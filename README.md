@@ -13,6 +13,9 @@ proposal to turn it into a modern, modular toolset for students and teachers.
 
 ```
 index.html                 entry point (redirects to rapport/rapport_FR.html)
+chapitre-*.html            legacy redirect stubs → chapitres/ (kept for old links)
+composant-*.html           legacy redirect stubs → composants/
+rapport_FR.html, rapport_EN.html  legacy redirect stubs → rapport/
 LISEZ-MOI.html             French tester guide
 README.md                  this file
 rapport/
@@ -42,6 +45,10 @@ scripts/make_distrib.sh    builds the tester zip
   preserves the folder tree, excludes `interne/`).
 - `interne/versions-noyau/` — the three index prototypes (`version_A/B/C.html`) that were explored;
   Version B was adopted for the index cards and the workspace pages. **Internal — not shipped.**
+
+The root `chapitre-*.html`, `composant-*.html` and `rapport_*.html` files are **redirect stubs**
+(meta refresh + JS that preserves the `#anchor`) so URLs published before the folder reorganisation
+keep working. They are not part of the tester zip.
 
 All pages are self-contained single-file HTML (inline CSS, no external dependencies). Links are
 relative, so the folder tree must be kept intact; open any page in any browser.
