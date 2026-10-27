@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Espace de travail — Chapitre 11 · Agir</title>
+<title>Chantier — Composant C · Couche actualité vivante</title>
 <style>
   :root{--bg:#0f1419;--panel:#161d25;--panel-2:#1c2530;--border:#28323e;--ink:#e8edf2;--muted:#9aa8b6;--faint:#6b7885;--brand:#e0a458;--brand-2:#c9704b;--accent:#5aa9c9;--good:#5fb380;--maxw:880px}
   *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -23,6 +23,7 @@
   h1{font-size:26px;margin:0}
   .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
   .chip{font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:3px 11px}
+  .chip.todo{color:var(--accent);border-color:rgba(90,169,201,.4)}
   .lead{color:var(--muted);font-size:16px;border-left:3px solid var(--brand);padding:4px 0 4px 16px;margin:6px 0 28px}
   .lead b{color:var(--ink)}
   h2.s{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:30px 0 12px;font-weight:700}
@@ -42,75 +43,77 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .note a{color:var(--accent);text-decoration:none}
+  .note a:hover{text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
 <body>
   <div class="bar"><div class="in">
-    <a class="back" href="javascript:history.back()">← Retour à l&rsquo;index</a>
-    <span class="crumb">Outil péda · Espace de travail · Chap. 11</span>
+    <a class="back" href="../rapport/rapport_FR.html">← Retour à l&rsquo;index</a>
+    <span class="crumb">Outil péda · Chantier · Composant C</span>
   </div></div>
 
   <div class="wrap">
     <div class="headcard">
       <div class="band"></div>
       <div class="head-in">
-        <div class="kicker">Espace de travail — Chapitre 11</div>
-        <div class="titlerow"><span class="badge">11</span><h1>Agir</h1></div>
-        <div class="meta"><span class="chip">≈ 40 min</span><span class="chip">Secondaire supérieur</span><span class="chip">Paix · engagement citoyen</span></div>
+        <div class="kicker">Chantier — Composant C</div>
+        <div class="titlerow"><span class="badge">C</span><h1>Couche actualité vivante</h1></div>
+        <div class="meta"><span class="chip">Effort · Moyen</span><span class="chip">Réutilise : événements datés des chap. 4/6/10</span><span class="chip todo">● À créer</span></div>
       </div>
     </div>
-    <p class="lead"><b>Objectif :</b> relier le conflit à la Belgique et ouvrir sur l&rsquo;engagement citoyen concret.</p>
+    <p class="lead"><b>Idée :</b> Séparer un noyau stable (histoire, géographie, droit, concepts) d&rsquo;une couche vivante (CIJ 2024, New York juil. 2025, plan Trump oct. 2025, sanctions, arrêté 2026), avec un flux « ce qui a changé ».</p>
 
-    <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
-
+    <h2 class="s">Étapes de mise en œuvre — cliquez pour dérouler</h2>
     <details class="acc" open>
-      <summary><span class="seq-num">1</span><span class="t">C&rsquo;est quoi la paix&nbsp;?</span><span class="c">negative vs positive</span></summary>
+      <summary><span class="seq-num">1</span><span class="t">Marquer les faits datés</span><span class="c">stable / vivant</span></summary>
       <div class="body">
-        <p>Paix négative (absence de guerre) vs paix positive (justice, égalité, conditions qui préviennent le conflit) — l&rsquo;idée clé qui clôt la mallette.</p>
-        <div class="todo"><b>À travailler ici :</b> à partir d&rsquo;exemples concrets, classer ce qui relève de la paix négative et de la paix positive ; définir chaque terme en une phrase.</div>
+        <p>Parcourir les documents et marquer les faits datés et sujets à évolution : c&rsquo;est la frontière noyau stable / couche vivante.</p>
+        <div class="todo"><b>À travailler ici :</b> passer les chapitres 4, 6 et 10 en revue et étiqueter chaque fait daté.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">2</span><span class="t">La Belgique : actrice de paix ou de guerre&nbsp;?</span><span class="c">polarisation</span></summary>
+      <summary><span class="seq-num">2</span><span class="t">Créer un registre de faits</span><span class="c">markdown / JSON</span></summary>
       <div class="body">
-        <p>La polarisation de la société belge ; la Belgique, spectatrice ou partie prenante ? Relier le débat local au conflit.</p>
-        <div class="todo"><b>À travailler ici :</b> tour de table cadré (membrane de discussion) : où se situe chacun·e, et pourquoi — sans classement des opinions.</div>
+        <p>Un registre : énoncé, source primaire, date, échéance de revue, responsable — la base de toute la couche vivante.</p>
+        <div class="todo"><b>À travailler ici :</b> créer le fichier et le remplir des dix premiers faits, avec le format validé par le GT.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">3</span><span class="t">Implications concrètes : commerce, armes, Europe</span><span class="c">leviers</span></summary>
+      <summary><span class="seq-num">3</span><span class="t">Générer un journal des modifications</span><span class="c">« ce qui a changé »</span></summary>
       <div class="body">
-        <p>Commerce avec les colonies, industrie militaire et exportations d&rsquo;armes, l&rsquo;UE comme premier partenaire commercial d&rsquo;Israël : les leviers matériels qui relient la Belgique au terrain.</p>
-        <div class="todo"><b>À travailler ici :</b> cartographier les liens Belgique / Europe – Israël : commerce, armes, diplomatie — avec des sources datées.</div>
+        <p>Produire un flux « ce qui a changé » — journal des modifications ou flux RSS — consultable par les utilisateurs et utilisatrices.</p>
+        <div class="todo"><b>À travailler ici :</b> définir le format d&rsquo;une entrée et générer une première version à partir du registre.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">4</span><span class="t">La mobilisation citoyenne</span><span class="c">sanctions · arrêté</span></summary>
+      <summary><span class="seq-num">4</span><span class="t">Fixer une cadence de revue</span><span class="c">mensuelle · responsable</span></summary>
       <div class="body">
-        <p>Les 12 sanctions belges (septembre 2025), l&rsquo;arrêté royal sur le survol (2026) : ce que la pression citoyenne a déjà produit, et comment.</p>
-        <div class="todo"><b>À travailler ici :</b> étude de cas : comment une mesure concrète est-elle née d&rsquo;une mobilisation ? Reconstituer la chaîne acteur &rarr; décision.</div>
+        <p>Une revue mensuelle avec un·e responsable nommé·e : c&rsquo;est la garantie que la couche reste vivante et exacte.</p>
+        <div class="todo"><b>À travailler ici :</b> proposer au GT un calendrier de revue et une rotation des responsables.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">5</span><span class="t">Que faire en tant que citoyen·ne belge&nbsp;?</span><span class="c">consommer · mobiliser · rejoindre · pression</span></summary>
+      <summary><span class="seq-num">5</span><span class="t">Relier aux sources primaires</span><span class="c">CIJ · ONU · presse</span></summary>
       <div class="body">
-        <p>Quatre registres d&rsquo;action — consommer, mobiliser, rejoindre, faire pression — et des initiatives qui inspirent : EcoPeace, Breaking the Silence, Voix juives pour la paix&hellip;</p>
-        <div class="todo"><b>À travailler ici :</b> chaque élève choisit un registre et formule une action réaliste à son échelle, avec un premier pas daté.</div>
+        <p>Chaque carte de fait relie vers sa source primaire (CIJ, ONU, presse de référence) — pas de fait sans source.</p>
+        <div class="todo"><b>À travailler ici :</b> auditer le registre : chaque fait doit avoir une source primaire cliquable et datée.</div>
       </div>
     </details>
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> texte des 12 sanctions belges et de l&rsquo;arrêté 2026 (liens datés) · fiches des initiatives citées · protocole « membrane de discussion » · garde-fous d&rsquo;animation.</p>
+      <p style="margin-top:0"><b>Chantier</b> : cette page pilote la construction du composant — étapes, responsables, décisions et livrables s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
+      <p><b>Voir aussi :</b> <a href="../chapitres/chapitre-4-espace.html">chap. 4</a> · <a href="../chapitres/chapitre-6-espace.html">chap. 6</a> · <a href="../chapitres/chapitre-10-espace.html">chap. 10</a> — les faits datés</p>
+      <p><b>À ajouter :</b> un·e responsable nommé·e par étape · une date cible par étape · les livrables au fil de l&rsquo;eau.</p>
     </div>
 
-    <div class="foot">Chapitre 11 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
+    <div class="foot">Composant C / I · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à organiser, dater et assigner.</div>
   </div>
 <script>
   document.querySelectorAll('.acc').forEach(function(d){

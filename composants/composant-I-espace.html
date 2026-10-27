@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chantier — Composant A · Noyau interactif pour les élèves</title>
+<title>Chantier — Composant I · Gouvernance &amp; chaîne de production</title>
 <style>
   :root{--bg:#0f1419;--panel:#161d25;--panel-2:#1c2530;--border:#28323e;--ink:#e8edf2;--muted:#9aa8b6;--faint:#6b7885;--brand:#e0a458;--brand-2:#c9704b;--accent:#5aa9c9;--good:#5fb380;--maxw:880px}
   *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -50,70 +50,70 @@
 </head>
 <body>
   <div class="bar"><div class="in">
-    <a class="back" href="javascript:history.back()">← Retour à l&rsquo;index</a>
-    <span class="crumb">Outil péda · Chantier · Composant A</span>
+    <a class="back" href="../rapport/rapport_FR.html">← Retour à l&rsquo;index</a>
+    <span class="crumb">Outil péda · Chantier · Composant I</span>
   </div></div>
 
   <div class="wrap">
     <div class="headcard">
       <div class="band"></div>
       <div class="head-in">
-        <div class="kicker">Chantier — Composant A</div>
-        <div class="titlerow"><span class="badge">A</span><h1>Noyau interactif pour les élèves</h1></div>
-        <div class="meta"><span class="chip">Effort · Élevé</span><span class="chip">Réutilise : 12 chapitres + dates.xlsx</span><span class="chip todo">● À créer</span></div>
+        <div class="kicker">Chantier — Composant I</div>
+        <div class="titlerow"><span class="badge">I</span><h1>Gouvernance &amp; chaîne de production</h1></div>
+        <div class="meta"><span class="chip">Effort · Faible</span><span class="chip">Réutilise : le modèle du GT</span><span class="chip todo">● À créer</span></div>
       </div>
     </div>
-    <p class="lead"><b>Idée :</b> Transformer chaque chapitre en un court module web interactif : chronologie manipulable, comparaison en volets, visualisation de l&rsquo;eau, glossaire au survol. Les élèves naviguent au lieu de seulement lire.</p>
+    <p class="lead"><b>Idée :</b> Garder le groupe de travail d&rsquo;expert·es, mais y ajouter une chaîne répétable : revue d&rsquo;expert·e → traduction pédagogique → test en classe → publication versionnée.</p>
 
     <h2 class="s">Étapes de mise en œuvre — cliquez pour dérouler</h2>
     <details class="acc" open>
-      <summary><span class="seq-num">1</span><span class="t">Choisir le format</span><span class="c">H5P · web-components</span></summary>
+      <summary><span class="seq-num">1</span><span class="t">Définir les rôles</span><span class="c">RACI léger</span></summary>
       <div class="body">
-        <p>Trancher le format technique des modules : contenus H5P ou web-components légers sur site statique — pas de serveur lourd, utilisable en classe.</p>
-        <div class="todo"><b>À travailler ici :</b> lister les contraintes matérielles des écoles cibles (équipement, connexion, vidéoprojection), puis décider un format unique et l&rsquo;écrire en une page de décision.</div>
+        <p>Définir les rôles — responsable éditorial, expert·es, pédagogue, testeur·se — avec un RACI léger.</p>
+        <div class="todo"><b>À travailler ici :</b> cartographier les rôles tenus aujourd&rsquo;hui dans le GT et identifier les manques.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">2</span><span class="t">Extraire les données structurées</span><span class="c">.xlsx → JSON</span></summary>
+      <summary><span class="seq-num">2</span><span class="t">Documenter la chaîne</span><span class="c">entrée / sortie</span></summary>
       <div class="body">
-        <p>Passer du document brut à des données exploitables : <code>dates.xlsx</code> → JSON, <code>Lexique</code> → dictionnaire, cartes d&rsquo;identité → paires de champs.</p>
-        <div class="todo"><b>À travailler ici :</b> produire le premier jeu JSON des dates clés et le faire valider contre le fichier source par le GT.</div>
+        <p>Documenter la chaîne : revue d&rsquo;expert → traduction pédago → pilote → publication, avec des critères d&rsquo;entrée et de sortie par étape.</p>
+        <div class="todo"><b>À travailler ici :</b> dessiner la chaîne sur une page et la valider en réunion de GT.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">3</span><span class="t">Concevoir 3 gabarits réutilisables</span><span class="c">chronologie · A/B · data</span></summary>
+      <summary><span class="seq-num">3</span><span class="t">Gestionnaire de citations</span><span class="c">Zotero</span></summary>
       <div class="body">
-        <p>Concevoir trois gabarits — chronologie, comparaison A/B, visualisation de données — qui alimenteront tous les modules.</p>
-        <div class="todo"><b>À travailler ici :</b> prototyper chaque gabarit avec une donnée réelle : frise du chap. 4, comparaison du chap. 2, visualisation de l&rsquo;eau du chap. 3.</div>
+        <p>Adopter un gestionnaire de citations (ex. Zotero) — les documents citent déjà leurs sources.</p>
+        <div class="todo"><b>À travailler ici :</b> créer la bibliothèque partagée et y importer les références existantes.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">4</span><span class="t">Produire les 12 modules</span><span class="c">alimentation</span></summary>
+      <summary><span class="seq-num">4</span><span class="t">Versionner avec git</span><span class="c">étiquettes · journal des modifications</span></summary>
       <div class="body">
-        <p>Produire les douze modules en alimentant les gabarits depuis les chapitres — un objectif pédagogique par module.</p>
-        <div class="todo"><b>À travailler ici :</b> produire le module du chapitre 1 de bout en bout comme preuve de concept, avant de généraliser.</div>
+        <p>Versionner avec git : versions étiquetées et journal des modifications — fini le versionnage par nom de fichier.</p>
+        <div class="todo"><b>À travailler ici :</b> faire du dépôt actuel l&rsquo;outil de production et étiqueter la première version publiée.</div>
       </div>
     </details>
 
     <details class="acc">
-      <summary><span class="seq-num">5</span><span class="t">Tester en classe pilote</span><span class="c">mesurer · itérer</span></summary>
+      <summary><span class="seq-num">5</span><span class="t">Calendrier &amp; accueil</span><span class="c">pérennité</span></summary>
       <div class="body">
-        <p>Tester avec une classe pilote, mesurer où l&rsquo;attention décroche, itérer avant de généraliser.</p>
-        <div class="todo"><b>À travailler ici :</b> définir trois critères d&rsquo;observation avant la séance, plus un formulaire de retour élève d&rsquo;une page.</div>
+        <p>Fixer un calendrier de maintenance et une documentation d&rsquo;accueil pour les nouveaux contributeurs.</p>
+        <div class="todo"><b>À travailler ici :</b> rédiger la page d&rsquo;accueil des nouveaux contributeurs et proposer la première date de maintenance.</div>
       </div>
     </details>
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
       <p style="margin-top:0"><b>Chantier</b> : cette page pilote la construction du composant — étapes, responsables, décisions et livrables s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>Voir aussi :</b> <a href="rapport_FR.html#core">les 11 espaces de travail chapitre</a> (source des modules)</p>
+      <p><b>Voir aussi :</b> <a href="../rapport/rapport_FR.html#process">la section « Comment c&rsquo;est fait »</a> — le modèle du GT</p>
       <p><b>À ajouter :</b> un·e responsable nommé·e par étape · une date cible par étape · les livrables au fil de l&rsquo;eau.</p>
     </div>
 
-    <div class="foot">Composant A / I · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à organiser, dater et assigner.</div>
+    <div class="foot">Composant I / I · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à organiser, dater et assigner.</div>
   </div>
 <script>
   document.querySelectorAll('.acc').forEach(function(d){
