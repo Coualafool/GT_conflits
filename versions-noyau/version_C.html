@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Version C — Le noyau en 12 chapitres</title>
+<style>
+  :root{--bg:#0f1419;--panel:#161d25;--panel-2:#1c2530;--border:#28323e;--ink:#e8edf2;--muted:#9aa8b6;--faint:#6b7885;--brand:#e0a458;--accent:#5aa9c9;--maxw:1080px}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;font-size:16px}
+  .topbar{border-bottom:1px solid var(--border);padding:22px 22px}
+  .topbar .in{max-width:var(--maxw);margin:0 auto}
+  .vtag{display:inline-block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#1a1206;background:var(--good);font-weight:800;padding:4px 10px;border-radius:6px}
+  h1{font-size:24px;margin:12px 0 2px}
+  .lead{color:var(--muted);margin:0;font-size:14.5px}
+  .shell{max-width:var(--maxw);margin:0 auto;padding:24px 22px 80px;display:grid;grid-template-columns:280px 1fr;gap:22px}
+  @media(max-width:760px){.shell{grid-template-columns:1fr}}
+  /* nav */
+  .nav{border:1px solid var(--border);border-radius:14px;background:var(--panel);padding:10px;height:max-content}
+  .nav .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700;padding:8px 10px}
+  .navitem{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;cursor:pointer;color:var(--muted);transition:background .15s,color .15s}
+  .navitem:hover{background:var(--panel-2);color:var(--ink)}
+  .navitem .n{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+  .navitem.active{background:rgba(224,164,88,.14);color:var(--ink)}
+  .navitem.active .n{background:var(--brand);color:#1a1206;border-color:var(--brand)}
+  .navitem.active::after{content:"→";margin-left:auto;color:var(--brand)}
+  .navitem.dis{opacity:.45;cursor:default}
+  .navitem.dis:hover{background:transparent;color:var(--muted)}
+  /* content pane */
+  .pane{border:1px solid var(--border);border-radius:14px;background:var(--panel);overflow:hidden}
+  .pane-head{padding:22px 24px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--panel-2),var(--panel))}
+  .pane-head .k{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:700}
+  .pane-head h2{margin:6px 0 10px;font-size:24px}
+  .openbtn{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#1a1206;font-weight:800;text-decoration:none;padding:11px 18px;border-radius:10px}
+  .openbtn:hover{filter:brightness(1.08)}
+  .pane-body{padding:22px 24px}
+  .obj{color:var(--ink);font-size:15.5px;margin:0 0 18px}
+  .obj b{color:var(--brand)}
+  .sec-t{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:0 0 8px}
+  .plan{list-style:none;margin:0;padding:0}
+  .plan li{padding:9px 0 9px 24px;position:relative;color:var(--muted);font-size:14.5px;border-bottom:1px dashed var(--border)}
+  .plan li:last-child{border-bottom:none}
+  .plan li::before{content:"";position:absolute;left:6px;top:16px;width:8px;height:8px;border-radius:2px;transform:rotate(45deg);background:var(--accent)}
+  /* rolldown animation when (re)opened */
+  .pane-body{animation:slidein .35s ease}
+  @keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .placeholder{padding:40px 24px;color:var(--faint);text-align:center}
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="in">
+    <span class="vtag">Version C · Index latéral + page détail</span>
+    <h1>Le noyau en 12 chapitres</h1>
+    <p class="lead">Façon « documentation » : un index à gauche, le contenu du chapitre sélectionné à droite, avec un bouton vers sa page espace de travail. Seule la fiche 1 est remplie ici.</p>
+  </div></div>
+
+  <div class="shell">
+    <nav class="nav">
+      <div class="lbl">Chapitres</div>
+      <div class="navitem active" data-ch="1"><span class="n">1</span> L&rsquo;ordre mondial aujourd&rsquo;hui</div>
+      <div class="navitem dis"><span class="n">2</span> Géopolitique Israël / Palestine</div>
+      <div class="navitem dis"><span class="n">3</span> Ressources naturelles</div>
+      <div class="navitem dis"><span class="n">4</span> Historique du conflit</div>
+      <div class="navitem dis"><span class="n">5</span> Le mot « conflit »</div>
+    </nav>
+
+    <section class="pane" id="pane">
+      <div class="pane-head">
+        <div class="k">Chapitre 1</div>
+        <h2>L&rsquo;ordre mondial aujourd&rsquo;hui</h2>
+        <a class="openbtn" href="chapitre-1-espace.html">Ouvrir l&rsquo;espace de travail →</a>
+      </div>
+      <div class="pane-body">
+        <p class="obj"><b>Objectif :</b> donner aux apprenant·es les clés de lecture du système international pour ne pas réduire le conflit à une opposition binaire ou décontextualisée.</p>
+        <p class="sec-t">Plan du chapitre</p>
+        <ul class="plan">
+          <li>Pourquoi l&rsquo;ordre mondial éclaire le conflit — définition de la notion</li>
+          <li>Le monde bipolaire : la guerre froide (1945–1991)</li>
+          <li>L&rsquo;unipolarité américaine (après 1991)</li>
+          <li>Un monde multipolaire et fragmenté : alliances américaines fragiles, bloc sino-russe, « Sud global »</li>
+          <li>Une dimension idéologique plurielle ; l&rsquo;émergence d&rsquo;acteurs non étatiques</li>
+          <li>Tensions, enjeux et perspectives</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+<script>
+  // re-trigger the slide-in animation if the active item is clicked again
+  document.querySelectorAll('.navitem.active').forEach(function(it){
+    it.addEventListener('click',function(){var b=document.querySelector('#pane .pane-body');b.style.animation='none';void b.offsetWidth;b.style.animation='';});
+  });
+</script>
+</body>
+</html>

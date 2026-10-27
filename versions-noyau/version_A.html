@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Version A — Le noyau en 12 chapitres</title>
+<style>
+  :root{--bg:#0f1419;--panel:#161d25;--panel-2:#1c2530;--border:#28323e;--ink:#e8edf2;--muted:#9aa8b6;--faint:#6b7885;--brand:#e0a458;--accent:#5aa9c9;--maxw:860px}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;font-size:16px}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:40px 22px 80px}
+  .vtag{display:inline-block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#1a1206;background:var(--brand);font-weight:800;padding:4px 10px;border-radius:6px}
+  h1{font-size:26px;margin:14px 0 4px}
+  .lead{color:var(--muted);margin:0 0 26px;font-size:15px}
+  /* list */
+  .row{border:1px solid var(--border);border-radius:12px;background:var(--panel);margin:10px 0;overflow:hidden;transition:border-color .15s}
+  .row:hover{border-color:var(--brand)}
+  .row-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer}
+  .num{width:34px;height:34px;border-radius:9px;background:var(--panel-2);border:1px solid var(--border);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;transition:all .15s}
+  .row:hover .num,.row.open .num{background:var(--brand);color:#1a1206;border-color:var(--brand)}
+  .row-title{font-weight:700;font-size:17px}
+  .row:hover .row-title{color:var(--brand)}
+  .chev{margin-left:auto;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .15s}
+  .row:hover .chev{color:var(--brand);border-color:var(--brand);background:rgba(224,164,88,.14)}
+  .chev .ar{transition:transform .25s;display:inline-block}
+  .row.open .chev{color:var(--brand);border-color:var(--brand)}
+  .row.open .chev .ar{transform:rotate(90deg)}
+  /* rolldown via grid 0fr->1fr */
+  .rd{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s ease}
+  .rd>.inner{overflow:hidden}
+  .row.open .rd{grid-template-rows:1fr}
+  .rd-pad{padding:2px 18px 18px}
+  .obj{color:var(--ink);font-size:14.5px;margin:6px 0 12px}
+  .obj b{color:var(--brand)}
+  .plan{list-style:none;margin:0;padding:0}
+  .plan li{position:relative;padding:6px 0 6px 22px;color:var(--muted);font-size:14.5px;border-top:1px dashed var(--border)}
+  .plan li:first-child{border-top:none}
+  .plan li::before{content:"";position:absolute;left:4px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .cta{display:flex;align-items:center;gap:10px;margin-top:16px}
+  .cta a{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#1a1206;font-weight:700;text-decoration:none;padding:10px 16px;border-radius:9px;font-size:14px}
+  .cta a:hover{filter:brightness(1.08)}
+  .cta .hint{color:var(--faint);font-size:12.5px}
+  /* placeholders */
+  .row.ph{opacity:.5}
+  .row.ph .row-head{cursor:default}
+  .row.ph:hover{border-color:var(--border)}
+  .row.ph:hover .num{background:var(--panel-2);color:var(--brand);border-color:var(--border)}
+  .soon{margin-left:auto;color:var(--faint);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="vtag">Version A · Accordéon minimaliste</span>
+  <h1>Le noyau en 12 chapitres</h1>
+  <p class="lead">Cliquez un chapitre : le texte se déroule sous la ligne, avec un lien vers sa <b>page espace de travail</b>. Un seul chapitre ouvert à la fois. Seule la ligne 1 est active ici (exemple).</p>
+
+  <div id="list">
+    <div class="row" data-ch="1">
+      <div class="row-head" role="button" tabindex="0">
+        <span class="num">1</span>
+        <span class="row-title">L&rsquo;ordre mondial aujourd&rsquo;hui</span>
+        <span class="chev"><span class="ar">▶</span> détail</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> donner aux apprenant·es les clés de lecture du système international pour ne pas réduire le conflit à une opposition binaire ou décontextualisée.</p>
+        <ul class="plan">
+          <li>Pourquoi l&rsquo;ordre mondial éclaire le conflit — définition de la notion</li>
+          <li>Le monde bipolaire : la guerre froide (1945–1991)</li>
+          <li>L&rsquo;unipolarité américaine (après 1991)</li>
+          <li>Un monde multipolaire et fragmenté : alliances américaines fragiles, bloc sino-russe, « Sud global »</li>
+          <li>Une dimension idéologique plurielle ; l&rsquo;émergence d&rsquo;acteurs non étatiques</li>
+          <li>Tensions, enjeux et perspectives</li>
+        </ul>
+        <div class="cta"><a href="chapitre-1-espace.html">→ Ouvrir l&rsquo;espace de travail</a><span class="hint">Page dédiée · chap. 1</span></div>
+      </div></div></div>
+    </div>
+
+    <!-- placeholders to convey the list -->
+    <div class="row ph"><div class="row-head"><span class="num">2</span><span class="row-title">Géopolitique d&rsquo;Israël et de la Palestine</span><span class="soon">à venir</span></div></div>
+    <div class="row ph"><div class="row-head"><span class="num">3</span><span class="row-title">Ressources naturelles</span><span class="soon">à venir</span></div></div>
+    <div class="row ph"><div class="row-head"><span class="num">4</span><span class="row-title">Historique du conflit</span><span class="soon">à venir</span></div></div>
+    <div class="row ph"><div class="row-head"><span class="num">5</span><span class="row-title">Le mot « conflit »</span><span class="soon">à venir</span></div></div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll('#list .row:not(.ph) .row-head').forEach(function(h){
+    function toggle(){var r=h.parentElement;var was=r.classList.contains('open');
+      document.querySelectorAll('#list .row.open').forEach(function(o){o.classList.remove('open')});
+      if(!was)r.classList.add('open');}
+    h.addEventListener('click',toggle);
+    h.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026_Outil péda_Israël-Palestine — Enquête &amp; note de modernisation</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#161d25; --panel-2:#1c2530; --border:#28323e;
+    --ink:#e8edf2; --muted:#9aa8b6; --faint:#6b7885;
+    --brand:#e0a458; --brand-2:#c9704b; --accent:#5aa9c9; --good:#5fb380; --warn:#d98a5e; --risk:#cf6b6b;
+    --maxw:1120px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px 80px}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  h1,h2,h3,h4{line-height:1.25;font-weight:700}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86em;background:#0b0f14;
+    border:1px solid var(--border);border-radius:5px;padding:1px 6px;color:#cdd7e0}
+  /* HERO */
+  .hero{padding:54px 22px 40px;border-bottom:1px solid var(--border);
+    background:radial-gradient(1200px 480px at 18% -10%,rgba(224,164,88,.16),transparent 60%),
+               radial-gradient(900px 420px at 92% 0%,rgba(90,169,201,.12),transparent 55%)}
+  .hero .wrap{padding-bottom:0}
+  .kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--brand);font-weight:700}
+  .hero h1{font-size:34px;margin:14px 0 8px}
+  .hero h1 .fr{color:var(--muted);font-weight:500;font-size:22px;display:block;margin-top:6px}
+  .hero p.lead{color:var(--muted);max-width:760px;font-size:17px;margin:10px 0 0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .chip{background:var(--panel);border:1px solid var(--border);border-radius:999px;
+    padding:6px 14px;font-size:13px;color:var(--muted)}
+  .chip b{color:var(--ink);font-weight:600}
+  /* SECTIONS */
+  section{margin-top:46px}
+  .sec-h{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:20px}
+  .sec-h .num{font-size:13px;color:var(--brand);font-weight:700;letter-spacing:.1em}
+  .sec-h h2{font-size:24px;margin:0}
+  .sec-h .sub{margin-left:auto;color:var(--faint);font-size:13px}
+  p{margin:12px 0}
+  .muted{color:var(--muted)}
+  .small{font-size:14px}
+  /* CARDS */
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 18px 16px}
+  .card h3{margin:0 0 6px;font-size:17px}
+  .card h4{margin:0 0 6px;font-size:15px;color:var(--brand)}
+  .card p{margin:6px 0;font-size:14.5px;color:var(--muted)}
+  .card .tag{display:inline-block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:8px;font-weight:700}
+  /* STAT */
+  .stat{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--border);
+    border-radius:12px;padding:18px}
+  .stat .v{font-size:30px;font-weight:800;color:var(--brand)}
+  .stat .l{font-size:13px;color:var(--muted);margin-top:4px}
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  tbody tr:hover{background:rgba(255,255,255,.02)}
+  td .fr{color:var(--ink)}
+  td .en{color:var(--muted);font-size:13px}
+  /* TREE */
+  .tree{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;font-size:14px}
+  .tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px dashed var(--border)}
+  .tree>ul{padding-left:0;border-left:none}
+  .tree li{margin:7px 0;position:relative}
+  .tree .dir{color:var(--brand);font-weight:600}
+  .tree .file{color:var(--muted)}
+  .tree .note{color:var(--faint);font-size:12.5px}
+  /* CALLOUT */
+  .callout{border-left:3px solid var(--brand);background:var(--panel);border-radius:0 10px 10px 0;
+    padding:14px 18px;margin:16px 0}
+  .callout.q{border-left-color:var(--accent);font-style:italic;color:var(--muted)}
+  .callout .lbl{font-style:normal;font-weight:700;color:var(--ink);display:block;margin-bottom:4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:3px 9px;border-radius:6px;margin-right:6px}
+  .p-build{background:rgba(95,179,128,.15);color:var(--good)}
+  .p-reuse{background:rgba(90,169,201,.15);color:var(--accent)}
+  .p-effort{background:rgba(224,164,88,.15);color:var(--brand)}
+  .p-risk{background:rgba(207,107,107,.15);color:var(--risk)}
+  /* ROADMAP */
+  .phase{border:1px solid var(--border);border-radius:12px;padding:0;margin:14px 0;overflow:hidden}
+  .phase .ph-h{display:flex;align-items:center;gap:12px;padding:13px 18px;background:var(--panel-2)}
+  .phase .ph-h .badge{width:26px;height:26px;border-radius:50%;background:var(--brand);color:#1a1206;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
+  .phase .ph-h .t{font-weight:700}
+  .phase .ph-h .when{margin-left:auto;color:var(--faint);font-size:12.5px}
+  .phase .ph-b{padding:12px 18px 16px}
+  .phase ul{margin:6px 0;padding-left:20px}
+  .phase li{margin:5px 0;font-size:14.5px;color:var(--muted)}
+  /* ACCORDION (sections 3 & 7) */
+  .acc-tools{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
+  .acc-tools button{background:var(--panel);border:1px solid var(--border);color:var(--muted);
+    border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+  .acc-tools button:hover{color:var(--ink);border-color:var(--brand)}
+  details.acc{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s}
+  details.acc summary{list-style:none;cursor:pointer;padding:15px 18px;display:block}
+  details.acc summary::-webkit-details-marker{display:none}
+  details.acc summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  details.acc:hover{border-color:var(--brand)}
+  details.acc[open]{border-color:var(--brand)}
+  details.acc summary{transition:background .15s ease}
+  details.acc summary:hover{background:rgba(224,164,88,.10)}
+  details.acc summary:hover .acc-title{color:var(--brand)}
+  details.acc[open] summary{border-bottom:1px solid var(--border);background:var(--panel-2)}
+  .acc-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .acc-title{font-weight:700;font-size:16px;color:var(--ink)}
+  .acc-blurb{color:var(--muted);font-size:13.5px;margin:8px 0 0;line-height:1.5}
+  .acc-chev{margin-left:auto;color:var(--muted);font-size:12.5px;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 11px;transition:all .15s ease}
+  details.acc summary:hover .acc-chev{color:var(--brand);border-color:var(--brand);background:rgba(224,164,88,.14)}
+  details.acc[open] .acc-chev{color:var(--brand);border-color:var(--brand)}
+  .acc-chev .ar{transition:transform .2s;display:inline-block}
+  details.acc[open] .acc-chev .ar{transform:rotate(90deg)}
+  .acc-body{padding:6px 18px 18px}
+  .acc-body h5{margin:16px 0 6px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--brand);font-weight:700}
+  .acc-body h5.imp{color:var(--good)}
+  .acc-body ol,.acc-body ul{margin:6px 0;padding-left:20px}
+  .acc-body ol li,.acc-body ul li{margin:5px 0;font-size:14.5px;color:var(--muted)}
+  .acc-body p{font-size:14.5px;color:var(--muted);margin:6px 0}
+  .acc-body ol li b,.acc-body ul li b{color:var(--ink);font-weight:600}
+  /* CHAPTER LIST (section 3) */
+  .chap-list{display:flex;flex-direction:column;gap:10px}
+  .chap-num{width:26px;height:26px;border-radius:50%;background:var(--panel-2);border:1px solid var(--border);
+    color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
+  details.acc[open] .chap-num{background:var(--brand);color:#1a1206}
+  .chap-obj{color:var(--ink);font-size:14.5px;margin:2px 0 0}
+  /* VERSION B CARDS (section 3) */
+  #core .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;margin:14px 0;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
+  #core .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35);border-color:#3a4756}
+  #core .band{height:5px;background:linear-gradient(90deg,var(--brand),var(--accent))}
+  #core .card-head{display:flex;align-items:center;gap:16px;padding:18px 20px;cursor:pointer}
+  #core .badge{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#1a1206;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex:none}
+  #core .htext .row-title{font-weight:700;font-size:18px}
+  #core .htext .chips{margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+  #core .chip{background:none;font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
+  #core .chip.ready{color:var(--good);border-color:rgba(95,179,128,.4)}
+  #core .chev{margin-left:auto;color:var(--muted);font-size:20px;transition:transform .25s,color .15s;flex:none}
+  #core .card-head:hover .chev{color:var(--brand)}
+  #core .card.open .chev{transform:rotate(90deg);color:var(--brand)}
+  #core .rd{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s ease}
+  #core .rd>.inner{overflow:hidden}
+  #core .card.open .rd{grid-template-rows:1fr}
+  #core .rd-pad{padding:0 20px 20px}
+  #core .obj{color:var(--ink);font-size:15px;margin:4px 0 14px}
+  #core .obj b{color:var(--brand)}
+  #core .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+  #core .plan li{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13.5px;color:var(--muted)}
+  #core .banner{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(90deg,rgba(224,164,88,.18),rgba(90,169,201,.14));border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+  #core .banner .b-t{font-weight:700}
+  #core .banner .b-s{color:var(--muted);font-size:13px}
+  #core .banner a{background:var(--brand);color:#1a1206;font-weight:800;text-decoration:none;padding:11px 18px;border-radius:10px;white-space:nowrap}
+  #core .banner a:hover{filter:brightness(1.08);text-decoration:none}
+  /* VERSION B CARDS (section 7 — mirror) */
+  #proposal .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;margin:14px 0;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
+  #proposal .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35);border-color:#3a4756}
+  #proposal .band{height:5px;background:linear-gradient(90deg,var(--brand),var(--accent))}
+  #proposal .card-head{display:flex;align-items:center;gap:16px;padding:18px 20px;cursor:pointer}
+  #proposal .badge{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#1a1206;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex:none}
+  #proposal .htext .row-title{font-weight:700;font-size:18px}
+  #proposal .htext .chips{margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+  #proposal .chip{background:none;font-size:11.5px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
+  #proposal .chip.ready{color:var(--good);border-color:rgba(95,179,128,.4)}
+  #proposal .chev{margin-left:auto;color:var(--muted);font-size:20px;transition:transform .25s,color .15s;flex:none}
+  #proposal .card-head:hover .chev{color:var(--brand)}
+  #proposal .card.open .chev{transform:rotate(90deg);color:var(--brand)}
+  #proposal .rd{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s ease}
+  #proposal .rd>.inner{overflow:hidden}
+  #proposal .card.open .rd{grid-template-rows:1fr}
+  #proposal .rd-pad{padding:0 20px 20px}
+  #proposal .obj{color:var(--ink);font-size:15px;margin:4px 0 14px}
+  #proposal .obj b{color:var(--brand)}
+  #proposal .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+  #proposal .plan li{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13.5px;color:var(--muted)}
+  #proposal .banner{margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(90deg,rgba(224,164,88,.18),rgba(90,169,201,.14));border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+  #proposal .banner .b-t{font-weight:700}
+  #proposal .banner .b-s{color:var(--muted);font-size:13px}
+  #proposal .banner a{background:var(--brand);color:#1a1206;font-weight:800;text-decoration:none;padding:11px 18px;border-radius:10px;white-space:nowrap}
+  #proposal .banner a:hover{filter:brightness(1.08);text-decoration:none}
+  #proposal .chip.todo{color:var(--accent);border-color:rgba(90,169,201,.4)}
+
+  /* GLOSSARY */
+  dl.gloss{margin:0}
+  dl.gloss dt{font-weight:700;color:var(--ink);margin-top:14px}
+  dl.gloss dd{margin:2px 0 0;color:var(--muted);font-size:14.5px}
+  .foot{margin-top:50px;padding-top:20px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .toc a{font-size:13px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--muted)}
+  .toc a:hover{color:var(--ink);text-decoration:none;border-color:var(--brand)}
+  .flag{color:var(--warn)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Enquête Drive · Note de modernisation</div>
+    <h1>Outil pédagogique israélo-palestinien
+      <span class="fr">« 2026_Outil péda_Israël-Palestine »</span>
+    </h1>
+    <p class="lead">Un dossier Google Drive partagé contenant une mallette pédagogique francophone,
+      construite par la société civile sur la question israélo-palestineienne — la révision 2025–2026
+      d&rsquo;une lignée de supports « comprendre les conflits » qui remonte à 2009. Cette note cartographie
+      ce que le dossier contient réellement et propose d&rsquo;en faire un <b>ensemble d&rsquo;outils moderne et
+      modulaire pour les élèves et les enseignant·es</b>.</p>
+    <div class="meta-row">
+      <span class="chip">Type · <b>Dossier Drive partagé (lien lecture seule)</b></span>
+      <span class="chip">Langue · <b>Français</b></span>
+      <span class="chip">Région · <b>Belgique francophone</b></span>
+      <span class="chip">Format · <b>.docx / .xlsx / .pdf / médias</b></span>
+      <span class="chip">État · <b>Ébauche active (éditions jusqu&rsquo;en sept. 2026)</b></span>
+    </div>
+    <nav class="toc">
+      <a href="#what">1 · Ce que c&rsquo;est</a>
+      <a href="#anatomy">2 · Anatomie du dossier</a>
+      <a href="#core">3 · Le noyau en 12 chapitres</a>
+      <a href="#assets">4 · Ressources &amp; médias</a>
+      <a href="#process">5 · Comment c&rsquo;est fait</a>
+      <a href="#assess">6 · Forces &amp; limites</a>
+      <a href="#proposal">7 · Le nouvel ensemble</a>
+      <a href="#roadmap">8 · Feuille de route</a>
+      <a href="#risks">9 · Risques &amp; garde-fous</a>
+      <a href="#gloss">10 · Glossaire</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- 1. WHAT IT IS -->
+<section id="what">
+  <div class="sec-h"><span class="num">01</span><h2>Ce que c&rsquo;est</h2><span class="sub">résumé en langage clair</span></div>
+  <p>Ce dossier n&rsquo;est <b>pas un document unique</b> — c&rsquo;est l&rsquo;espace de travail d&rsquo;une
+    <b>mallette pédagogique</b> complète, conçue pour aider un·e enseignant·e à aborder le conflit
+    israélo-palestinien en classe sans le réduire à une querelle binaire, émotionnelle ou décontextualisée.
+    Il est construit et maintenu par un <b>groupe de travail</b> (le dossier l&rsquo;appelle « GT conflits
+    internationaux ») d&rsquo;enseignant·es, de juristes en droit international et d&rsquo;acteurs associatifs de
+    Belgique francophone, avec des interventions d&rsquo;expert·es consignées de 2025 à 2026.</p>
+  <p>Le matériel se positionne explicitement comme une ressource d&rsquo;<b>éducation à la paix</b>, ancrée dans le
+    droit international et l&rsquo;esprit critique. Son introduction fixe elle-même le ton éditorial :</p>
+  <div class="callout q">
+    <span class="lbl">Extrait de l&rsquo;introduction de la mallette</span>
+    « En tant qu&rsquo;acteurs et actrices de paix, parce que nous choisissons le camp de l&rsquo;Humanité, nous nous
+    refusons à donner du crédit à une violence plutôt qu&rsquo;à une autre. Nous dénonçons avec force les actes barbares
+    perpétrés par les terroristes du Hamas le 7 octobre 2023, tout comme nous dénonçons avec autant de force la violence
+    disproportionnée perpétrée contre les civils de Gaza par le gouvernement Netanyahou&hellip; Nous ne nous abaisserons
+    pas à hiérarchiser les morts. »
+  </div>
+  <div class="grid g4">
+    <div class="stat"><div class="v">4</div><div class="l">dossiers de premier niveau</div></div>
+    <div class="stat"><div class="v">12</div><div class="l">chapitres numérotés (0&ndash;11)</div></div>
+    <div class="stat"><div class="v">2009&rarr;2026</div><div class="l">généalogie du projet</div></div>
+    <div class="stat"><div class="v">BE / FR</div><div class="l">public : élèves &amp; enseignant·es</div></div>
+  </div>
+  <p class="small muted" style="margin-top:14px"><b>Qui est derrière (basé sur les indices) :</b> l&rsquo;archive 2009
+    mentionne la série « Comprendre les conflits » de la <i>Fondation Reine Paola</i> et une « mallette pédagogique »
+    sur CD-ROM ; les comptes rendus 2025–26 du groupe de travail consignent des interventions de personnalités et
+    d&rsquo;organisations proches des milieux belges des droits humains et des médias (p. ex. la <i>Ligue des droits
+    humains</i>, un professeur de droit international de l&rsquo;ULiège, le <i>CNCD-11.11.11</i>, <i>Caritas</i>,
+    <i>Reporters sans frontières</i> et la chaîne gazatie <i>Zin TV</i>). À considérer comme indicatif plutôt que confirmé.</p>
+</section>
+
+<!-- 2. ANATOMY -->
+<section id="anatomy">
+  <div class="sec-h"><span class="num">02</span><h2>Anatomie du dossier</h2><span class="sub">ce qui se trouve où</span></div>
+  <div class="tree">
+    <ul>
+      <li><span class="dir">📁 L&rsquo;outil pédagogique</span> — <span class="note">le cœur : une séquence pédagogique en 12 chapitres</span>
+        <ul>
+          <li><span class="file">0. Table des matières</span> · <span class="note">plan maître de tous les chapitres</span></li>
+          <li><span class="file">1. L&rsquo;ordre mondial aujourd&rsquo;hui</span> → <span class="file">11. Agir</span> · <span class="note">les 11 chapitres de contenu (voir §3)</span></li>
+          <li><span class="file">2.1 Acteurs (tableau)</span> · <span class="note">tableau comparatif des parties</span></li>
+        </ul>
+      </li>
+      <li><span class="dir">📁 Ressources</span> — <span class="note">ressources d&rsquo;appui &amp; médias</span>
+        <ul>
+          <li><span class="file">0-Introduction</span> · <span class="file">bibliographie_Pal-Isr</span> · <span class="file">Lexique</span> · <span class="file">dates clés (.xlsx)</span> · <span class="file">pistes pédas</span></li>
+          <li><span class="file">squelette Isra-Pal</span> &amp; <span class="file">squelette V2</span> · <span class="note">le plan/la structure du projet lui-même</span></li>
+          <li><span class="file">construire des ponts</span> · <span class="note">méthode d&rsquo;empathie / de débat</span></li>
+          <li><span class="file">Mesures israéliennes visant des enseignant·es</span></li>
+          <li><span class="dir">📁 Animations</span> · <span class="file">Illustrations</span> · <span class="file">Témoignages</span> · <span class="file">Ressources</span> · <span class="note">activités prêtes à l&rsquo;emploi, images, témoignages</span></li>
+        </ul>
+      </li>
+      <li><span class="dir">📁 GT conflits internationaux</span> — <span class="note">les archives du groupe de travail lui-même</span>
+        <ul>
+          <li><span class="dir">📁 Contenus du groupe</span> · <span class="note">productions du groupe (images)</span></li>
+          <li><span class="dir">📁 P.V des réunions</span> · <span class="note">comptes rendus + interventions d&rsquo;expert·es 2025&ndash;26</span></li>
+        </ul>
+      </li>
+      <li><span class="dir">📁 2009_CLC_israel_palestine</span> — <span class="note">l&rsquo;archive historique (l&rsquo;ancêtre 2009)</span>
+        <ul>
+          <li><span class="dir">📁 CJP_PCWB_Livret</span> · <span class="note">livret 2009, articles de presse, carte du monde, témoignages, formulaire Reine Paola, factures</span></li>
+          <li><span class="dir">📁 Malette_pedagogique</span> · <span class="note">kit CD-ROM : initiatives non violentes (audio), PDF CD</span></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. CORE (version B cards) -->
+<section id="core">
+  <div class="sec-h"><span class="num">03</span><h2>Le noyau en 12 chapitres</h2><span class="sub">cliquez un chapitre pour le détail</span></div>
+  <p class="muted small">Le cœur de la mallette est un récit volontairement ordonné : il part large (l&rsquo;ordre
+    mondial), resserre sur le territoire et son histoire, puis interroge <i>le langage, le droit et les médias</i>,
+    avant de finir sur <i>ce qui bloque la paix</i> et <i>ce qu&rsquo;un·e citoyen·ne peut faire</i>. Chaque carte
+    déroule l&rsquo;<b>objectif</b> et le <b>plan détaillé</b> du chapitre, et une <b>bannière</b> mène à sa page
+    <b>espace de travail</b>. Un seul ouvert à la fois.</p>
+
+  <div id="cards">
+    <div class="card" data-ch="1">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">1</span>
+        <div class="htext">
+          <div class="row-title">L&rsquo;ordre mondial aujourd&rsquo;hui</div>
+          <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> donner aux apprenant·es les clés de lecture du système international pour ne pas réduire le conflit à une opposition binaire ou décontextualisée.</p>
+        <ul class="plan">
+          <li>Pourquoi l&rsquo;ordre mondial éclaire le conflit — définition de la notion</li>
+          <li>Le monde bipolaire : la guerre froide (1945–1991)</li>
+          <li>L&rsquo;unipolarité américaine (après 1991)</li>
+          <li>Un monde multipolaire et fragmenté : fragilité des alliances américaines, bloc sino-russe, affirmation du « Sud global »</li>
+          <li>Une dimension idéologique plurielle ; l&rsquo;émergence d&rsquo;acteurs non étatiques</li>
+          <li>Tensions, enjeux et perspectives</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 1</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-1-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="2">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">2</span>
+        <div class="htext">
+          <div class="row-title">Géopolitique d&rsquo;Israël et de la Palestine</div>
+          <div class="chips"><span class="chip">≈ 60 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> comparer les deux entités sur des critères symétriques et faire voir le rapport de force asymétrique.</p>
+        <ul class="plan">
+          <li>Comprendre le monde sous l&rsquo;angle géopolitique — carte d&rsquo;identité comparative</li>
+          <li><b>Israël :</b> géographie/territoire, politique/institutions, économie, population/langues/société, armée/sécurité, encart « le couple Israël–USA »</li>
+          <li><b>Palestine :</b> géographie/territoire/ressources, politique/institutions, économie, population/société, culture, zoom sur Gaza, armée/sécurité</li>
+          <li>Encart : le rapport de force asymétrique</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 2</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-2-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="3">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">3</span>
+        <div class="htext">
+          <div class="row-title">Ressources naturelles</div>
+          <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> montrer comment l&rsquo;eau et l&rsquo;énergie sont des enjeux de pouvoir et de droit, pas seulement techniques.</p>
+        <ul class="plan">
+          <li>Des ressources au cœur des tensions</li>
+          <li><b>L&rsquo;eau :</b> contexte climatique et stress hydrique, approvisionnement d&rsquo;Israël, accès restreint pour la Palestine</li>
+          <li>Le contrôle de l&rsquo;eau comme outil politique : historique depuis 1967, impact humanitaire (Gaza, Cisjordanie), ce que dit le droit international</li>
+          <li><b>Le gaz :</b> le gisement Gaza Marine, le blocus naval et la dépendance énergétique palestinienne, droit international de la mer</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 3</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-3-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="4">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">4</span>
+        <div class="htext">
+          <div class="row-title">Historique du conflit</div>
+          <div class="chips"><span class="chip">≈ 60 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> replacer le 7 octobre 2023 dans une chronologie longue, des origines à aujourd&rsquo;hui.</p>
+        <ul class="plan">
+          <li>Pourquoi certains Juifs revendiquent la Palestine — le contexte européen et la naissance du sionisme (fin XIX<sup>e</sup>–début XX<sup>e</sup>)</li>
+          <li>Première Guerre mondiale : promesses contradictoires — Hussein-MacMahon, Sykes-Picot, Balfour — et encart sur les origines coloniales</li>
+          <li>Entre-deux-guerres (1920–1939) ; Seconde Guerre mondiale, Shoah et création d&rsquo;Israël</li>
+          <li>1947–1949 : plan de partage, proclamation, première guerre, <b>Nakba</b></li>
+          <li>1950–1966 : guerre froide, Suez, naissance de l&rsquo;OLP · 1967 : Six Jours, occupation, colonisation</li>
+          <li>1973–1982 : Kippour, Camp David, Liban · 1987–1993 : 1<sup>re</sup> Intifada · 1993–1999 : Oslo</li>
+          <li>2000–2005 : Camp David II, 2<sup>e</sup> Intifada, mur · 2006–2007 : division palestinienne, blocus de Gaza</li>
+          <li>2010–2023 : diplomatie, normalisations, tensions · <b>7 octobre 2023 et ses conséquences</b></li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 4</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-4-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="5">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">5</span>
+        <div class="htext">
+          <div class="row-title">Qualification et utilisation du mot « conflit »</div>
+          <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> interroger le pouvoir des mots et la qualification juridique du conflit.</p>
+        <ul class="plan">
+          <li>L&rsquo;importance des mots : « terroriste » et son usage politique ; les limites du mot « conflit »</li>
+          <li>Récit et propagande : les <b>10 règles de la propagande en temps de guerre</b> (Anne Morelli)</li>
+          <li>Qualification juridique : conflit armé international (CAI), non-international (CANI), autres catégories (UCDP)</li>
+          <li>Application au cas : qualification par l&rsquo;ONU, l&rsquo;occupation et ses qualifications (résolutions, avis CIJ 2004 et 2024)</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 5</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-5-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="6">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">6</span>
+        <div class="htext">
+          <div class="row-title">Pourquoi parle-t-on de génocide&nbsp;?</div>
+          <div class="chips"><span class="chip">≈ 50 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> comprendre le terme dans son sens juridique précis et la prudence qu&rsquo;il exige.</p>
+        <ul class="plan">
+          <li>Définition juridique (Convention de 1948) ; origine du concept et jurisprudence (Shoah, Rwanda, Srebrenica, Rohingyas)</li>
+          <li>Les juridictions compétentes (CIJ, CPI, tribunaux ad hoc) et la prudence exigée</li>
+          <li>Obligations des États en matière de prévention</li>
+          <li>Pourquoi parle-t-on de génocide à Gaza : l&rsquo;élément matériel (bombardements, blocus) et l&rsquo;élément intentionnel (déclarations officielles)</li>
+          <li>La reconnaissance officielle (procédure judiciaire, rôle des ONG) ; chronologie des faits et déclarations 2023–2025</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 6</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-6-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="7">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">7</span>
+        <div class="htext">
+          <div class="row-title">Instrumentalisation du droit international</div>
+          <div class="chips"><span class="chip">≈ 50 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> montrer le droit comme boussole — et ses limites structurelles.</p>
+        <ul class="plan">
+          <li>Le droit international comme boussole : les 4 principes du DIH ; saisines de la CIJ et de la CPI</li>
+          <li>Obligations des États tiers : non-reconnaissance de l&rsquo;illicite, responsabilité active (sanctions, soutien aux procédures)</li>
+          <li>Faiblesses structurelles des institutions ; le paradoxe de la sur-judiciarisation inefficace</li>
+          <li>L&rsquo;instrumentalisation : la légitime défense, oui ou non ? l&rsquo;asymétrie d&rsquo;application (Ukraine vs Palestine)</li>
+          <li>Animation : étude de cas — les colonies et l&rsquo;avis CIJ 2024</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 7</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-7-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="8">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">8</span>
+        <div class="htext">
+          <div class="row-title">Résonance médiatique</div>
+          <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> développer l&rsquo;esprit critique face au traitement médiatique et aux réseaux sociaux.</p>
+        <ul class="plan">
+          <li>Comment ces événements nous parviennent-ils ? — construction de l&rsquo;« ennemi » ; déshistoricisation (pourquoi tout semble commencer le 7 octobre)</li>
+          <li>Déshumanisation : vocabulaire et double standard lexical (« otage » vs « prisonnier ») ; « désenfantement » médiatique</li>
+          <li>La désinformation : précédents (couveuses du Koweït, armes en Irak) et exemples israélo-palestiniens</li>
+          <li>Comment fonctionnent les réseaux sociaux : économie de l&rsquo;attention, bulles algorithmiques, exposition à la violence, acteurs invisibles de la manipulation</li>
+          <li>Reprendre le contrôle : esprit critique et outils de vérification</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 8</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-8-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="9">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">9</span>
+        <div class="htext">
+          <div class="row-title">Les points clés qui bloquent une solution politique</div>
+          <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> décomposer les nœuds du conflit en exposant chaque position sans en hiérarchiser aucune.</p>
+        <ul class="plan">
+          <li>Introduction : décomposer les enjeux centraux</li>
+          <li>1. Les frontières et le territoire · 2. Le statut de Jérusalem · 3. Le droit au retour des réfugié·es · 4. Les colonies</li>
+          <li>Chaque point traité en <b>trois positions</b> : palestinienne, israélienne, communauté internationale</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 9</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-9-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="10">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">10</span>
+        <div class="htext">
+          <div class="row-title">Les processus de paix</div>
+          <div class="chips"><span class="chip">≈ 45 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> comprendre pourquoi les négociations ont échoué et ce qui se joue aujourd&rsquo;hui.</p>
+        <ul class="plan">
+          <li>Qu&rsquo;est-ce qu&rsquo;un processus de paix ? — le rôle des femmes (résolution 1325 de l&rsquo;ONU, « Guerrières de la paix »)</li>
+          <li>Retour sur les échecs : Oslo I/II, Wye River, Camp David II &amp; Taba, Roadmap du Quartet, Initiative de Genève, Charm el-Cheikh 2005, « Deal of the Century » (2020)</li>
+          <li>Et maintenant ? : conférence de New York (juil. 2025), Charm el-Cheikh (oct. 2025), plan de paix Trump pour Gaza (oct. 2025)</li>
+          <li>Encart colonial : analyse critique du plan Trump 2025</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 10</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-10-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-ch="11">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">11</span>
+        <div class="htext">
+          <div class="row-title">Agir</div>
+          <div class="chips"><span class="chip">≈ 40 min</span><span class="chip">Secondaire supérieur</span><span class="chip ready">● Prêt</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Objectif :</b> relier le conflit à la Belgique et ouvrir sur l&rsquo;engagement citoyen concret.</p>
+        <ul class="plan">
+          <li>C&rsquo;est quoi la paix ? — paix négative vs paix positive ; la Belgique, actrice de paix ou de guerre ?</li>
+          <li>La polarisation de la société belge ; la Belgique, spectatrice ou partie prenante ?</li>
+          <li>Implications concrètes : commerce avec les colonies, industrie militaire et exportations d&rsquo;armes, l&rsquo;UE 1<sup>er</sup> partenaire commercial d&rsquo;Israël</li>
+          <li>La mobilisation citoyenne : les 12 sanctions belges (sept. 2025), l&rsquo;arrêté royal sur le survol (2026)</li>
+          <li>Que faire en tant que citoyen·ne belge ? — consommer, mobiliser, rejoindre, faire pression ; initiatives qui inspirent (EcoPeace, Breaking the Silence, Voix juives pour la paix…)</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Espace de travail — Chapitre 11</div><div class="b-s">Page dédiée, complète et autonome</div></div>
+          <a href="chapitre-11-espace.html">Ouvrir l&rsquo;espace →</a>
+        </div>
+      </div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. ASSETS -->
+<section id="assets">
+  <div class="sec-h"><span class="num">04</span><h2>Ressources &amp; médias d&rsquo;appui</h2><span class="sub">la matière première à réutiliser</span></div>
+  <div class="grid g3">
+    <div class="card"><span class="tag">Données de référence</span><h4>Dates clés &amp; lexique</h4>
+      <p>Un <code>.xlsx</code> de la chronologie des dates clés, un glossaire (<i>Lexique</i> : réfugié, apartheid,
+      UNRWA, sionisme, antisémitisme, Nakba&hellip;) et une bibliographie — déjà structurés, parfaits comme point de
+      départ d&rsquo;outils interactifs.</p></div>
+    <div class="card"><span class="tag">Méthode</span><h4>Pistes pédagogiques</h4>
+      <p><i>Pistes pédago</i> + <i>construire des ponts</i> définissent la méthode de discussion : une « membrane de
+      discussion », et un véritable exercice d&rsquo;empathie — se glisser un instant dans le récit de l&rsquo;autre
+      sans pour autant être d&rsquo;accord.</p></div>
+    <div class="card"><span class="tag">Activités</span><h4>Animations</h4>
+      <p>Activités de classe prêtes à l&rsquo;emploi : « la notion d&rsquo;État » (Herzl), analyse de discours,
+      exercices sur les titres de journaux, et une banque d&rsquo;idées — les éléments les plus directement réutilisables
+      pour un produit destiné aux élèves.</p></div>
+    <div class="card"><span class="tag">Médias</span><h4>Témoignages &amp; illustrations</h4>
+      <p>Les dossiers de témoignages et d&rsquo;illustrations (plus l&rsquo;audio 2009 d&rsquo;initiatives non violentes)
+      apportent la couche humaine et visuelle qui manque à un kit purement textuel.</p></div>
+    <div class="card"><span class="tag">Planification</span><h4>Le squelette (V2)</h4>
+      <p>Deux ébauches de « squelette » montrent la structure évolutive de l&rsquo;équipe — utile pour comprendre
+      l&rsquo;intention et aligner toute refonte sur sa trajectoire.</p></div>
+    <div class="card"><span class="tag">Archive</span><h4>Le kit de 2009</h4>
+      <p>L&rsquo;outil d&rsquo;origine, ère CD (livret, carte des influences, articles de presse, documents Fondation
+      Reine Paola) — preuve de la généalogie et source d&rsquo;actifs historiques durables.</p></div>
+  </div>
+</section>
+
+<!-- 5. PROCESS -->
+<section id="process">
+  <div class="sec-h"><span class="num">05</span><h2>Comment c&rsquo;est fait</h2><span class="sub">le modèle du groupe de travail</span></div>
+  <p>Le dossier <i>GT conflits internationaux</i> révèle un processus de production sain : des comptes rendus datés
+    (<i>P.V</i>) de 2025 à 2026, chacun bâti autour d&rsquo;un·e expert·e invité·e. C&rsquo;est le moteur caché de la
+    mallette — et ce qu&rsquo;il vaut la peine de préserver et de formaliser à mesure qu&rsquo;elle grandit.</p>
+  <div class="grid g2">
+    <div class="card"><h4>Contenu porté par des expert·es</h4><p>Les comptes rendus consignent des interventions sur la
+      représentation médiatique du génocide, le droit international et les perspectives de la société civile — le contenu
+      est sourcé auprès de spécialistes, et non écrit en vase clos.</p></div>
+    <div class="card"><h4>Itératif et versionné</h4><p>Plusieurs versions du « squelette » (2019, 2025, V2) et un ancêtre
+      2009 montrent un projet révisé au fil des années et des crises — mais le versionnage se fait actuellement par
+      <i>noms de fichiers</i>, pas par un vrai système.</p></div>
+  </div>
+</section>
+
+<!-- 6. ASSESS -->
+<section id="assess">
+  <div class="sec-h"><span class="num">06</span><h2>Forces &amp; limites</h2><span class="sub">lecture honnête du corpus actuel</span></div>
+  <div class="grid g2">
+    <div class="card"><h4 style="color:var(--good)">Ce qui est fort</h4>
+      <p>✔ Une colonne vertébrale narrative cohérente, non binaire, ancrée dans le droit.<br>
+      ✔ Du contenu sourcé auprès d&rsquo;expert·es et réellement multi-angles (positions palestinienne / israélienne / internationale).<br>
+      ✔ Un chapitre rare et transférable sur les <b>médias et l&rsquo;esprit critique</b>.<br>
+      ✔ Une méthode d&rsquo;empathie/de discussion intégrée et une honnête reconnaissance de ses propres limites.<br>
+      ✔ Des données de référence structurées (dates, lexique) existent déjà.</p></div>
+    <div class="card"><h4 style="color:var(--warn)">Ce qui limite son statut de « boîte à outils »</h4>
+      <p>✖ <b>Prose pour enseignant·es uniquement</b> — rien de destiné aux élèves ni d&rsquo;interactif.<br>
+      ✖ <b>Linéaire et taille unique</b> — pas de différenciation par âge/niveau ni par rôle de l&rsquo;apprenant·e.<br>
+      ✖ <b>Se périme vite</b> — l&rsquo;introduction l&rsquo;admet elle-même : l&rsquo;actualité dépasse le document.<br>
+      ✖ <b>Versionnage par nom de fichier</b> ; pas de processus de publication, pas d&rsquo;évaluation, pas d&rsquo;accessibilité.<br>
+      ✖ <b>Langue unique</b>, cadre pays unique (Belgique), pas de distribution print/hors-ligne.<br>
+      ✖ Une posture militante assumée qui exige des garde-fous de classe explicites pour être défendable partout.</p></div>
+  </div>
+</section>
+
+<!-- 7. PROPOSAL (version B cards) -->
+<section id="proposal">
+  <div class="sec-h"><span class="num">07</span><h2>La proposition : un nouvel ensemble d&rsquo;outils</h2><span class="sub">cliquez un sujet pour le détail</span></div>
+  <p class="muted">L&rsquo;objectif n&rsquo;est <b>pas de réécrire le contenu</b> — il est bon — mais de <b>réexprimer le
+    même corpus sous forme d&rsquo;un ensemble d&rsquo;outils modulaire et multi-publics</b>. Neuf composants, chacun
+    relié à l&rsquo;actif existant qu&rsquo;il réutilise. Chaque carte déroule l&rsquo;<b>idée</b> et <b>comment
+    l&rsquo;améliorer</b>, et une <b>bannière</b> mène à sa page <b>chantier</b> — les étapes de mise en œuvre. Un seul
+    ouvert à la fois.</p>
+
+  <div id="cards-comp">
+    <div class="card" data-comp="A">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">A</span>
+        <div class="htext">
+          <div class="row-title">Noyau interactif pour les élèves</div>
+          <div class="chips"><span class="chip">Effort · Élevé</span><span class="chip">Réutilise : 12 chapitres + dates.xlsx</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Transformer chaque chapitre en un court module web interactif : chronologie manipulable, comparaison en volets, visualisation de l&rsquo;eau, glossaire au survol. Les élèves naviguent au lieu de seulement lire.</p>
+        <ul class="plan">
+          <li>Passer de la <b>prose descendante</b> à l&rsquo;<b>exploration active</b> : un objectif pédagogique clair par module</li>
+          <li>Des modules courts (<b>3–5 min</b>) pour tenir l&rsquo;attention et permettre le « à la carte »</li>
+          <li>Alterner les formats (carte, chronologie, chiffre-clé, mini-quiz) plutôt qu&rsquo;un long texte</li>
+          <li>Rendre le <b>glossaire contextuel</b> (définition au survol de chaque terme du Lexique)</li>
+          <li>Soigner l&rsquo;<b>accessibilité</b> dès la conception (clavier, alternatives textuelles, contraste)</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant A</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-A-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="B">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">B</span>
+        <div class="htext">
+          <div class="row-title">Kit d&rsquo;animation pour les enseignant·es</div>
+          <div class="chips"><span class="chip">Effort · Moyen</span><span class="chip">Réutilise : pistes pédas + ponts + Animations</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Formaliser la « membrane de discussion » et l&rsquo;exercice d&rsquo;empathie en un plan de cours + protocole d&rsquo;animation + fiches imprimables + jeux de diapos.</p>
+        <ul class="plan">
+          <li>Transformer des <b>pistes éparses</b> en un <b>protocole reproductible</b> par n&rsquo;importe quel·le collègue</li>
+          <li>Fournir un déroulé <b>minute par minute</b> et des <b>scripts de cadrage</b> (lancer, relancer, désamorcer)</li>
+          <li>Proposer des variantes de durée : <b>1h / 3h / séquence complète</b></li>
+          <li>Ajouter une rubrique « <b>questions difficiles &amp; réponses</b> » tirée des P.V d&rsquo;expert·es</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant B</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-B-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="C">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">C</span>
+        <div class="htext">
+          <div class="row-title">Couche actualité vivante</div>
+          <div class="chips"><span class="chip">Effort · Moyen</span><span class="chip">Réutilise : événements datés des chap. 4/6/10</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Séparer un noyau stable (histoire, géographie, droit, concepts) d&rsquo;une couche vivante (CIJ 2024, New York juil. 2025, plan Trump oct. 2025, sanctions, arrêté 2026), avec un flux « ce qui a changé ».</p>
+        <ul class="plan">
+          <li>Éviter la <b>péremption silencieuse</b> : chaque fait daté devient une « carte » avec source + date + statut</li>
+          <li>Matérialiser la frontière <b>stable / vivant</b> dans le contenu lui-même</li>
+          <li>Offrir un <b>historique</b> consultable (« ce qui a changé depuis… ») plutôt qu&rsquo;un texte qui se contredit</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant C</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-C-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="D">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">D</span>
+        <div class="htext">
+          <div class="row-title">Pistes de différenciation</div>
+          <div class="chips"><span class="chip">Effort · Moyen</span><span class="chip">Réutilise : tous les chapitres, 3 registres</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Même noyau, trois registres : secondaire inférieur, secondaire supérieur, adultes/associatif. Une seule source de contenu, trois sorties.</p>
+        <ul class="plan">
+          <li>Définir explicitement le <b>niveau visé</b> (prérequis, vocabulaire, ambition) plutôt qu&rsquo;un texte unique</li>
+          <li>Éviter le registre « simplifié » <b>condescendant</b> : même exigence de rigueur, accès différent</li>
+          <li>Garder la <b>cohérence</b> : mêmes faits, mêmes sources, profondeur réglable</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant D</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-D-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="E">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">E</span>
+        <div class="htext">
+          <div class="row-title">Labo autonome médias &amp; éducation à l&rsquo;information</div>
+          <div class="chips"><span class="chip">Effort · Faible</span><span class="chip">Réutilise : chapitre 8 (le plus transférable)</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Emballer le chapitre 8 en atelier indépendant de tout conflit : 10 règles de la propagande, bulles algorithmiques, exercices de vérification des faits — utilisable pour n&rsquo;importe quel sujet.</p>
+        <ul class="plan">
+          <li>Le rendre <b>autonome et transférable</b> : le plus fort levier d&rsquo;audience de tout le projet</li>
+          <li>Passer de l&rsquo;explication à la <b>pratique</b> : vérifier de vrais titres, images, posts viraux</li>
+          <li>Outiller concrètement (reverse image, vérificateurs de faits, lecture de sources)</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant E</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-E-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="F">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">F</span>
+        <div class="htext">
+          <div class="row-title">Évaluation &amp; réflexion</div>
+          <div class="chips"><span class="chip">Effort · Faible</span><span class="chip">Réutilise : chapitre 11 + méthode d&rsquo;empathie</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> De courts quiz formatifs par module + un journal de réflexion. Mesurer la compréhension sans noter les opinions.</p>
+        <ul class="plan">
+          <li>Évaluer la <b>compréhension et la méthode</b>, jamais la position politique de l&rsquo;élève</li>
+          <li>Prioriser le <b>formatif</b> (progresser) sur le sanction</li>
+          <li>Capitaliser sur la <b>démarche d&rsquo;empathie</b> déjà présente (défendre un point de vue qu&rsquo;on ne partage pas)</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant F</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-F-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="G">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">G</span>
+        <div class="htext">
+          <div class="row-title">Charte éditoriale, protection &amp; accessibilité</div>
+          <div class="chips"><span class="chip">Effort · Moyen</span><span class="chip">Traite : la sensibilité</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Une charte éditoriale d&rsquo;une page + un code de l&rsquo;animateur·rice, des avertissements de contenu, l&rsquo;accessibilité WCAG et le multilingue (FR → NL → EN).</p>
+        <ul class="plan">
+          <li>Rendre la <b>posture assumée défendable</b> partout, sans l&rsquo;édulcorer</li>
+          <li>Garantir la <b>sécurité émotionnelle</b> des élèves face à un sujet traumatique</li>
+          <li>Ouvrir l&rsquo;audience par la <b>langue</b> et l&rsquo;<b>accessibilité</b></li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant G</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-G-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="H">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">H</span>
+        <div class="htext">
+          <div class="row-title">Livraison &amp; distribution</div>
+          <div class="chips"><span class="chip">Effort · Moyen</span><span class="chip">Réutilise : tout le corpus</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Publier en site statique / web-app + pack PDF imprimable + paquet hors-ligne, sous licence ouverte CC BY-NC-SA, avec mesure d&rsquo;usage respectueuse.</p>
+        <ul class="plan">
+          <li>Passer d&rsquo;un dossier Drive à une <b>distribution multi-format</b> pensée pour la classe</li>
+          <li>Prévoir le <b>hors-ligne</b> (le kit 2009 se donnait sur CD — même réflexe, support moderne)</li>
+          <li>Ouvrir les droits pour que les enseignant·es <b>adaptent légalement</b></li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant H</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-H-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+
+    <div class="card" data-comp="I">
+      <div class="band"></div>
+      <div class="card-head" role="button" tabindex="0">
+        <span class="badge">I</span>
+        <div class="htext">
+          <div class="row-title">Gouvernance &amp; chaîne de production</div>
+          <div class="chips"><span class="chip">Effort · Faible</span><span class="chip">Réutilise : le modèle du GT</span><span class="chip todo">● À créer</span></div>
+        </div>
+        <span class="chev">▸</span>
+      </div>
+      <div class="rd"><div class="inner"><div class="rd-pad">
+        <p class="obj"><b>Idée :</b> Garder le groupe de travail d&rsquo;expert·es, mais y ajouter une chaîne répétable : revue d&rsquo;expert·e → traduction pédagogique → test en classe → publication versionnée.</p>
+        <ul class="plan">
+          <li>Formaliser une chaîne qui aujourd&rsquo;hui repose sur le <b>dévouement individuel</b></li>
+          <li>Remplacer le versionnage par nom de fichier par un <b>vrai suivi</b></li>
+          <li>Donner de la <b>redevabilité</b> (qui valide quoi) sans bureaucratiser le bénévolat</li>
+        </ul>
+        <div class="banner">
+          <div><div class="b-t">Chantier — Composant I</div><div class="b-s">Page dédiée : étapes de mise en œuvre</div></div>
+          <a href="composant-I-espace.html">Ouvrir le chantier →</a>
+        </div>
+      </div></div></div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:26px">Carte de réutilisation en un coup d&rsquo;œil</h3>
+  <table>
+    <thead><tr><th>Nouveau composant</th><th>Actif existant réutilisé</th><th>Effort</th></tr></thead>
+    <tbody>
+      <tr><td>A · Noyau interactif élèves</td><td>12 chapitres · dates.xlsx · Lexique</td><td><span class="pill p-effort">Élevé</span></td></tr>
+      <tr><td>B · Kit d&rsquo;animation enseignant·es</td><td>Pistes pédago · construire des ponts · Animations · PPTX</td><td><span class="pill p-effort">Moyen</span></td></tr>
+      <tr><td>C · Couche vivante</td><td>Événements datés des chap. 4/6/10</td><td><span class="pill p-effort">Moyen</span></td></tr>
+      <tr><td>D · Pistes de différenciation</td><td>Tous les chapitres</td><td><span class="pill p-effort">Moyen</span></td></tr>
+      <tr><td>E · Labo médias</td><td>Chapitre 8</td><td><span class="pill p-effort">Faible</span></td></tr>
+      <tr><td>F · Évaluation &amp; réflexion</td><td>Chapitre 11 · méthode d&rsquo;empathie</td><td><span class="pill p-effort">Faible</span></td></tr>
+      <tr><td>G · Charte · accessibilité · i18n</td><td>Introduction (posture) · tout le corpus</td><td><span class="pill p-effort">Moyen</span></td></tr>
+      <tr><td>H · Livraison &amp; distribution</td><td>Tout le corpus</td><td><span class="pill p-effort">Moyen</span></td></tr>
+      <tr><td>I · Chaîne de gouvernance</td><td>PV du GT + réseau d&rsquo;expert·es</td><td><span class="pill p-effort">Faible</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 8. ROADMAP -->
+<section id="roadmap">
+  <div class="sec-h"><span class="num">08</span><h2>Feuille de route suggérée</h2><span class="sub">par phases, du risque le plus faible</span></div>
+  <div class="phase"><div class="ph-h"><span class="badge">1</span><span class="t">Stabiliser &amp; emballer l&rsquo;existant</span><span class="when">victoires rapides</span></div>
+    <div class="ph-b"><ul>
+      <li>Adopter le <b>squelette V2</b> comme plan canonique ; figer une séparation « noyau stable » vs « couche vivante ».</li>
+      <li>Sortir le versionnage des noms de fichiers → de vraies publications (versions étiquetées + journal des modifications).</li>
+      <li>Générer un <b>pack PDF imprimable</b> propre à partir du jeu de docx ; publier sous <b>CC BY-NC-SA</b>.</li>
+      <li>Livrer la <b>charte éditoriale + note de protection</b> (G) — petit mais très utile pour la confiance.</li>
+    </ul></div></div>
+  <div class="phase"><div class="ph-h"><span class="badge">2</span><span class="t">Construire les deux outils à plus fort levier</span><span class="when">cœur de construction</span></div>
+    <div class="ph-b"><ul>
+      <li><b>E · Labo médias</b> (faible effort, indépendant du conflit, public le plus large).</li>
+      <li><b>B · Kit d&rsquo;animation enseignant·es</b> — formaliser le protocole de discussion + les Animations en plans de cours.</li>
+      <li>Mettre en place la coquille <b>site statique / web-app</b> (H) qui héberge les deux.</li>
+    </ul></div></div>
+  <div class="phase"><div class="ph-h"><span class="badge">3</span><span class="t">Noyau pour les élèves + couche vivante</span><span class="when">le produit phare</span></div>
+    <div class="ph-b"><ul>
+      <li><b>A · Modules interactifs</b> — chronologie, comparaison, visualisation de l&rsquo;eau, glossaire au survol.</li>
+      <li><b>C · Flux d&rsquo;actualité vivant</b> avec une cadence de maintenance fixe.</li>
+      <li><b>D · Pistes de différenciation</b> (secondaire inférieur / supérieur / adultes).</li>
+      <li><b>F · Évaluation + journal de réflexion</b>.</li>
+    </ul></div></div>
+  <div class="phase"><div class="ph-h"><span class="badge">4</span><span class="t">Passer à l&rsquo;échelle &amp; pérenniser</span><span class="when">rayonnement</span></div>
+    <div class="ph-b"><ul>
+      <li><b>G · Traduction</b> NL → EN ; passage complet <b>WCAG</b> ; paquet hors-ligne.</li>
+      <li>Formaliser la <b>chaîne de gouvernance (I)</b> ; tester avec quelques classes ; itérer à partir des analytics.</li>
+    </ul></div></div>
+</section>
+
+<!-- 9. RISKS -->
+<section id="risks">
+  <div class="sec-h"><span class="num">09</span><h2>Risques &amp; garde-fous</h2><span class="sub">c&rsquo;est une matière sensible</span></div>
+  <div class="grid g2">
+    <div class="card"><h4 class="flag">Défendabilité éditoriale</h4><p>La mallette prend une posture militante assumée
+      (« camp de l&rsquo;Humanité », condamne toute violence). Pour les écoles, y associer un <b>sourçage transparent</b>,
+      la structure en trois positions déjà présente, et une revue par les autorités éducatives concernées — présenter les
+      faits documentés avec rigueur, sans les édulcorer.</p></div>
+    <div class="card"><h4 class="flag">Sécurité en classe</h4><p>La polarisation et la détresse des élèves sont réelles.
+      Le kit d&rsquo;animation (B) et la note de protection (G) doivent donner aux enseignant·es des scripts, des
+      avertissements de contenu, et un moyen de tenir la « membrane de discussion » sans exposer les élèves.</p></div>
+    <div class="card"><h4 class="flag">Actualité &amp; exactitude</h4><p>Les affirmations juridiques et d&rsquo;actualité
+      (CIJ/CPI, sanctions, arrêtés) vieillissent vite. La couche vivante (C) a besoin de sources nommées, de dates et d&rsquo;un·e
+      responsable de revue — sinon la mallette devient silencieusement fausse.</p></div>
+    <div class="card"><h4 class="flag">Pérennité</h4><p>Les groupes de travail bénévoles s&rsquo;épuisent. La chaîne de
+      gouvernance (I), la licence ouverte et le design modulaire permettent à d&rsquo;autres de contribuer sans point de
+      défaillance unique.</p></div>
+  </div>
+</section>
+
+<!-- 10. GLOSSARY -->
+<section id="gloss">
+  <div class="sec-h"><span class="num">10</span><h2>Glossaire</h2><span class="sub">termes du domaine en langage clair</span></div>
+  <dl class="gloss">
+    <dt>Outil pédagogique / Mallette pédagogique</dt><dd>Un kit d&rsquo;enseignement emballé — ici, l&rsquo;ensemble des ressources construites pour les enseignant·es.</dd>
+    <dt>GT (Groupe de travail)</dt><dd>L&rsquo;équipe bénévole qui produit et relit le contenu.</dd>
+    <dt>P.V. (Procès-verbal)</dt><dd>Le compte rendu d&rsquo;une réunion — les discussions et apports d&rsquo;expert·es consignés par le groupe.</dd>
+    <dt>CLC</dt><dd>Le cadre de cours/comité d&rsquo;origine dont le projet est issu (visible dans les « squelettes » 2009 &amp; 2019).</dd>
+    <dt>Squelette</dt><dd>Le plan/la structure du projet lui-même, avant la rédaction complète.</dd>
+    <dt>DI / DIH</dt><dd><i>Droit international</i> / <i>DI humanitaire</i>.</dd>
+    <dt>CIJ / CPI</dt><dd>La Cour internationale de Justice (CIJ) et la Cour pénale internationale (CPI).</dd>
+    <dt>Nakba</dt><dd>La « Catastrophe » — la destruction/déplacement de la société palestinienne en 1948 lors de la création d&rsquo;Israël.</dd>
+    <dt>UNRWA</dt><dd>L&rsquo;agence de l&rsquo;ONU pour les réfugiés de Palestine.</dd>
+    <dt>Paix négative vs paix positive</dt><dd>Négative = absence de guerre ; positive = présence de justice, d&rsquo;égalité et des conditions qui préviennent le conflit (idée clé du chapitre 11).</dd>
+    <dt>WCAG</dt><dd>Web Content Accessibility Guidelines — la norme pour rendre les outils numériques utilisables par les personnes en situation de handicap.</dd>
+    <dt>CC BY-NC-SA</dt><dd>Licence Creative Commons : partager/adapter avec attribution, usage non commercial, partage dans les mêmes conditions — permet aux enseignant·es de remixer légalement la mallette.</dd>
+  </dl>
+</section>
+
+<div class="foot">
+  <p><b>Comment cette note a été produite.</b> Le dossier Drive et ses sous-dossiers ont été navigués directement ;
+    les noms, identifiants et dates des dossiers/fichiers ont été lus dans la liste en direct, et le texte des documents
+    clés (table des matières, introduction, chapitre 1, chapitre 11, lexique, squelette V2, pistes pédagogiques et notes
+    « construire des ponts ») a été téléchargé et analysé pour étayer chaque affirmation ci-dessus. Les trois sous-dossiers
+    de médias (Illustrations, Ressources, Témoignages) ont été confirmés par leur nom dans la liste parente mais pas ouverts
+    individuellement.</p>
+  <p>Dossier source : <code>2026_Outil péda_Israël-Palestine</code> ·
+    <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq</a></p>
+  <p>Généré le 23 octobre 2026 · enquête en lecture seule ; aucun fichier du Drive n&rsquo;a été modifié.</p>
+</div>
+
+</div>
+
+<script>
+/* Accordéon : un seul ouvert à la fois, par section. */
+(function(){
+  document.querySelectorAll('details.acc').forEach(function(d){
+    d.addEventListener('toggle', function(){
+      if(!d.open) return;
+      var group = d.closest('section');
+      if(!group) return;
+      group.querySelectorAll('details.acc[open]').forEach(function(o){
+        if(o !== d) o.open = false;
+      });
+    });
+  });
+})();
+
+/* Version B cards (section 3) : un seul ouvert à la fois. */
+(function(){
+  document.querySelectorAll('#core #cards .card .card-head').forEach(function(h){
+    function toggle(){var c=h.closest('.card');var was=c.classList.contains('open');
+      document.querySelectorAll('#core #cards .card.open').forEach(function(o){o.classList.remove('open')});
+      if(!was)c.classList.add('open');}
+    h.addEventListener('click',toggle);
+    h.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  });
+})();
+
+/* Version B cards (section 7) : un seul ouvert à la fois. */
+(function(){
+  document.querySelectorAll('#proposal #cards-comp .card .card-head').forEach(function(h){
+    function toggle(){var c=h.closest('.card');var was=c.classList.contains('open');
+      document.querySelectorAll('#proposal #cards-comp .card.open').forEach(function(o){o.classList.remove('open')});
+      if(!was)c.classList.add('open');}
+    h.addEventListener('click',toggle);
+    h.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  });
+})();
+</script>
+</body>
+</html>
