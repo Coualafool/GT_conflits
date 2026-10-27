@@ -1,0 +1,3 @@
+# GitHub Pages (deploy from branch main) — exclude internal files from the published site.
+exclude:
+  - interne
