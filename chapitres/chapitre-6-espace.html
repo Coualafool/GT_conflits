@@ -42,6 +42,19 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .rail{position:sticky;top:53px;z-index:4;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .rail .in{max-width:var(--maxw);margin:0 auto;display:flex;gap:6px;padding:8px 22px;flex-wrap:wrap;align-items:center}
+  .rail a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .rail a:hover{color:var(--brand);border-color:var(--brand)}
+  .rail .tools{margin-left:auto;display:flex;gap:6px}
+  .rail button{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}
+  .rail button:hover{color:var(--brand);border-color:var(--brand)}
+  .todo ul{margin:8px 0 0;padding-left:18px}
+  .todo li{margin:4px 0}
+  .srcs{margin:12px 0 0;font-size:13.5px;line-height:1.7}
+  .srcs b{color:var(--ink)}
+  .srcs a{color:var(--accent);text-decoration:none}
+  .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
@@ -60,19 +73,28 @@
         <div class="meta"><span class="chip">≈ 50 min</span><span class="chip">Secondaire supérieur</span><span class="chip">Droit pénal international</span></div>
       </div>
     </div>
+    <div class="rail"><div class="in">
+      <a href="#s1">1 · Définition</a>
+      <a href="#s2">2 · Juridictions</a>
+      <a href="#s3">3 · Obligations</a>
+      <a href="#s4">4 · Gaza</a>
+      <a href="#s5">5 · Procédures</a>
+      <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
+    </div></div>
+
     <p class="lead"><b>Objectif :</b> comprendre le terme dans son sens juridique précis et la prudence qu&rsquo;il exige.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
-    <details class="acc" open>
+    <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Définition juridique et origine du concept</span><span class="c">Convention 1948</span></summary>
       <div class="body">
         <p>La définition de la Convention de 1948, l&rsquo;origine du concept et la jurisprudence qui l&rsquo;a fait vivre : Shoah, Rwanda, Srebrenica, Rohingyas.</p>
-        <div class="todo"><b>À travailler ici :</b> copier la définition légale en une fiche ; distinguer le sens juridique du mot de son usage courant.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>copier la définition légale en une fiche.</li><li>distinguer le sens juridique du mot de son usage courant.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Les juridictions compétentes et la prudence</span><span class="c">CIJ · CPI</span></summary>
       <div class="body">
         <p>Qui est compétent pour qualifier un génocide : CIJ, CPI, tribunaux ad hoc — et pourquoi la prudence s&rsquo;impose avant toute décision de justice.</p>
@@ -80,42 +102,62 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Les obligations des États : prévenir</span><span class="c">obligations</span></summary>
       <div class="body">
         <p>La Convention n&rsquo;est pas seulement une qualification : elle impose aux États des obligations actives de prévention.</p>
-        <div class="todo"><b>À travailler ici :</b> lister ce qu&rsquo;un État peut concrètement faire au titre de l&rsquo;obligation de prévenir ; classer par leviers (diplomatique, économique, judiciaire).</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>lister ce qu&rsquo;un État peut concrètement faire au titre de l&rsquo;obligation de prévenir.</li><li>classer par leviers (diplomatique, économique, judiciaire).</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Pourquoi parle-t-on de génocide à Gaza</span><span class="c">actus reus · mens rea</span></summary>
       <div class="body">
         <p>Les deux éléments de la qualification : l&rsquo;élément matériel (bombardements, blocus) et l&rsquo;élément intentionnel (déclarations officielles) — et la façon dont chacun est documenté et discuté.</p>
-        <div class="todo"><b>À travailler ici :</b> exercice de tri : classer des énoncés sourcés selon qu&rsquo;ils relèvent de l&rsquo;élément matériel ou intentionnel ; discuter la difficulté de prouver l&rsquo;intention.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>exercice de tri : classer des énoncés sourcés selon qu&rsquo;ils relèvent de l&rsquo;élément matériel ou intentionnel.</li><li>discuter la difficulté de prouver l&rsquo;intention.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">La reconnaissance officielle et la chronologie 2023–2025</span><span class="c">procédures · ONG</span></summary>
       <div class="body">
         <p>La reconnaissance officielle : procédure judiciaire en cours, rôle des ONG et des expert·es ; chronologie des faits et des déclarations de 2023 à 2025.</p>
-        <div class="todo"><b>À travailler ici :</b> tenir une chronologie datée et sourcée des étapes de la procédure ; préciser à chaque ligne ce qui est établi, allégué ou en cours d&rsquo;examen.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>tenir une chronologie datée et sourcée des étapes de la procédure.</li><li>préciser à chaque ligne ce qui est établi, allégué ou en cours d&rsquo;examen.</li></ul></div>
       </div>
     </details>
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> extraits de la Convention de 1948 · fiches CIJ/CPI datées · chronologie 2023–2025 sourcée · avertissement de contenu (sujet sensible, élèves exposés à l&rsquo;actualité).</p>
+      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
+
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/1NuXu6PxsehIbIvT6CVhIQO1l7gnrTAzh/view">&laquo;&nbsp;6. Pourquoi parle t-on de génocide.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+
+      <p class="srcs"><b>Droit —</b> <a href="https://docs.un.org/fr/A/RES/260(III)">Convention pour la prévention et la répression du crime de génocide (1948)</a> &nbsp;· <a href="https://www.icj-cij.org/case/192">affaire 192</a> — Afrique du Sud c. Israël (mesures conservatoires 2024&nbsp;; procédure écrite jusqu&rsquo;en 2029).</p>
+
+      <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icty.org/">TPIY</a> — arrêt Krstić (Srebrenica, 2001) &nbsp;· TPIR — arrêt Akayesu (Rwanda, 1998), première condamnation pour génocide.</p>
+
+      <p class="srcs"><b>Alertes et données —</b> Commission d&rsquo;enquête de l&rsquo;ONU (2025)&nbsp;: «&nbsp;motifs raisonnables&nbsp;» de retenir le génocide &nbsp;· OHCHR &nbsp;· <a href="https://www.hrw.org/fr">Human Rights Watch</a> &nbsp;· Amnesty International.</p>
+
+      
     </div>
 
     <div class="foot">Chapitre 6 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
   </div>
 <script>
-  document.querySelectorAll('.acc').forEach(function(d){
-    d.addEventListener('toggle',function(){if(!d.open)return;document.querySelectorAll('.acc[open]').forEach(function(o){if(o!==d)o.open=false;});});
-  });
+  // tout ouvrir / tout replier
+  function setAll(o){document.querySelectorAll('.acc').forEach(function(d){d.open=o;});}
+  document.getElementById('openAll').addEventListener('click',function(){setAll(true);});
+  document.getElementById('closeAll').addEventListener('click',function(){setAll(false);});
+  // liens profonds : ouvrir la section cible et y faire défiler
+  function openHash(){
+    var h=location.hash; if(!h)return;
+    var el=document.querySelector(h); if(!el)return;
+    var d=el.closest?el.closest('.acc'):null; if(d)d.open=true;
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+  }
+  window.addEventListener('hashchange',openHash);
+  window.addEventListener('DOMContentLoaded',openHash);
+  openHash();
 </script>
 </body>
 </html>

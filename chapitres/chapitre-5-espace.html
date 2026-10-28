@@ -42,6 +42,19 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .rail{position:sticky;top:53px;z-index:4;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .rail .in{max-width:var(--maxw);margin:0 auto;display:flex;gap:6px;padding:8px 22px;flex-wrap:wrap;align-items:center}
+  .rail a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .rail a:hover{color:var(--brand);border-color:var(--brand)}
+  .rail .tools{margin-left:auto;display:flex;gap:6px}
+  .rail button{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}
+  .rail button:hover{color:var(--brand);border-color:var(--brand)}
+  .todo ul{margin:8px 0 0;padding-left:18px}
+  .todo li{margin:4px 0}
+  .srcs{margin:12px 0 0;font-size:13.5px;line-height:1.7}
+  .srcs b{color:var(--ink)}
+  .srcs a{color:var(--accent);text-decoration:none}
+  .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
@@ -60,11 +73,19 @@
         <div class="meta"><span class="chip">≈ 40 min</span><span class="chip">Secondaire supérieur</span><span class="chip">Mots · droit · propagande</span></div>
       </div>
     </div>
+    <div class="rail"><div class="in">
+      <a href="#s1">1 · Les mots</a>
+      <a href="#s2">2 · Propagande</a>
+      <a href="#s3">3 · CAI · CANI</a>
+      <a href="#s4">4 · Le cas</a>
+      <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
+    </div></div>
+
     <p class="lead"><b>Objectif :</b> interroger le pouvoir des mots et la qualification juridique du conflit.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
-    <details class="acc" open>
+    <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">L&rsquo;importance des mots</span><span class="c">sémantique</span></summary>
       <div class="body">
         <p>Le mot « terroriste » et son usage politique ; les limites du mot « conflit » pour décrire une situation d&rsquo;occupation. Choisir ses mots, c&rsquo;est déjà choisir une grille de lecture.</p>
@@ -72,15 +93,15 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Récit et propagande : les 10 règles</span><span class="c">Morelli</span></summary>
       <div class="body">
         <p>Les 10 règles de la propagande en temps de guerre (Anne Morelli), appliquées comme grille d&rsquo;analyse des récits dominants.</p>
-        <div class="todo"><b>À travailler ici :</b> associer chaque règle à un exemple concret tiré de la presse ou des réseaux sociaux ; en trouver un exemple par camp.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>associer chaque règle à un exemple concret tiré de la presse ou des réseaux sociaux.</li><li>en trouver un exemple par camp.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">La qualification juridique</span><span class="c">CAI · CANI</span></summary>
       <div class="body">
         <p>Conflit armé international (CAI), conflit armé non international (CANI), autres catégories (notamment le classement UCDP) : de quoi le droit parle-t-il quand il qualifie une situation ?</p>
@@ -88,7 +109,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Application au cas : ONU, occupation, CIJ</span><span class="c">résolutions · avis</span></summary>
       <div class="body">
         <p>La qualification par l&rsquo;ONU, la notion d&rsquo;occupation et ses qualifications juridiques — résolutions, avis consultatifs de la CIJ de 2004 et de 2024.</p>
@@ -98,16 +119,36 @@
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> les 10 règles de Morelli en fiches · extraits cités des résolutions ONU et avis CIJ · corpus de titres de presse datés · questions de discussion.</p>
+      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
+
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/1Qzxh_CnXYt0juWz44cj8nuW06dOCNOn-/view">&laquo;&nbsp;5. Qualification et utilisation du mot conflit.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+
+      <p class="srcs"><b>Droit international humanitaire —</b> <a href="https://ihl-databases.icrc.org/en/ihl-treaties/api-1977">Conventions de Genève et Protocole additionnel I (1977)</a> — base de données du CICR (distinction conflits armés internationaux / non internationaux) &nbsp;· <a href="https://ucdp.uu.se/">UCDP</a>, typologie des conflits armés.</p>
+
+      <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> — avis «&nbsp;Mur&nbsp;» (2004) &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> — avis du 19 juillet 2024.</p>
+
+      <p class="srcs"><b>Propagande —</b> Anne Morelli, <i>Les Principes élémentaires de propagande de guerre</i> (2001) &nbsp;· précédent documenté&nbsp;: le canular des couveuses du Koweït (AP, octobre 1990), rétracté par Amnesty en 1991.</p>
+
+      
     </div>
 
     <div class="foot">Chapitre 5 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
   </div>
 <script>
-  document.querySelectorAll('.acc').forEach(function(d){
-    d.addEventListener('toggle',function(){if(!d.open)return;document.querySelectorAll('.acc[open]').forEach(function(o){if(o!==d)o.open=false;});});
-  });
+  // tout ouvrir / tout replier
+  function setAll(o){document.querySelectorAll('.acc').forEach(function(d){d.open=o;});}
+  document.getElementById('openAll').addEventListener('click',function(){setAll(true);});
+  document.getElementById('closeAll').addEventListener('click',function(){setAll(false);});
+  // liens profonds : ouvrir la section cible et y faire défiler
+  function openHash(){
+    var h=location.hash; if(!h)return;
+    var el=document.querySelector(h); if(!el)return;
+    var d=el.closest?el.closest('.acc'):null; if(d)d.open=true;
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+  }
+  window.addEventListener('hashchange',openHash);
+  window.addEventListener('DOMContentLoaded',openHash);
+  openHash();
 </script>
 </body>
 </html>

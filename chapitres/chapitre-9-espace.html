@@ -42,6 +42,19 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .rail{position:sticky;top:53px;z-index:4;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .rail .in{max-width:var(--maxw);margin:0 auto;display:flex;gap:6px;padding:8px 22px;flex-wrap:wrap;align-items:center}
+  .rail a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .rail a:hover{color:var(--brand);border-color:var(--brand)}
+  .rail .tools{margin-left:auto;display:flex;gap:6px}
+  .rail button{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}
+  .rail button:hover{color:var(--brand);border-color:var(--brand)}
+  .todo ul{margin:8px 0 0;padding-left:18px}
+  .todo li{margin:4px 0}
+  .srcs{margin:12px 0 0;font-size:13.5px;line-height:1.7}
+  .srcs b{color:var(--ink)}
+  .srcs a{color:var(--accent);text-decoration:none}
+  .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
@@ -60,11 +73,21 @@
         <div class="meta"><span class="chip">≈ 45 min</span><span class="chip">Secondaire supérieur</span><span class="chip">Négociation · trois positions</span></div>
       </div>
     </div>
+    <div class="rail"><div class="in">
+      <a href="#s1">1 · Cadre</a>
+      <a href="#s2">2 · Frontières</a>
+      <a href="#s3">3 · Jérusalem</a>
+      <a href="#s4">4 · Réfugié·es</a>
+      <a href="#s5">5 · Colonies</a>
+      <a href="#s6">6 · Synthèse</a>
+      <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
+    </div></div>
+
     <p class="lead"><b>Objectif :</b> décomposer les nœuds du conflit en exposant chaque position sans en hiérarchiser aucune.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
-    <details class="acc" open>
+    <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Introduction : décomposer les enjeux centraux</span><span class="c">cadre</span></summary>
       <div class="body">
         <p>Un conflit « sans solution » n&rsquo;est pas un bloc indistinct : il se décompose en quelques points durs, chacun documenté. Le chapitre les prend un à un.</p>
@@ -72,7 +95,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Les frontières et le territoire</span><span class="c">point 1</span></summary>
       <div class="body">
         <p>Premier point dur : les frontières et le territoire. Chaque point est traité en <b>trois positions</b> — palestinienne, israélienne, communauté internationale — exposées sans hiérarchie.</p>
@@ -80,31 +103,31 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Le statut de Jérusalem</span><span class="c">point 2</span></summary>
       <div class="body">
         <p>Deuxième point dur : le statut de Jérusalem — la dimension symbolique et religieuse en plus du différend territorial, traitée en trois positions.</p>
-        <div class="todo"><b>À travailler ici :</b> fiche « trois positions » ; repérer ce qui rend ce point particulièrement difficile à négocier.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>fiche « trois positions ».</li><li>repérer ce qui rend ce point particulièrement difficile à négocier.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Le droit au retour des réfugié·es</span><span class="c">point 3</span></summary>
       <div class="body">
         <p>Troisième point dur : le droit au retour des réfugié·es — chiffre, réalité juridique, poids politique, en trois positions.</p>
-        <div class="todo"><b>À travailler ici :</b> fiche « trois positions » ; distinguer ce que dit le droit de ce que demandent les parties.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>fiche « trois positions ».</li><li>distinguer ce que dit le droit de ce que demandent les parties.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">Les colonies</span><span class="c">point 4</span></summary>
       <div class="body">
         <p>Quatrième point dur : les colonies — fait accompli sur le terrain, statut juridique (voir l&rsquo;avis CIJ 2024, chap. 7), en trois positions.</p>
-        <div class="todo"><b>À travailler ici :</b> fiche « trois positions » ; carte : l&rsquo;évolution de la colonisation et son effet sur les scénarios de solution.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>fiche « trois positions ».</li><li>carte : l&rsquo;évolution de la colonisation et son effet sur les scénarios de solution.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s6">
       <summary><span class="seq-num">6</span><span class="t">Mise en pratique : le comparatif des trois positions</span><span class="c">synthèse</span></summary>
       <div class="body">
         <p>Recouper les quatre fiches pour voir la structure d&rsquo;ensemble : où les positions se répondent, où elles s&rsquo;excluent, ce que chaque camp considère comme non négociable.</p>
@@ -114,16 +137,36 @@
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> les quatre fiches « trois positions » de la mallette · cartes datées · questions de discussion · garde-fous d&rsquo;animation (sujet polarisant).</p>
+      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
+
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/1tQw3pW2NKEizJJclX0JSxEXQ8imsFCXi/view">&laquo;&nbsp;9. Les points clés qui bloquent une solution politique.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+
+      <p class="srcs"><b>Résolutions —</b> <a href="https://docs.un.org/fr/A/RES/181(II)">A/RES/181(II)</a> partage (1947) &nbsp;· <a href="https://docs.un.org/fr/A/RES/194(III)">A/RES/194(III)</a> réfugié·es (1948) &nbsp;· <a href="https://docs.un.org/fr/S/RES/242(1967)">S/RES/242(1967)</a> retrait des territoires (1967) &nbsp;· <a href="https://docs.un.org/fr/S/RES/476(1980)">S/RES/476(1980)</a> Jérusalem (1980) &nbsp;· <a href="https://docs.un.org/fr/S/RES/478(1980)">S/RES/478(1980)</a> annexion de Jérusalem déclarée nulle (1980) &nbsp;· <a href="https://docs.un.org/fr/A/RES/2334">A/RES/2334</a> colonisation (2016) &nbsp;· <a href="https://docs.un.org/fr/A/RES/67/19">A/RES/67/19</a> Palestine, État observateur (2012).</p>
+
+      <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> — avis «&nbsp;Mur&nbsp;» (2004), Jérusalem-Est comprise &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> — avis du 19 juillet 2024 (colonies, ressources, fin de l&rsquo;occupation).</p>
+
+      <p class="srcs"><b>Références —</b> Geneva Initiative (2003) — projet détaillé de statut final &nbsp;· initiatives citoyennes bilatérales (voir chapitre 11).</p>
+
+      
     </div>
 
     <div class="foot">Chapitre 9 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
   </div>
 <script>
-  document.querySelectorAll('.acc').forEach(function(d){
-    d.addEventListener('toggle',function(){if(!d.open)return;document.querySelectorAll('.acc[open]').forEach(function(o){if(o!==d)o.open=false;});});
-  });
+  // tout ouvrir / tout replier
+  function setAll(o){document.querySelectorAll('.acc').forEach(function(d){d.open=o;});}
+  document.getElementById('openAll').addEventListener('click',function(){setAll(true);});
+  document.getElementById('closeAll').addEventListener('click',function(){setAll(false);});
+  // liens profonds : ouvrir la section cible et y faire défiler
+  function openHash(){
+    var h=location.hash; if(!h)return;
+    var el=document.querySelector(h); if(!el)return;
+    var d=el.closest?el.closest('.acc'):null; if(d)d.open=true;
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+  }
+  window.addEventListener('hashchange',openHash);
+  window.addEventListener('DOMContentLoaded',openHash);
+  openHash();
 </script>
 </body>
 </html>

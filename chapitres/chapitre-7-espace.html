@@ -42,6 +42,19 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .rail{position:sticky;top:53px;z-index:4;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .rail .in{max-width:var(--maxw);margin:0 auto;display:flex;gap:6px;padding:8px 22px;flex-wrap:wrap;align-items:center}
+  .rail a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .rail a:hover{color:var(--brand);border-color:var(--brand)}
+  .rail .tools{margin-left:auto;display:flex;gap:6px}
+  .rail button{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}
+  .rail button:hover{color:var(--brand);border-color:var(--brand)}
+  .todo ul{margin:8px 0 0;padding-left:18px}
+  .todo li{margin:4px 0}
+  .srcs{margin:12px 0 0;font-size:13.5px;line-height:1.7}
+  .srcs b{color:var(--ink)}
+  .srcs a{color:var(--accent);text-decoration:none}
+  .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
@@ -60,19 +73,28 @@
         <div class="meta"><span class="chip">≈ 50 min</span><span class="chip">Secondaire supérieur</span><span class="chip">DIH · CIJ · CPI</span></div>
       </div>
     </div>
+    <div class="rail"><div class="in">
+      <a href="#s1">1 · Boussole</a>
+      <a href="#s2">2 · États tiers</a>
+      <a href="#s3">3 · Limites</a>
+      <a href="#s4">4 · Instrument.</a>
+      <a href="#s5">5 · Étude de cas</a>
+      <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
+    </div></div>
+
     <p class="lead"><b>Objectif :</b> montrer le droit comme boussole — et ses limites structurelles.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
-    <details class="acc" open>
+    <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Le droit international comme boussole</span><span class="c">DIH · saisines</span></summary>
       <div class="body">
         <p>Les 4 principes du droit international humanitaire ; les saisines de la CIJ et de la CPI et ce qu&rsquo;elles peuvent — et ne peuvent pas — produire.</p>
-        <div class="todo"><b>À travailler ici :</b> résumer chaque principe du DIH en un exemple ; situer les procédures en cours (qui saisit qui, depuis quand).</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>résumer chaque principe du DIH en un exemple.</li><li>situer les procédures en cours (qui saisit qui, depuis quand).</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Les obligations des États tiers</span><span class="c">non-reconnaissance</span></summary>
       <div class="body">
         <p>Non-reconnaissance de la situation illicite, responsabilité active : sanctions, soutien aux procédures — ce que le droit attend des États qui ne sont pas parties au conflit.</p>
@@ -80,7 +102,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Faiblesses structurelles et sur-judiciarisation</span><span class="c">limites</span></summary>
       <div class="body">
         <p>Les faiblesses structurelles des institutions ; le paradoxe d&rsquo;une sur-judiciarisation qui produit des décisions sans obtenir leur application.</p>
@@ -88,7 +110,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">L&rsquo;instrumentalisation : légitime défense et asymétrie</span><span class="c">Ukraine / Palestine</span></summary>
       <div class="body">
         <p>Invoquer la légitime défense : oui ou non, et selon quelles conditions ? L&rsquo;asymétrie d&rsquo;application du droit — comparaison avec le traitement de la guerre en Ukraine.</p>
@@ -96,7 +118,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">Animation : les colonies et l&rsquo;avis CIJ 2024</span><span class="c">étude de cas</span></summary>
       <div class="body">
         <p>Étude de cas guidée : le statut juridique des colonies à la lumière de l&rsquo;avis consultatif de la CIJ de 2024.</p>
@@ -106,16 +128,36 @@
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> fiche des 4 principes du DIH · extraits d&rsquo;avis CIJ datés · tableau Ukraine / Palestine complété · questions de discussion.</p>
+      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
+
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/15-U8wQPdVyvVhH4rDSL5xuuu8ZNa-hMz/view">&laquo;&nbsp;7. Instrumentalisation du DI.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+
+      <p class="srcs"><b>DIH et responsabilité des États —</b> <a href="https://ihl-databases.icrc.org/en/ihl-treaties/api-1977">Conventions de Genève et Protocole additionnel I</a> (CICR)&nbsp;: distinction, proportionnalité, précaution, interdiction des représailles &nbsp;· <a href="https://docs.un.org/fr/A/RES/56/83">Articles de la CDI sur la responsabilité des États (2001)</a> — non-reconnaissance de l&rsquo;illicite.</p>
+
+      <p class="srcs"><b>Jurisprudences et saisines —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> (2004) &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> (19/07/2024) &nbsp;· <a href="https://www.icj-cij.org/case/192">affaire 192</a> (génocide, en cours) &nbsp;· <a href="https://www.icj-cij.org/case/196">affaire 196</a> (22/10/2025, ONU et UNRWA) &nbsp;· <a href="https://www.icc-cpi.int/palestine">CPI — situation «&nbsp;État de Palestine&nbsp;»</a>.</p>
+
+      <p class="srcs"><b>Résolutions —</b> <a href="https://docs.un.org/fr/A/RES/2334">A/RES/2334</a> colonisation (2016) &nbsp;· <a href="https://docs.un.org/fr/S/RES/242(1967)">S/RES/242(1967)</a> retrait des territoires (1967).</p>
+
+      
     </div>
 
     <div class="foot">Chapitre 7 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
   </div>
 <script>
-  document.querySelectorAll('.acc').forEach(function(d){
-    d.addEventListener('toggle',function(){if(!d.open)return;document.querySelectorAll('.acc[open]').forEach(function(o){if(o!==d)o.open=false;});});
-  });
+  // tout ouvrir / tout replier
+  function setAll(o){document.querySelectorAll('.acc').forEach(function(d){d.open=o;});}
+  document.getElementById('openAll').addEventListener('click',function(){setAll(true);});
+  document.getElementById('closeAll').addEventListener('click',function(){setAll(false);});
+  // liens profonds : ouvrir la section cible et y faire défiler
+  function openHash(){
+    var h=location.hash; if(!h)return;
+    var el=document.querySelector(h); if(!el)return;
+    var d=el.closest?el.closest('.acc'):null; if(d)d.open=true;
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+  }
+  window.addEventListener('hashchange',openHash);
+  window.addEventListener('DOMContentLoaded',openHash);
+  openHash();
 </script>
 </body>
 </html>

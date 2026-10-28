@@ -42,6 +42,19 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .rail{position:sticky;top:53px;z-index:4;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .rail .in{max-width:var(--maxw);margin:0 auto;display:flex;gap:6px;padding:8px 22px;flex-wrap:wrap;align-items:center}
+  .rail a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .rail a:hover{color:var(--brand);border-color:var(--brand)}
+  .rail .tools{margin-left:auto;display:flex;gap:6px}
+  .rail button{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}
+  .rail button:hover{color:var(--brand);border-color:var(--brand)}
+  .todo ul{margin:8px 0 0;padding-left:18px}
+  .todo li{margin:4px 0}
+  .srcs{margin:12px 0 0;font-size:13.5px;line-height:1.7}
+  .srcs b{color:var(--ink)}
+  .srcs a{color:var(--accent);text-decoration:none}
+  .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
@@ -60,19 +73,28 @@
         <div class="meta"><span class="chip">≈ 40 min</span><span class="chip">Secondaire supérieur</span><span class="chip">Paix · engagement citoyen</span></div>
       </div>
     </div>
+    <div class="rail"><div class="in">
+      <a href="#s1">1 · La paix</a>
+      <a href="#s2">2 · Belgique</a>
+      <a href="#s3">3 · Leviers</a>
+      <a href="#s4">4 · Mobilisation</a>
+      <a href="#s5">5 · Agir</a>
+      <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
+    </div></div>
+
     <p class="lead"><b>Objectif :</b> relier le conflit à la Belgique et ouvrir sur l&rsquo;engagement citoyen concret.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
-    <details class="acc" open>
+    <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">C&rsquo;est quoi la paix&nbsp;?</span><span class="c">négative / positive</span></summary>
       <div class="body">
         <p>Paix négative (absence de guerre) / paix positive (justice, égalité, conditions qui préviennent le conflit) — l&rsquo;idée clé qui clôt la mallette.</p>
-        <div class="todo"><b>À travailler ici :</b> à partir d&rsquo;exemples concrets, classer ce qui relève de la paix négative et de la paix positive ; définir chaque terme en une phrase.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>à partir d&rsquo;exemples concrets, classer ce qui relève de la paix négative et de la paix positive.</li><li>définir chaque terme en une phrase.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">La Belgique : actrice de paix ou de guerre&nbsp;?</span><span class="c">polarisation</span></summary>
       <div class="body">
         <p>La polarisation de la société belge ; la Belgique, spectatrice ou partie prenante ? Relier le débat local au conflit.</p>
@@ -80,7 +102,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Implications concrètes : commerce, armes, Europe</span><span class="c">leviers</span></summary>
       <div class="body">
         <p>Commerce avec les colonies, industrie militaire et exportations d&rsquo;armes, l&rsquo;UE comme premier partenaire commercial d&rsquo;Israël : les leviers matériels qui relient la Belgique au terrain.</p>
@@ -88,7 +110,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">La mobilisation citoyenne</span><span class="c">sanctions · arrêté</span></summary>
       <div class="body">
         <p>Les 12 sanctions belges (septembre 2025), l&rsquo;arrêté royal sur le survol (2026) : ce que la pression citoyenne a déjà produit, et comment.</p>
@@ -96,7 +118,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">Que faire en tant que citoyen·ne belge&nbsp;?</span><span class="c">consommer · mobiliser · rejoindre · pression</span></summary>
       <div class="body">
         <p>Quatre registres d&rsquo;action — consommer, mobiliser, rejoindre, faire pression — et des initiatives qui inspirent : EcoPeace, Breaking the Silence, Voix juives pour la paix&hellip;</p>
@@ -106,16 +128,36 @@
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> texte des 12 sanctions belges et de l&rsquo;arrêté 2026 (liens datés) · fiches des initiatives citées · protocole « membrane de discussion » · garde-fous d&rsquo;animation.</p>
+      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
+
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/105WbIxxpa6eTKTRC1dYHh7EVzQxs3dXr/view">&laquo;&nbsp;11. Agir.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+
+      <p class="srcs"><b>Belgique —</b> <a href="https://diplomatie.belgium.be/fr">SPF Affaires étrangères</a> &nbsp;· les «&nbsp;12 sanctions&nbsp;» belges contre Israël (septembre 2025) &nbsp;· arrêté royal sur le survol et le transit (2026, Moniteur belge) &nbsp;· rapports du GRIP sur les licences d&rsquo;armes.</p>
+
+      <p class="srcs"><b>Union européenne —</b> <a href="https://policy.trade.ec.europa.eu/index_fr">Politique commerciale de la Commission européenne</a> — l&rsquo;UE, premier partenaire commercial d&rsquo;Israël &nbsp;· accord d&rsquo;association UE-Israël et sa clause relative aux droits de l&rsquo;homme.</p>
+
+      <p class="srcs"><b>S&rsquo;inspirer —</b> <a href="https://allmep.org/">ALLMEP</a> &nbsp;· <a href="https://www.ecopeace.org/">EcoPeace Middle East</a> &nbsp;· <a href="https://breakingthesilence.org.il/">Breaking the Silence</a> &nbsp;· Don&rsquo;t Buy Into Occupation &nbsp;· Tashattot Collective &nbsp;· EJJP, UPJB et EAJS (Juifs européens et nord-américains pour la paix).</p>
+
+      
     </div>
 
     <div class="foot">Chapitre 11 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
   </div>
 <script>
-  document.querySelectorAll('.acc').forEach(function(d){
-    d.addEventListener('toggle',function(){if(!d.open)return;document.querySelectorAll('.acc[open]').forEach(function(o){if(o!==d)o.open=false;});});
-  });
+  // tout ouvrir / tout replier
+  function setAll(o){document.querySelectorAll('.acc').forEach(function(d){d.open=o;});}
+  document.getElementById('openAll').addEventListener('click',function(){setAll(true);});
+  document.getElementById('closeAll').addEventListener('click',function(){setAll(false);});
+  // liens profonds : ouvrir la section cible et y faire défiler
+  function openHash(){
+    var h=location.hash; if(!h)return;
+    var el=document.querySelector(h); if(!el)return;
+    var d=el.closest?el.closest('.acc'):null; if(d)d.open=true;
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+  }
+  window.addEventListener('hashchange',openHash);
+  window.addEventListener('DOMContentLoaded',openHash);
+  openHash();
 </script>
 </body>
 </html>

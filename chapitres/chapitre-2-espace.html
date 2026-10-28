@@ -44,6 +44,19 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .rail{position:sticky;top:53px;z-index:4;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .rail .in{max-width:var(--maxw);margin:0 auto;display:flex;gap:6px;padding:8px 22px;flex-wrap:wrap;align-items:center}
+  .rail a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .rail a:hover{color:var(--brand);border-color:var(--brand)}
+  .rail .tools{margin-left:auto;display:flex;gap:6px}
+  .rail button{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}
+  .rail button:hover{color:var(--brand);border-color:var(--brand)}
+  .todo ul{margin:8px 0 0;padding-left:18px}
+  .todo li{margin:4px 0}
+  .srcs{margin:12px 0 0;font-size:13.5px;line-height:1.7}
+  .srcs b{color:var(--ink)}
+  .srcs a{color:var(--accent);text-decoration:none}
+  .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
@@ -62,19 +75,27 @@
         <div class="meta"><span class="chip">≈ 60 min</span><span class="chip">Secondaire supérieur</span><span class="chip">Géopolitique comparée</span></div>
       </div>
     </div>
+    <div class="rail"><div class="in">
+      <a href="#s1">1 · Cadre</a>
+      <a href="#s2">2 · Israël</a>
+      <a href="#s3">3 · Palestine</a>
+      <a href="#s4">4 · Asymétrie</a>
+      <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
+    </div></div>
+
     <p class="lead"><b>Objectif :</b> comparer les deux entités sur des critères symétriques et faire voir le rapport de force asymétrique.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
-    <details class="acc" open>
+    <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Comprendre le monde sous l&rsquo;angle géopolitique</span><span class="c">cadre</span></summary>
       <div class="body">
         <p>Poser le regard géopolitique : territoire, puissance, ressources, populations. La « carte d&rsquo;identité comparative » sert de grille unique, appliquée de manière symétrique aux deux entités — comparer sans hiérarchiser.</p>
-        <div class="todo"><b>À travailler ici :</b> définir les critères de la carte d&rsquo;identité en classe ; convenir de ce qui permet de comparer deux entités sans les mettre sur un pied d&rsquo;égalité forcé.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>définir les critères de la carte d&rsquo;identité en classe.</li><li>convenir de ce qui permet de comparer deux entités sans les mettre sur un pied d&rsquo;égalité forcé.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Israël : fiche d&rsquo;identité</span><span class="c">comparatif</span></summary>
       <div class="body">
         <p>Parcourir l&rsquo;entité israélienne avec la grille : géographie et territoire, politique et institutions, économie, population / langues / société, armée et sécurité — avec l&rsquo;encart « le couple Israël–USA ».</p>
@@ -82,34 +103,52 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Palestine : fiche d&rsquo;identité</span><span class="c">comparatif</span></summary>
       <div class="body">
         <p>Même grille appliquée à l&rsquo;entité palestinienne : géographie, territoire et ressources, politique et institutions, économie, population et société, culture, armée et sécurité — avec un zoom sur Gaza.</p>
-        <div class="todo"><b>À travailler ici :</b> remplir la colonne « Palestine » ; noter ce que la fragmentation du territoire change concrètement au quotidien.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>remplir la colonne « Palestine ».</li><li>noter ce que la fragmentation du territoire change concrètement au quotidien.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Le rapport de force asymétrique</span><span class="c">encart</span></summary>
       <div class="body">
         <p>Relier les deux fiches pour rendre visible l&rsquo;asymétrie des moyens et des pouvoirs entre les deux entités — la clé d&rsquo;analyse de tout le chapitre.</p>
-        <div class="todo"><b>À travailler ici :</b> exercice en deux colonnes : pour chaque critère, qui dispose de quels moyens ; puis discussion nuancée en classe.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>exercice en deux colonnes : pour chaque critère, qui dispose de quels moyens.</li><li>puis discussion nuancée en classe.</li></ul></div>
       </div>
     </details>
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> le tableau comparatif vierge (à partir de « 2.1 Acteurs » de la mallette) · cartes des territoires à différentes dates · sources démographiques et économiques datées · questions de discussion.</p>
+      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
+
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/1KaLNEEHSI_z8fYKCEjY_FSgQx_Kd1uJp/view">&laquo;&nbsp;2. Géopolitique Isra &amp; Pal.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+
+      <p class="srcs"><b>Données comparées —</b> <a href="https://www.cia.gov/the-world-factbook/countries/israel/">CIA World Factbook</a> (Israël) &nbsp;· Palestinian Central Bureau of Statistics (PCBS) &nbsp;· <a href="https://www.worldbank.org/en/country/westbankandgaza">Banque mondiale — Cisjordanie et Gaza (WBPS)</a> &nbsp;· B&rsquo;Tselem, les divisions administratives de la Cisjordanie (zones A/B/C).</p>
+
+      <p class="srcs"><b>Cartes et atlas —</b> <a href="https://www.diploweb.com/Fiche-et-carte-pays-Israel.html">Diploweb — fiche et carte d&rsquo;Israël</a> &nbsp;· <a href="https://www.diploweb.com/Comment-comprendre-le-conflit-israelo-palestinien-de-ses-origines-au-7-octobre-2023.html">Diploweb — comprendre le conflit, des origines au 7 octobre 2023</a> &nbsp;· Atlas géopolitique d&rsquo;Israël (Autrement, 2022) &nbsp;· Atlas des Palestiniens (Autrement, 2023) &nbsp;· cartes de Philippe Rekacewicz (Le Monde diplomatique).</p>
+
+      
     </div>
 
     <div class="foot">Chapitre 2 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
   </div>
 <script>
-  document.querySelectorAll('.acc').forEach(function(d){
-    d.addEventListener('toggle',function(){if(!d.open)return;document.querySelectorAll('.acc[open]').forEach(function(o){if(o!==d)o.open=false;});});
-  });
+  // tout ouvrir / tout replier
+  function setAll(o){document.querySelectorAll('.acc').forEach(function(d){d.open=o;});}
+  document.getElementById('openAll').addEventListener('click',function(){setAll(true);});
+  document.getElementById('closeAll').addEventListener('click',function(){setAll(false);});
+  // liens profonds : ouvrir la section cible et y faire défiler
+  function openHash(){
+    var h=location.hash; if(!h)return;
+    var el=document.querySelector(h); if(!el)return;
+    var d=el.closest?el.closest('.acc'):null; if(d)d.open=true;
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+  }
+  window.addEventListener('hashchange',openHash);
+  window.addEventListener('DOMContentLoaded',openHash);
+  openHash();
 </script>
 </body>
 </html>

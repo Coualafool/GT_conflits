@@ -42,6 +42,19 @@
   .todo{margin-top:10px;background:var(--panel-2);border:1px dashed var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px;color:var(--faint)}
   .todo b{color:var(--brand)}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;color:var(--muted);font-size:14.5px}
+  .rail{position:sticky;top:53px;z-index:4;background:rgba(15,20,25,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .rail .in{max-width:var(--maxw);margin:0 auto;display:flex;gap:6px;padding:8px 22px;flex-wrap:wrap;align-items:center}
+  .rail a{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .rail a:hover{color:var(--brand);border-color:var(--brand)}
+  .rail .tools{margin-left:auto;display:flex;gap:6px}
+  .rail button{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:4px 10px;cursor:pointer;font-family:inherit}
+  .rail button:hover{color:var(--brand);border-color:var(--brand)}
+  .todo ul{margin:8px 0 0;padding-left:18px}
+  .todo li{margin:4px 0}
+  .srcs{margin:12px 0 0;font-size:13.5px;line-height:1.7}
+  .srcs b{color:var(--ink)}
+  .srcs a{color:var(--accent);text-decoration:none}
+  .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
 </style>
 </head>
@@ -60,19 +73,31 @@
         <div class="meta"><span class="chip">≈ 60 min</span><span class="chip">Secondaire supérieur</span><span class="chip">Chronologie · 1890 &rarr; 2023</span></div>
       </div>
     </div>
+    <div class="rail"><div class="in">
+      <a href="#s1">1 · Origines</a>
+      <a href="#s2">2 · 1914-18</a>
+      <a href="#s3">3 · 1920-48</a>
+      <a href="#s4">4 · 1947-49</a>
+      <a href="#s5">5 · 1950-67</a>
+      <a href="#s6">6 · 1973-93</a>
+      <a href="#s7">7 · 1993-2007</a>
+      <a href="#s8">8 · 2010-23</a>
+      <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
+    </div></div>
+
     <p class="lead"><b>Objectif :</b> replacer le 7 octobre 2023 dans une chronologie longue, des origines à aujourd&rsquo;hui.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
-    <details class="acc" open>
+    <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Aux origines : sionisme et contexte européen</span><span class="c">fin XIX<sup>e</sup>–début XX<sup>e</sup></span></summary>
       <div class="body">
         <p>Pourquoi certains Juifs revendiquent la Palestine : le contexte européen, l&rsquo;antisémitisme et la naissance du sionisme à la fin du XIX<sup>e</sup> siècle.</p>
-        <div class="todo"><b>À travailler ici :</b> résumé d&rsquo;un texte clé sur le sionisme (Herzl, dossier Animations) en quelques lignes ; définir le terme.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>résumé d&rsquo;un texte clé sur le sionisme (Herzl, dossier Animations) en quelques lignes.</li><li>définir le terme.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">La Première Guerre mondiale : promesses contradictoires</span><span class="c">1914–1918</span></summary>
       <div class="body">
         <p>Correspondance Hussein–MacMahon, accords Sykes-Picot, déclaration Balfour : trois promesses qui se contredisent — avec l&rsquo;encart sur les origines coloniales.</p>
@@ -80,31 +105,31 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Entre-deux-guerres, Shoah et création d&rsquo;Israël</span><span class="c">1920–1948</span></summary>
       <div class="body">
         <p>Le développement de 1920 à 1939, la Seconde Guerre mondiale, la Shoah, puis la création d&rsquo;Israël en 1948.</p>
-        <div class="todo"><b>À travailler ici :</b> situer ces étapes sur une frise ; relier les événements européens et les dynamiques locales.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>situer ces étapes sur une frise.</li><li>relier les événements européens et les dynamiques locales.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">1947–1949 : plan de partage, guerre, Nakba</span><span class="c">1947–1949</span></summary>
       <div class="body">
         <p>Le plan de partage de l&rsquo;ONU, la proclamation, la première guerre et la Nakba — une matrice fondatrice vécue différemment des deux côtés.</p>
-        <div class="todo"><b>À travailler ici :</b> pour une même période, comparer deux récits (israélien / palestinien) en colonnes ; identifier ce qui change et ce qui reste.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>pour une même période, comparer deux récits (israélien / palestinien) en colonnes.</li><li>identifier ce qui change et ce qui reste.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">1950–1967 : guerre froide, Suez, OLP, Six Jours</span><span class="c">1950–1967</span></summary>
       <div class="body">
         <p>Guerre froide régionale, crise de Suez, naissance de l&rsquo;OLP, puis 1967 : la guerre des Six Jours, le début de l&rsquo;occupation et de la colonisation.</p>
-        <div class="todo"><b>À travailler ici :</b> carte : situer les lignes de 1949 et d&rsquo;après 1967 ; définir « occupation » et « colonie » en droit.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>carte : situer les lignes de 1949 et d&rsquo;après 1967.</li><li>définir « occupation » et « colonie » en droit.</li></ul></div>
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s6">
       <summary><span class="seq-num">6</span><span class="t">1973–1993 : Kippour, Camp David, Liban, 1<sup>re</sup> Intifada</span><span class="c">1973–1993</span></summary>
       <div class="body">
         <p>La guerre de Kippour, les accords de Camp David, la guerre du Liban (1982), puis la première Intifada (1987).</p>
@@ -112,7 +137,7 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s7">
       <summary><span class="seq-num">7</span><span class="t">1993–2007 : Oslo, 2<sup>e</sup> Intifada, mur, blocus</span><span class="c">1993–2007</span></summary>
       <div class="body">
         <p>Les accords d&rsquo;Oslo (1993–1999), Camp David II, la deuxième Intifada, la construction du mur, la division palestinienne et le blocus de Gaza (2006–2007).</p>
@@ -120,26 +145,46 @@
       </div>
     </details>
 
-    <details class="acc">
+    <details class="acc" id="s8">
       <summary><span class="seq-num">8</span><span class="t">2010–2023 : normalisations, tensions, 7 octobre</span><span class="c">2010–2023</span></summary>
       <div class="body">
         <p>Diplomatie, accords de normalisation, tensions croissantes, puis le 7 octobre 2023 et ses conséquences — l&rsquo;actualité relue à la lumière de toute la chronologie.</p>
-        <div class="todo"><b>À travailler ici :</b> compléter la frise jusqu&rsquo;à aujourd&rsquo;hui ; écrire une phrase de synthèse reliant 2023 à un événement antérieur choisi.</div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>compléter la frise jusqu&rsquo;à aujourd&rsquo;hui.</li><li>écrire une phrase de synthèse reliant 2023 à un événement antérieur choisi.</li></ul></div>
       </div>
     </details>
 
     <h2 class="s">Notes &amp; ressources</h2>
     <div class="note">
-      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index.</p>
-      <p><b>À ajouter :</b> la frise « dates clés » (.xlsx de la mallette) · cartes par période · bibliographie sélective par étape · questions de discussion.</p>
+      <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
+
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/1Px_7dFq4WQdwSlCqxwXNy64z1ornIDgu/view">&laquo;&nbsp;4. Historique du conflit.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+
+      <p class="srcs"><b>Textes et chronologies officiels —</b> <a href="https://www.un.org/unispal/fr/histoire-de-la-question-de-palestine/">UNISPAL — histoire de la question de Palestine</a> &nbsp;· résolutions <a href="https://docs.un.org/fr/A/RES/181(II)">181(II)</a>, <a href="https://docs.un.org/fr/A/RES/194(III)">194(III)</a>, <a href="https://docs.un.org/fr/S/RES/242(1967)">242</a>, <a href="https://docs.un.org/fr/A/RES/2334">2334</a>.</p>
+
+      <p class="srcs"><b>Analyses et cartes —</b> <a href="https://www.diploweb.com/Comment-comprendre-le-conflit-israelo-palestinien-de-ses-origines-au-7-octobre-2023.html">Diploweb — origines à octobre 2023 (histoire, dates et chiffres clés)</a> &nbsp;· BBC Afrique, «&nbsp;6 cartes qui montrent comment le territoire palestinien a changé&nbsp;» &nbsp;· cartes de Philippe Rekacewicz (Le Monde diplomatique).</p>
+
+      <p class="srcs"><b>Histoire —</b> Benny Morris, <i>1948</i> (2001) contre Ilan Pappé, <i>The Ethnic Cleansing of Palestine</i> (2006) — deux lectures rivales de 1948 &nbsp;· commission Kahan (1982) sur Sabra et Chatila &nbsp;· déclaration Balfour (1917), accords Sykes-Picot (1916), correspondance Hussein-MacMahon (1915-1916) — textes via UNISPAL.</p>
+
+      
     </div>
 
     <div class="foot">Chapitre 4 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
   </div>
 <script>
-  document.querySelectorAll('.acc').forEach(function(d){
-    d.addEventListener('toggle',function(){if(!d.open)return;document.querySelectorAll('.acc[open]').forEach(function(o){if(o!==d)o.open=false;});});
-  });
+  // tout ouvrir / tout replier
+  function setAll(o){document.querySelectorAll('.acc').forEach(function(d){d.open=o;});}
+  document.getElementById('openAll').addEventListener('click',function(){setAll(true);});
+  document.getElementById('closeAll').addEventListener('click',function(){setAll(false);});
+  // liens profonds : ouvrir la section cible et y faire défiler
+  function openHash(){
+    var h=location.hash; if(!h)return;
+    var el=document.querySelector(h); if(!el)return;
+    var d=el.closest?el.closest('.acc'):null; if(d)d.open=true;
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);
+  }
+  window.addEventListener('hashchange',openHash);
+  window.addEventListener('DOMContentLoaded',openHash);
+  openHash();
 </script>
 </body>
 </html>
