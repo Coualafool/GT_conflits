@@ -56,6 +56,29 @@
   .srcs a{color:var(--accent);text-decoration:none}
   .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  .acc .body h4.v{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin:20px 0 6px;font-weight:700}
+  .acc .body .pv{border-left:3px solid var(--border);padding:2px 0 2px 14px;margin:12px 0}
+  .acc .body .pv.off{border-color:var(--brand)}
+  .acc .body .pv.real{border-color:var(--faint)}
+  .acc .body .who{font-weight:700;color:var(--ink)}
+  .acc .body ul{margin:6px 0 6px 20px;padding:0}
+  .acc .body li{margin:5px 0}
+  .acc .body .src{color:var(--faint);font-size:12.5px}
+  .acc .body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  .acc .body th{color:var(--ink);font-weight:700;text-align:left;border-bottom:1px solid var(--border);padding:6px 8px}
+  .acc .body td{border-bottom:1px solid var(--border);padding:6px 8px;color:var(--muted);vertical-align:top}
+  .essentiel{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel-2);border-radius:0 10px 10px 0;padding:12px 14px;margin:2px 0 16px}
+  .essentiel .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:6px}
+  .essentiel ul{margin:0;padding-left:18px}
+  .essentiel li{margin:4px 0;font-size:14px;color:var(--ink)}
+  .pv .these{display:block;color:var(--ink);font-weight:600;font-size:14.5px;margin:5px 0 7px}
+  .etages{display:grid;gap:8px;margin:8px 0}
+  .etage{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel)}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:1px}
+  .t-ok{background:rgba(95,179,128,.15);color:var(--good);border:1px solid rgba(95,179,128,.4)}
+  .t-int{background:rgba(224,164,88,.15);color:var(--brand);border:1px solid rgba(224,164,88,.4)}
+  .t-dis{background:rgba(154,168,182,.12);color:var(--muted);border:1px solid var(--border)}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--brand-2);background:var(--panel-2);border-radius:0 9px 9px 0;color:var(--ink);font-size:14px}
 </style>
 </head>
 <body>
@@ -82,47 +105,180 @@
       <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
     </div></div>
 
-    <p class="lead"><b>Objectif :</b> montrer le droit comme boussole — et ses limites structurelles.</p>
+    <p class="lead"><b>Objectif :</b> montrer le droit comme boussole — ses principes, ce qu&rsquo;il impose aux parties et aux tiers — et ses limites structurelles : un outil sans gendarme, que la puissance façonne.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
     <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Le droit international comme boussole</span><span class="c">DIH · saisines</span></summary>
       <div class="body">
-        <p>Les 4 principes du droit international humanitaire ; les saisines de la CIJ et de la CPI et ce qu&rsquo;elles peuvent — et ne peuvent pas — produire.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>résumer chaque principe du DIH en un exemple.</li><li>situer les procédures en cours (qui saisit qui, depuis quand).</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Épigraphe du chapitre (Pierre d&rsquo;Argent)&nbsp;: «&nbsp;Lorsqu&rsquo;on veut un droit pour ses amis et un autre droit pour ses ennemis, alors ce n&rsquo;est plus du droit.&nbsp;»</li>
+          <li>Le DIH — «&nbsp;droit de la guerre&nbsp;» — tient sur trois principes&nbsp;: <b>distinction</b> (civils ≠ combattants), <b>proportionnalité</b> (dégâts civils non excessifs vs avantage militaire), <b>précaution</b> (tout faire pour minimiser les pertes civiles).</li>
+          <li>Codifié aux Conventions de Genève (1949) et Protocoles — ratifiés par la quasi-totalité des États&nbsp;; applicable à <b>tous</b> les conflits, internationaux ou non.</li>
+          <li>La question israélo-palestinienne est <b>la plus saisie au monde</b>&nbsp;: CIJ (avis 2004, 2024&nbsp;; affaire génocide&nbsp;; avis ONU/UNRWA 2025), CPI (enquêtes 2021, mandats 2024), commissions d&rsquo;enquête, Assemblée générale.</li>
+        </ul></div>
+
+        <h4 class="v">Pourquoi une boussole, pas un gendarme</h4>
+        <p>Le DIH ne dit pas qui a raison de faire la guerre&nbsp;; il dit <b>comment</b> on peut la faire — et il protège ceux qui ne la font pas. Sa force&nbsp;: l&rsquo;universalité (tous les États liés). Sa faiblesse&nbsp;: l&rsquo;absence d&rsquo;exécutif mondial. D&rsquo;où la méthode du chapitre en quatre gestes <span class="src">(doc. de travail)</span>&nbsp;: identifier les principes → comparer les actes des parties à ces principes → observer la réaction des tiers et des institutions → repérer les <b>usages politiques du droit</b> (le mot «&nbsp;droit&nbsp;» comme argument d&rsquo;autorité dans un récit). Les Conventions protègent <b>toute</b> personne sous occupation, que son État soit reconnu ou non — la non-reconnaissance de la Palestine par certains pays ne change rien à la protection due à sa population.</p>
+
+        <h4 class="v">L&rsquo;état des saisines (2026)</h4>
+        <ul>
+          <li><b>CIJ</b>&nbsp;: avis «&nbsp;Mur&nbsp;» (2004)&nbsp;; avis «&nbsp;Occupations&nbsp;» (19 juil. 2024)&nbsp;; Afrique du Sud c. Israël, Convention génocide (janv. 2024, mesures conservatoires&nbsp;; procédure écrite jusqu&rsquo;en 2029)&nbsp;; avis sur les restrictions à l&rsquo;ONU et à l&rsquo;UNRWA (22 oct. 2025).</li>
+          <li><b>CPI</b>&nbsp;: enquête ouverte (situation «&nbsp;État de Palestine&nbsp;», 2021)&nbsp;; mandats d&rsquo;arrêt nov. 2024 (Netanyahou, Gallant)&nbsp;; d&rsquo;autres procédures suivent.</li>
+          <li><b>ONU</b>&nbsp;: commissions d&rsquo;enquête permanentes (dont celle de sept. 2025 sur le génocide)&nbsp;; résolutions répétées de l&rsquo;Assemblée générale.</li>
+        </ul>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les textes (Genève, PA I), les principes (aussi coutumiers — base CICR), la liste des saisines et décisions — tout est public.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: si une frappe précise respecte la proportionnalité — chaque cas est un débat d&rsquo;experts&nbsp;; les commissions tranchent des faits, pas la légitimité politique des belligérants.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;le DIH est déséquilibré car il ne distingue pas agresseur et agressé&nbsp;» (objection israélienne classique) vs «&nbsp;c&rsquo;est son objet même&nbsp;: protéger, pas juger les causes&nbsp;» — deux conceptions du droit de la guerre&nbsp;; la seconde est celle des Conventions.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Résumer chaque principe du DIH en un exemple concret (un permis, un interdit — et les cas limites).</li>
+            <li>Situer les procédures en cours&nbsp;: qui saisit qui, depuis quand, avec quels effets déjà produits.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Les obligations des États tiers</span><span class="c">non-reconnaissance</span></summary>
       <div class="body">
-        <p>Non-reconnaissance de la situation illicite, responsabilité active : sanctions, soutien aux procédures — ce que le droit attend des États qui ne sont pas parties au conflit.</p>
-        <div class="todo"><b>À travailler ici :</b> inventaire : quelles mesures un tiers peut-il prendre ? Les classer par type et évaluer leur application réelle.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Le droit ne regarde pas que les belligérants&nbsp;: les <b>tiers</b> (tout le reste du monde) ont des obligations — rappelées par la CIJ (2004, 2024).</li>
+          <li><b>Non-reconnaissance</b>&nbsp;: ne pas traiter comme légale une situation créée par une violation grave — ni la souveraineté sur Jérusalem-Est, ni les colonies, ni les changements unilatéraux.</li>
+          <li><b>Non-assistance</b>&nbsp;: ne rien fournir qui maintienne l&rsquo;illicite — commerce avec les colonies, documents officiels pour colons, accords économiques sans distinction Israël/territoires.</li>
+          <li><b>Coopération active</b>&nbsp;: sanctions ciblées, suspension d&rsquo;accords préférentiels, soutien aux procédures. Réalité&nbsp;: très peu d&rsquo;États appliquent — le commerce avec les colonies continue.</li>
+        </ul></div>
+
+        <h4 class="v">Ce que la CIJ a dit aux tiers</h4>
+        <p>L&rsquo;avis de 2024 (affaire 186) est le plus explicite jamais rendu&nbsp;: les 193 États ont l&rsquo;obligation de <b>ne pas reconnaître</b> la situation issue de l&rsquo;occupation illégale, de <b>ne pas aider à son maintien</b>, et de <b>coopérer</b> pour y mettre fin <span class="src">(CIJ, 19 juil. 2024&nbsp;; doc. de travail)</span>. Concrètement, la liste est précise&nbsp;: étiquetage des produits des colonies, exclusion des accords UE-Israël des territoires occupés, refus de visa pour colons violents, fin des préférences douanières non distinguées. En 2025-2026, quelques gestes suivent — la Commission européenne propose le réexamen de l&rsquo;accord d&rsquo;association (clause droits de l&rsquo;homme)&nbsp;; des Parlements (Espagne, Slovénie, Irlande, Belgique…) adoptent interdictions d&rsquo;importation ou embargos d&rsquo;armes — mais l&rsquo;application reste <b>fragmentaire</b> et souvent annulée par les exécutifs <span class="src">(doc. de travail&nbsp;; actualité 2025-2026)</span>.</p>
+
+        <div class="pv off"><span class="who">Encart — pourquoi cette séquence est politique.</span><span class="these">La non-reconnaissance est le levier le plus sous-estimé du droit international&nbsp;: il ne juge pas Israël, il lie… les autres.</span> C&rsquo;est la traduction pratique du chapitre&nbsp;: ce que <b>nos</b> gouvernements, <b>nos</b> achats, <b>nos</b> universités font de l&rsquo;illicite. Le droit international n&rsquo;attend pas un miracle géopolitique — il demande aux démocraties européennes, en priorité, de cesser de distinguer «&nbsp;Israël&nbsp;» et «&nbsp;les colonies&nbsp;» le moins possible.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les paragraphes d&rsquo;obligations des tiers (avis 2004 §155-159&nbsp;; avis 2024)&nbsp;; les articles CDI 2001&nbsp;; le maintien du commerce avec les colonies — documenté (rapports ONU sur les bases de données des entreprises).</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: où passe exactement «&nbsp;l&rsquo;aide qui maintient la situation&nbsp;»&nbsp;— une licence d&rsquo;exportation d&rsquo;armes&nbsp;? un simple survol commercial&nbsp;? les juristes débattent de la ligne&nbsp;; les gouvernements la placent bas.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;ces obligations sont du droit dur&nbsp;» vs «&nbsp;des recommandations politiques&nbsp;» — la CIJ dit droit&nbsp;; les capitales traitent en option&nbsp;; l&rsquo;écart entre les deux lectures EST le sujet du chapitre.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Inventaire&nbsp;: quelles mesures un tiers peut-il prendre&nbsp;? Classer par type (commercial, diplomatique, judiciaire, académique) et évaluer leur application réelle dans son propre pays.</li>
+            <li>Repérer, dans les rayons ou les contrats publics, la distinction «&nbsp;Israël / colonies&nbsp;» — existe-t-elle&nbsp;? Qui la fait&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Faiblesses structurelles et sur-judiciarisation</span><span class="c">limites</span></summary>
       <div class="body">
-        <p>Les faiblesses structurelles des institutions ; le paradoxe d&rsquo;une sur-judiciarisation qui produit des décisions sans obtenir leur application.</p>
-        <div class="todo"><b>À travailler ici :</b> débat cadré : le droit sert-il encore sans moyen de contrainte ? Deux arguments pour, deux arguments contre, sourcés.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Quatre verrous connus&nbsp;: avis CIJ <b>non contraignants</b>&nbsp;; Assemblée générale sans pouvoir exécutif&nbsp;; Conseil de sécurité <b>paralysé par le veto américain</b>&nbsp;; CPI dépendante de la coopération des États.</li>
+          <li>Le paradoxe&nbsp;: la question la plus «&nbsp;juridiquement encadrée&nbsp;» du monde produit des <b>décisions sans application</b> — colonies en expansion, blocus, violence persistante.</li>
+          <li>Leçon structurelle&nbsp;: le droit international n&rsquo;est pas un mécanisme autonome — c&rsquo;est un outil politique créé par les États, dépendant de leur volonté collective.</li>
+          <li>Contre-épreuve 2025&nbsp;: les <b>sanctions américaines contre la CPI</b> (gel d&rsquo;actifs du procureur et de juges) — la faiblesse du droit exposée par son créateur.</li>
+        </ul></div>
+
+        <h4 class="v">La cartographie des verrous</h4>
+        <p>Chaque institution a son plafond de verre <span class="src">(doc. de travail)</span>&nbsp;: la <b>CIJ</b> dit le droit — ses avis pèsent comme des recommandations (l&rsquo;exécution relève du Conseil de sécurité, là où le veto bloque)&nbsp;; l&rsquo;<b>Assemblée générale</b> vote massivement (ES-10, rés. 2334 confirmée par 124 voix en 2024…) sans bras exécutif&nbsp;; le <b>Conseil de sécurité</b> est le seul à pouvoir sanctionner — et le veto américain y a protégé Israël des décennies durant (plus de quarante vetos, dont plusieurs depuis octobre 2023 sur des cessez-le-feu)&nbsp;; la <b>CPI</b> juge des individus mais n&rsquo;a pas de police — un mandat d&rsquo;arrêt vaut si un État coopère&nbsp;; Israël, les USA et plusieurs alliés ne coopèrent pas — et Washington a sanctionné la Cour elle-même en 2025.</p>
+
+        <h4 class="v">Le paradoxe de la sur-judiciarisation inefficace</h4>
+        <p>Plus le droit est invoqué, moins il change le terrain&nbsp;: l&rsquo;accumulation des procédures est aussi le symptôme d&rsquo;une <b>impasse politique</b> — le forum juridique remplace le forum politique fermé. Ce que la judiciarisation produit malgré tout&nbsp;: une <b>mémoire factuelle</b> d&rsquo;une précision inégalée (les rapports font foi pour l&rsquo;avenir)&nbsp;; une <b>délégitimation</b> progressive (l&rsquo;avis 2024 a déplacé le débat&nbsp;: l&rsquo;occupation n&rsquo;est plus «&nbsp;temporaire&nbsp;», elle est illégale)&nbsp;; et un <b>langage commun</b> — même les adversaires argumentent désormais en droit. Ce que la sur-judiciarisation masque&nbsp;: l&rsquo;absence de rapport de force pour appliquer. Le chapitre 10 (processus de paix) bouclera la boucle&nbsp;: sans levier, pas de paix par les mots.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les verrous sont dans les textes des Chartes&nbsp;; les vetos américains sont décomptés (site ONU)&nbsp;; les sanctions US contre la CPI (2025) sont documentées par décret.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;inefficace&nbsp;» vs «&nbsp;lentement efficace&nbsp;» — l&rsquo;apartheid sud-africain a été démantelé après des décennies de droit et de sanctions&nbsp;; le temps du droit n&rsquo;est pas celui de l&rsquo;urgence&nbsp;; les deux lectures sont défendables.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;le droit international est une imposture occidentale&nbsp;» vs «&nbsp;il est imparfait mais universel&nbsp;» — débat de foi laïque&nbsp;; noter que les deux camps citent Nuremberg, l&rsquo;un comme promesse, l&rsquo;autre comme exception.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Débat cadré&nbsp;: le droit sert-il encore sans moyen de contrainte&nbsp;? Deux arguments pour, deux contre, sourcés.</li>
+            <li>Frise des vetos américains au Conseil de sécurité sur Israël-Palestine — les compter, les contextualiser.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">L&rsquo;instrumentalisation : légitime défense et asymétrie</span><span class="c">Ukraine / Palestine</span></summary>
       <div class="body">
-        <p>Invoquer la légitime défense : oui ou non, et selon quelles conditions ? L&rsquo;asymétrie d&rsquo;application du droit — comparaison avec le traitement de la guerre en Ukraine.</p>
-        <div class="todo"><b>À travailler ici :</b> tableau comparatif Ukraine / Palestine : mêmes principes invoqués, quelles différences de traitement — et par qui.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Art. 51 de la Charte&nbsp;: légitime défense en cas d&rsquo;«&nbsp;attaque armée&nbsp;» — mais la CIJ (avis Mur, 2004) a jugé qu&rsquo;une <b>puissance occupante ne peut pas l&rsquo;invoquer sur le territoire qu&rsquo;elle occupe</b>.</li>
+          <li>L&rsquo;usage systématique de l&rsquo;argument face à un acteur non étatique est une <b>instrumentalisation</b>&nbsp;: le principe est détourné pour légitimer l&rsquo;illégal.</li>
+          <li>Récit symétrique&nbsp;: présenter le 7 octobre comme <b>point de départ</b> efface des décennies d&rsquo;occupation — la sélection de la date est déjà un argument juridique.</li>
+          <li>Asymétrie Ukraine/Palestine&nbsp;: mêmes principes invoqués, effets opposés — mandats, sanctions, accueil des réfugiés pour l&rsquo;un&nbsp;; lenteur, veto, sanctions <i>contre la CPI</i> pour l&rsquo;autre. La gravité n&rsquo;explique pas&nbsp;: la géopolitique explique.</li>
+        </ul></div>
+
+        <h4 class="v">La légitime défense, oui ou non&nbsp;?</h4>
+        <p>L&rsquo;argument israélien est massif politiquement après le 7 octobre — 1 200 tués, 250 otages&nbsp;; et juridiquement borné&nbsp;: l&rsquo;art. 51 suppose une attaque <b>d&rsquo;un État</b> (débat sur les groupes armés)&nbsp;; la CIJ a refusé la lecture israélienne dans l&rsquo;avis Mur (2004, §139)&nbsp;; et surtout, la légitime défense ne justifie <b>aucune</b> méthode — proportionnalité, distinction, précaution s&rsquo;appliquent à chaque frappe, sous n&rsquo;importe quel titre <span class="src">(CIJ 2004&nbsp;; doc. de travail)</span>. La position en défense d&rsquo;Israël existe&nbsp;: le Hamas est une entité de fait gouvernant Gaza (attribuable), l&rsquo;art. 51 s&rsquo;adapte aux menaces non étatiques (pratique UK/USA), et les avis CIJ sont consultatifs — objection sérieuse, jamais majoritaire en doctrine <span class="src">(opinions dissidentes de la Cour&nbsp;; doctrine opposée&nbsp;; doc. de travail)</span>.</p>
+
+        <h4 class="v">Le tableau comparatif — même grammaire, deux régimes</h4>
+        <table>
+          <tr><th>Principe invoqué</th><th>Ukraine (depuis 2022)</th><th>Palestine (depuis 1967/2023)</th></tr>
+          <tr><td>Mandat d&rsquo;arrêt CPI</td><td>Poutine — mars 2023, en quelques mois</td><td>Netanyahou, Gallant — nov. 2024&nbsp;; et sanctions US contre la CPI en riposte</td></tr>
+          <tr><td>Sanctions</td><td>Plusieurs paquets UE, les plus lourds de l&rsquo;histoire</td><td>Quasi aucune&nbsp;; accords préférentiels maintenus</td></tr>
+          <tr><td>Réfugiés</td><td>Protection temporaire immédiate (plusieurs millions)</td><td>Diasporas sans statut&nbsp;; frontières fermées (Égypte, Jordanie, 2024-25)</td></tr>
+          <tr><td>Conseil de sécurité</td><td>Veto russe — mais AG mobilisée, coalition large</td><td>Veto US — isolement diplomatique de la position palestinienne</td></tr>
+          <tr><td>Médias / opinion</td><td>«&nbsp;Résistance héroïque&nbsp;»</td><td>«&nbsp;Conflit compliqué&nbsp;», «&nbsp;des deux côtés&nbsp;»</td></tr>
+        </table>
+        <p>Le constat du doc. de travail est net&nbsp;: l&rsquo;application du droit dépend <b>moins de la gravité des violations que des rapports de force</b>. Trois conditions font fonctionner le droit&nbsp;: <b>cohérence</b> (pas de double standard), <b>crédibilité des sanctions</b>, <b>alignement minimal des puissants</b>. Quand une manque, les décisions restent symboliques — un outil de discours, pas de régulation <span class="src">(doc. de travail)</span>.</p>
+        <div class="pv real"><span class="who">La nuance honnête.</span><span class="these">Les cadres juridiques ne sont pas identiques — l&rsquo;asymétrie s&rsquo;explique, elle ne se justifie pas.</span> L&rsquo;Ukraine est un État reconnu victime d&rsquo;une agression interétatique classique&nbsp;; la Palestine est une question de décolonisation sans État — le droit applicable diffère, et la Russie est membre permanent du Conseil. Mais ces différences <i>structurelles</i> n&rsquo;expliquent pas l&rsquo;écart des <i>réactions</i> — un État sous occupation depuis 59 ans et 20 000 enfants morts n&rsquo;ont pas «&nbsp;besoin&nbsp;» d&rsquo;un autre cadre juridique&nbsp;: ils ont besoin du même.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: l&rsquo;art. 51, l&rsquo;avis Mur §139, les mandats et sanctions (Ukraine), les sanctions US contre la CPI — tout est daté et public.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: si l&rsquo;art. 51 couvre les attaques de groupes non étatiques — doctrine divisée, pratique des puissances oui, CIJ non&nbsp;; l&rsquo;«&nbsp;instrumentalisation&nbsp;» est un jugement porté sur un débat réel.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: comparer Ukraine et Palestine est accusé de hiérarchiser les victimes («&nbsp;les Juifs d&rsquo;abord&nbsp;», «&nbsp;les Noirs jamais&nbsp;» inversés)&nbsp;; la comparaison porte sur les <b>États et leurs réactions</b>, pas sur la valeur des vies — distinction à tenir absolument en classe.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Tableau comparatif Ukraine / Palestine&nbsp;: mêmes principes invoqués, quelles différences de traitement — et par qui.</li>
+            <li>Relever cinq usages médiatiques de «&nbsp;légitime défense&nbsp;»&nbsp;: pour qui l&rsquo;argument est-il invoqué&nbsp;? avec quelles limites citées&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">Animation : les colonies et l&rsquo;avis CIJ 2024</span><span class="c">étude de cas</span></summary>
       <div class="body">
-        <p>Étude de cas guidée : le statut juridique des colonies à la lumière de l&rsquo;avis consultatif de la CIJ de 2024.</p>
-        <div class="todo"><b>À travailler ici :</b> lire un extrait de l&rsquo;avis, en dégager la conclusion juridique, puis ses conséquences pratiques possibles pour les États tiers.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Le cas</b>&nbsp;: l&rsquo;avis consultatif du 19 juillet 2024 — les colonies violent l&rsquo;art. 49(6) de la IV<sup>e</sup> Convention (interdit de transférer sa population civile en territoire occupé).</li>
+          <li><b>La conclusion</b>&nbsp;: illégalité de l&rsquo;occupation elle-même, obligation de démanteler, réparations, et obligations des tiers (séq. 2).</li>
+          <li><b>Le terrain</b>&nbsp;: depuis l&rsquo;avis, la colonisation s&rsquo;est <b>accélérée</b> (Cisjordanie 2024-2026&nbsp;; «&nbsp;E1&nbsp;» relancé&nbsp;; annonces de milliers d&rsquo;unités) — l&rsquo;écart décision/réalité est l&rsquo;objet de l&rsquo;animation.</li>
+          <li><b>La question centrale</b>&nbsp;: que faire d&rsquo;un droit juste sans force&nbsp;? — la réponse n&rsquo;est pas «&nbsp;rien&nbsp;», elle est dans les chapitres 10-11.</li>
+        </ul></div>
+
+        <h4 class="v">Déroulé de l&rsquo;animation</h4>
+        <p><b>1. Lire</b> — extraits choisis de l&rsquo;avis (passages sur l&rsquo;illégalité des colonies et les obligations des tiers)&nbsp;; relever les termes juridiques et les traduire en langage clair. <b>2. Cartographier</b> — cartes ou photos satellites de la colonisation avant/après 2024 (Peace Now, B&rsquo;Tselem Conquer and Divide)&nbsp;; mesurer l&rsquo;évolution des blocs, de la route 60 à «&nbsp;E1&nbsp;». <b>3. Analyser</b> — quels principes violés (49(6), droit à l&rsquo;autodétermination, interdiction de l&rsquo;annexion)&nbsp;; quelles obligations pour les tiers (séq. 2). <b>4. Discuter</b> — pourquoi l&rsquo;avis ne change-t-il pas le terrain&nbsp;? Quels obstacles (veto, économie, sécurité, opinion)&nbsp;; comment les États tiers se sont-ils comportés <i>depuis</i>&nbsp;— la réponse est la leçon du chapitre.</p>
+
+        <h4 class="v">Ce que l&rsquo;étude de cas enseigne</h4>
+        <p>La colonisation est le cas d&rsquo;école de l&rsquo;écart droit/réalité&nbsp;: illégale depuis 1967 (rés. 242), confirmée illégale en 2004, 2024 et par le Conseil de sécurité lui-même (2334, 2016 — non veto) — et passée de ~250 000 colons (1993) à ~700 000+ aujourd&rsquo;hui (Cisjordanie + Jérusalem-Est)&nbsp;: le droit parle, le terrain accélère <span class="src">(doc. de travail&nbsp;; Peace Now)</span>. La sur-judiciarisation sans levier produit ce résultat paradoxal&nbsp;: plus les avis s&rsquo;accumulent, plus l&rsquo;annexion de fait avance — car l&rsquo;absence de coût rend le droit gratuit à violer. C&rsquo;est la définition même du chapitre&nbsp;: <b>instrumentalisation</b> — par ceux qui détournent le droit pour se légitimer, et par ceux qui l&rsquo;invoquent pour se dispenser d&rsquo;agir.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: le texte de l&rsquo;avis 186, les chiffres de colonisation (Peace Now, B&rsquo;Tselem), la relance «&nbsp;E1&nbsp;» — tout est documenté, y compris par les sources israéliennes.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: l&rsquo;avis 2024 dit-il «&nbsp;retrait immédiat&nbsp;» ou «&nbsp;fin de l&rsquo;occupation dans les plus brefs délais&nbsp;» — la Cour a calibré&nbsp;; chaque camp lit le calendrier à sa façon.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: la doctrine juive de Judée-Samarie (territoire hérité, mandat non valide, présence antérieure) — récit religieux-historique sincère, opposé à la ligne onusienne continue&nbsp;; le cours note la contradiction, ne tranche pas la foi, constate le droit.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Lire un extrait de l&rsquo;avis, en dégager la conclusion juridique, puis ses conséquences pratiques possibles pour les États tiers.</li>
+            <li>Comparer deux cartes (2024 / 2026) des colonies&nbsp;: mesurer l&rsquo;écart et écrire dix lignes&nbsp;: «&nbsp;pourquoi le droit n&rsquo;a-t-il pas arrêté ça&nbsp;?&nbsp;»</li>
+            <li>Vers le chap. 8&nbsp;: comment les médias ont-ils couvert l&rsquo;avis 2024 — titre par titre, pays par pays.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
@@ -134,11 +290,11 @@
 
       <p class="srcs"><b>DIH et responsabilité des États —</b> <a href="https://ihl-databases.icrc.org/en/ihl-treaties/api-1977">Conventions de Genève et Protocole additionnel I</a> (CICR)&nbsp;: distinction, proportionnalité, précaution, interdiction des représailles &nbsp;· <a href="https://docs.un.org/fr/A/RES/56/83">Articles de la CDI sur la responsabilité des États (2001)</a> — non-reconnaissance de l&rsquo;illicite.</p>
 
-      <p class="srcs"><b>Jurisprudences et saisines —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> (2004) &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> (19/07/2024) &nbsp;· <a href="https://www.icj-cij.org/case/192">affaire 192</a> (génocide, en cours) &nbsp;· <a href="https://www.icj-cij.org/case/196">affaire 196</a> (22/10/2025, ONU et UNRWA) &nbsp;· <a href="https://www.icc-cpi.int/palestine">CPI — situation «&nbsp;État de Palestine&nbsp;»</a>.</p>
+      <p class="srcs"><b>Jurisprudences et saisines —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> (2004&nbsp;; §139 légitime défense, §155-159 obligations des tiers) &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> (19/07/2024) &nbsp;· <a href="https://www.icj-cij.org/case/192">affaire 192</a> (génocide, en cours) &nbsp;· <a href="https://www.icj-cij.org/case/196">affaire 196</a> (22/10/2025, ONU et UNRWA) &nbsp;· <a href="https://www.icc-cpi.int/palestine">CPI — situation «&nbsp;État de Palestine&nbsp;»</a>.</p>
 
       <p class="srcs"><b>Résolutions —</b> <a href="https://docs.un.org/fr/A/RES/2334">A/RES/2334</a> colonisation (2016) &nbsp;· <a href="https://docs.un.org/fr/S/RES/242(1967)">S/RES/242(1967)</a> retrait des territoires (1967).</p>
 
-      
+      <p class="srcs"><b>Asymétrie et sanctions —</b> Mandat CPI Poutine (17/03/2023)&nbsp;; paquets de sanctions UE Russie (2022-2026)&nbsp;; directive de protection temporaire 2011/55/UE (activée 2022) — à comparer avec le statut des réfugiés palestiniens &nbsp;· Sanctions américaines contre la CPI (décrets 2025, gel d&rsquo;actifs du procureur et de juges) &nbsp;· Décompte des vetos US&nbsp;: site «&nbsp;UN Security Council Vetoes&nbsp;» &nbsp;· Pierre d&rsquo;Argent (UCLouvain), interviews 2024-2025 sur le double standard.</p>
     </div>
 
     <div class="foot">Chapitre 7 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
