@@ -34,6 +34,10 @@
     box-shadow:0 6px 18px rgba(0,0,0,.25);transition:transform .12s ease, box-shadow .12s ease;
   }
   .cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.3);}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:22px;}
+  .cta-row .cta-btn{margin-top:0;}
+  .cta-btn.secondary{background:rgba(255,255,255,.08);color:var(--white);border:2px solid rgba(255,255,255,.85);box-shadow:none;}
+  .cta-btn.secondary:hover{background:rgba(255,255,255,.22);}
   .hero .invite-link{font-size:.85rem;opacity:.9;margin-top:12px;word-break:break-all;}
 
   /* ---------- Section / step layout ---------- */
@@ -117,7 +121,10 @@
   <div class="logo">💬</div>
   <h1>Rejoindre le serveur Discord «&nbsp;GT - Conflits internationaux&nbsp;»</h1>
   <p>Guide pas-à-pas pour débutants&nbsp;: installer Discord, créer un compte et rejoindre le serveur en 5&nbsp;petites étapes.</p>
-  <a class="cta-btn" href="https://discord.gg/XhN5PXSF6" target="_blank" rel="noopener">Clique ici pour rejoindre le serveur ➜</a>
+  <div class="cta-row">
+    <a class="cta-btn" href="https://discord.gg/XhN5PXSF6" target="_blank" rel="noopener">Clique ici pour rejoindre le serveur ➜</a>
+    <a class="cta-btn secondary" href="https://discord.com/download" target="_blank" rel="noopener">⬇️&nbsp;Télécharger Discord</a>
+  </div>
   <div>
     <span class="pill">Gratuit</span>
     <span class="pill">PC &amp; téléphone</span>
@@ -205,7 +212,10 @@
     <div class="join-box">
       <div class="server-name">🎉 GT - Conflits internationaux</div>
       <p>Rejoindre la communauté en un clic&nbsp;:</p>
-      <a class="cta-btn" href="https://discord.gg/XhN5PXSF6" target="_blank" rel="noopener">Rejoindre le serveur ➜</a>
+      <div class="cta-row">
+        <a class="cta-btn" href="https://discord.gg/XhN5PXSF6" target="_blank" rel="noopener">Rejoindre le serveur ➜</a>
+        <a class="cta-btn secondary" href="https://discord.com/download" target="_blank" rel="noopener">⬇️&nbsp;Télécharger Discord</a>
+      </div>
       <div class="copy-link">Lien : https://discord.gg/XhN5PXSF6</div>
     </div>
 
