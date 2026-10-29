@@ -56,6 +56,29 @@
   .srcs a{color:var(--accent);text-decoration:none}
   .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  .acc .body h4.v{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin:20px 0 6px;font-weight:700}
+  .acc .body .pv{border-left:3px solid var(--border);padding:2px 0 2px 14px;margin:12px 0}
+  .acc .body .pv.off{border-color:var(--brand)}
+  .acc .body .pv.real{border-color:var(--faint)}
+  .acc .body .who{font-weight:700;color:var(--ink)}
+  .acc .body ul{margin:6px 0 6px 20px;padding:0}
+  .acc .body li{margin:5px 0}
+  .acc .body .src{color:var(--faint);font-size:12.5px}
+  .acc .body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  .acc .body th{color:var(--ink);font-weight:700;text-align:left;border-bottom:1px solid var(--border);padding:6px 8px}
+  .acc .body td{border-bottom:1px solid var(--border);padding:6px 8px;color:var(--muted);vertical-align:top}
+  .essentiel{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel-2);border-radius:0 10px 10px 0;padding:12px 14px;margin:2px 0 16px}
+  .essentiel .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:6px}
+  .essentiel ul{margin:0;padding-left:18px}
+  .essentiel li{margin:4px 0;font-size:14px;color:var(--ink)}
+  .pv .these{display:block;color:var(--ink);font-weight:600;font-size:14.5px;margin:5px 0 7px}
+  .etages{display:grid;gap:8px;margin:8px 0}
+  .etage{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel)}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:1px}
+  .t-ok{background:rgba(95,179,128,.15);color:var(--good);border:1px solid rgba(95,179,128,.4)}
+  .t-int{background:rgba(224,164,88,.15);color:var(--brand);border:1px solid rgba(224,164,88,.4)}
+  .t-dis{background:rgba(154,168,182,.12);color:var(--muted);border:1px solid var(--border)}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--brand-2);background:var(--panel-2);border-radius:0 9px 9px 0;color:var(--ink);font-size:14px}
 </style>
 </head>
 <body>
@@ -81,39 +104,155 @@
       <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
     </div></div>
 
-    <p class="lead"><b>Objectif :</b> interroger le pouvoir des mots et la qualification juridique du conflit.</p>
+    <p class="lead"><b>Objectif :</b> interroger le pouvoir des mots — «&nbsp;terroriste&nbsp;», «&nbsp;conflit&nbsp;», «&nbsp;otage&nbsp;» — et la qualification juridique de la situation : de quoi parle-t-on quand on parle, et pourquoi ce choix n&rsquo;est jamais neutre.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
     <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">L&rsquo;importance des mots</span><span class="c">sémantique</span></summary>
       <div class="body">
-        <p>Le mot « terroriste » et son usage politique ; les limites du mot « conflit » pour décrire une situation d&rsquo;occupation. Choisir ses mots, c&rsquo;est déjà choisir une grille de lecture.</p>
-        <div class="todo"><b>À travailler ici :</b> relever cinq titres de presse réels : pour chacun, quel mot cadre le récit ? Le remplacer et observer ce qui change.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>«&nbsp;Terroriste&nbsp;», «&nbsp;conflit&nbsp;», «&nbsp;guerre&nbsp;», «&nbsp;otage&nbsp;» ne sont jamais neutres&nbsp;: ils trient la sympathie, désignent les coupables et ferment ou ouvrent des solutions.</li>
+          <li>«&nbsp;Terroriste&nbsp;» n&rsquo;a <b>pas de définition en droit international</b> — les listes (UE, USA, Israël) sont des outils politiques&nbsp;; l&rsquo;ANC de Mandela en est le précédent&nbsp;: longtemps «&nbsp;terroriste&nbsp;», devenu partenaire de sortie du conflit.</li>
+          <li>«&nbsp;Conflit&nbsp;» suggère deux acteurs symétriques&nbsp;; la réalité documentée est un <b>système durable</b> d&rsquo;occupation, d&rsquo;annexion, de colonisation — et d&rsquo;apartheid pour plusieurs ONG et rapporteurs.</li>
+          <li>Clé de lecture&nbsp;: <b>qui utilise ce mot, pourquoi, et quel effet cela produit&nbsp;?</b></li>
+        </ul></div>
+
+        <h4 class="v">« Terroriste » : un mot sans définition, donc un levier</h4>
+        <p>Le terme n&rsquo;est défini par aucune convention internationale générale — chaque État et organisation compose sa liste, ses critères, ses exceptions (les armes d&rsquo;État n&rsquo;y figurent jamais). Désigner le Hamas «&nbsp;terroriste&nbsp;» évacue la <b>dimension politique</b> de ses actions et de sa base électorale palestinienne&nbsp;; or un processus de paix suppose de parler à tous les acteurs — l&rsquo;histoire l&rsquo;a montré avec l&rsquo;ANC sud-africaine, retirée des listes quand la négociation est devenue possible <span class="src">(doc. de travail)</span>. Symétriquement&nbsp;: selon les mêmes critères (cibler des civils pour effet politique — la définition proposée par Pascal Boniface), des groupes armés <b>sionistes</b> (Irgoun, Lehi) avant 1948, et certains actes des appareils israéliens ensuite, tombent dans la qualification — ce qui ne «&nbsp;terrorise&nbsp;» pas pour autant l&rsquo;État d&rsquo;Israël dans son ensemble, mais rappelle que l&rsquo;étiquette exclusive est un choix de récit, pas un fait <span class="src">(doc. de travail)</span>.</p>
+
+        <h4 class="v">« Conflit » : le mot qui égalise</h4>
+        <p>Juridiquement, on parle bien de «&nbsp;conflit armé&nbsp;» — mais le mot courant laisse entendre deux forces comparables qui s&rsquo;affrontent à égalité. La situation documentée est autre&nbsp;: un acteur exerce un <b>pouvoir continu</b> sur un autre (territoire, économie, registres de population, ciel et mer), dans un système d&rsquo;occupation, d&rsquo;annexion et de colonisation. La violence périodique — bombardements, attentats, opérations — n&rsquo;est alors que <b>l&rsquo;expression visible</b> d&rsquo;une structure de domination, pas le cœur du problème <span class="src">(doc. de travail)</span>. D&rsquo;où les qualifications concurrentes («&nbsp;apartheid&nbsp;» selon HRW, B&rsquo;Tselem, Amnesty — voir chap. 7) et le débat sur le mot même, qui est déjà un débat politique.</p>
+
+        <div class="pv off"><span class="who">Encart — la responsabilité citoyenne des mots.</span><span class="these">Le langage n&rsquo;est pas l&rsquo;affaire des seuls États et médias&nbsp;: nos mots, à distance, polarisent ou apaisent.</span> Choisir ses mots avec précision — «&nbsp;otage&nbsp;» et «&nbsp;prisonnier&nbsp;» ne disent pas la même chose, «&nbsp;morts&nbsp;» sans distinction d&rsquo;âge efface les enfants — et développer une <b>empathie critique</b>&nbsp;: comprendre le récit de l&rsquo;autre sans approuver ses actions <span class="src">(doc. de travail)</span>. C&rsquo;est le fil rouge des chapitres 5 et 8.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: l&rsquo;absence de définition conventionnelle du terrorisme&nbsp;; l&rsquo;existence des listes UE/USA/Israël et de leurs revirements (ANC retirée des listes US en 2008)&nbsp;; les définitions proposées (Boniface, ONU) — tout est vérifiable.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: qualifier tel acte précis de «&nbsp;terrorisme&nbsp;» — application au cas par cas, toujours disputée&nbsp;; le mot «&nbsp;apartheid&nbsp;» comme qualification juridique ou comme polémique — débat vif (voir chap. 7).</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;terroriste&nbsp;» comme réalité essentielle du Hamas vs «&nbsp;l&rsquo;étiquette ferme la porte à la paix&nbsp;» — les deux positions ont des arguments&nbsp;; le doc. de travail choisit la seconde comme <b>méthode</b>, pas comme absolution.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Relever cinq titres de presse réels&nbsp;: pour chacun, quel mot cadre le récit&nbsp;? Le remplacer et observer ce qui change.</li>
+            <li>Définir «&nbsp;terrorisme&nbsp;» à partir de Boniface, puis qualifier trois actes historiques (un par camp) — justifier chaque choix, assumer les malaises.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Récit et propagande : les 10 règles</span><span class="c">Morelli</span></summary>
       <div class="body">
-        <p>Les 10 règles de la propagande en temps de guerre (Anne Morelli), appliquées comme grille d&rsquo;analyse des récits dominants.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>associer chaque règle à un exemple concret tiré de la presse ou des réseaux sociaux.</li><li>en trouver un exemple par camp.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Les récits ne commentent pas la guerre&nbsp;: ils la <b>conditionnent</b> — ils fabriquent le consentement.</li>
+          <li>Les 10 règles d&rsquo;Anne Morelli (2001) forment une grille transposable&nbsp;: chaque camp, chaque État, s&rsquo;y reconnaît à peu de frais.</li>
+          <li>Le précédent pédagogique&nbsp;: le <b>canular des couveuses</b> du Koweït (oct. 1990) — faux témoignage «&nbsp;irakien&nbsp;» repris par Amnesty et par le Congrès US&nbsp;: la propagande n&rsquo;est pas un accident, c&rsquo;est une industrie.</li>
+        </ul></div>
+
+        <blockquote>«&nbsp;En temps de guerre, les ponts sont les premières choses qui sont détruites afin de construire des murs à la place. Dans ce conflit, le plus gros enjeu, c&rsquo;est précisément de maintenir ces liens entre les deux peuples.&nbsp;» <span class="src">Delphine Horvilleur (doc. de travail)</span></blockquote>
+
+        <h4 class="v">La grille — et son mode d&rsquo;emploi honnête</h4>
+        <table>
+          <tr><th>#</th><th>Règle (Morelli)</th><th>Test sur le cas</th></tr>
+          <tr><td>1</td><td>Nous ne voulons pas la guerre</td><td>Chaque camp se dit en guerre défensive&nbsp;: riposte au 7-Oct vs riposte à l&rsquo;occupation — les deux «&nbsp;défensives&nbsp;» se nourrissent.</td></tr>
+          <tr><td>2</td><td>L&rsquo;ennemi est seul responsable</td><td>«&nbsp;Tout vient du Hamas&nbsp;» vs «&nbsp;tout vient d&rsquo;Israël&nbsp;» — chaque lecture monocamp est une règle n°2 en action.</td></tr>
+          <tr><td>3</td><td>L&rsquo;ennemi est méchant et cruel</td><td>«&nbsp;Barbares&nbsp;», «&nbsp;terrorisés&nbsp;», déshumanisation par images — des deux côtés, systématiquement.</td></tr>
+          <tr><td>4</td><td>Nous ne faisons pas de victimes civiles</td><td>Frappes «&nbsp;chirurgicales&nbsp;» vs «&nbsp;dommages collatéraux&nbsp;»&nbsp;; les morts civils de «&nbsp;notre&nbsp;» camp sont des victimes, ceux d&rsquo;en face des statistiques.</td></tr>
+          <tr><td>5</td><td>L&rsquo;ennemi utilise des armes interdites</td><td>Boucliers humains, phosphore blanc… — vérifier chaque accusation&nbsp;: certaines sont documentées, d&rsquo;autres sont des rumeurs.</td></tr>
+          <tr><td>6</td><td>Nous souffrons peu, l&rsquo;ennemi souffre énormément</td><td>Chaque camp hiérarchise les souffrances — la balance des morts est un champ de bataille narratif (voir chap. 8).</td></tr>
+          <tr><td>7</td><td>Ce que l&rsquo;ennemi dit est propagande</td><td>Le témoignage palestinien de Gaza est «&nbsp;du Hamas&nbsp;», le porte-parole israélien est «&nbsp;de la propagande&nbsp;» — pré-réflexe symétrique.</td></tr>
+          <tr><td>8</td><td>Nous avons un but juste</td><td>Sécurité / autodétermination&nbsp;: deux buts nobles instrumentalisés en fins absolues.</td></tr>
+          <tr><td>9</td><td>La culture soutient notre cause</td><td>Concours, hymnes, films, expositions — chaque camp mobilise ses créateurs.</td></tr>
+          <tr><td>10</td><td>Douter, c&rsquo;est trahir</td><td>Accusations croisées d&rsquo;antisémitisme / de soutien au terrorisme contre les dissidents internes — effet refroidissant documenté sur les campus (voir chap. 8).</td></tr>
+        </table>
+        <p><b>Mode d&rsquo;emploi&nbsp;:</b> la grille n&rsquo;est pas une machine à innocenter&nbsp;— elle n&rsquo;efface pas le 7 octobre ni les faits documentés sur Gaza. Elle sert à repérer <b>les mécanismes de fabrique du consentement</b>, des deux côtés, pour désarmer nos propres réflexes. Le canular des couveuses (Nayirah, oct. 1990&nbsp;— témoignage fabriqué repris par AP puis Amnesty, rétracté en 1991) reste la leçon fondatrice&nbsp;: même les vigilants se font prendre <span class="src">(doc. de travail&nbsp;; Notes)</span>.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les 10 règles de Morelli (ouvrage publié, 2001)&nbsp;; le canular des couveuses et ses rétractations — documentés dans le détail.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: la grille est une heuristique, pas une loi&nbsp;: toutes les situations ne relèvent pas de la propagande — un témoignage vrai peut sembler «&nbsp;règle 3&nbsp;» inverse&nbsp;; l&rsquo;usage symétrique est un outil, pas un verdict de fausseté.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;tout est propagande&nbsp;» est lui-même une position disputée — le négationnisme des faits établis (7-Oct, Gaza) se cache parfois derrière la suspicion généralisée&nbsp;; distinguer mécanismes et faits.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Associer chaque règle à un exemple concret tiré de la presse ou des réseaux sociaux&nbsp;; en trouver un exemple <b>par camp</b>.</li>
+            <li>Étudier le canular des couveuses de bout en bout&nbsp;: qui, comment, pourquoi ça a marché — et ce qui l&rsquo;a démonté.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">La qualification juridique</span><span class="c">CAI · CANI</span></summary>
       <div class="body">
-        <p>Conflit armé international (CAI), conflit armé non international (CANI), autres catégories (notamment le classement UCDP) : de quoi le droit parle-t-il quand il qualifie une situation ?</p>
-        <div class="todo"><b>À travailler ici :</b> mini-exercice : à partir de définitions, qualifier trois situations différentes — et justifier chaque choix.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Qualifier une situation en droit, ce n&rsquo;est pas étiqueter&nbsp;: c&rsquo;est <b>activer des protections</b> (Conventions de Genève) et des obligations.</li>
+          <li>Le DIH distingue deux cadres&nbsp;: <b>CAI</b> (entre États — ex. Inde/Pakistan au Cachemire) et <b>CANI</b> (État contre groupes armés — ex. Turquie/PKK).</li>
+          <li>L&rsquo;UCDP affine&nbsp;: conflits <i>intraétatiques avec intervention étrangère</i> (la «&nbsp;guerre contre le terrorisme&nbsp;» depuis 2001), conflits non étatiques, violences unilatérales (Rohingya).</li>
+          <li>2024&nbsp;: l&rsquo;UCDP recense <b>61 conflits étatiques</b> — record, deuxième année consécutive.</li>
+        </ul></div>
+
+        <h4 class="v">Pourquoi qualifier ?</h4>
+        <p>Le droit international humanitaire — les quatre Conventions de Genève (ratifiées universellement) et leurs Protocoles — encadre la <b>conduite des hostilités</b>&nbsp;: protection des civils, des blessés, des prisonniers&nbsp;; distinction, proportionnalité, précaution. La classification déclenche le régime applicable&nbsp;: CAI (interétatique) ou CANI (intraétatique). Un même acte — frapper une école, déplacer une population — n&rsquo;a pas le même régime juridique selon la qualification de la situation <span class="src">(doc. de travail)</span>.</p>
+
+        <h4 class="v">Les catégories au-delà du DIH</h4>
+        <ul>
+          <li><b>Intraétatique avec intervention étrangère</b>&nbsp;: un gouvernement contre des groupes armés, avec troupes étrangères actives aux côtés d&rsquo;une partie — la «&nbsp;guerre contre le terrorisme&nbsp;» (Afghanistan, Irak, Syrie, Yémen depuis 2001) en est le cas d&rsquo;école.</li>
+          <li><b>Conflits non étatiques</b>&nbsp;: groupes armés organisés entre eux, sans gouvernement en face — la Somalie en compte des dizaines.</li>
+          <li><b>Violences unilatérales</b>&nbsp;: violence armée d&rsquo;un gouvernement ou groupe organisé <i>contre des civils</i> — les Rohingya en Birmanie.</li>
+        </ul>
+        <p>Ces catégories montrent les <b>limites du cadre</b>&nbsp;: les États invoquent la légitime défense pour frapper un groupe non étatique sur le territoire d&rsquo;un autre État — lecture très controversée, la majorité des juristes réservant l&rsquo;art. 51 de la Charte aux attaques <i>entre États</i> <span class="src">(doc. de travail)</span>. C&rsquo;est exactement le terrain du débat après le 7 octobre&nbsp;: Israël invoque la légitime défense contre le Hamas à Gaza — la communauté internationale débat, notamment de la <b>proportionnalité</b>, qui borne même une défense légitime.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les textes (Genève 1949, PA I 1977), la distinction CAI/CANI, la typologie UCDP et son chiffre 2024 (61 conflits étatiques) — tout est sourcé et public.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: la légitime défense contre un groupe non étatique (art. 51 «&nbsp;effectiveness&nbsp;») — doctrine minoritaire vs pratique des puissances&nbsp;; le débat est ouvert en doctrine, pas clos par les votes.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: la proportionnalité de la campagne de Gaza — qualifiée d&rsquo;«&nbsp;excessive&nbsp;» par des rapporteurs ONU et des juristes, «&nbsp;légitime et mesurée&nbsp;» par Israël et ses alliés&nbsp;; les faits (bilans, destructions) sont documentés, leur qualification juridique n&rsquo;est pas encore tranchée.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Mini-exercice&nbsp;: à partir des définitions, qualifier trois situations (Cachemire, Turquie/PKK, Somalie) — et justifier chaque choix.</li>
+            <li>Débat cadré&nbsp;: «&nbsp;Un État peut-il se défendre légitimement contre un groupe non étatique&nbsp;?&nbsp;» — deux notes contradictoires, une synthèse.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Application au cas : ONU, occupation, CIJ</span><span class="c">résolutions · avis</span></summary>
       <div class="body">
-        <p>La qualification par l&rsquo;ONU, la notion d&rsquo;occupation et ses qualifications juridiques — résolutions, avis consultatifs de la CIJ de 2004 et de 2024.</p>
-        <div class="todo"><b>À travailler ici :</b> lecture guidée d&rsquo;un extrait d&rsquo;avis de la CIJ : relever les termes juridiques et les traduire en langage clair.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>L&rsquo;ONU tranche&nbsp;: la situation est un <b>conflit armé international</b> — Israël, puissance occupante, face à la Palestine, en raison de l&rsquo;occupation depuis 1967.</li>
+          <li>Quatorze résolutions du Conseil de sécurité (242 → 2334) constatent l&rsquo;illégalité de l&rsquo;occupation et des colonies&nbsp;; la CIJ deux fois&nbsp;: avis «&nbsp;Mur&nbsp;» (2004), avis «&nbsp;Occupations&nbsp;» (19 juillet 2024).</li>
+          <li>L&rsquo;avis 2024 confirme que <b>Gaza reste occupée</b> malgré le retrait de 2005&nbsp;: le contrôle effectif — ciel, mer, blocus, registres — suffit en droit.</li>
+          <li>Conséquence pratique&nbsp;: le DIH s&rsquo;applique intégralement, les Conventions de Genève protègent la population occupée — chaque qualification a un <b>effet juridique</b>, pas seulement rhétorique.</li>
+        </ul></div>
+
+        <h4 class="v">La ligne onusienne, d&rsquo;un seul tenant</h4>
+        <p>De la rés. 242 (1967) à la rés. 2334 (2016), le Conseil de sécurité n&rsquo;a cessé de qualifier les territoires conquis d&rsquo;«&nbsp;occupés&nbsp;» et les colonies d&rsquo;«&nbsp;illégales&nbsp;» — liste complète au doc. de travail (242, 338, 446, 452, 465, 476, 478, 605, 608, 1322, 1402, 1435, 1544, 2334) <span class="src">(doc. de travail&nbsp;; UNISPAL)</span>. La régularité du geste compte&nbsp;: ce n&rsquo;est pas une résolution isolée, c&rsquo;est une <b>ligne continue</b> que seule la menace du veto américain a maintenue sans suite politique.</p>
+
+        <h4 class="v">La CIJ : deux avis, une doctrine</h4>
+        <p><b>Avis «&nbsp;Mur&nbsp;» (9 juil. 2004, affaire 143)</b>&nbsp;: la construction du mur en Cisjordanie — dont le tracé absorbe des blocs de colonies — est contraire au droit international&nbsp;; l&rsquo;obligation de le déconstruire et de réparer. <b>Avis «&nbsp;Effets juridiques des politiques et pratiques israéliennes dans les territoires palestiniens&nbsp;» (19 juil. 2024, affaire 186)</b>&nbsp;: l&rsquo;occupation est illégale, les colonies doivent cesser et être démantelées, les ressources du territoire ne peuvent être exploitées — et <b>Gaza demeure occupée</b>&nbsp;: malgré le retrait de 2005, Israël garde un contrôle effectif (blocus terrestre, aérien, maritime, registres) <span class="src">(avis CIJ&nbsp;; doc. de travail)</span>. Les deux avis sont <i>consultatifs</i>&nbsp;: autorité juridique maximale, exécution nulle — la fracture entre le droit et sa force est le sujet du chapitre 7.</p>
+        <div class="pv real"><span class="who">Le pas de côté final — les mots comme protection.</span><span class="these">Nommer correctement n&rsquo;est pas un luxe sémantique&nbsp;: c&rsquo;est ce qui déclenche les obligations.</span> Dire «&nbsp;population occupée&nbsp;» active Genève&nbsp;; dire «&nbsp;réfugiés&nbsp;» active la rés. 194&nbsp;; dire «&nbsp;colonies&nbsp;» (4<sup>e</sup> Convention, art. 49) active une interdiction. À l&rsquo;inverse, «&nbsp;conflit&nbsp;» sans qualificatif et «&nbsp;des deux côtés&nbsp;» désactivent tout. Le chapitre 5 se referme sur sa consigne d&rsquo;ouverture&nbsp;: <b>qui utilise ce mot, pourquoi, et quel effet cela produit&nbsp;?</b> — appliquée à chaque titre, chaque communiqué, chaque discours — y compris aux nôtres.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les quatorze résolutions citées existent, les deux avis CIJ existent et sont publics&nbsp;; leur contenu est lisible en ligne — aucun résumé de seconde main n&rsquo;est nécessaire.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: la portée exacte de l&rsquo;avis 2024 (retrait «&nbsp;immédiat&nbsp;»? obligations des tiers? autodétermination opposable?) — les juristes débattent de chaque alinéa&nbsp;; Israël et les USA contestent la compétence de la Cour — argument à connaître et à présenter.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;territoires contestés&nbsp;» vs «&nbsp;territoires occupés&nbsp;» — le choix du mot est lui-même la position politique&nbsp;; la doctrine israélienne du «&nbsp;dispute&nbsp;» (territoires sans souverain légitime avant 1967, la Jordanie n&rsquo;ayant pas été reconnue) est documentée et réfutée par la CIJ — les deux thèses se discutent, une seule a été retenue par la Cour.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Lecture guidée d&rsquo;un extrait de l&rsquo;avis CIJ 2024&nbsp;: relever les termes juridiques et les traduire en langage clair.</li>
+            <li>Carte heuristique «&nbsp;un mot, une obligation&nbsp;»&nbsp;: occupé / colonie / réfugié / annexion — pour chaque mot, quelle règle se déclenche&nbsp;?</li>
+            <li>Comparer la couverture médiatique des avis 2004 et 2024 — un même fait, deux réceptions (transition vers le chap. 8).</li>
+          </ul>
+        </div>
       </div>
     </details>
 
@@ -123,13 +262,13 @@
 
       <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/1Qzxh_CnXYt0juWz44cj8nuW06dOCNOn-/view">&laquo;&nbsp;5. Qualification et utilisation du mot conflit.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
 
-      <p class="srcs"><b>Droit international humanitaire —</b> <a href="https://ihl-databases.icrc.org/en/ihl-treaties/api-1977">Conventions de Genève et Protocole additionnel I (1977)</a> — base de données du CICR (distinction conflits armés internationaux / non internationaux) &nbsp;· <a href="https://ucdp.uu.se/">UCDP</a>, typologie des conflits armés.</p>
+      <p class="srcs"><b>Droit international humanitaire —</b> <a href="https://ihl-databases.icrc.org/en/ihl-treaties/api-1977">Conventions de Genève et Protocole additionnel I (1977)</a> — base de données du CICR (distinction conflits armés internationaux / non internationaux) &nbsp;· <a href="https://ucdp.uu.se/">UCDP</a>, typologie des conflits armés (61 conflits étatiques recensés en 2024) &nbsp;· Pascal Boniface, <i>Géopolitique du terrorisme</i> (Armand Colin) — définition opérationnelle.</p>
 
-      <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> — avis «&nbsp;Mur&nbsp;» (2004) &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> — avis du 19 juillet 2024.</p>
+      <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> — avis «&nbsp;Mur&nbsp;» (2004) &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> — avis du 19 juillet 2024 (illégalité de l&rsquo;occupation&nbsp;; Gaza reste occupée) &nbsp;· résolutions du Conseil de sécurité 242 (1967), 338 (1973), 446, 452, 465, 476, 478, 605, 608, 1322, 1402, 1435, 1544, <a href="https://docs.un.org/fr/A/RES/2334">2334 (2016)</a> — textes via UNISPAL/docs.un.org.</p>
 
-      <p class="srcs"><b>Propagande —</b> Anne Morelli, <i>Les Principes élémentaires de propagande de guerre</i> (2001) &nbsp;· précédent documenté&nbsp;: le canular des couveuses du Koweït (AP, octobre 1990), rétracté par Amnesty en 1991.</p>
+      <p class="srcs"><b>Propagande —</b> Anne Morelli, <i>Les Principes élémentaires de propagande de guerre</i> (Éd. complexes, 2001) &nbsp;· précédent documenté&nbsp;: le canular des couveuses du Koweït (AP, octobre 1990), rétracté par Amnesty en 1991 &nbsp;· Delphine Horvilleur, interviews 2023-2024 sur le «&nbsp;maintien des liens&nbsp;».</p>
 
-      
+      <p class="srcs"><b>Qualifications concurrentes —</b> HRW, <i>A Threshold Crossing</i> (2021)&nbsp;; B&rsquo;Tselem (2021)&nbsp;; Amnesty, <i>Israel&rsquo;s apartheid against Palestinians</i> (2022) — les trois rapports «&nbsp;apartheid&nbsp;», à lire avec leurs réponses officielles israéliennes &nbsp;· Rapporteuse spéciale de l&rsquo;ONU Francesca Albanese (rapports 2024-2025) — pour la qualification «&nbsp;apartheid&nbsp;» saisie à l&rsquo;ONU.</p>
     </div>
 
     <div class="foot">Chapitre 5 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
