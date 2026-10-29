@@ -56,6 +56,26 @@
   .srcs a{color:var(--accent);text-decoration:none}
   .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  .acc .body h4.v{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin:20px 0 6px;font-weight:700}
+  .acc .body .pv{border-left:3px solid var(--border);padding:2px 0 2px 14px;margin:12px 0}
+  .acc .body .who{font-weight:700;color:var(--ink)}
+  .acc .body ul{margin:6px 0 6px 20px;padding:0}
+  .acc .body li{margin:5px 0}
+  .acc .body .src{color:var(--faint);font-size:12.5px}
+  .acc .body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  .acc .body th{color:var(--ink);font-weight:700;text-align:left;border-bottom:1px solid var(--border);padding:6px 8px}
+  .acc .body td{border-bottom:1px solid var(--border);padding:6px 8px;color:var(--muted);vertical-align:top}
+  .essentiel{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel-2);border-radius:0 10px 10px 0;padding:12px 14px;margin:2px 0 16px}
+  .essentiel .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:6px}
+  .essentiel ul{margin:0;padding-left:18px}
+  .essentiel li{margin:4px 0;font-size:14px;color:var(--ink)}
+  .pv .these{display:block;color:var(--ink);font-weight:600;font-size:14.5px;margin:5px 0 7px}
+  .etages{display:grid;gap:8px;margin:8px 0}
+  .etage{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel)}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:1px}
+  .t-ok{background:rgba(95,179,128,.15);color:var(--good);border:1px solid rgba(95,179,128,.4)}
+  .t-int{background:rgba(224,164,88,.15);color:var(--brand);border:1px solid rgba(224,164,88,.4)}
+  .t-dis{background:rgba(154,168,182,.12);color:var(--muted);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -82,47 +102,159 @@
       <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
     </div></div>
 
-    <p class="lead"><b>Objectif :</b> relier le conflit à la Belgique et ouvrir sur l&rsquo;engagement citoyen concret.</p>
+    <p class="lead"><b>Objectif :</b> relier le conflit à la Belgique et ouvrir sur l&rsquo;engagement citoyen concret — la paix comme concept, la Belgique comme actrice, l&rsquo;action comme choix.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
     <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">C&rsquo;est quoi la paix&nbsp;?</span><span class="c">négative / positive</span></summary>
       <div class="body">
-        <p>Paix négative (absence de guerre) / paix positive (justice, égalité, conditions qui préviennent le conflit) — l&rsquo;idée clé qui clôt la mallette.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>à partir d&rsquo;exemples concrets, classer ce qui relève de la paix négative et de la paix positive.</li><li>définir chaque terme en une phrase.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Paix négative</b>&nbsp;: l&rsquo;absence d&rsquo;affrontement armé sur un territoire — la Belgique «&nbsp;vit en paix&nbsp;» à ce sens.</li>
+          <li><b>Paix positive</b> (Galtung)&nbsp;: la présence active de conditions durables — égalité des droits, justice sociale, accès aux ressources, reconnaissance politique, dignité, respect de l&rsquo;environnement.</li>
+          <li>La paix négative coexiste avec des <b>violences structurelles</b>&nbsp;: politiques migratoires restrictives, contrôles policiers discriminatoires, criminalisation de la solidarité — une «&nbsp;paix&nbsp;» qui gère des symptômes.</li>
+          <li>La paix positive est un <b>processus long</b> orienté vers l&rsquo;émancipation plutôt que la domination — elle transforme les causes, pas les effets.</li>
+        </ul></div>
+
+        <h4 class="v">Commencer par chez soi</h4>
+        <p>Le doc. de travail pose la question dans notre pays&nbsp;: la Belgique est en paix négative — pas de guerre sur son sol — mais cette paix cohabite avec des violences institutionnelles (migrations, maintien de l&rsquo;ordre, discriminations) et une <b>participation active aux guerres des autres</b>&nbsp;: industrie de l&rsquo;armement, licences d&rsquo;exportation, OTAN, coalitions (Afghanistan, Libye, Irak-Syrie), appui militaire à l&rsquo;Ukraine <span class="src">(doc. de travail)</span>. Les conflits externalisés reviennent «&nbsp;ici&nbsp;» par les réfugiés, les débats sécuritaires, les images en continu — et nourrissent ce que le doc. nomme des <b>affects guerriers</b>&nbsp;: anxiété, sidération, colère, impuissance, fascination — terreau de discours autoritaires qui valorisent la force au détriment du dialogue. La culture de paix, dans ce cadre, n&rsquo;est pas un supplément d&rsquo;âme&nbsp;: c&rsquo;est interroger nos responsabilités économiques, militaires et historiques — héritages coloniaux, inégalités, racisme — <b>ici et ailleurs</b>, par les mêmes outils&nbsp;: éducation critique, droit international, solidarité.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: la distinction négative/positive vient de Johan Galtung (1969) — un classique de la recherche sur la paix&nbsp;; les engagements militaires belges (OTAN, coalitions) sont publics et documentés.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;violences structurelles&nbsp;» est un concept savant — tout le monde n&rsquo;admet pas que discriminations = violence&nbsp;; le débat est réel, mais la définition de Galtung (atteinte aux besoins fondamentaux) le cadre proprement.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;la Belgique est un pays de paix&nbsp;» vs «&nbsp;la Belgique est un pays en guerre contre certains de ses habitants&nbsp;» — deux usages du mot paix&nbsp;; le cours demande lequel on emploie quand on l&rsquo;emploie.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>À partir d&rsquo;exemples concrets, classer ce qui relève de la paix négative et de la paix positive.</li>
+            <li>Définir chaque terme en une phrase — puis trouver un exemple belge de chaque côté.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">La Belgique : actrice de paix ou de guerre&nbsp;?</span><span class="c">polarisation</span></summary>
       <div class="body">
-        <p>La polarisation de la société belge ; la Belgique, spectatrice ou partie prenante ? Relier le débat local au conflit.</p>
-        <div class="todo"><b>À travailler ici :</b> tour de table cadré (membrane de discussion) : où se situe chacun·e, et pourquoi — sans classement des opinions.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Un conflit de plus de 80 ans, toujours «&nbsp;à chaud&nbsp;»&nbsp;: il traverse rues, campus, médias et familles belges — manifestations massives à Bruxelles, occupations d&rsquo;universités (2024-2025), tensions communautaires, binarisme en ligne.</li>
+          <li>Cette agitation <b>cache l&rsquo;implication concrète</b> de la Belgique (séq. 3)&nbsp;: on débat «&nbsp;du conflit&nbsp;» comme s&rsquo;il nous était extérieur — il ne l&rsquo;est pas.</li>
+          <li>La polarisation fragmente le débat&nbsp;: méfiance entre communautés, nuance impossible, positions binaires — le risque&nbsp;: amalgames et tensions entre personnes.</li>
+          <li>Cadre nécessaire&nbsp;: <b>les faits, le droit, le respect</b> — comprendre un point de vue ne signifie pas l&rsquo;approuver&nbsp;; les propos racistes ou discriminatoires sont arrêtés et replacés dans le cadre légal.</li>
+        </ul></div>
+
+        <h4 class="v">Cartographier la polarisation belge</h4>
+        <p>Depuis octobre 2023, la Belgique vit une mobilisation rare&nbsp;: manifestations de dizaines de milliers de personnes (plusieurs cortèges dépassant les chiffres des grandes marches climatiques)&nbsp;; campements étudiants à la VUB, à l&rsquo;UCLouvain et ailleurs (2024-2025) exigeant la rupture de partenariats académiques avec des universités israéliennes&nbsp;; contre-mobilisations et accusations croisées&nbsp;; débats houleux dans les conseils communaux (reconnaissance de la Palestine, produits des colonies)&nbsp;; et sur les réseaux, l&rsquo;effacement de la nuance documenté au ch. 8 <span class="src">(doc. de travail&nbsp;; presse belge 2023-2026)</span>. Le doc. de travail en tire une méthode en deux volets&nbsp;: <b>sur le fond</b> — contexte historique minimal, notions et acteurs clarifiés (éviter les amalgames), conséquences humaines visibles, initiatives de paix montrées (contre le fatalisme)&nbsp;; <b>sur la forme</b> — revenir aux faits et au droit, accueillir les émotions sans les laisser diriger, écoute respectueuse, décentrement, et ligne rouge légale explicite.</p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">La polarisation n&rsquo;est pas un défaut à supprimer — c&rsquo;est un signal à lire.</span> Elle dit que la question touche des identités (juive, palestinienne, belge, citoyenne) et des mémoires (Shoah, colonialisme) — pas seulement des faits. Le cadre «&nbsp;faits-droit-respect&nbsp;» ne dissout pas les positions&nbsp;: il les empêche de se transformer en violence. Vouloir «&nbsp;dépasser la polarisation&nbsp;» sans justice, c&rsquo;est souvent imposer le silence du plus faible.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi&nbsp;:</span> dates et formes des mobilisations belges (marches, campements, motions communales) sont documentées par la presse&nbsp;; le cadre légal (racisme, négationnisme, incitation) est dans les lois de 1981.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;les campus occupés = liberté académique défendue&nbsp;» vs «&nbsp;= antisémitisme déguisé&nbsp;» — les deux grilles existent&nbsp;; le cours distingue les faits (blocages&nbsp;? propos&nbsp;? symboles&nbsp;?) des qualifications.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: l&rsquo;ampleur de chaque camp est surjouée des deux côtés («&nbsp;la Belgique entière avec nous&nbsp;») — les sondages belges (2024-2025) montrent une opinion majoritairement critique d&rsquo;Israël mais très divisée sur les moyens&nbsp;; compter, ne pas camper.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Tour de table cadré (membrane de discussion)&nbsp;: où se situe chacun·e, et pourquoi — sans classement des opinions.</li>
+            <li>Écrire ensemble la «&nbsp;charte de discussion&nbsp;» de la classe&nbsp;: faits, droit, respect, ligne rouge légale.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Implications concrètes : commerce, armes, Europe</span><span class="c">leviers</span></summary>
       <div class="body">
-        <p>Commerce avec les colonies, industrie militaire et exportations d&rsquo;armes, l&rsquo;UE comme premier partenaire commercial d&rsquo;Israël : les leviers matériels qui relient la Belgique au terrain.</p>
-        <div class="todo"><b>À travailler ici :</b> cartographier les liens Belgique / Europe – Israël : commerce, armes, diplomatie — avec des sources datées.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Commerce</b>&nbsp;: des importations belges de produits des colonies (fruits, cosmétique, électronique)&nbsp;; des banques belges investies dans des entreprises actives dans les colonies — l&rsquo;argent «&nbsp;de chez nous&nbsp;» dans un territoire illégal.</li>
+          <li><b>Armes</b>&nbsp;: Liège hub de transit (mars 2024)&nbsp;; pièces de F-15 produites en Belgique selon l&rsquo;enquête citée&nbsp;; relations avec Lockheed Martin (F-16/F-35 de Gaza)&nbsp;; le tribunal de Bruxelles ordonne à la Flandre de bloquer un conteneur militaire.</li>
+          <li><b>UE</b>&nbsp;: premier partenaire commercial d&rsquo;Israël (~29&nbsp;% des exportations israéliennes, 2024)&nbsp;; accord d&rsquo;association avec <b>clause droits de l&rsquo;homme (art. 2)</b>&nbsp;; accord gazier 2022&nbsp;; aucune suspension malgré l&rsquo;art. 2.</li>
+          <li><b>Obligations violées</b>&nbsp;: «&nbsp;faire respecter&nbsp;» Genève IV (art. 1 commun)&nbsp;; prévenir (Convention génocide&nbsp;; ordonnance CIJ 26 janv. 2024)&nbsp;; Traité sur le commerce des armes&nbsp;; avis CIJ 2004/2024&nbsp;: couper les liens économiques avec l&rsquo;occupation.</li>
+        </ul></div>
+
+        <h4 class="v">La chaîne Belgique → terrain</h4>
+        <p>Le doc. de travail reconstitue la chaîne matérielle&nbsp;: <b>consommation</b> (produits des colonies dans les rayons — l&rsquo;étiquette d&rsquo;origine est le point de contrôle manquant)&nbsp;; <b>finance</b> (banques investies dans les entreprises de la liste ONU des entités liées aux colonies)&nbsp;; <b>armes</b> — le cas belge est documenté&nbsp;: en mars 2024, la presse révèle des vols d&rsquo;armes transitant par l&rsquo;aéroport de Liège&nbsp;; en octobre 2024, le tribunal de première instance de Bruxelles enjoint aux autorités flamandes de bloquer un conteneur militaire à Zeebrugge et d&rsquo;interdire les transits ultérieurs — une décision de justice là où la politique restait muette&nbsp;; des pièces de moteurs de F-15 auraient été produites sur le territoire <span class="src">(doc. de travail&nbsp;; presse belge 2024)</span>. Côté européen&nbsp;: l&rsquo;accord d&rsquo;association UE-Israël (2000) conditionne les relations au «&nbsp;respect des droits de l&rsquo;homme&nbsp;» (art. 2)&nbsp;; en 2025, le rapport demandé par le Conseil (haut représentant) conclut à des violations «&nbsp;probables&nbsp;» — la révision de l&rsquo;accord s&rsquo;enlise faute de consensus, tandis que l&rsquo;UE signe en 2022 un partenariat gazier avec Israël <span class="src">(doc. de travail&nbsp;; Conseil UE 2025)</span>. Le doc. nomme le nœud&nbsp;: intérêts économiques et calculs géopolitiques contre principes affichés.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: l&rsquo;UE premier partenaire (Eurostat)&nbsp;; l&rsquo;art. 2 de l&rsquo;accord d&rsquo;association&nbsp;; l&rsquo;ordonnance CIJ du 26 janvier 2024 (risque plausible, mesures conservatoires)&nbsp;; la décision du tribunal de Bruxelles (2024)&nbsp;; le TCA et la Position commune 2008 — tout est public.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: l&rsquo;obligation de «&nbsp;faire respecter&nbsp;» (art. 1 commun) impose-t-elle un embargo&nbsp;? les juristes disent oui pour les risques substantiels&nbsp;; les gouvernements interprètent au minimum&nbsp;; l&rsquo;écart est politique, pas technique.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: le mot «&nbsp;génocide&nbsp;» pour Gaza — la commission d&rsquo;enquête ONU (sept. 2025) l&rsquo;a conclu&nbsp;; Israël et plusieurs gouvernements le rejettent&nbsp;; la CIJ n&rsquo;a pas encore tranché au fond (affaire 192 en cours)&nbsp;; le cours distingue&nbsp;: le fait est documenté par une commission onusienne, la qualification judiciaire est pendue — l&rsquo;obligation de <i>prévenir</i>, elle, court dès le risque plausible.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Cartographier les liens Belgique / Europe – Israël&nbsp;: commerce, armes, diplomatie — avec des sources datées.</li>
+            <li>Étude&nbsp;: l&rsquo;affaire du conteneur — qui a agi&nbsp;? (la justice, pas le gouvernement)&nbsp;: que dit ce renversement de la séparation des pouvoirs&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">La mobilisation citoyenne</span><span class="c">sanctions · arrêté</span></summary>
       <div class="body">
-        <p>Les 12 sanctions belges (septembre 2025), l&rsquo;arrêté royal sur le survol (2026) : ce que la pression citoyenne a déjà produit, et comment.</p>
-        <div class="todo"><b>À travailler ici :</b> étude de cas : comment une mesure concrète est-elle née d&rsquo;une mobilisation ? Reconstituer la chaîne acteur &rarr; décision.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Face à l&rsquo;inaction&nbsp;: citoyens et <b>communes</b> prennent les devants — manifestations, pétitions, exclusion des produits des colonies des marchés publics (Gand).</li>
+          <li><b>Septembre 2025</b>&nbsp;: accord fédéral belge — <b>12 sanctions contre Israël</b>&nbsp;: interdiction d&rsquo;exportation et de transit d&rsquo;armes, interdiction d&rsquo;importations des territoires occupés, sanctions contre des colons violents et deux ministres israéliens&nbsp;; proposition de loi sur la commercialisation.</li>
+          <li><b>2026</b>&nbsp;: arrêté royal interdisant le <b>survol</b> de l&rsquo;espace aérien belge et les escales techniques pour matériel militaire vers Israël — publié au Moniteur&nbsp;; victoire d&rsquo;étape vers un embargo complet.</li>
+          <li>La mise en œuvre tarde&nbsp;: le cessez-le-feu (oct. 2025) a servi de prétexte au ralentissement — le suivi citoyen reste la condition de l&rsquo;application.</li>
+        </ul></div>
+
+        <h4 class="v">Comment une mesure naît — anatomie belge</h4>
+        <p>La chaîne est reconstituable&nbsp;: enquêtes journalistiques (mars 2024)&nbsp;→ actions en justice (blocage du conteneur, octobre 2024)&nbsp;→ mobilisation continue et communes pilotes (Gand)&nbsp;→ accord fédéral de 12 sanctions (septembre 2025, sous pression civile et judiciaire)&nbsp;→ arrêté royal survol (2026) <span class="src">(doc. de travail)</span>. Le détail institutionnel importe&nbsp;: l&rsquo;arrêté royal se limite au <b>survol</b> parce que les compétences <i>douanières</i> d&rsquo;import-export sont <b>régionales</b> — le fédéral tient le ciel, les régions tiennent les ports&nbsp;: la structure belge est elle-même un verrou (et un levier&nbsp;: agir au bon niveau). Le doc. note aussi le reflux&nbsp;: le cessez-le-feu imposé par le plan Trump (ch. 10) a servi de prétexte au gel partiel des sanctions — un cessez-le-feu fragile n&rsquo;éteint pas les obligations juridiques&nbsp;; le suivi (courriers aux élus, permanences, presse) est le métier de la citoyenneté.</p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">Ces victoires sont réelles — et précaires.</span> Douze sanctions adoptées, un embargo aérien inscrit au Moniteur&nbsp;: c&rsquo;est du droit qui avance sous pression citoyenne, pas un acquis. L&rsquo;histoire des embargos belges (Rwanda 1994&nbsp;: les leçons non tirées) commande la vigilance&nbsp;: une mesure non appliquée vaut moins qu&rsquo;une mesure appliquée tardivement.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: l&rsquo;accord fédéral de septembre 2025 (communiqué officiel)&nbsp;; l&rsquo;arrêté royal 2026 (Moniteur belge)&nbsp;; la motion de Gand&nbsp;; la décision judiciaire de 2024 — tout est daté et public.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;les sanctions belges sont symboliques&nbsp;» vs «&nbsp;elles ouvrent la brèche&nbsp;» — l&rsquo;impact économique direct est faible (petites parts de marché)&nbsp;; l&rsquo;effet politique (précédent juridique, entraînement d&rsquo;autres États) est le vrai enjeu&nbsp;; les deux lectures se disputent le même texte.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: l&rsquo;accusation de «&nbsp;sanctions unilatérales injustes&nbsp;» (position israélienne et d&rsquo;une partie belge)&nbsp;; le cours note que ces sanctions <i>suivent</i> des demandes onusiennes et judiciaires — elles ne créent pas d&rsquo;obligation, elles appliquent la sienne.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Étude de cas&nbsp;: comment une mesure concrète est née d&rsquo;une mobilisation — reconstituer la chaîne acteur → décision.</li>
+            <li>Vérifier l&rsquo;état d&rsquo;application des 12 sanctions aujourd&rsquo;hui (sources officielles vs ONG)&nbsp;: où en est le suivi&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">Que faire en tant que citoyen·ne belge&nbsp;?</span><span class="c">consommer · mobiliser · rejoindre · pression</span></summary>
       <div class="body">
-        <p>Quatre registres d&rsquo;action — consommer, mobiliser, rejoindre, faire pression — et des initiatives qui inspirent : EcoPeace, Breaking the Silence, Voix juives pour la paix&hellip;</p>
-        <div class="todo"><b>À travailler ici :</b> chaque élève choisit un registre et formule une action réaliste à son échelle, avec un premier pas daté.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Quatre registres</b>&nbsp;: consommer (produits des colonies, banques)&nbsp;; mobiliser (le vocabulaire juste, l&rsquo;information, les médias)&nbsp;; rejoindre (organisations — certaines agissent en justice)&nbsp;; faire pression (communes, motions, élus, ICE européennes).</li>
+          <li><b>Le vocabulaire est un levier</b>&nbsp;: occupation, colonisation, annexion — des termes juridiques&nbsp;; apartheid et génocide — des qualifications documentées par des commissions et ONG, encore pendues devant les juridictions (ch. 7).</li>
+          <li>Ces gestes comptent&nbsp;: pression politique réelle, retraits d&rsquo;entreprises des colonies, changement des mentalités — «&nbsp;interdire certains produits n&rsquo;est pas un acte radical, c&rsquo;est le strict minimum pour se conformer au droit international&nbsp;».</li>
+          <li><b>S&rsquo;inspirer</b>&nbsp;: ALLMEP (180+ organisations), EcoPeace Middle East, Breaking the Silence, Don&rsquo;t Buy Into Occupation, Tashattot, Francis Alÿs (<i>The Green Line</i>, 2004), Les Guerrières de la Paix, voix juives (EJJP, UPJB, EAJS).</li>
+        </ul></div>
+
+        <h4 class="v">Les initiatives qui contredisent le fatalisme</h4>
+        <p>Le doc. de travail clôt la mallette par ce que les médias montrent peu&nbsp;: des Israéliens, des Palestiniens et des internationaux qui refusent la violence comme seule issue — <b>ALLMEP</b> (coalition de 180+ organisations pour des projets sociaux et éducatifs)&nbsp;; <b>EcoPeace Middle East</b> (Palestiniens, Jordaniens, Israéliens autour de l&rsquo;eau — la ressource comme lien)&nbsp;; <b>Breaking the Silence</b> (anciens soldats israéliens qui témoignent de l&rsquo;occupation — 2004)&nbsp;; <b>Don&rsquo;t Buy Into Occupation</b> (enquête sur les finances européennes des colonies, campagnes de désinvestissement)&nbsp;; <b>Tashattot Collective</b> (artistes SWANA en Belgique)&nbsp;; <b>Francis Alÿs</b> — l&rsquo;artiste belge marchant la ligne verte de 1949, 58 litres de peinture versant pour la tracer (Jérusalem, 2004)&nbsp;; <b>Les Guerrières de la Paix</b> (mouvement fondé par Hanna Assouline, 2022)&nbsp;; et les <b>voix juives pour la paix</b> — EJJP (fédération européenne), UPJB (Union des Progressistes Juifs de Belgique), EAJS / Een Andere Joodse Stem — qui rappellent qu&rsquo;il n&rsquo;y a pas une communauté, mais des positions <span class="src">(doc. de travail)</span>. La leçon finale du doc.&nbsp;: la tolérance et le dialogue ne sont pas naïfs — ce sont des <b>leviers concrets</b>&nbsp;; la question n&rsquo;est pas «&nbsp;peut-on faire quelque chose&nbsp;?&nbsp;» mais «&nbsp;<b>que choisissons-nous de faire&nbsp;?</b>&nbsp;»</p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">Le pouvoir d&rsquo;agir est réel — le tri des actions est un débat.</span> Boycotter, saisir les communes, porter plainte, manifester&nbsp;: chaque voie a ses défenseurs et ses critiques — y compris dans le camp palestiniste (efficacité&nbsp;? symbolique&nbsp;? risque de repli communautaire&nbsp;?) et dans le camp israélien (l&rsquo;accusation de boycott antisémite — distinguée, par les juristes et par la loi belge, de la critique d&rsquo;État légitime)&nbsp;; le cours ne désigne pas LA bonne action&nbsp;: il exige que chacun·e en choisisse une, datée, et en mesure les effets.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les organisations citées existent, publient et agissent (témoignages BtS&nbsp;; rapports DBIO&nbsp;; projets ALLMEP/EcoPeace documentés)&nbsp;; les retraits d&rsquo;entreprises des colonies sont comptabilisés (rapports ONU des entreprises, 2020-2025).</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: l&rsquo;efficacité du boycott est débattue — pour chaque entreprise partie, une autre reste&nbsp;; l&rsquo;argument «&nbsp;signal politique&nbsp;» vs «&nbsp;impact économique&nbsp;» reste ouvert&nbsp;; le cours présente les deux.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: boycotter est accusé d&rsquo;«&nbsp;punir les coexistants&nbsp;» (les partenaires israéliens des ONG de paix) — objection sérieuse&nbsp;; plusieurs de ces organisations soutiennent pourtant le boycott (BtS, voix juives)&nbsp;: le débat est <i>à l&rsquo;intérieur</i> des camps, pas entre eux.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Chaque élève choisit un registre et formule une action réaliste à son échelle, avec un premier pas daté.</li>
+            <li>Inviter une initiative locale (Guerrières de la Paix, UPJB, comité de solidarité)&nbsp;: préparer dix questions, mener l&rsquo;entretien.</li>
+            <li>Clôture de la mallette&nbsp;: reprendre les 11 chapitres — où le droit dit, où la force décide, où l&rsquo;action citoyenne fait la différence.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
@@ -132,13 +264,15 @@
 
       <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/105WbIxxpa6eTKTRC1dYHh7EVzQxs3dXr/view">&laquo;&nbsp;11. Agir.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
 
-      <p class="srcs"><b>Belgique —</b> <a href="https://diplomatie.belgium.be/fr">SPF Affaires étrangères</a> &nbsp;· les «&nbsp;12 sanctions&nbsp;» belges contre Israël (septembre 2025) &nbsp;· arrêté royal sur le survol et le transit (2026, Moniteur belge) &nbsp;· rapports du GRIP sur les licences d&rsquo;armes.</p>
+      <p class="srcs"><b>Concepts de paix —</b> Johan Galtung, <i>Violence, Peace, and Peace Research</i> (1969) — paix négative / positive, violence structurelle &nbsp;· <a href="https://www.sipri.org/">SIPRI</a> — recherche sur la paix et les armements.</p>
 
-      <p class="srcs"><b>Union européenne —</b> <a href="https://policy.trade.ec.europa.eu/index_fr">Politique commerciale de la Commission européenne</a> — l&rsquo;UE, premier partenaire commercial d&rsquo;Israël &nbsp;· accord d&rsquo;association UE-Israël et sa clause relative aux droits de l&rsquo;homme.</p>
+      <p class="srcs"><b>Belgique —</b> <a href="https://diplomatie.belgium.be/fr">SPF Affaires étrangères</a> &nbsp;· les «&nbsp;12 sanctions&nbsp;» belges contre Israël (septembre 2025) &nbsp;· arrêté royal sur le survol et les escales techniques (2026, Moniteur belge) &nbsp;· décision du tribunal de première instance de Bruxelles, octobre 2024 (blocage du conteneur) &nbsp;· rapports du GRIP sur les licences d&rsquo;armes.</p>
 
-      <p class="srcs"><b>S&rsquo;inspirer —</b> <a href="https://allmep.org/">ALLMEP</a> &nbsp;· <a href="https://www.ecopeace.org/">EcoPeace Middle East</a> &nbsp;· <a href="https://breakingthesilence.org.il/">Breaking the Silence</a> &nbsp;· Don&rsquo;t Buy Into Occupation &nbsp;· Tashattot Collective &nbsp;· EJJP, UPJB et EAJS (Juifs européens et nord-américains pour la paix).</p>
+      <p class="srcs"><b>Union européenne —</b> <a href="https://policy.trade.ec.europa.eu/index_fr">Politique commerciale de la Commission européenne</a> — l&rsquo;UE, premier partenaire commercial d&rsquo;Israël &nbsp;· accord d&rsquo;association UE-Israël (2000), art. 2 — clause droits de l&rsquo;homme &nbsp;· rapport du haut représentant sur la révision de l&rsquo;accord (2025) &nbsp;· partenariat gazier UE-Israël (2022).</p>
 
-      
+      <p class="srcs"><b>Obligations internationales —</b> art. 1 commun des Conventions de Genève («&nbsp;respecter et faire respecter&nbsp;») &nbsp;· Convention génocide (1948), art. 1 &nbsp;· ordonnance CIJ du 26 janvier 2024 (mesures conservatoires, affaire 192) &nbsp;· avis CIJ 2004 et 2024 (non-reconnaissance, non-assistance) &nbsp;· <a href="https://thearmstradetreaty.org/">Traité sur le commerce des armes</a> &nbsp;· Position commune UE 2008/944/PESC (exportations d&rsquo;armes).</p>
+
+      <p class="srcs"><b>S&rsquo;inspirer —</b> <a href="https://allmep.org/">ALLMEP</a> &nbsp;· <a href="https://www.ecopeace.org/">EcoPeace Middle East</a> &nbsp;· <a href="https://breakingthesilence.org.il/">Breaking the Silence</a> &nbsp;· Don&rsquo;t Buy Into Occupation (dontbuyintooccupation.org) &nbsp;· Tashattot Collective &nbsp;· Francis Alÿs, <i>The Green Line</i> (2004) &nbsp;· Les Guerrières de la Paix (guerrieresdelapaix.be) &nbsp;· EJJP (ejjp.eu), UPJB (upjb.be) et EAJS / Een Andere Joodse Stem.</p>
     </div>
 
     <div class="foot">Chapitre 11 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
