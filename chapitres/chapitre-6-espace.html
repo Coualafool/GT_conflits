@@ -56,6 +56,29 @@
   .srcs a{color:var(--accent);text-decoration:none}
   .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  .acc .body h4.v{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin:20px 0 6px;font-weight:700}
+  .acc .body .pv{border-left:3px solid var(--border);padding:2px 0 2px 14px;margin:12px 0}
+  .acc .body .pv.off{border-color:var(--brand)}
+  .acc .body .pv.real{border-color:var(--faint)}
+  .acc .body .who{font-weight:700;color:var(--ink)}
+  .acc .body ul{margin:6px 0 6px 20px;padding:0}
+  .acc .body li{margin:5px 0}
+  .acc .body .src{color:var(--faint);font-size:12.5px}
+  .acc .body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  .acc .body th{color:var(--ink);font-weight:700;text-align:left;border-bottom:1px solid var(--border);padding:6px 8px}
+  .acc .body td{border-bottom:1px solid var(--border);padding:6px 8px;color:var(--muted);vertical-align:top}
+  .essentiel{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel-2);border-radius:0 10px 10px 0;padding:12px 14px;margin:2px 0 16px}
+  .essentiel .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:6px}
+  .essentiel ul{margin:0;padding-left:18px}
+  .essentiel li{margin:4px 0;font-size:14px;color:var(--ink)}
+  .pv .these{display:block;color:var(--ink);font-weight:600;font-size:14.5px;margin:5px 0 7px}
+  .etages{display:grid;gap:8px;margin:8px 0}
+  .etage{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel)}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:1px}
+  .t-ok{background:rgba(95,179,128,.15);color:var(--good);border:1px solid rgba(95,179,128,.4)}
+  .t-int{background:rgba(224,164,88,.15);color:var(--brand);border:1px solid rgba(224,164,88,.4)}
+  .t-dis{background:rgba(154,168,182,.12);color:var(--muted);border:1px solid var(--border)}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--brand-2);background:var(--panel-2);border-radius:0 9px 9px 0;color:var(--ink);font-size:14px}
 </style>
 </head>
 <body>
@@ -82,47 +105,192 @@
       <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
     </div></div>
 
-    <p class="lead"><b>Objectif :</b> comprendre le terme dans son sens juridique précis et la prudence qu&rsquo;il exige.</p>
+    <p class="lead"><b>Objectif :</b> comprendre le terme dans son sens juridique précis — acte matériel + intention spécifique —, qui peut le prononcer, ce qu&rsquo;il impose dès maintenant, et pourquoi son usage pour Gaza divise si profondément.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
     <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Définition juridique et origine du concept</span><span class="c">Convention 1948</span></summary>
       <div class="body">
-        <p>La définition de la Convention de 1948, l&rsquo;origine du concept et la jurisprudence qui l&rsquo;a fait vivre : Shoah, Rwanda, Srebrenica, Rohingyas.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>copier la définition légale en une fiche.</li><li>distinguer le sens juridique du mot de son usage courant.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Le mot est forgé en 1944 par <b>Raphael Lemkin</b> (du grec <i>genos</i> + latin <i>caedere</i>, tuer) pour combler le vide juridique laissé par la Shoah&nbsp;; la Convention est adoptée en 1948 (rés. 260 III).</li>
+          <li>Article II&nbsp;: cinq <b>actes</b> (meurtre&nbsp;; atteintes graves&nbsp;; conditions d&rsquo;existence calculées pour détruire&nbsp;; entrave aux naissances&nbsp;; transfert d&rsquo;enfants) commis <b>avec l&rsquo;intention spécifique</b> de détruire un groupe national, ethnique, racial ou religieux, en tout ou en partie.</li>
+          <li>Cette <b>intention</b> (<i>dolus specialis</i>) est l&rsquo;élément le plus dur à prouver&nbsp;: des civils tués ne suffisent pas — il faut viser le groupe <i>en tant que tel</i>.</li>
+          <li>Reconnus par des juridictions&nbsp;: Shoah&nbsp;; Rwanda (Akayesu, 1998)&nbsp;; Srebrenica (Krstić, 2001&nbsp;; CIJ 2007). Rohingyas&nbsp;: en cours (CIJ).</li>
+        </ul></div>
+
+        <h4 class="v">Un crime à deux étages</h4>
+        <p>La définition est technique et ne souffre pas l&rsquo;approximation&nbsp;: il faut un <b>élément matériel</b> (un des cinq actes de l&rsquo;article II) <i>et</i> un <b>élément intentionnel</b> — la volonté de détruire le groupe en tant que tel, et non la simple connaissance des conséquences létales d&rsquo;une action militaire <span class="src">(Convention de 1948, art. II&nbsp;; doc. de travail)</span>. D&rsquo;où la double erreur pédagogique à éviter&nbsp;: employer «&nbsp;génocide&nbsp;» comme synonyme de massacre (il existe d&rsquo;autres crimes — crimes de guerre, crimes contre l&rsquo;humanité), et à l&rsquo;inverse exiger une «&nbsp;preuve absolue&nbsp;» inaccessible pour écarter le débat&nbsp;: l&rsquo;intention se déduit de faisceaux d&rsquo;indices — discours, ordres, systématicité, cibles.</p>
+
+        <h4 class="v">La jurisprudence qui a fait vivre le mot</h4>
+        <ul>
+          <li><b>Shoah</b> — Nuremberg (1945-46)&nbsp;: le procès des dirigeants nazis pose les faits&nbsp;; le crime n&rsquo;existait pas encore sous ce nom, la Convention naît de cette absence.</li>
+          <li><b>Rwanda</b> — TPIR, <i>Akayesu</i> (1998)&nbsp;: première condamnation pour génocide&nbsp;; le viol reconnu comme acte de génocide.</li>
+          <li><b>Srebrenica</b> — TPIY, <i>Krstić</i> (2001), confirmé CIJ (2007)&nbsp;: la qualification porte sur une <i>partie</i> d&rsquo;un groupe (les hommes bosniaques), et sur une <i>localité</i> — pas un pays entier.</li>
+          <li><b>Rohingyas</b> — Gambie c. Myanmar (CIJ, en cours)&nbsp;: mesures conservatoires dès 2020&nbsp;; la Cour avance pas à pas.</li>
+        </ul>
+        <p>Ces reconnaissances ont pris <b>des années</b> — même pour des crimes évidents sur le moment. Le chapitre suit cette leçon&nbsp;: distinguer toujours le fait documenté, l&rsquo;alerte d&rsquo;expert, et le verdict d&rsquo;un juge <span class="src">(doc. de travail)</span>.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: le texte de l&rsquo;art. II, la date de la Convention, les arrêts Akayesu/Krstić, la procédure Gambie c. Myanmar — tout est public et consultable.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: ce qui compte comme «&nbsp;partie substantielle&nbsp;» d&rsquo;un groupe&nbsp;; si des destructions culturelles ou des famaines relèvent de l&rsquo;art. II — la doctrine débat, la jurisprudence est restrictive.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: l&rsquo;usage extensif du mot (Arménie 1915&nbsp;? colonialismes&nbsp;?) — reconnu par des historiens et certains Parlements, jamais par une juridiction internationale&nbsp;; la «&nbsp;concurrence des génocides&nbsp;» est elle-même un débat mémoriel vif.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Copier la définition légale en une fiche&nbsp;; distinguer le sens juridique du mot de son usage courant (publicité, réseaux sociaux).</li>
+            <li>Pour chaque cas reconnu (Shoah, Rwanda, Srebrenica)&nbsp;: quel acte, quelle intention retenue, combien d&rsquo;années de procédure&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Les juridictions compétentes et la prudence</span><span class="c">CIJ · CPI</span></summary>
       <div class="body">
-        <p>Qui est compétent pour qualifier un génocide : CIJ, CPI, tribunaux ad hoc — et pourquoi la prudence s&rsquo;impose avant toute décision de justice.</p>
-        <div class="todo"><b>À travailler ici :</b> schéma : quelle cour juge quoi, sur plainte de qui, avec quels effets — et ce que « prudence » veut dire dans le débat public.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Seules des <b>juridictions</b> qualifient un génocide en droit&nbsp;: la <b>CIJ</b> (responsabilité d&rsquo;un État), la <b>CPI</b> (responsabilité pénale individuelle), des tribunaux ad hoc ou nationaux.</li>
+          <li>Ni les ONG, ni l&rsquo;ONU, ni les Parlements ne peuvent <i>juridiquement</i> établir un génocide — ils alertent, documentent, qualifient politiquement&nbsp;; ce n&rsquo;est pas rien, mais ce n&rsquo;est pas un verdict.</li>
+          <li>La «&nbsp;prudence&nbsp;» n&rsquo;est pas un blanc-seing&nbsp;: elle interdit d&rsquo;invoquer un verdict inexistant — dans les deux sens&nbsp;: ni «&nbsp;c&rsquo;est un génocide, point&nbsp;», ni «&nbsp;aucun juge n&rsquo;a condamné, donc rien&nbsp;».</li>
+        </ul></div>
+
+        <h4 class="v">Qui juge quoi</h4>
+        <table>
+          <tr><th>Juridiction</th><th>Juge</th><th>Saisine</th><th>Effets</th></tr>
+          <tr><td><b>CIJ</b></td><td>États (ici&nbsp;: Afrique du Sud c. Israël, affaire 192)</td><td>Un État partie à la Convention</td><td>Mesures conservatoires (2024)&nbsp;; jugement — années&nbsp;; exécution politique incertaine</td></tr>
+          <tr><td><b>CPI</b></td><td>Individus</td><td>Procureur / États / Conseil de sécurité</td><td>Mandats d&rsquo;arrêt (Netanyahou et Gallant, nov. 2024 — crimes de guerre et contre l&rsquo;humanité&nbsp;; pas encore de chef de génocide)</td></tr>
+          <tr><td><b>Ad hoc / nationaux</b></td><td>Individus</td><td>Mandats propres / compétence universelle</td><td>Verdicts exécutoires selon coopération</td></tr>
+        </table>
+        <p>La distinction est opérante pour le débat public&nbsp;: quand une Rapporteuse spéciale, une commission d&rsquo;enquête ou un Parlement dit «&nbsp;génocide&nbsp;», c&rsquo;est une <b>qualification d&rsquo;alerte</b> — documentée, politiquement lourde, juridiquement préjudicielle. Quand la CIJ dit «&nbsp;risque plausible&nbsp;», c&rsquo;est un <b>seuil juridique</b> qui déclenche des obligations (séq. 3). Quand elle condamnera — ou non —, ce sera un <b>verdict</b> <span class="src">(doc. de travail)</span>.</p>
+
+        <div class="pv real"><span class="who">Encart — la double prudence.</span><span class="these">Le mot est une arme politique&nbsp;; la prudence juridique protège aussi le débat.</span> L&rsquo;accusation de génocide porte un poids moral unique (la Shoah) — certains y voient une dévaluation du terme, d&rsquo;autres le seul mot à la hauteur des faits&nbsp;; l&rsquo;emploi hâtif dessert la cause qu&rsquo;il sert, l&rsquo;emploi verrouillé («&nbsp;jamais&nbsp;») dessert les victimes. La position du cours&nbsp;: <b>documenter solidement, qualifier prudemment, laisser la Cour trancher — et rappeler que l&rsquo;obligation d&rsquo;agir ne l&rsquo;attend pas</b>.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les mandats des juridictions&nbsp;; l&rsquo;affaire 192 et ses ordonnances de mesures conservatoires&nbsp;; les mandats d&rsquo;arrêt CPI de novembre 2024 — décisions publiques.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: la valeur probante des qualifications non juridictionnelles (ONG, rapporteures, Parlements)&nbsp;— ni anecdotiques ni décisives&nbsp;; leur rôle est de faire preuve au procès, pas de le remplacer.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;la CPI/CIJ sont politisées et illégitimes&nbsp;» (position officielle israélienne et de ses alliés) vs «&nbsp;ce sont les gardiennes du droit&nbsp;» — les deux grilles structurent le débat&nbsp;; noter que la Cour est saisie d&rsquo;un État, pas du «&nbsp;sionisme&nbsp;».</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Schéma&nbsp;: quelle cour juge quoi, sur plainte de qui, avec quels effets.</li>
+            <li>Prendre trois titres de presse sur «&nbsp;génocide&nbsp;»&nbsp;: qui parle — un juge, une ONG, un État&nbsp;? Réécrire chaque titre à sa valeur exacte.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Les obligations des États : prévenir</span><span class="c">obligations</span></summary>
       <div class="body">
-        <p>La Convention n&rsquo;est pas seulement une qualification : elle impose aux États des obligations actives de prévention.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>lister ce qu&rsquo;un État peut concrètement faire au titre de l&rsquo;obligation de prévenir.</li><li>classer par leviers (diplomatique, économique, judiciaire).</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>L&rsquo;art. I de la Convention impose à <b>tous les États signataires</b> une obligation autonome de <b>prévenir</b> le génocide — indépendante de toute condamnation préalable.</li>
+          <li>Elle s&rsquo;active dès qu&rsquo;un <b>risque plausible</b> est identifié (jurisprudence CIJ&nbsp;: Bosnie c. Serbie 2007&nbsp;; Gambie c. Myanmar 2020).</li>
+          <li>Mesures «&nbsp;raisonnables&nbsp;» attendues&nbsp;: pression diplomatique, révision des alliances, <b>suspension des transferts d&rsquo;armes</b>, soutien aux enquêtes.</li>
+          <li>Citoyenneté active&nbsp;: le collectif <b>Droit pour Gaza</b> a assigné l&rsquo;État belge en juillet 2025 pour inaction face aux crimes à Gaza.</li>
+        </ul></div>
+
+        <h4 class="v">Une obligation sans verdict</h4>
+        <p>C&rsquo;est le point le plus mal connu de la Convention&nbsp;: l&rsquo;obligation de prévenir ne dépend <b>pas</b> d&rsquo;une reconnaissance judiciaire du génocide — elle naît du risque plausible, et chaque État doit faire ce qui est <i>«&nbsp;raisonnablement&nbsp;»</i> en son pouvoir pour l&rsquo;empêcher <span class="src">(CIJ, Bosnie c. Serbie, 2007&nbsp;; doc. de travail)</span>. Concrètement, la liste des leviers est connue&nbsp;: conditionnalité des accords d&rsquo;association (l&rsquo;accord UE-Israël contient une clause droits de l&rsquo;homme), embargo ou licence à l&rsquo;exportation (la Belgique a suspendu des licences en 2024), soutien aux commissions d&rsquo;enquête, sanctions ciblées, protection du personnel onusien. L&rsquo;inaction, elle, peut devenir justiciable&nbsp;: des citoyens belges ont porté l&rsquo;inaction de leur État devant ses tribunaux <span class="src">(Droit pour Gaza, juil. 2025)</span>.</p>
+        <div class="pv off"><span class="who">Encart — l&rsquo;exception qui confirme la règle.</span><span class="these">Pourquoi si peu d&rsquo;effets&nbsp;? Parce que le droit international est un système sans gendarme.</span> La Bosnie c. Serbie (2007) a condamné la Serbie pour <i>manquement à la prévention</i>… huit ans après Srebrenica&nbsp;; le verdict est arrivé quand il ne servait plus. La leçon structurelle vaut pour Gaza&nbsp;: attendre le verdict pour agir, c&rsquo;est organiser l&rsquo;impunité&nbsp;; agir sur le risque, c&rsquo;est ce que la Convention exige — et ce que les opinions publiques peuvent réclamer de leurs gouvernements.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: le texte de l&rsquo;art. I, la jurisprudence Bosnie 2007 et Gambie 2020, la procédure belge de 2025 — tout est documenté.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: ce qui est «&nbsp;raisonnablement en son pouvoir&nbsp;» pour un petit État vs une grande puissance&nbsp;; si la fourniture d&rsquo;armes «&nbsp;risque de faciliter&nbsp;» ou «&nbsp;n&rsquo;a pas de lien&nbsp;» avec les faits — les deux lectures existent, les rapports d&rsquo;experts ONU tranchent dans un sens, les gouvernements dans l&rsquo;autre.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;invoquer la Convention, c&rsquo;est politiser le droit&nbsp;» vs «&nbsp;ne pas l&rsquo;invoquer, c&rsquo;est la vider de son sens&nbsp;» — débat de doctrine, pas de faits&nbsp;; les deux camps citent les mêmes textes.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Lister ce qu&rsquo;un État peut concrètement faire au titre de la prévention&nbsp;; classer par leviers (diplomatique, économique, judiciaire).</li>
+            <li>Étudier un cas national (Belgique&nbsp;: licences d&rsquo;armes, accord d&rsquo;association UE) — qui décide, sous quel contrôle, avec quelle transparence&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Pourquoi parle-t-on de génocide à Gaza</span><span class="c">actus reus · mens rea</span></summary>
       <div class="body">
-        <p>Les deux éléments de la qualification : l&rsquo;élément matériel (bombardements, blocus) et l&rsquo;élément intentionnel (déclarations officielles) — et la façon dont chacun est documenté et discuté.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>exercice de tri : classer des énoncés sourcés selon qu&rsquo;ils relèvent de l&rsquo;élément matériel ou intentionnel.</li><li>discuter la difficulté de prouver l&rsquo;intention.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Élément matériel</b> documenté par des sources multiples (ONU, ONG israéliennes incluses)&nbsp;: bombardements de zones civiles, destruction d&rsquo;hôpitaux et d&rsquo;écoles, effondrement de l&rsquo;eau et de l&rsquo;électricité, famine par siège, attaques contre sites protégés.</li>
+          <li><b>Élément intentionnel</b> discuté à partir de déclarations officielles&nbsp;: Gallant («&nbsp;des animaux&nbsp;», siège total), Netanyahou (citation d&rsquo;Amalek), Herzog («&nbsp;toute la nation est responsable&nbsp;»), appels à «&nbsp;effacer Gaza&nbsp;».</li>
+          <li>L&rsquo;ampleur change l&rsquo;échelle du débat&nbsp;: ~74 500 morts déclarés à l&rsquo;automne 2026 (MoH), dont &gt;20 000 enfants&nbsp;; famine confirmée par l&rsquo;IPC en 2025&nbsp;; ~60&nbsp;% du bâti détruit.</li>
+          <li>La qualification «&nbsp;génocide&nbsp;» est <b>plausible pour une part croissante d&rsquo;expert·es</b> (commission d&rsquo;enquête ONU, sept. 2025&nbsp;: «&nbsp;motifs raisonnables&nbsp;») — pas encore tranchée par un juge.</li>
+        </ul></div>
+
+        <h4 class="v">Le dossier matériel</h4>
+        <p>Amnesty, HRW, OCHA, la Rapporteuse spéciale <b>Francesca Albanese</b> (rapport «&nbsp;Anatomie d&rsquo;un génocide&nbsp;», 2024&nbsp;; suite de sept. 2025), et — point politique majeur — les organisations israéliennes <b>B&rsquo;Tselem</b> et <b>Physicians for Human Rights Israel</b> documentent le même faisceau&nbsp;: bombardements massifs sur des quartiers civils&nbsp;; destruction du système de santé (hôpital par hôpital) et scolaire&nbsp;; coupure d&rsquo;eau, d&rsquo;électricité, de carburant dès le 9 octobre 2023 («&nbsp;siège total&nbsp;» annoncé par Gallant)&nbsp;; famine documentée (IPC, 2025)&nbsp;; attaques contre bâtiments de l&rsquo;ONU et ambulances&nbsp;; déplacements forcés répétés <span class="src">(doc. de travail&nbsp;; rapports cités)</span>. Ces faits correspondent case par case aux actes matériels de l&rsquo;art. II — c&rsquo;est le premier étage de l&rsquo;accusation, et il est massivement sourcé.</p>
+
+        <h4 class="v">Le dossier intentionnel — et sa contestation</h4>
+        <p><b>Accusation</b>&nbsp;: des propos de responsables — Gallant&nbsp;: «&nbsp;Pas d&rsquo;électricité, pas de nourriture, pas d&rsquo;eau… Nous combattons des animaux&nbsp;» (oct. 2023, Reuters)&nbsp;; Netanyahou citant le passage biblique d&rsquo;Amalek — «&nbsp;frappe tout ce qui lui appartient&nbsp;», hommes, femmes, enfants (oct. 2023, Times of Israel)&nbsp;; Herzog&nbsp;: «&nbsp;toute la nation est responsable&nbsp;» (oct. 2023, BBC)&nbsp;; un vice-président de la Knesset appelant à exécuter les adultes palestiniens, et des appels à «&nbsp;effacer Gaza de la surface de la Terre&nbsp;» (Haaretz) — suggèrent une volonté de détruire le groupe, pas seulement vaincre le Hamas <span class="src">(doc. de travail)</span>.</p>
+        <p><b>Défense</b>&nbsp;: Israël rejette l&rsquo;accusation en bloc&nbsp;: guerre contre le Hamas (qui nie le droit d&rsquo;Israël à exister et a massacré 1 200 civils)&nbsp;; avertissements et évacuations avant frappes&nbsp;; utilisation de boucliers humains&nbsp;; propos sortis de leur contexte ou tenus par des marginaux&nbsp;; évacuation de civils permise&nbsp;; et l&rsquo;argument symétrique — le 7 octobre lui-même était génocidaire dans sa rhétorique, ce qui n&rsquo;a pas fait des Palestiniens un peuple génocidaire <span class="src">(réponses officielles&nbsp;; doc. de travail)</span>.</p>
+        <p><b>État du débat savant</b>&nbsp;: des spécialistes mondiaux du génocide (Omer Bartov, Amos Goldberg) concluent au génocide&nbsp;; d&rsquo;autres jugent l&rsquo;<i>intent</i> non établi ou le cadre inadapté&nbsp;; la <b>commission d&rsquo;enquête de l&rsquo;ONU</b> (sept. 2025) retient des «&nbsp;motifs raisonnables&nbsp;» de conclure au génocide — quatre des actes de l&rsquo;art. II, intention incluse — position la plus avancée d&rsquo;un organe onusien, sans valeur de verdict <span class="src">(COI, A/HRC/60/C.2/2025/2&nbsp;; voir Notes)</span>.</p>
+
+        <div class="pv real"><span class="who">Le point d&rsquo;équilibre du chapitre.</span><span class="these">Ce qui est documenté&nbsp;: les actes. Ce qui est disputé&nbsp;: l&rsquo;intention. Ce qui est tranché&nbsp;: rien — pas encore.</span> Le cours ne demande à personne d&rsquo;«&nbsp;y croire&nbsp;»&nbsp;: il demande de savoir lire un dossier à deux étages — et de remarquer que l&rsquo;obligation de prévention (séq. 3), elle, n&rsquo;attend pas le verdict.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les faits matériels (destruction, famine, bilans MoH/Lancet, propos officiels cités mot pour mot avec sources) — documentés par des sources multiples, y compris israéliennes.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: ces propos prouvent-ils le <i>dolus specialis</i>&nbsp;? Contexte de guerre, rhétorique, marginaux — l&rsquo;objection est sérieuse&nbsp;; la COI et des juristes la jugent dépassée par la systématicité&nbsp;; d&rsquo;autres non. Attribué, disputé.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;accusation de génocide = délégitimation d&rsquo;Israël&nbsp;» vs «&nbsp;refus du mot = négation des faits&nbsp;» — les deux peurs sont réelles&nbsp;; le cours les nomme sans les choisir à la place du lecteur.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Exercice de tri&nbsp;: classer des énoncés sourcés selon l&rsquo;étage (matériel / intentionnel) — et repérer ceux qui ne relèvent d&rsquo;aucun.</li>
+            <li>Débat cadré&nbsp;: les propos d&rsquo;Amalek — pièce à conviction ou sortie de contexte&nbsp;? Deux notes contradictoires de dix lignes, sources obligatoires.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s5">
-      <summary><span class="seq-num">5</span><span class="t">La reconnaissance officielle et la chronologie 2023–2025</span><span class="c">procédures · ONG</span></summary>
+      <summary><span class="seq-num">5</span><span class="t">La reconnaissance officielle et la chronologie 2023–2026</span><span class="c">procédures · ONG</span></summary>
       <div class="body">
-        <p>La reconnaissance officielle : procédure judiciaire en cours, rôle des ONG et des expert·es ; chronologie des faits et des déclarations de 2023 à 2025.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>tenir une chronologie datée et sourcée des étapes de la procédure.</li><li>préciser à chaque ligne ce qui est établi, allégué ou en cours d&rsquo;examen.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>26 janv. 2024</b>&nbsp;: la CIJ reconnaît des droits «&nbsp;plausibles&nbsp;» et un risque réel&nbsp;; ordonne les mesures conservatoires — dont l&rsquo;aide humanitaire.</li>
+          <li><b>Nov. 2024</b>&nbsp;: mandats d&rsquo;arrêt CPI (Netanyahou, Gallant) — crimes de guerre/contre l&rsquo;humanité&nbsp;; le génocide n&rsquo;est pas (encore) au chef.</li>
+          <li><b>Sept. 2025</b>&nbsp;: la commission d&rsquo;enquête ONU conclut à des «&nbsp;motifs raisonnables&nbsp;» de génocide.</li>
+          <li>2026&nbsp;: procédure écrite Afrique du Sud c. Israël jusqu&rsquo;en 2029 — le verdict viendra après la guerre&nbsp;; les alertes, elles, ont commencé dès octobre 2023.</li>
+        </ul></div>
+
+        <h4 class="v">Chronologie datée et sourcée</h4>
+        <table>
+          <tr><th>Date</th><th>Fait</th><th>Statut</th></tr>
+          <tr><td>7 oct. 2023</td><td>Attaque du Hamas&nbsp;: ≈1 200 tués, ~250 otages&nbsp;; état de guerre.</td><td>Établi</td></tr>
+          <tr><td>9 oct. 2023</td><td>«&nbsp;Siège total&nbsp;» annoncé par Gallant&nbsp;; blocus nourriture/eau/carburant.</td><td>Établi</td></tr>
+          <tr><td>13 oct. 2023</td><td>Ordre d&rsquo;évacuation du nord Gaza (24 h)&nbsp;; déplacements massifs.</td><td>Établi</td></tr>
+          <tr><td>28 oct. 2023 →</td><td>Offensive terrestre&nbsp;; frappes sur hôpitaux, écoles, sites ONU.</td><td>Établi (Amnesty, HRW, OCHA)</td></tr>
+          <tr><td>26 janv. 2024</td><td>CIJ (affaire 192)&nbsp;: droits «&nbsp;plausibles&nbsp;», mesures conservatoires ordonnées.</td><td>Ordonnance — établie</td></tr>
+          <tr><td>2024</td><td>Rapports Albanese («&nbsp;Anatomie d&rsquo;un génocide&nbsp;»)&nbsp;; famine documentée&nbsp;; destructions systématiques.</td><td>Alertes d&rsquo;experts</td></tr>
+          <tr><td>21 nov. 2024</td><td>CPI&nbsp;: mandats d&rsquo;arrêt Netanyahou et Gallant (crimes de guerre et contre l&rsquo;humanité).</td><td>Décision — établie</td></tr>
+          <tr><td>Mar.–mai 2025</td><td>Famine confirmée (IPC)&nbsp;; malnutrition aiguë&nbsp;; «&nbsp;55 000 à 200 000 morts&nbsp;» selon les méthodes (OCHA, mai 2025).</td><td>Établi / estimations</td></tr>
+          <tr><td>juil. 2025</td><td>B&rsquo;Tselem (organisation israélienne) accuse Israël de génocide&nbsp;; Droit pour Gaza assigne la Belgique.</td><td>Qualifications civiles</td></tr>
+          <tr><td>16 sept. 2025</td><td>Commission d&rsquo;enquête ONU&nbsp;: «&nbsp;motifs raisonnables&nbsp;» de génocide (4 actes de l&rsquo;art. II, intention retenue).</td><td>Rapport onusien — alerte qualifiée</td></tr>
+          <tr><td>10 oct. 2025</td><td>Cessez-le-feu&nbsp;; bilans&nbsp;: ~68 000 déclarés alors&nbsp;; ~74 500 à l&rsquo;automne 2026 (MoH).</td><td>Établi / bilans déclarés</td></tr>
+          <tr><td>2026</td><td>CIJ&nbsp;: procédure écrite (mémoires) jusqu&rsquo;en 2029&nbsp;; CPI&nbsp;: mandats en vigueur, exécution incertaine.</td><td>En cours</td></tr>
+        </table>
+        <p><b>La leçon de temps judiciaire</b>&nbsp;: entre Srebrenica (1995) et le verdict Krstić (2001), six ans&nbsp;; entre le Rwanda (1994) et Akayesu (1998), quatre. Pour Gaza, l&rsquo;histoire est en train de s&rsquo;écrire avec la même asymétrie&nbsp;: <b>la documentation est massive et immédiate, le verdict sera tardif</b>. Entre les deux&nbsp;: les ONG documentent, les rapporteurs alertent, les États — eux — ont une obligation de prévention qui, elle, court dès maintenant <span class="src">(doc. de travail)</span>.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: chaque ligne de la chronologie est datée et sourcée&nbsp;; les ordonnances CIJ et mandats CPI sont des décisions publiques&nbsp;; les bilans portent leurs marges (MoH sous-compte&nbsp;; Lancet&nbsp;; OCHA donne une fourchette).</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: ce que «&nbsp;plausible&nbsp;» veut dire — un seuil procédural (les droits invoqués sont crédibles), pas un constat de génocide&nbsp;; la confusion entre seuil et verdict est la principale erreur de lecture du débat public.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;les procédures sont l&rsquo;arme des faibles contre Israël&nbsp;» vs «&nbsp;le droit est la seule arme des Gazaouis&nbsp;» — deux lectures du forum juridique&nbsp;; noter que les deux présupposent que le résultat dépend du forum, pas des faits.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Tenir la chronologie à jour jusqu&rsquo;au verdict CIJ — chaque ligne&nbsp;: date, source, statut (établi / allégué / en cours).</li>
+            <li>Écrire une «&nbsp;notice juridique&nbsp;» de 150 mots&nbsp;: ce que la CIJ a dit, ce qu&rsquo;elle n&rsquo;a pas dit, ce qu&rsquo;il reste à juger — sans le mot «&nbsp;génocide&nbsp;» hors de son contexte.</li>
+            <li>Vers le chap. 7&nbsp;: comparer ce calendrier judiciaire au calendrier politique (pourquoi le droit avance-t-il si lentement&nbsp;?).</li>
+          </ul>
+        </div>
       </div>
     </details>
 
@@ -134,11 +302,11 @@
 
       <p class="srcs"><b>Droit —</b> <a href="https://docs.un.org/fr/A/RES/260(III)">Convention pour la prévention et la répression du crime de génocide (1948)</a> &nbsp;· <a href="https://www.icj-cij.org/case/192">affaire 192</a> — Afrique du Sud c. Israël (mesures conservatoires 2024&nbsp;; procédure écrite jusqu&rsquo;en 2029).</p>
 
-      <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icty.org/">TPIY</a> — arrêt Krstić (Srebrenica, 2001) &nbsp;· TPIR — arrêt Akayesu (Rwanda, 1998), première condamnation pour génocide.</p>
+      <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icty.org/">TPIY</a> — arrêt Krstić (Srebrenica, 2001) &nbsp;· TPIR — arrêt Akayesu (Rwanda, 1998), première condamnation pour génocide &nbsp;· CIJ, Bosnie c. Serbie (2007) — obligation de prévenir&nbsp;; Gambie c. Myanmar (2020) — mesures conservatoires.</p>
 
-      <p class="srcs"><b>Alertes et données —</b> Commission d&rsquo;enquête de l&rsquo;ONU (2025)&nbsp;: «&nbsp;motifs raisonnables&nbsp;» de retenir le génocide &nbsp;· OHCHR &nbsp;· <a href="https://www.hrw.org/fr">Human Rights Watch</a> &nbsp;· Amnesty International.</p>
+      <p class="srcs"><b>Alertes et données —</b> <a href="https://docs.un.org/en/A/HRC/60/C.2/2025/2">Commission d&rsquo;enquête de l&rsquo;ONU (sept. 2025)</a>&nbsp;: «&nbsp;motifs raisonnables&nbsp;» de retenir le génocide &nbsp;· Francesca Albanese, rapporteure spéciale (rapports 2024-2025) &nbsp;· OHCHR &nbsp;· <a href="https://www.hrw.org/fr">Human Rights Watch</a> &nbsp;· Amnesty International &nbsp;· B&rsquo;Tselem et Physicians for Human Rights Israel (juil. 2025) &nbsp;· CNCD-11.11.11.</p>
 
-      
+      <p class="srcs"><b>Doctrine et débats —</b> Raphael Lemkin, <i>Axle Rule in the Balkans</i> (1944) — origine du concept &nbsp;· Omer Bartov, Amos Goldberg (conclusions au génocide)&nbsp;; auteurs opposés à la qualification — à croiser dans la bibliographie d&rsquo;équipe &nbsp;· <a href="https://www.association-belgo-palestinienne.be/action-juridique-citoyenne-contre-letat-belge-en-raison-de-son-inaction-face-au-genocide-a-gaza/">Droit pour Gaza — action citoyenne contre l&rsquo;État belge (juil. 2025)</a>.</p>
     </div>
 
     <div class="foot">Chapitre 6 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
