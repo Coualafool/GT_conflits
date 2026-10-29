@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rejoindre le serveur Discord — Guide pour débutants</title>
+<style>
+  :root{
+    --blurple:#5865F2; --blurple-dark:#4752C4; --green:#3BA55D;
+    --bg:#313338; --bg-2:#2B2D31; --card:#2B2D31; --card-2:#1E1F22;
+    --border:#3f4147; --fg:#DBDEE1; --muted:#B5BAC1; --white:#FFFFFF;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:"Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    background:var(--bg); color:var(--fg); line-height:1.6; font-size:17px;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px 80px;}
+
+  /* ---------- Header / hero ---------- */
+  .hero{
+    background:linear-gradient(135deg, var(--blurple) 0%, #7c84f5 60%, var(--green) 130%);
+    color:var(--white); padding:56px 24px 44px; text-align:center;
+    border-bottom:4px solid var(--border);
+  }
+  .hero .logo{font-size:60px;line-height:1;margin-bottom:10px;}
+  .hero h1{font-size:2.1rem;font-weight:800;letter-spacing:.3px;max-width:640px;margin:0 auto 10px;}
+  .hero p{font-size:1.05rem;opacity:.95;max-width:600px;margin:0 auto;}
+  .cta-btn{
+    display:inline-block;margin-top:22px;background:var(--white);color:var(--blurple-dark);
+    font-weight:800;font-size:1.05rem;text-decoration:none;padding:14px 30px;border-radius:999px;
+    box-shadow:0 6px 18px rgba(0,0,0,.25);transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.3);}
+  .hero .invite-link{font-size:.85rem;opacity:.9;margin-top:12px;word-break:break-all;}
+
+  /* ---------- Section / step layout ---------- */
+  section{margin-top:52px;}
+  h2{
+    font-size:1.6rem;font-weight:800;color:var(--white);
+    display:flex;align-items:center;gap:14px;margin-bottom:6px;
+  }
+  .step-num{
+    flex:0 0 auto;width:46px;height:46px;border-radius:14px;
+    background:var(--blurple);color:var(--white);font-weight:800;font-size:1.25rem;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 12px rgba(88,101,242,.4);
+  }
+  .subhead{color:var(--muted);font-size:1.05rem;margin-bottom:18px;padding-left:60px;}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;margin-top:18px;
+  }
+  .card h3{color:var(--white);font-size:1.15rem;margin-bottom:12px;}
+  ol,ul{margin-left:6px;list-style:none;counter-reset:step;}
+  .ol-step{
+    counter-increment:step;position:relative;padding-left:44px;margin-bottom:14px;
+  }
+  .ol-step::before{
+    content:counter(step);position:absolute;left:0;top:2px;
+    width:30px;height:30px;border-radius:50%;
+    background:var(--card-2);border:2px solid var(--blurple);color:var(--blurple);
+    font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center;
+  }
+  ul.bullets li{position:relative;padding-left:26px;margin-bottom:10px;}
+  ul.bullets li::before{
+    content:"";position:absolute;left:4px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--green);
+  }
+  .ol-step code,.bullets code,.inline-code{
+    background:var(--card-2);padding:2px 8px;border-radius:6px;font-family:Consolas,Menlo,monospace;
+    font-size:.92em;color:#C9D1FF;word-break:break-all;
+  }
+  strong{color:var(--white);}
+  .tip,.note{
+    border-radius:var(--radius);padding:14px 18px;margin-top:18px;font-size:.98rem;
+  }
+  .tip{background:rgba(59,165,93,.12);border:1px solid rgba(59,165,93,.35);}
+  .tip strong{color:var(--green);}
+  .note{background:rgba(88,101,242,.12);border:1px solid rgba(88,101,242,.35);}
+  .note strong{color:#9FA7FF;}
+
+  /* ---------- Big join callout ---------- */
+  .join-box{
+    text-align:center;background:linear-gradient(135deg,var(--blurple),var(--blurple-dark));
+    border:1px solid rgba(255,255,255,.15);padding:36px 24px;margin-top:20px;border-radius:16px;color:#fff;
+  }
+  .join-box .server-name{font-size:1.5rem;font-weight:800;margin-bottom:6px;}
+  .join-box .cta-btn{margin-top:16px;}
+  .join-box .copy-link{font-size:.9rem;opacity:.9;margin-top:14px;word-break:break-all;}
+
+  /* ---------- Troubleshooting ---------- */
+  .trouble{display:flex;flex-direction:column;gap:10px;}
+  .trouble-item{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);}
+  .trouble-ic{font-size:1.3rem;line-height:1;}
+  .trouble-item b{color:var(--white);display:block;margin-bottom:2px;}
+
+  footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--muted);font-size:.9rem;text-align:center;}
+  .pill{
+    display:inline-block;background:var(--card-2);border:1px solid var(--border);color:var(--muted);
+    padding:3px 12px;border-radius:999px;font-size:.85rem;margin-top:16px;
+  }
+  @media (max-width:520px){
+    .hero h1{font-size:1.6rem;}
+    h2{font-size:1.35rem;}
+    .subhead{padding-left:0;}
+    .step-num{width:40px;height:40px;font-size:1.1rem;}
+    .cta-btn{width:100%;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="logo">💬</div>
+  <h1>Rejoindre le serveur Discord «&nbsp;GT - Conflits internationaux&nbsp;»</h1>
+  <p>Guide pas-à-pas pour débutants&nbsp;: installer Discord, créer un compte et rejoindre le serveur en 5&nbsp;petites étapes.</p>
+  <a class="cta-btn" href="https://discord.gg/XhN5PXSF6" target="_blank" rel="noopener">Clique ici pour rejoindre le serveur ➜</a>
+  <div>
+    <span class="pill">Gratuit</span>
+    <span class="pill">PC &amp; téléphone</span>
+    <span class="pill">5 minutes</span>
+  </div>
+  <div class="invite-link">Lien : https://discord.gg/XhN5PXSF6</div>
+</header>
+
+<div class="wrap">
+
+  <!-- QU'EST-CE QUE DISCORD -->
+  <section>
+    <h2>💡 C'est quoi Discord&nbsp;?</h2>
+    <div class="card">
+      <p>Discord est une <strong>application gratuite de discussion</strong> (comme un tchat&nbsp;/&nbsp;chat) utilisée sur ordinateur et sur téléphone. Elle sert à&nbsp;:</p>
+      <ul class="bullets" style="margin-top:14px;">
+        <li><strong>Écrire des messages</strong> dans des <em>salons</em> (sujets de discussion).</li>
+        <li><strong>Envoyer des photos</strong>, vidéos et fichiers.</li>
+        <li><strong>Discuter à la voix ou en vidéo</strong> avec d'autres membres.</li>
+      </ul>
+      <p style="margin-top:12px;">Un <em>serveur</em> est un groupe créé par quelqu'un autour d'un sujet — ici, <strong>«&nbsp;GT - Conflits internationaux&nbsp;»</strong>, un serveur animé par <strong>Couala</strong>. Pour y accéder, il suffit d'un simple <strong>lien d'invitation</strong>.</p>
+    </div>
+  </section>
+
+  <!-- ÉTAPE 1 -->
+  <section>
+    <h2><span class="step-num">1</span> Créer un compte Discord</h2>
+    <p class="subhead">Tu peux créer ton compte depuis le lien d'invitation (étape&nbsp;4) ou à l'avance sur le site.</p>
+    <div class="card">
+      <ol>
+        <li class="ol-step">Ouvre ton navigateur et va sur <code class="inline-code">https://discord.com/download</code>.</li>
+        <li class="ol-step">Clique sur <strong>«&nbsp;S'inscrire&nbsp;»</strong> (ou «&nbsp;Sign Up&nbsp;»).</li>
+        <li class="ol-step">Renseigne ta <strong>date de naissance</strong>, un <strong>email</strong>, un <strong>nom d'utilisateur</strong> et un <strong>mot de passe</strong>.</li>
+        <li class="ol-step">Confirme ton âge, puis clique sur <strong>«&nbsp;Continuer&nbsp;»</strong>. Discord t'envoie souvent un <strong>code de vérification par email</strong>&nbsp;: saisis-le pour activer ton compte.</li>
+      </ol>
+      <div class="tip"><strong>💡 Astuce&nbsp;:</strong> note bien ton mot de passe quelque part&nbsp;— il te servira à chaque connexion.</div>
+    </div>
+  </section>
+
+  <!-- ÉTAPE 2 -->
+  <section>
+    <h2><span class="step-num">2</span> Installer l'application</h2>
+    <p class="subhead">L'application est plus pratique que le site web. Choisis ton appareil&nbsp;:</p>
+
+    <div class="card">
+      <h3>🖥️ Sur ordinateur (Windows, Mac ou Linux)</h3>
+      <ol>
+        <li class="ol-step">Va sur <code class="inline-code">https://discord.com/download</code>.</li>
+        <li class="ol-step">Clique sur le bouton correspondant à ton système (par ex. «&nbsp;Download for Windows&nbsp;»).</li>
+        <li class="ol-step">Ouvre le fichier téléchargé (il se termine en <code class="inline-code">.exe</code> sur Windows).</li>
+        <li class="ol-step">Suis les instructions&nbsp;: clique sur <strong>«&nbsp;Accepter&nbsp;»</strong> puis <strong>«&nbsp;Installer&nbsp;»</strong>. C'est terminé en quelques secondes.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>📱 Sur téléphone (Android ou iPhone)</h3>
+      <ol>
+        <li class="ol-step">Ouvre la boutique d'applications&nbsp;: <strong>Play Store</strong> sur Android ou <strong>App Store</strong> sur iPhone.</li>
+        <li class="ol-step">Recherche <strong>«&nbsp;Discord&nbsp;»</strong> dans la barre de recherche.</li>
+        <li class="ol-step">Clique sur <strong>«&nbsp;Installer&nbsp;»</strong> (ou «&nbsp;Obtenir&nbsp;»).</li>
+        <li class="ol-step">Attends le téléchargement, puis ouvre l'application.</li>
+      </ol>
+    </div>
+
+    <div class="note"><strong>ℹ️ Note&nbsp;:</strong> tu peux aussi utiliser Discord <em>directement dans ton navigateur</em>, sans rien installer. Mais l'application est plus simple pour un débutant.</div>
+  </section>
+
+  <!-- ÉTAPE 3 -->
+  <section>
+    <h2><span class="step-num">3</span> Se connecter</h2>
+    <div class="card">
+      <ol>
+        <li class="ol-step">Ouvre l'<strong>application Discord</strong> (ou le site).</li>
+        <li class="ol-step">Saisis ton <strong>email</strong> et ton <strong>mot de passe</strong>, puis clique sur <strong>«&nbsp;Se connecter&nbsp;»</strong>.</li>
+        <li class="ol-step">Si tu as créé ton compte depuis le lien d'invitation, tu es déjà connecté(e).</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ÉTAPE 4 -->
+  <section>
+    <h2><span class="step-num">4</span> Rejoindre le serveur</h2>
+    <p class="subhead">Le serveur «&nbsp;GT - Conflits internationaux&nbsp;», invité par Couala.</p>
+
+    <div class="join-box">
+      <div class="server-name">🎉 GT - Conflits internationaux</div>
+      <p>Rejoindre la communauté en un clic&nbsp;:</p>
+      <a class="cta-btn" href="https://discord.gg/XhN5PXSF6" target="_blank" rel="noopener">Rejoindre le serveur ➜</a>
+      <div class="copy-link">Lien : https://discord.gg/XhN5PXSF6</div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <ol>
+        <li class="ol-step">Clique sur le lien&nbsp;: <code class="inline-code">https://discord.gg/XhN5PXSF6</code>.</li>
+        <li class="ol-step">Une page s'ouvre et propose de rejoindre le serveur. Clique sur <strong>«&nbsp;Rejoindre le serveur&nbsp;»</strong> (ou «&nbsp;Join Community&nbsp;»).</li>
+        <li class="ol-step">Si Discord te demande de <strong>confirmer ton âge</strong>, accepte (le serveur peut être réservé aux 13&nbsp;ans et plus, voire 18+).</li>
+        <li class="ol-step">Une fois dedans, tu verras les <strong>salons</strong> à gauche. Clique sur un salon (par ex. «&nbsp;général&nbsp;») pour commencer à écrire.</li>
+      </ol>
+    </div>
+
+    <div class="tip"><strong>🔗 Le lien ne fonctionne pas&nbsp;?</strong> Copie <code class="inline-code">https://discord.gg/XhN5PXSF6</code>, colle-le dans la barre d'adresse du navigateur et appuie sur <strong>Entrée</strong>.</div>
+  </section>
+
+  <!-- ÉTAPE 5 -->
+  <section>
+    <h2><span class="step-num">5</span> Personnaliser ton profil <span style="font-weight:400;font-size:.9rem;color:var(--muted);">(facultatif)</span></h2>
+    <div class="card">
+      <ul class="bullets">
+        <li>En <strong>bas à gauche</strong>, clique sur ta photo de profil pour changer ton <strong>nom d'affichage</strong> (celui que les autres voient).</li>
+        <li>Tu peux aussi ajouter une <strong>photo de profil</strong>, un <strong>statut</strong> (par ex. «&nbsp;En ligne&nbsp;») et un petit message.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DÉPANNAGE -->
+  <section>
+    <h2 style="--muted:#fff;">🛠️ Des problèmes&nbsp;? On t'aide</h2>
+    <div class="trouble" style="margin-top:16px;">
+      <div class="trouble-item"><span class="trouble-ic">🔗</span><div><b>«&nbsp;Lien invalide&nbsp;»</b>Le lien a probablement expiré. Demande un nouveau lien d'invitation à un membre du serveur.</div></div>
+      <div class="trouble-item"><span class="trouble-ic">📧</span><div><b>Je ne reçois pas le code par email</b>Vérifie ton dossier «&nbsp;Courriers indésirables&nbsp;» (Spam).</div></div>
+      <div class="trouble-item"><span class="trouble-ic">💻</span><div><b>L'application ne s'ouvre pas</b>Redémarre l'ordinateur ou le téléphone et réessaie. Sinon, désinstalle puis réinstalle Discord.</div></div>
+      <div class="trouble-item"><span class="trouble-ic">🔞</span><div><b>Tu as moins de 13 ans</b>Discord n'est pas autorisé en dessous de cet âge.</div></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Une fois connecté(e), lis les règles du serveur (salon «&nbsp;règles&nbsp;» ou «&nbsp;welcome&nbsp;») avant de poster. Bonnes discussions&nbsp;! 🎉</p>
+    <p style="margin-top:8px;">Guide créé pour les débutants · Serveur «&nbsp;GT - Conflits internationaux&nbsp;»</p>
+  </footer>
+
+</div>
+</body>
+</html>
