@@ -58,6 +58,37 @@
   .srcs a{color:var(--accent);text-decoration:none}
   .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  /* contenu enrichi (recette ch1/ch3) */
+  .acc .body h4.v{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin:20px 0 6px;font-weight:700}
+  .acc .body .pv{border-left:3px solid var(--border);padding:2px 0 2px 14px;margin:12px 0}
+  .acc .body .pv.off{border-color:var(--brand)}
+  .acc .body .pv.palest{border-color:var(--good)}
+  .acc .body .pv.israel{border-color:var(--accent)}
+  .acc .body .pv.real{border-color:var(--faint)}
+  .acc .body .pv.sud{border-color:var(--brand-2)}
+  .acc .body .who{font-weight:700;color:var(--ink)}
+  .acc .body ul{margin:6px 0 6px 20px;padding:0}
+  .acc .body li{margin:5px 0}
+  .acc .body .src{color:var(--faint);font-size:12.5px}
+  .acc .body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  .acc .body th{color:var(--ink);font-weight:700;text-align:left;border-bottom:1px solid var(--border);padding:6px 8px}
+  .acc .body td{border-bottom:1px solid var(--border);padding:6px 8px;color:var(--muted)}
+  .essentiel{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel-2);border-radius:0 10px 10px 0;padding:12px 14px;margin:2px 0 16px}
+  .essentiel .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:6px}
+  .essentiel ul{margin:0;padding-left:18px}
+  .essentiel li{margin:4px 0;font-size:14px;color:var(--ink)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:12px 0}
+  .stat{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--panel-2)}
+  .stat .n{font-size:19px;font-weight:800;color:var(--brand);line-height:1.25}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:3px}
+  .stat .s{font-size:10.5px;color:var(--faint);margin-top:3px}
+  .pv .these{display:block;color:var(--ink);font-weight:600;font-size:14.5px;margin:5px 0 7px}
+  .etages{display:grid;gap:8px;margin:8px 0}
+  .etage{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel)}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:1px}
+  .t-ok{background:rgba(95,179,128,.15);color:var(--good);border:1px solid rgba(95,179,128,.4)}
+  .t-int{background:rgba(224,164,88,.15);color:var(--brand);border:1px solid rgba(224,164,88,.4)}
+  .t-dis{background:rgba(154,168,182,.12);color:var(--muted);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -90,32 +121,213 @@
     <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Comprendre le monde sous l&rsquo;angle géopolitique</span><span class="c">cadre</span></summary>
       <div class="body">
-        <p>Poser le regard géopolitique : territoire, puissance, ressources, populations. La « carte d&rsquo;identité comparative » sert de grille unique, appliquée de manière symétrique aux deux entités — comparer sans hiérarchiser.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>définir les critères de la carte d&rsquo;identité en classe.</li><li>convenir de ce qui permet de comparer deux entités sans les mettre sur un pied d&rsquo;égalité forcé.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>La géopolitique est une paire de lunettes&nbsp;: territoire, puissance, ressources, populations, représentations.</li>
+          <li>Une carte n&rsquo;est jamais neutre&nbsp;: elle est produite, elle découpe, elle nomme — toujours demander qui l&rsquo;a faite et pourquoi.</li>
+          <li>La «&nbsp;carte d&rsquo;identité comparative&nbsp;» applique les <b>mêmes critères</b> aux deux entités&nbsp;: comparer sans hiérarchiser, mais sans égaliser non plus.</li>
+          <li>Ici plus qu&rsquo;ailleurs, les chiffres sont des champs de bataille&nbsp;: superficie, population, frontières — chaque statistique suppose un choix politique assumé.</li>
+        </ul></div>
+
+        <p>Nos connaissances des conflits reposent souvent sur les médias généralistes, qui présentent les événements de manière rapide et factuelle, sans expliquer le contexte ni les enchaînements de causes <span class="src">(doc. de travail, Drive)</span>. La géopolitique propose l&rsquo;inverse&nbsp;: des <b>«&nbsp;lunettes&nbsp;»</b> pour prendre du recul — non pas une discipline académique stricte, mais une façon de lire le monde. Elle pose que les tensions ne se limitent pas aux affrontements armés&nbsp;: elles impliquent des rivalités de pouvoir autour des <b>territoires</b>, des <b>ressources</b> et de l&rsquo;<b>influence</b>, portées par des acteurs aux intérêts et aux représentations différents.</p>
+
+        <h4 class="v">Premier geste&nbsp;: qui a créé cette carte&nbsp;?</h4>
+        <p>Les cartes sont l&rsquo;outil principal de la géopolitique — et comme tout document, elles donnent <b>déjà</b> une lecture du monde. Une carte qui montre «&nbsp;Israël de la mer au Jourdain&nbsp;» sans les territoires occupés, une carte qui montre «&nbsp;la Palestine historique&nbsp;» sans Israël, une carte des zones A/B/C&nbsp;: trois cadrages, trois récits. L&rsquo;exercice de base est donc toujours le même&nbsp;: <b>qui a fait cette carte, pour qui, avec quelles frontières tracées ou effacées&nbsp;?</b></p>
+        <p><b>Piste péda (doc. de travail)&nbsp;:</b> analyser le timelapse satellite de la région sur Google Earth Engine (1984-2026) — expansion urbaine, colonies, terres agricoles, et à Gaza l&rsquo;effacement puis la reconstruction impossible. Le document brut parle sans commentaire&nbsp;; c&rsquo;est à la classe de le lire.</p>
+
+        <h4 class="v">Pourquoi les chiffres sont si difficiles à établir ici</h4>
+        <p>Dans le cas d&rsquo;Israël et des territoires palestiniens, il n&rsquo;est pas facile de donner des chiffres précis qui se recoupent&nbsp;: depuis plusieurs décennies, le contrôle territorial s&rsquo;étend par l&rsquo;occupation militaire et la construction de colonies, rendant les frontières floues et contestées <span class="src">(doc. de travail)</span>. <b>Notre convention, assumée&nbsp;:</b> nous nous appuyons sur les <b>lignes de 1967</b>, référence de la majorité des États et du droit international (voir chap. 7). Tous les chiffres du chapitre précisent donc ce qu&rsquo;ils incluent ou excluent.</p>
+
+        <div class="stats">
+          <div class="stat"><div class="n">10,31 M</div><div class="l">habitants en Israël (frontières de 1967 incluses&nbsp;: Golan, Jérusalem-Est)</div><div class="s">CBS, sept. 2026</div></div>
+          <div class="stat"><div class="n">5,6 M</div><div class="l">Palestiniens dans l&rsquo;État de Palestine (3,43 M Cisjordanie · 2,13 M Gaza)</div><div class="s">PCBS, fin 2025</div></div>
+          <div class="stat"><div class="n">15,5 M</div><div class="l">Palestiniens dans le monde, dont 8,1 M en diaspora</div><div class="s">PCBS, fin 2025</div></div>
+          <div class="stat"><div class="n">~22 000 km²</div><div class="l">Israël (lignes de 1967) — contre ~6 000 km² pour Cisjordanie&nbsp;+&nbsp;Gaza</div><div class="s">chiffres de travail</div></div>
+        </div>
+
+        <h4 class="v">La grille&nbsp;: la carte d&rsquo;identité comparative</h4>
+        <p>Le chapitre entier s&rsquo;appuie sur une <b>grille unique appliquée symétriquement</b> aux deux entités&nbsp;: géographie et territoire · politique et institutions · économie · population, langues et société · armée et sécurité. Les séquences 2 et 3 parcourent cette grille pour Israël puis pour la Palestine&nbsp;; la séquence 4 recoupe les deux fiches pour faire voir le rapport de force.</p>
+        <p><b>La règle du jeu&nbsp;:</b> comparer sans hiérarchiser — mais pas égaliser pour autant. Appliquer les mêmes critères, c&rsquo;est précisément ce qui rend <i>visible</i> l&rsquo;asymétrie (une armée classée 15<sup>e</sup> mondiale en face d&rsquo;une absence d&rsquo;armée&nbsp;; un PIB par habitant de ~55 000 $ contre ~212 $ à Gaza). L&rsquo;objectivité n&rsquo;est pas la neutralité&nbsp;: elle est dans la méthode — mêmes cases, sources datées, hypothèses affichées.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span> (sourçable)&nbsp;: les chiffres de population (CBS, PCBS), les superficies, les lignes de 1967 comme référence onusienne — tout est attribué.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: le choix de la grille elle-même. D&rsquo;autres grilles existent (religieuse, juridique, mémorielle)&nbsp;; celle-ci est géopolitique — elle met l&rsquo;accent sur l&rsquo;espace et le pouvoir, pas sur le sacré ou le droit pur.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: les noms eux-mêmes (Judée-Samarie / Cisjordanie&nbsp;; «&nbsp;territoires disputés&nbsp;» / «&nbsp;territoires occupés&nbsp;»). Chaque page de ce chapitre affiche le choix fait et sa raison.</div>
+          </div>
+          Ce document ne tranche pas les récits&nbsp;; il exige des sources pour chaque affirmation.
+        </div>
+
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Définir «&nbsp;géopolitique&nbsp;» en une phrase, avec les mots de la classe.</li>
+            <li>Établir les critères de la carte d&rsquo;identité en classe — et convenir de ce qui permet de comparer deux entités sans les mettre sur un pied d&rsquo;égalité forcé.</li>
+            <li>Exercice «&nbsp;qui a fait cette carte&nbsp;?&nbsp;»&nbsp;: projeter trois cartes du même territoire issues de sources différentes (CIA Factbook, OCHA, site officiel israélien) — relever ce que chacune montre et cache.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Israël : fiche d&rsquo;identité</span><span class="c">comparatif</span></summary>
       <div class="body">
-        <p>Parcourir l&rsquo;entité israélienne avec la grille : géographie et territoire, politique et institutions, économie, population / langues / société, armée et sécurité — avec l&rsquo;encart « le couple Israël–USA ».</p>
-        <div class="todo"><b>À travailler ici :</b> remplir la colonne « Israël » du tableau comparatif à partir de sources fournies et datées.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>État solide et riche (PIB/hab. ~55 000 $, 15<sup>e</sup> puissance militaire) — mais une société plurielle, jamais monolithique.</li>
+          <li>Élections du 27 octobre 2026&nbsp;: aucun camp ne décroche la majorité&nbsp;; les partis arabes font un score historique et pèsent sur la suite.</li>
+          <li>Le coût des guerres (~20&nbsp;% du PIB) et le coût de la vie pèsent sur les votes, malgré une économie tech en plein boom.</li>
+          <li>La relation aux États-Unis est la clé de voûte de sa puissance — et elle se négocie désormais autrement (fin de l&rsquo;aide MOU en 2028).</li>
+        </ul></div>
+
+        <h4 class="v">Géographie et territoire</h4>
+        <p>Israël borde le Liban au nord, la Syrie au nord-est, la Jordanie à l&rsquo;est, l&rsquo;Égypte au sud-ouest, la Méditerranée à l&rsquo;ouest. Géographie variée&nbsp;: plaine côtière fertile, montagnes de Judée et Samarie, vallée du Jourdain, désert du Néguev (~60&nbsp;% du territoire). Superficie&nbsp;: ~22 000 km² selon les lignes de 1967 — <b>sans compter</b> les zones annexées ou occupées&nbsp;: Jérusalem-Est (annexée en 1980, non reconnue), le Golan (occupé en 1967, annexé en 1981), la Cisjordanie (territoire occupé au regard du droit international). Avec ces zones, le contrôle dépasse 28 000 km² <span class="src">(doc. de travail&nbsp;; voir séq. 4 pour la lecture politique de ces zones)</span>.</p>
+        <div class="pv off"><span class="who">Encart — Jérusalem, capitale revendiquée.</span><span class="these">Berceau des trois monothéismes, revendiquée comme capitale par les deux peuples.</span> Israël administre la partie ouest et y installe ses institutions&nbsp;; il revendique Jérusalem «&nbsp;entière et indivisible&nbsp;», revendication <b>non reconnue</b> par la communauté internationale&nbsp;; les Palestiniens revendiquent Jérusalem-Est comme capitale. Sur le terrain&nbsp;: démographie, colonisation à Jérusalem-Est et restrictions d&rsquo;accès font de la ville un point de tension permanent <span class="src">(doc. de travail&nbsp;; résolutions 476 et 478 du Conseil de sécurité, 1980)</span>.</div>
+
+        <h4 class="v">Politique et institutions</h4>
+        <p>Démocratie parlementaire <b>sans constitution écrite</b>&nbsp;: un ensemble de Lois fondamentales cadre le système. La Knesset (120 députés) légifère&nbsp;; le Président (Isaac Herzog en 2026) a un rôle protocolaire&nbsp;; le Premier ministre détient l&rsquo;essentiel de l&rsquo;exécutif — oblige à des coalitions fragiles dans un multipartisme où se superposent droites et gauches, laïcs et religieux, Juifs et Arabes israéliens <span class="src">(doc. de travail)</span>.</p>
+        <p><b>Benyamin Netanyahou</b> (Likoud), Premier ministre le plus longtemps en fonction de l&rsquo;histoire d&rsquo;Israël, dirige depuis fin 2022 le gouvernement considéré comme le plus à droite du pays (partis nationaliste et ultraorthodoxes&nbsp;; 7 femmes sur 38 ministres à la formation). Sa réforme judiciaire de 2023 a suscité d&rsquo;immenses manifestations et une inquiétude internationale sur l&rsquo;équilibre des pouvoirs. En novembre 2024, la CPI a émis des mandats d&rsquo;arrêt contre lui et l&rsquo;ex-ministre de la Défense Yoav Gallant pour crimes de guerre et crimes contre l&rsquo;humanité présumés <span class="src">(CPI, 21/11/2024&nbsp;; doc. de travail)</span>.</p>
+        <div class="pv israel"><span class="who">Actualité — élections du 27 octobre 2026&nbsp;: le suspense.</span><span class="these">Aucun vainqueur clair au moment de rédaction&nbsp;; compte en cours jusqu&rsquo;au 4 novembre.</span> Participation record&nbsp;: <b>77,7&nbsp;%</b>, la plus forte depuis 1999 <span class="src">(comité électoral central, via CNN/NBC, 27-28/10/2026)</span>. Avec ~85&nbsp;% des bulletins comptés, le bloc pro-Netanyahou reste devant (~53 sièges) mais s&rsquo;effondre depuis 68&nbsp;; le bloc du chef d&rsquo;état-major sortant <b>Gadi Eisenkot</b> (parti Yashar&nbsp;!) plafonne à ~48&nbsp;; Likud premier parti (~25-27 sièges) <span class="src">(Al Jazeera, CNN, Times of Israel, 27-28/10/2026)</span>. Aucun camp n&rsquo;atteint les 61 sièges&nbsp;; <b>les partis arabes (Joint List + Ra&rsquo;am) font un score historique (17-19 sièges)</b> et peuvent peser sur la formation du gouvernement. Scénarios ouverts&nbsp;: coalition élargie, gouvernement minoritaire, ou nouveau vote avec Netanyahou aux affaires par intérim.</div>
+        <p><b>Lecture symétrique&nbsp;:</b> ce scrutin est aussi un fait palestinien — l&rsquo;électorat arabe entre comme arbitre, et l&rsquo;issue déterminera le sort des cessez-le-feu, des retenues fiscales et de l&rsquo;annexion rampante (séq. 3).</p>
+
+        <h4 class="v">Économie</h4>
+        <p>«&nbsp;Startup nation&nbsp;»&nbsp;: la tech pèse ~40&nbsp;% des exportations (cybersécurité, défense, IA, biotechs) et environ un cinquième de l&rsquo;activité&nbsp;; ~5&nbsp;% du PIB en R&amp;D — seul pays OCDE où plus de la moitié du financement R&amp;D vient de l&rsquo;étranger <span class="src">(doc. de travail&nbsp;; EIU via Al Jazeera, 10/2026)</span>. PIB/hab. ~54 000 $ <span class="src">(CIA World Factbook)</span>. Après le choc de 2024 (+1&nbsp;%), croissance de <b>+2,9&nbsp;% en 2025</b> et ~3,4&nbsp;% attendus en 2026&nbsp;; shekel au plus haut depuis 30 ans (mai 2026), indice TA-125 en hausse de +110&nbsp;% sur trois ans <span class="src">(Al Jazeera, 10/10/2026&nbsp;; Banque d&rsquo;Israël, prévisions d&rsquo;oct. 2026)</span>.</p>
+        <p><b>Mais le plein-emploi apparent ne dit pas tout.</b> Les guerres depuis octobre 2023 ont coûté ~350 milliards de shekels (~115 milliards $), soit ~20&nbsp;% du PIB selon la Banque d&rsquo;Israël&nbsp;; la défense dépasse 7&nbsp;% du PIB en 2026 <span class="src">(Banque d&rsquo;Israël&nbsp;; S&amp;P Global Ratings, mai 2026)</span>. Environ <b>2 millions de personnes — une sur cinq — vivent sous le seuil de pauvreté</b>, dans une économie devenue ultra-libérale&nbsp;; les femmes, les Arabes israéliens et les Juifs ultraorthodoxes sont particulièrement lésés dans l&rsquo;accès à l&rsquo;éducation et au travail <span class="src">(doc. de travail, 2026)</span>. Le coût de la vie est le thème dominant de la campagne de 2026 <span class="src">(Al Jazeera, 10/2026)</span>. Et Israël est aussi le <b>7<sup>e</sup> exportateur mondial d&rsquo;armes</b> (4,4&nbsp;% du commerce mondial 2021-2025) <span class="src">(SIPRI)</span>.</p>
+
+        <h4 class="v">Population, langues et société</h4>
+        <p><b>10 305 000 habitants</b> en septembre 2026&nbsp;: 78,3&nbsp;% de Juifs et «&nbsp;autres&nbsp;», 21,7&nbsp;% d&rsquo;Arabes (musulmans sunnites pour la plupart, chrétiens, druzes), 304 000 ressortissants étrangers <span class="src">(CBS, 09/09/2026)</span>. Croissance de 1,2&nbsp;% — mais <b>solde migratoire négatif</b> (−8 000) pour l&rsquo;année juive écoulée, un signal historique <span class="src">(CBS/Times of Israel, 09/2026)</span>.</p>
+        <p>La société est <b>loin d&rsquo;être monolithique</b>&nbsp;: ashkénazes, séfarades, mizrahi, falachas, haredim — avec des rapports au sionisme très différents&nbsp;; ~30&nbsp;% des Juifs étaient présents avant 1948. Les 21&nbsp;% d&rsquo;Arabes israéliens sont majoritairement descendants de la Palestine d&rsquo;avant 1948&nbsp;; égaux en droit, mais confrontés à des discriminations socio-économiques (logement, travail, santé, terre) <span class="src">(doc. de travail)</span>. L&rsquo;arabe a perdu son statut de langue officielle en 2018 (Loi sur l&rsquo;État-nation du peuple juif), ce qui reste très contesté. À noter&nbsp;: la croissance politique et militaire du courant juif religieux, dont une fraction revendique l&rsquo;annexion de toute la Cisjordanie <span class="src">(doc. de travail)</span>.</p>
+
+        <h4 class="v">Armée et sécurité</h4>
+        <p>Tsahal (FDI) est classée <b>15<sup>e</sup> puissance militaire mondiale (2026) et 2<sup>e</sup> du Moyen-Orient</b> derrière la Turquie <span class="src">(Global Firepower, 2026)</span>. Service obligatoire pour la majorité des jeunes (32 mois hommes, 24 mois femmes), sauf la plupart des Arabes israéliens et des ultraorthodoxes (~15&nbsp;% de la population juive) — la question de leur conscription est un conflit politique majeur depuis les arrêts de la Cour suprême de 2025. Israël est l&rsquo;un des neuf pays dotés de l&rsquo;arme nucléaire (doctrine de l&rsquo;ambiguïté). Dôme de fer, fronde de David, Arrow&nbsp;; et l&rsquo;IA appliquée à la guerre (voir encart chap. 8 «&nbsp;Lavender&nbsp;»). <b>Paradoxe relevé par le doc. de travail&nbsp;:</b> 76&nbsp;% des Juifs israéliens se sentent plus en sécurité en Israël qu&rsquo;ailleurs — alors que statistiquement les Juifs courent plus de risque d&rsquo;y être tués pour leur identité qu&rsquo;à l&rsquo;étranger <span class="src">(Times of Israel, 2025)</span>.</p>
+        <div class="pv off"><span class="who">Encart — le couple Israël–USA.</span><span class="these">Le soutien américain est la clé de voûte de la puissance israélienne — et il se transforme.</span> De 1948 à aujourd&rsquo;hui&nbsp;: une relation antérieure à l&rsquo;État lui-même, durcie après 1973 (l&rsquo;aide est alors multipliée par neuf). Le protocole (MOU) 2019-2028 garantit <b>3,3 Md$/an d&rsquo;aide militaire + 0,5 Md$/an de défense antimissile</b> <span class="src">(CRS&nbsp;; Atlantic Council)</span>. En 2026, tout bouge&nbsp;: Netanyahou propose d&rsquo;«&nbsp;arrêter de grandir&nbsp;» et de mettre fin progressivement à l&rsquo;aide&nbsp;; Trump y est plutôt hostile&nbsp;; les négociations pour l&rsquo;après-2028 butent sur le <b>transfert de technologie</b> que Washington exige <span class="src">(CRS, juin 2026&nbsp;; Globes, 2026)</span>. Washington a notifié plus de <b>7 Md$ de ventes d&rsquo;armes</b> à l&rsquo;été 2026 et reste le seul veto au Conseil de sécurité qui protège Israël des suites onusiennes <span class="src">(CRS, juil. 2026)</span>.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span> (sourçable)&nbsp;: chiffres CBS/CBS-économie, classement GFP, MOU 2016, mandat CPI, résultats partiels du 27/10/2026 — tous attribués et datés.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;démocratie avec occupation&nbsp;» — la coexistence d&rsquo;institutions démocratiques pour les citoyens et d&rsquo;un régime sur un territoire sans droits égaux est qualifiée diversement (démocratie ethnique, régime mixte, apartheid selon HRW/B&rsquo;Tselem/Addameer&nbsp;; rejeté par Israël et d&rsquo;autres). Ces qualifications sont attribuées, pas tranchées ici.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: l&rsquo;identité de Jérusalem, la légitimité de la Loi État-nation, le bilan des guerres — chaque camp a sa grille de lecture&nbsp;; voir les deux colonnes de la séq. 4.</div>
+          </div>
+        </div>
+
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Remplir la colonne «&nbsp;Israël&nbsp;» du tableau comparatif à partir des sources fournies et datées.</li>
+            <li>Suivre le décompte électoral jusqu&rsquo;au 4 novembre 2026 — tenir un journal de bord d&rsquo;une classe «&nbsp;en direct&nbsp;» (qui parle, quelles promesses, quel sort pour les sujets palestiniens).</li>
+            <li>Relever dans la fiche trois chiffres qui surprennent — et dire pourquoi ils surprennent (écart ressenti / mesuré).</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Palestine : fiche d&rsquo;identité</span><span class="c">comparatif</span></summary>
       <div class="body">
-        <p>Même grille appliquée à l&rsquo;entité palestinienne : géographie, territoire et ressources, politique et institutions, économie, population et société, culture, armée et sécurité — avec un zoom sur Gaza.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>remplir la colonne « Palestine ».</li><li>noter ce que la fragmentation du territoire change concrètement au quotidien.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Un État reconnu par 157 États — mais sans maîtrise réelle du territoire, des frontières, des ressources ni du ciel.</li>
+          <li>Économie effondrée&nbsp;: −83&nbsp;% de PIB à Gaza en 2024&nbsp;; 78&nbsp;% de chômage&nbsp;; 92&nbsp;% des établissements détruits.</li>
+          <li>Transition 2026 sous tension&nbsp;: le Hamas rend son pouvoir administratif (juil.), un comité technocrate (NCAG) et un Board of Peace (rés. 2803) se mettent en place — mais tout est gelé.</li>
+          <li>En Cisjordanie&nbsp;: violence de colons sans précédent et annexion rampante&nbsp;; à Gaza&nbsp;: un an de cessez-le-feu sans reconstruction.</li>
+        </ul></div>
+
+        <h4 class="v">Géographie, territoire et ressources</h4>
+        <p>La Palestine revendique les lignes de 1967&nbsp;: Cisjordanie (~5 640 km²), bande de Gaza (~365 km²) et Jérusalem-Est. La Cisjordanie est découpée par les accords d&rsquo;Oslo (1993-1995) en <b>zone A</b> (contrôle palestinien, ~18&nbsp;%), <b>zone B</b> (contrôle civil palestinien, sécurité israélienne, ~22&nbsp;%), <b>zone C</b> (contrôle israélien complet, ~60&nbsp;%). Un territoire <b>fragmenté</b>&nbsp;: check-points, barrages, mur, routes réservées — la géographie palestinienne est d&rsquo;abord celle de la mobilité empêchée. Ressources limitées et disputées&nbsp;; l&rsquo;eau est l&rsquo;enjeu central (dossier complet au chap. 3).</p>
+
+        <h4 class="v">Politique et institutions</h4>
+        <p>L&rsquo;État de Palestine est proclamé par l&rsquo;OLP en <b>1988</b>&nbsp;; État observateur non membre de l&rsquo;ONU depuis <b>2012</b>. Au 23 septembre 2025, <b>157 des 193 États membres le reconnaissent</b> — dont la Belgique et une vague automnale 2025 (Royaume-Uni, Canada, Australie, Portugal, France, Luxembourg, Malte, Monaco, Andorre, Saint-Marin, Mexique). Mais l&rsquo;adhésion à l&rsquo;ONU exige un Conseil de sécurité, donc un veto américain qui bloque <span class="src">(Wikipedia/MAE&nbsp;; AFP, 09/2025&nbsp;; voir chap. 1)</span>.</p>
+        <p>Sur le terrain, la division politique persiste&nbsp;: le <b>Fatah</b> de Mahmoud Abbas (90 ans) domine l&rsquo;Autorité palestinienne en Cisjordanie&nbsp;; le <b>Hamas</b> contrôle Gaza depuis 2007&nbsp;; aucune élection générale depuis 2006. <b>2026 rebat les cartes&nbsp;:</b> dans le cadre du cessez-le-feu, le Hamas annonce en juillet la <b>dissolution de son organe de gouvernement</b> et le transfert à un comité technocrate, le <b>NCAG</b> (National Committee for the Administration of Gaza, présidé par Ali Shaath), sous l&rsquo;égide d&rsquo;un <b>Board of Peace</b> doté de la personnalité juridique et d&rsquo;une autorité administrative transitoire par la <b>résolution 2803 du Conseil de sécurité (17/11/2025, mandat au 31/12/2027)</b>. Sauf que… le NCAG siège au Caire — Israël lui refuse l&rsquo;entrée de Gaza&nbsp;; le désarmement du Hamas est conditionné au retrait israélien, qui n&rsquo;est pas entamé <span class="src">(Gisha, 10/2026&nbsp;; AFP, 10/2026&nbsp;; Gaza Information Index, 03/10/2026)</span>.</p>
+        <p><b>L&rsquo;Autorité palestinienne est elle-même en crise existante&nbsp;:</b> Israël retient <b>la totalité des recettes de dédouanement</b> depuis mai 2025&nbsp;; le budget a perdu ~deux tiers de ses recettes&nbsp;; salaires amputés, écoles ouvertes trois jours par semaine&nbsp;; Abbas a demandé en septembre 2026 un «&nbsp;filet de sécurité&nbsp;» arabe <span class="src">(Boston Globe / New Arab, 2026&nbsp;; Banque mondiale, 2026&nbsp;; voir chap. 1)</span>.</p>
+
+        <h4 class="v">Économie</h4>
+        <div class="stats">
+          <div class="stat"><div class="n">−83&nbsp;%</div><div class="l">PIB de Gaza en 2024</div><div class="s">UNCTAD, rapport 2026</div></div>
+          <div class="stat"><div class="n">212&nbsp;$</div><div class="l">PIB/hab. à Gaza en 2025 (≈ 0,58 $/jour)</div><div class="s">UNCTAD, 2026</div></div>
+          <div class="stat"><div class="n">78&nbsp;%</div><div class="l">chômage à Gaza · 28&nbsp;% en Cisjordanie · 49&nbsp;% ensemble</div><div class="s">UNCTAD / Banque mondiale, 2025-26</div></div>
+          <div class="stat"><div class="n">71,5 Md$</div><div class="l">besoins de reconstruction de Gaza</div><div class="s">UNCTAD, 2026</div></div>
+        </div>
+        <p>La croissance «&nbsp;+4,3&nbsp;% en 2025&nbsp;» est une <b>illusion de base basse</b>&nbsp;: le PIB palestinien reste 20&nbsp;% sous son niveau de 2022, et le premier trimestre 2026 a encore reculé de 6,6&nbsp;% <span class="src">(UNCTAD, conférence de presse 2026)</span>. À Gaza, <b>92&nbsp;% des établissements économiques ont été endommagés ou détruits</b> depuis octobre 2023&nbsp;; plus de 90&nbsp;% de la population active n&rsquo;a aucun emploi <span class="src">(UNCTAD, 2026)</span>. En Cisjordanie, la contraction vient du blocage des recettes fiscales et de la quasi-interdiction de travailler en Israël <span class="src">(Banque mondiale, MPO 2026)</span>. Le plan de relance du Board of Peace (2,45 Md$ sur six mois, présenté le 23/09/2026) n&rsquo;a pas démarré&nbsp;; le premier chantier — une base pour la force internationale — est bloqué par Israël dans l&rsquo;attente des suites électorales <span class="src">(AFP&nbsp;; Gaza Information Index, 17/10/2026)</span>.</p>
+        <div class="pv palest"><span class="who">Encart — une économie sous contrainte.</span><span class="these">Contrôle des frontières, des ressources, de la fiscalité et des mouvements&nbsp;: pas d&rsquo;autonomie économique réelle possible.</span> La journaliste israélienne <b>Amira Hass</b> parle d&rsquo;un «&nbsp;vol du temps&nbsp;»&nbsp;: permis, check-points et barrages privent les Palestiniens de la maîtrise de leur propre temps — emplois, écoles, hôpitaux, échanges commerciaux <span class="src">(doc. de travail)</span>. Symbole&nbsp;: les <b>oranges de Jaffa</b>, cultivées au XIX<sup>e</sup> siècle par des agriculteurs arabes, confisquées avec les vergers après 1948 et retournées en marque nationale israélienne — voir le documentaire «&nbsp;Jaffa&nbsp;: la mécanique de l&rsquo;orange&nbsp;» <span class="src">(doc. de travail)</span>.</div>
+
+        <h4 class="v">Population, société, culture</h4>
+        <p><b>15,5 millions de Palestiniens dans le monde</b> fin 2025&nbsp;: 7,4 M en Palestine historique (dont 1,86 M dans les territoires de 1948), 8,1 M en diaspora (6,8 M dans les pays arabes). Dans l&rsquo;État de Palestine&nbsp;: ~5,6 M (3,43 M Cisjordanie, 2,13 M Gaza) <span class="src">(PCBS, 2026)</span>. <b>~6 millions de réfugiés enregistrés à l&rsquo;UNRWA</b>&nbsp;; 42&nbsp;% de la population des territoires est réfugiée&nbsp;; un tiers des Palestiniens vit dans des camps <span class="src">(PCBS, journée des réfugiés 2026)</span>. Société très jeune&nbsp;: plus de 50&nbsp;% des moins de 25 ans. L&rsquo;arabe est la langue officielle&nbsp;; la culture — dabké, poésie de <b>Mahmoud Darwich</b>, broderie, cinéma, le <b>keffieh</b> comme symbole — fonctionne comme mémoire et résistance en exil comme sur place <span class="src">(doc. de travail&nbsp;; ARTE, «&nbsp;La Palestine dans un tissu&nbsp;»)</span>.</p>
+
+        <h4 class="v">Zoom — la bande de Gaza, un an après le cessez-le-feu</h4>
+        <p>365 km² — le double de Bruxelles — le territoire le plus densément peuplé au monde (2,3 M d&rsquo;habitants avant la guerre). Carrefour entre Méditerranée et Égypte, convoité de tout temps&nbsp;: en 1948 y s&rsquo;entassent les réfugiés de la Nakba&nbsp;; administrée par l&rsquo;Égypte puis occupée par Israël (1967)&nbsp;; retrait des colons et de l&rsquo;armée en 2005&nbsp;; blocus depuis la prise du Hamas en 2007&nbsp;; quinze guerres ou offensives depuis 1948 <span class="src">(doc. de travail&nbsp;; ARTE, «&nbsp;Une brève histoire de Gaza&nbsp;», 2023)</span>. L&rsquo;expression de «&nbsp;prison à ciel ouvert&nbsp;», courante chez les organisations de droits humains, dit le régime de fermeture — frontières terrestres, maritimes et aériennes contrôlées hors du territoire.</p>
+        <p><b>La guerre de 2023-2026</b> a renversé l&rsquo;échelle&nbsp;: ~2 millions de déplacés (presque toute la population), des dizaines de milliers de morts, l&rsquo;essentiel du bâti rasé <span class="src">(PCBS&nbsp;; OCHA)</span>. Le <b>cessez-le-feu du 10 octobre 2025</b> (plan Trump, endossé par la rés. 2803) a fait taire la campagne majeure — pas les armes&nbsp;: <b>~1 450 morts depuis lors</b> selon le ministère de la Santé de Gaza (dont 1 076 vérifiés par l&rsquo;ONU), frappes quasi quotidiennes&nbsp;; Israël contrôle <b>~70&nbsp;% du territoire</b> au lieu des 53&nbsp;% prévus par l&rsquo;accord <span class="src">(AFP/HRW, 10/2026&nbsp;; voir chap. 1)</span>. Le point de passage de Rafah a rouvert le 2/02/2026&nbsp;: 11 684 personnes y sont passées entre février et septembre (dont 2 224 patients) — puis il a été refermé&nbsp;; mi-octobre, zéro jour d&rsquo;ouverture sur sept <span class="src">(EUBAM via Gisha&nbsp;; Gaza Information Index, 17/10/2026)</span>. L&rsquo;aide reste «&nbsp;très en dessous des besoins&nbsp;» à l&rsquo;approche de l&rsquo;hiver, la plupart des habitants toujours sous tente ou dans des bâtiments endommagés <span class="src">(HRW, 10/10/2026)</span>.</p>
+
+        <h4 class="v">Zoom — la Cisjordanie, «&nbsp;point de rupture&nbsp;»</h4>
+        <p>Pendant que Gaza brûlait, l&rsquo;ONU alerte&nbsp;: la Cisjordanie vit une transformation accélérée. <b>Violence de colons sans précédent</b>&nbsp;: plus de 1 430 incidents avec victimes ou dégâts documentés par l&rsquo;ONU en 2026, affectant ~260 communautés — souvent en présence de l&rsquo;armée <span class="src">(briefing Conseil de sécurité, 11/08/2026)</span>. <b>49 communautés entièrement vidées</b> depuis janvier 2023&nbsp;; les camps de Jénine, Toulkarem et Nour Shams sont déserts — plus de 33 000 déplacés, le plus grand déplacement en Cisjordanie depuis 1967 <span class="src">(UNSCO, 28/09/2026)</span>. Les avant-postes agricoles et pastoraux exercent un contrôle effectif sur <b>~20&nbsp;% de la Cisjordanie</b>. Côté politique&nbsp;: en juillet 2025, la Knesset a voté (71-13, non contraignant) un appel à la souveraineté sur la Cisjordanie et la vallée du Jourdain&nbsp;; le secrétaire général de l&rsquo;ONU conclut&nbsp;: «&nbsp;l&rsquo;annexion rampante est illégale, dépourvue d&rsquo;effet juridique, et doit cesser&nbsp;» <span class="src">(UNSCO, 28/09/2026)</span>.</p>
+
+        <h4 class="v">Armée et sécurité</h4>
+        <p>La Palestine ne possède <b>pas d&rsquo;armée régulière</b>&nbsp;: l&rsquo;AP gère ~30 000 agents de sécurité interne en Cisjordanie&nbsp;; le Hamas dispose des brigades Izz al-Din al-Qassam (classées organisations terroristes par Israël, les USA et l&rsquo;UE). Le désarmement — condition posée par Israël à son retrait, accepté <i>en principe</i> par le Hamas en 2026 — est au point mort&nbsp;: chacun attend que l&rsquo;autre commence <span class="src">(Gisha&nbsp;; AFP, 10/2026)</span>. Cette asymétrie militaire n&rsquo;est pas un état de nature&nbsp;: c&rsquo;est le produit d&rsquo;une histoire et de décisions — voir séquence 4.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span> (sourçable)&nbsp;: reconnaissances (157), rés. 2803, chiffres PCBS/UNCTAD/Banque mondiale, dates du cessez-le-feu et du passage de Rafah, EUBAM, briefings UNSCO — tout attribué.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;régime colonial&nbsp;», «&nbsp;apartheid&nbsp;», «&nbsp;prison à ciel ouvert&nbsp;» — ces qualifications sont portées par des auteurs (rapports HRW, B&rsquo;Tselem, Addameer, UNCTAD pour certains termes)&nbsp;; Israël et plusieurs États les rejettent. Elles sont nommées, pas imposées. Le terme «&nbsp;génocide&nbsp;» est traité au chap. 6&nbsp;; la qualification juridique au chap. 5.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: l&rsquo;avenir institutionnel de Gaza (NCAG&nbsp;? AP réformée&nbsp;? autonomie&nbsp;?), la représentativité du Hamas après sa dissolution administrative, la viabilité de l&rsquo;AP — tout est ouvert à l&rsquo;heure où ces lignes sont écrites (29/10/2026).</div>
+          </div>
+        </div>
+
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Remplir la colonne «&nbsp;Palestine&nbsp;» de la carte d&rsquo;identité comparative.</li>
+            <li>Noter ce que la fragmentation du territoire change au quotidien&nbsp;: tracer sur une carte les zones A/B/C, puis le trajet Ramallah-Naplouse ou Gaza-Rafah avec et sans entraves.</li>
+            <li>Étude de cas «&nbsp;un an de cessez-le-feu&nbsp;»&nbsp;: lister ce qui a été promis (rés. 2803, plan en phases) et ce qui s&rsquo;est appliqué — tableau promesse/réalité sourcé.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s4">
-      <summary><span class="seq-num">4</span><span class="t">Le rapport de force asymétrique</span><span class="c">encart</span></summary>
+      <summary><span class="seq-num">4</span><span class="t">Le rapport de force asymétrique</span><span class="c">synthèse</span></summary>
       <div class="body">
-        <p>Relier les deux fiches pour rendre visible l&rsquo;asymétrie des moyens et des pouvoirs entre les deux entités — la clé d&rsquo;analyse de tout le chapitre.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>exercice en deux colonnes : pour chaque critère, qui dispose de quels moyens.</li><li>puis discussion nuancée en classe.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Le rapport de force n&rsquo;oppose pas deux entités comparables&nbsp;: un État souverain outillé contre un territoire fragmenté privé des attributs de l&rsquo;État.</li>
+          <li>L&rsquo;asymétrie n&rsquo;est pas une conjoncture&nbsp;: c&rsquo;est un système structuré (militaire, économique, juridique, temporel) qui façonne le quotidien.</li>
+          <li>Asymétrie ne veut pas dire passivité&nbsp;: les Palestiniens disposent de leviers (droit, reconnaissance, mobilisation, culture) — faibles mais réels.</li>
+          <li>C&rsquo;est la clé d&rsquo;analyse de tout le chapitre — et la passerelle vers les chap. 5 à 11.</li>
+        </ul></div>
+
+        <h4 class="v">Recouper les deux fiches&nbsp;: la grille de souveraineté</h4>
+        <table>
+          <tr><th>Attribut de l&rsquo;État</th><th>Israël</th><th>Palestine</th></tr>
+          <tr><td>Armée</td><td>15<sup>e</sup> mondiale (GFP 2026), nucléaire non déclaré</td><td>Aucune&nbsp;; forces de sécurité AP (~30 000), brigades du Hamas</td></tr>
+          <tr><td>PIB / hab.</td><td>~54 000 $</td><td>~4 000 $ en Cisjordanie · ~212 $ à Gaza <span class="src">(BM/UNCTAD 2026)</span></td></tr>
+          <tr><td>Frontières &amp; douane</td><td>Maîtrise totale&nbsp;; retient les recettes douanières palestiniennes depuis mai 2025</td><td>Passages contrôlés ou fermés (Rafah sous conditions, ouvert par compte-gouttes)</td></tr>
+          <tr><td>Espace aérien &amp; maritime</td><td>Contrôle intégral&nbsp;; gaz offshore exploité (Tamar, Leviathan)</td><td>Aucun&nbsp;; Gaza Marine gelé (chap. 3)&nbsp;; aéroport de Gaza détruit</td></tr>
+          <tr><td>Monnaie &amp; fiscalité</td><td>Shekel, politique monétaire propre (Banque d&rsquo;Israël)</td><td>Pas de monnaie&nbsp;; dépend des transferts israéliens et de l&rsquo;aide</td></tr>
+          <tr><td>Mobilité des personnes</td><td>Libre pour ses citoyens</td><td>Permis, check-points, «&nbsp;vol du temps&nbsp;» (Hass)&nbsp;; 2 M de déplacés à Gaza</td></tr>
+          <tr><td>Statut international</td><td>État membre de l&rsquo;ONU&nbsp;; veto américain au Conseil de sécurité</td><td>157 reconnaissances&nbsp;; État observateur&nbsp;; avis CIJ et mandats CPI comme leviers</td></tr>
+        </table>
+        <p>Le constat du doc. de travail reste la grille de lecture&nbsp;: la supériorité militaire, économique et technologique israélienne, combinée au contrôle des ressources, du territoire et de la mobilité, produit une <b>dépendance durable</b>&nbsp;; l&rsquo;asymétrie du pouvoir façonne en profondeur les conditions politiques, économiques et sociales de la population palestinienne <span class="src">(encart «&nbsp;Rapport de force&nbsp;», doc. de travail)</span>.</p>
+
+        <h4 class="v">Deux lectures légitimes du même rapport de force</h4>
+        <div class="pv israel"><span class="who">La lecture sécuritaire israélienne.</span><span class="these">Le contrôle est un bouclier&nbsp;: sans lui, 7 octobre se répéterait.</span> Un État entouré d&rsquo;ennemis déclarés, attaqué le 7 octobre 2023 (≈1 200 tués, ~250 prises en otage), en guerre sur plusieurs fronts jusqu&rsquo;en 2026&nbsp;; aucun partenaire de paix vérifiable&nbsp;; le désarmement d&rsquo;en face comme condition non négociable. <b>Sa limite, honnêtement&nbsp;:</b> un «&nbsp;bouclier&nbsp;» qui s&rsquo;élargit (70&nbsp;% de Gaza au lieu des 53&nbsp;% promis, ~20&nbsp;% de la Cisjordanie sous avant-postes) cesse d&rsquo;être défensif pour devenir une emprise — et la sécurité acquise par la contrainte nourrit l&rsquo;insécurité des autres, donc la sienne à terme.</div>
+        <div class="pv palest"><span class="who">La lecture palestinienne de libération.</span><span class="these">L&rsquo;asymétrie s&rsquo;appelle occupation&nbsp;; elle a un début, un régime juridique, et doit finir.</span> 1948 et la Nakba&nbsp;; 1967 et l&rsquo;occupation&nbsp;; 1993 et des promesses non tenues&nbsp;; 2023-2026 et la dévastation de Gaza sous les yeux du monde&nbsp;; 2025-2026 et l&rsquo;annexion rampante en Cisjordanie. Le droit — CIJ, CPI, résolutions — est le levier des sans-armes. <b>Sa limite, honnêtement&nbsp;:</b> miser sur le droit sans rapport de force terrain produit des victoires juridiques sans effet immédiat&nbsp;; et la fragmentation (Fatah/Hamas, Cisjordanie/Gaza, diaspora) affaiblit la cause autant que l&rsquo;adversaire.</div>
+        <div class="pv real"><span class="who">Ce que les deux lectures ont en commun&nbsp;: deux sociétés qui ne se parlent plus.</span> Le doc. de travail le note sans détour&nbsp;: les deux sociétés se tournent le dos, s&rsquo;ignorent l&rsquo;une l&rsquo;autre, ne connaissent pas le récit de l&rsquo;autre. C&rsquo;est un fait géopolitique — pas seulement psychologique&nbsp;: séparation physique, langues médiatiques distinctes, mémoires opposées. Le chap. 8 (médias) et le chap. 11 (agir) prennent acte de ce point.</div>
+
+        <h4 class="v">Asymétrie n&rsquo;est pas passivité</h4>
+        <ul>
+          <li><b>Leviers juridiques&nbsp;:</b> avis consultatifs de la CIJ, mandats d&rsquo;arrêt de la CPI, plaintes — lents, mais ils déplacent la légitimité (voir chap. 6-7).</li>
+          <li><b>Leviers politiques&nbsp;:</b> la vague de reconnaissances de 2025&nbsp;; les 17-19 députés arabes de la Knesset du 27/10/2026, arbitres potentiels du prochain gouvernement israélien.</li>
+          <li><b>Leviers sociétaux&nbsp;:</b> société civile, culture, boycott (BDS — voir chap. 11 pour ses critiques et défenses).</li>
+          <li><b>Levier démographique et présence physique&nbsp;:</b> rester sur la terre — en Cisjordanie comme à Gaza — est en soi une forme d&rsquo;action politique.</li>
+        </ul>
+        <p><b>À retenir&nbsp;:</b> comparer sur critères symétriques ne conduit pas à l&rsquo;égalité — cela rend l&rsquo;inégalité <i>mesurable</i>. Le rapport de force asymétrique est la clé qui ouvre les chapitres suivants&nbsp;: les mots (chap. 5), le droit (chap. 6-7), les médias (chap. 8), les blocages politiques (chap. 9-10), l&rsquo;action (chap. 11).</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span> (sourçable)&nbsp;: les lignes du tableau (classements, PIB, recettes douanières, % de territoire, reconnaissances) sont toutes attribuées&nbsp;; l&rsquo;asymétrie elle-même n&rsquo;est pas un avis, c&rsquo;est une mesure.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: qualifier le système (occupation&nbsp;? régime&nbsp;? apartheid&nbsp;? sécurité&nbsp;?) — chaque terme est un choix argumenté, renvoyé aux chap. 5-7 plutôt que tranché ici.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: la causalité profonde (l&rsquo;asymétrie explique-t-elle tout, ou la sécurité explique-t-elle l&rsquo;asymétrie&nbsp;?) — les deux colonnes ci-dessus sont posées franchement&nbsp;; aucune n&rsquo;a le monopole du ressenti, les faits eux sont partagés et sourcés.</div>
+          </div>
+        </div>
+
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Exercice en deux colonnes&nbsp;: pour chaque critère de la carte d&rsquo;identité, «&nbsp;qui dispose de quels moyens&nbsp;?&nbsp;» — puis discussion nuancée en classe.</li>
+            <li>Écrire en dix lignes la synthèse du chapitre pour un élève d&rsquo;une autre école — contrainte&nbsp;: au moins trois chiffres sourcés, aucune assertion non attribuée.</li>
+            <li>Vexillologie comparée (doc. de travail)&nbsp;: le talit d&rsquo;Israël, les couleurs panarabes de la Palestine — deux drapeaux, deux récits nationaux&nbsp;; d&rsquo;où viennent-ils, que racontent-ils&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
@@ -125,9 +337,15 @@
 
       <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/1KaLNEEHSI_z8fYKCEjY_FSgQx_Kd1uJp/view">&laquo;&nbsp;2. Géopolitique Isra &amp; Pal.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
 
-      <p class="srcs"><b>Données comparées —</b> <a href="https://www.cia.gov/the-world-factbook/countries/israel/">CIA World Factbook</a> (Israël) &nbsp;· Palestinian Central Bureau of Statistics (PCBS) &nbsp;· <a href="https://www.worldbank.org/en/country/westbankandgaza">Banque mondiale — Cisjordanie et Gaza (WBPS)</a> &nbsp;· B&rsquo;Tselem, les divisions administratives de la Cisjordanie (zones A/B/C).</p>
+      <p class="srcs"><b>Données comparées —</b> <a href="https://www.cbs.gov.il/en/pages/default.aspx">Israel Central Bureau of Statistics (CBS)</a> (population 10,31 M, 09/2026&nbsp;; Independence Day 2026) &nbsp;· Palestinian Central Bureau of Statistics (PCBS, pcbs.gov.ps) — 15,5 M dans le monde&nbsp;; 5,6 M dans l&rsquo;État de Palestine (notes Nakba &amp; Population 2026) &nbsp;· <a href="https://www.cia.gov/the-world-factbook/countries/israel/">CIA World Factbook</a> &nbsp;· <a href="https://www.worldbank.org/en/country/westbankandgaza">Banque mondiale — Cisjordanie et Gaza (MPO 2026)</a> &nbsp;· <a href="https://unctad.org/news/unctad-gaza-reconstruction-needs-reach-715-billion-palestinian-economy-and-public-finances">UNCTAD — rapport 2026</a> (−83&nbsp;% Gaza, 212 $/hab., 71,5 Md$ de besoins) &nbsp;· B&rsquo;Tselem, les divisions administratives de la Cisjordanie (zones A/B/C).</p>
 
-      <p class="srcs"><b>Cartes et atlas —</b> <a href="https://www.diploweb.com/Fiche-et-carte-pays-Israel.html">Diploweb — fiche et carte d&rsquo;Israël</a> &nbsp;· <a href="https://www.diploweb.com/Comment-comprendre-le-conflit-israelo-palestinien-de-ses-origines-au-7-octobre-2023.html">Diploweb — comprendre le conflit, des origines au 7 octobre 2023</a> &nbsp;· Atlas géopolitique d&rsquo;Israël (Autrement, 2022) &nbsp;· Atlas des Palestiniens (Autrement, 2023) &nbsp;· cartes de Philippe Rekacewicz (Le Monde diplomatique).</p>
+      <p class="srcs"><b>Actualité 2026 — élections &amp; transition —</b> <a href="https://edition.cnn.com/2026/10/27/world/live-news/israel-elections-live-results-latest-votes-intl">CNN — Israeli election live</a> (27-28/10/2026) &nbsp;· <a href="https://www.aljazeera.com/news/liveblog/2026/10/27/israel-election-results-live-exit-polls-soon-as-netanyahu-faces-tight-race">Al Jazeera — election results</a> &nbsp;· <a href="https://www.timesofisrael.com/">The Times of Israel</a> (décompte, CBS) &nbsp;· <a href="https://www.congress.gov/crs-product/R44245">CRS — Israel: Major Issues and U.S. Relations</a> (MOU, ventes d&rsquo;armes) &nbsp;· <a href="https://www.atlanticcouncil.org/blogs/mideast-voices/the-us-israel-relationship-needs-a-reset-heres-how-to-do-it/">Atlantic Council — US–Israel reset</a>.</p>
+
+      <p class="srcs"><b>Cessez-le-feu &amp; terrain —</b> <a href="https://gisha.org/en/gaza-now-facts-and-figures/">Gisha — Gaza Now</a> (Rafah, EUBAM, phases de l&rsquo;accord) &nbsp;· <a href="https://www.nextcenturyfoundation.org/gaza-information-index-17-october-2026/">Next Century Foundation — Gaza Information Index</a> (17/10/2026) &nbsp;· <a href="https://www.hrw.org/news/2026/10/10/gaza-ceasefire-anniversary-marks-year-of-failed-promises">HRW — Gaza ceasefire anniversary</a> (10/10/2026) &nbsp;· <a href="https://www.un.org/unispal/document/the-west-bank-is-at-the-breaking-point-briefing-unsco-11aug2026/">UN — &laquo;&nbsp;The West Bank is at the breaking point&nbsp;&raquo;</a> (briefing 11/08/2026) &nbsp;· <a href="https://unsco.unmissions.org/en/news/security-council-briefing-28-september-2026-unscr-2334">UNSCO — briefing 2334</a> (28/09/2026&nbsp;: annexion rampante) &nbsp;· <a href="https://docs.un.org/en/S/RES/2803(2025)">Texte de la résolution 2803 (2025)</a>.</p>
+
+      <p class="srcs"><b>Cartes et atlas —</b> <a href="https://earthengine.google.com/timelapse/">Google Earth Engine Timelapse</a> (1984-2026) &nbsp;· <a href="https://www.diploweb.com/Fiche-et-carte-pays-Israel.html">Diploweb — fiche et carte d&rsquo;Israël</a> &nbsp;· <a href="https://www.diploweb.com/Comment-comprendre-le-conflit-israelo-palestinien-de-ses-origines-au-7-octobre-2023.html">Diploweb — comprendre le conflit, des origines au 7 octobre 2023</a> &nbsp;· Atlas géopolitique d&rsquo;Israël (Autrement, 2022) &nbsp;· Atlas des Palestiniens (Autrement, 2023) &nbsp;· cartes de Philippe Rekacewicz (Le Monde diplomatique).</p>
+
+      <p class="srcs"><b>Histoire &amp; références (doc. de travail) —</b> L&rsquo;Histoire, «&nbsp;Jérusalem, l&rsquo;impossible capitale&nbsp;», 2017 &nbsp;· Gautier &amp; Lemire, Histoire de Jérusalem (BD), Les Arènes, 2022 &nbsp;· France Culture, «&nbsp;Histoire de Jérusalem&nbsp;» (podcast, 4 ép., 2013) &nbsp;· ARTE, Le dessous des cartes&nbsp;: «&nbsp;Les Palestiniens&nbsp;: quel État&nbsp;?&nbsp;» (2023) et «&nbsp;Une brève histoire de Gaza&nbsp;» (2023) &nbsp;· ARTE, «&nbsp;La Palestine dans un tissu&nbsp;» (keffieh, 2021) &nbsp;· «&nbsp;Jaffa&nbsp;: la mécanique de l&rsquo;orange&nbsp;» (documentaire, E. Siman) &nbsp;· IFRI — La politique étrangère d&rsquo;Israël (D. Bauchard) &nbsp;· J.-Jaurès, «&nbsp;Le terrorisme juif en Judée-Samarie&nbsp;» (2024).</p>
 
       
     </div>
