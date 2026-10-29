@@ -56,6 +56,28 @@
   .srcs a{color:var(--accent);text-decoration:none}
   .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  .acc .body h4.v{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin:20px 0 6px;font-weight:700}
+  .acc .body .pv{border-left:3px solid var(--border);padding:2px 0 2px 14px;margin:12px 0}
+  .acc .body .who{font-weight:700;color:var(--ink)}
+  .acc .body ul{margin:6px 0 6px 20px;padding:0}
+  .acc .body li{margin:5px 0}
+  .acc .body .src{color:var(--faint);font-size:12.5px}
+  .acc .body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  .acc .body th{color:var(--ink);font-weight:700;text-align:left;border-bottom:1px solid var(--border);padding:6px 8px}
+  .acc .body td{border-bottom:1px solid var(--border);padding:6px 8px;color:var(--muted);vertical-align:top}
+  .essentiel{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel-2);border-radius:0 10px 10px 0;padding:12px 14px;margin:2px 0 16px}
+  .essentiel .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:6px}
+  .essentiel ul{margin:0;padding-left:18px}
+  .essentiel li{margin:4px 0;font-size:14px;color:var(--ink)}
+  .pv .these{display:block;color:var(--ink);font-weight:600;font-size:14.5px;margin:5px 0 7px}
+  .etages{display:grid;gap:8px;margin:8px 0}
+  .etage{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel)}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:1px}
+  .t-ok{background:rgba(95,179,128,.15);color:var(--good);border:1px solid rgba(95,179,128,.4)}
+  .t-int{background:rgba(224,164,88,.15);color:var(--brand);border:1px solid rgba(224,164,88,.4)}
+  .t-dis{background:rgba(154,168,182,.12);color:var(--muted);border:1px solid var(--border)}
+  .pos{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel);margin:8px 0}
+  .pos .who{display:block;color:var(--ink);font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -83,55 +105,194 @@
       <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
     </div></div>
 
-    <p class="lead"><b>Objectif :</b> décomposer les nœuds du conflit en exposant chaque position sans en hiérarchiser aucune.</p>
+    <p class="lead"><b>Objectif :</b> décomposer les nœuds du conflit en exposant chaque position sans en hiérarchiser aucune — la clé de lecture des négociations et de leurs impasses.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
     <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Introduction : décomposer les enjeux centraux</span><span class="c">cadre</span></summary>
       <div class="body">
-        <p>Un conflit « sans solution » n&rsquo;est pas un bloc indistinct : il se décompose en quelques points durs, chacun documenté. Le chapitre les prend un à un.</p>
-        <div class="todo"><b>À travailler ici :</b> demander aux élèves ce qu&rsquo;ils pensent être les points de blocage, puis comparer avec la liste du chapitre.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Un conflit «&nbsp;sans solution&nbsp;» n&rsquo;est pas un bloc indistinct&nbsp;: il se décompose en <b>quatre points durs</b> — frontières, Jérusalem, réfugiés, colonies — chacun documenté, chacun avec ses peurs et ses droits.</li>
+          <li>Méthode&nbsp;: <b>trois positions</b> par point — palestinienne, israélienne, communauté internationale — exposées sans hiérarchie, avec leurs arguments propres.</li>
+          <li>Avertissement du doc. de base&nbsp;: les positions présentées sont <b>majoritaires ou officielles</b> — chaque camp interne est divers (avis dissidents, courants, alternatives).</li>
+          <li>Ces quatre nœuds <b>se répondent</b>&nbsp;: les colonies décident des frontières, Jérusalem décide des symboles, les réfugiés décident de la démographie — bouger l&rsquo;un fait bouger les trois.</li>
+        </ul></div>
+
+        <h4 class="v">Pourquoi cette décomposition</h4>
+        <p>Comprendre le conflit ne suffit pas&nbsp;; il faut voir <b>la mécanique du blocage</b>. Chaque point dur relie trois niveaux&nbsp;: un <b>droit</b> invoqué (autodétermination, sécurité, retour, propriété), une <b>peur</b> concrète (État morcelé, perte de majorité, violence, dépossession), et un <b>fait accompli</b> sur le terrain (colonies, murs, statuts). D&rsquo;où les quatre compétences du chapitre <span class="src">(doc. de travail)</span>&nbsp;: comprendre les revendications fondamentales et leurs tensions&nbsp;; identifier les peurs et besoins sous les positions&nbsp;; voir pourquoi des solutions écrites sur papier deviennent impossibles&nbsp;; et disposer d&rsquo;une grille pour lire les accords — Oslo, Camp David, Genève — sans se limiter aux annonces.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: la liste des points durs fait consensus parmi les négociateurs (statut final d&rsquo;Oslo&nbsp;: réfugiés, Jérusalem, frontières, colonies, sécurité, eau) — ce chapitre en prend quatre, les plus médiatisés.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;quatre points&nbsp;» vs «&nbsp;un seul conflit&nbsp;» — certains analystes disent que tous les points dérivent de l&rsquo;asymétrie de pouvoir&nbsp;; d&rsquo;autres que chacun a sa logique propre. Les deux lectures servent en classe.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;les Palestiniens ont toujours refusé tout compromis&nbsp;» vs «&nbsp;Israël n&rsquo;a jamais voulu rien céder&nbsp;» — chaque camp a dit non quelque part (1947, 2000, 2008, 2014&nbsp;; rejets côté israélien aussi, 1993-2000)&nbsp;; le cours montre les dates, pas les procès.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Demander aux élèves ce qu&rsquo;ils pensent être les points de blocage, puis comparer avec la liste du chapitre.</li>
+            <li>Pour chaque point dur, noter d&rsquo;abord&nbsp;: quel droit est invoqué&nbsp;? quelle peur est en jeu&nbsp;? quel fait accompli pèse&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Les frontières et le territoire</span><span class="c">point 1</span></summary>
       <div class="body">
-        <p>Premier point dur : les frontières et le territoire. Chaque point est traité en <b>trois positions</b> — palestinienne, israélienne, communauté internationale — exposées sans hiérarchie.</p>
-        <div class="todo"><b>À travailler ici :</b> remplir la fiche « trois positions » de ce point : argument, source, objectif de chaque partie.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Position palestinienne</b>&nbsp;: un État en Cisjordanie, Gaza et Jérusalem-Est, selon les <b>lignes de 1967</b> — soit ~22&nbsp;% de la Palestine mandataire&nbsp;: déjà une concession historique par rapport au plan de partage de 1947.</li>
+          <li><b>Position israélienne</b>&nbsp;: pas de retour strict aux lignes de 1967 — conservation de <b>blocs de colonies</b>, contrôle de la <b>vallée du Jourdain</b>, accès sécurisé à Jérusalem&nbsp;; des gouvernements ont évoqué l&rsquo;annexion partielle.</li>
+          <li><b>Communauté internationale</b>&nbsp;: deux États avec <b>échanges de territoire négociés</b> (rés. 242, formule «&nbsp;terres contre paix&nbsp;»)&nbsp;; le consensus (140+ reconnaissances) se heurte à l&rsquo;expansion coloniale continue.</li>
+          <li>Le blocage est <b>structurel</b>&nbsp;: chaque partie craint pour sa viabilité — État morcelé côté palestinien, frontières indéfendables côté israélien.</li>
+        </ul></div>
+
+        <h4 class="v">Les trois positions, en détail</h4>
+        <div class="pos"><span class="who">Palestinienne</span>La ligne de 1967 est le <b>consensus international</b>&nbsp;; l&rsquo;accepter (1988, puis Oslo) a été une concession majeure — 78&nbsp;% du territoire mandataire renoncé. La crainte&nbsp;: un État en archipel (les zones A/B/C d&rsquo;Oslo, les routes de contournement, le mur qui intègre ~10&nbsp;% de la Cisjordanie) — viable sur une carte, invivable dans la vie quotidienne.</div>
+        <div class="pos"><span class="who">Israélienne</span>Les frontières de 1967 (la «&nbsp;ligne verte&nbsp;», 1949) sont jugées <b>indéfendables</b> — 15&nbsp;% de largeur à certains points&nbsp;; les blocs de colonies abritent des centaines de milliers de citoyens&nbsp;; la vallée du Jourdain est présentée comme profondeur stratégique. Crainte de fond&nbsp;: un État palestinien démilitarisé&nbsp;? — l&rsquo;histoire (1967, 2005-Gaza) est lue comme preuve que le territoire rendu devient base d&rsquo;attaque.</div>
+        <div class="pos"><span class="who">Communauté internationale</span>Deux États selon 1967 avec <b>échanges mineurs et équivalents</b>&nbsp;: la formule est constante de 1967 à l&rsquo;initiative arabe (2002), aux paramètres Clinton (2000), à l&rsquo;avis CIJ 2024. En 2025-2026, la vague de reconnaissances (France, Royaume-Uni, Canada, Belgique, Espagne, Slovénie…&nbsp;— plus de 140 États membres de l&rsquo;ONU) réaffirme la ligne&nbsp;; le plan américain d&rsquo;octobre 2025 sur Gaza (cessez-le-feu, démilitarisation, administration de transition) <b>ne fixe aucun calendrier étatique</b> — le nœud territorial reste entier.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les lignes de 1967 sont le référentiel juridique (242)&nbsp;; les chiffres de colonisation et les zones Oslo sont cartographiés (OCHA, Peace Now)&nbsp;; les reconnaissances 2025 sont datées.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;la solution à deux États est morte&nbsp;» vs «&nbsp;elle est la seule vivable&nbsp;» — l&rsquo;expansion coloniale rend l&rsquo;application <i>plus</i> difficile, pas <i>impossible</i>&nbsp;; les deux diagnostics structurent le débat diplomatique actuel.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: la Judée-Samarie comme terre héritée (annexion légitime) vs occupation illégale (49<sup>e</sup> Convention) — chapitre 7&nbsp;; le Hamas a accepté un État «&nbsp;sur les lignes de 1967&nbsp;» dans sa charte de 2017 (formulation «&nbsp;transitionnelle&nbsp;») — citée par ses défenseurs, niée par ses détracteurs&nbsp;; noter la date, pas la polémique.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Fiche «&nbsp;trois positions&nbsp;»&nbsp;: argument, source, objectif de chaque partie.</li>
+            <li>Carte&nbsp;: zones A/B/C + mur + blocs de colonies — mesurer ce qui resterait d&rsquo;un État palestinien «&nbsp;en l&rsquo;état&nbsp;».</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">Le statut de Jérusalem</span><span class="c">point 2</span></summary>
       <div class="body">
-        <p>Deuxième point dur : le statut de Jérusalem — la dimension symbolique et religieuse en plus du différend territorial, traitée en trois positions.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>fiche « trois positions ».</li><li>repérer ce qui rend ce point particulièrement difficile à négocier.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Position palestinienne</b>&nbsp;: Jérusalem-Est (occupée en 1967, annexée en 1980 — annexion déclarée <b>nulle</b> par le Conseil de sécurité, rés. 478) comme capitale de l&rsquo;État — centre religieux, historique et culturel.</li>
+          <li><b>Position israélienne</b>&nbsp;: Jérusalem «&nbsp;une et indivisible&nbsp;» — capitale depuis 1950/1967, siège des anciens royaumes, et le <b>Mur occidental</b>, lieu le plus sacré de la prière juive.</li>
+          <li><b>Communauté internationale</b>&nbsp;: non-reconnaissance de l&rsquo;annexion&nbsp;; statut à négocier&nbsp;; les ambassades (sauf les USA depuis 2018) à Tel-Aviv.</li>
+          <li>Le nœud&nbsp;: <b>aucune des deux parties ne veut renoncer</b> — la ville concentre les lieux saints des trois monothéismes&nbsp;; les propositions (Genève 2003&nbsp;: souveraineté fonctionnelle, «&nbsp;la ville ouverte&nbsp;») butent sur le symbolique.</li>
+        </ul></div>
+
+        <h4 class="v">Ce qui rend ce point si dur</h4>
+        <p>Jérusalem superpose trois conflits&nbsp;: <b>territorial</b> (frontière de 1967 à l&rsquo;Est), <b>juridique</b> (annexion de 1980 jamais reconnue — les 200 000+ Palestiniens de Jérusalem-Est sont résidents, pas citoyens), et <b>religieux</b> (le mont du Temple / esplanade des Mosquées — lieu le plus saint du judaïsme, troisième de l&rsquo;islam&nbsp;; le statu quo des lieux géré depuis 1967 s&rsquo;est érodé depuis 2000 et les visites accrues de non-musulmans depuis 2023-2025 alimentent la tension récurrente <span class="src">(doc. de travail&nbsp;; presse 2023-2026)</span>). La tentative de résolution la plus aboutie (Genève 2003) proposait d&rsquo;inventer une <b>souveraineté par couches</b>&nbsp;: souveraineté palestinienne sur les quartiers arabes, israélienne sur les quartiers juifs, «&nbsp;souveraineté partagée&nbsp;» sur le bassin sacré — une idée juridique inédite, jamais négociée officiellement. En 2025-2026, la pression démographique et urbanistique continue&nbsp;: le projet «&nbsp;E1&nbsp;» (relier Ma&rsquo;ale Adumim à Jérusalem-Est) couperait la Cisjordanie en deux et isole Jérusalem de la Cisjordanie — le fait accompli urbanistique tranche la question par le béton <span class="src">(Peace Now)</span>.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: rés. 476/478 (1980)&nbsp;; avis CIJ 2004 (le mur à Jérusalem-Est illégal)&nbsp;; statut de résidence des Palestiniens de Jérusalem-Est&nbsp;; transfert de l&rsquo;ambassade US (2018) documentés.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;Jérusalem unifiée est un fait que le monde devrait accepter&nbsp;» vs «&nbsp;l&rsquo;annexion ne créera jamais de droit&nbsp;» — c&rsquo;est le débat droit vs puissance, rejoué localement.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: la hiérarchie des liens religieux à la ville (juif, musulman, chrétien) est elle-même disputée — chaque tradition revendique antériorité et centralité&nbsp;; le cours note que <b>ni la foi ni l&rsquo;archéologie ne peuvent trancher une frontière</b> — d&rsquo;où le droit, ou le partage.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Fiche «&nbsp;trois positions&nbsp;».</li>
+            <li>Repérer ce qui rend ce point difficile&nbsp;: lister les trois couches (territoire, droit, sacré) et pourquoi la négociation classique échoue sur la troisième.</li>
+            <li>Lire le plan «&nbsp;ville ouverte&nbsp;» de Genève 2003&nbsp;: en quoi diffère-t-il du partage&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Le droit au retour des réfugié·es</span><span class="c">point 3</span></summary>
       <div class="body">
-        <p>Troisième point dur : le droit au retour des réfugié·es — chiffre, réalité juridique, poids politique, en trois positions.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>fiche « trois positions ».</li><li>distinguer ce que dit le droit de ce que demandent les parties.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Le fait</b>&nbsp;: ~5,9 millions de réfugiés palestiniens enregistrés par l&rsquo;UNRWA (descendants de 1948 et 1967) — la plus ancienne et la plus nombreuse question de réfugiés au monde.</li>
+          <li><b>Position palestinienne</b>&nbsp;: droit au retour sur les terres d&rsquo;origine <b>ou</b> compensation, selon la rés. 194 (1948)&nbsp;; le droit individuel est un principe non négociable de la position officielle.</li>
+          <li><b>Position israélienne</b>&nbsp;: refus d&rsquo;un retour massif — il mettrait fin à la <b>majorité juive</b> de l&rsquo;État, donc à sa raison d&rsquo;être&nbsp;; offre historique&nbsp;: retour symbolique + compensation + absorption dans le futur État ou pays tiers.</li>
+          <li><b>Communauté internationale</b>&nbsp;: reconnaît le principe (retour <i>ou</i> compensation), laisse les <b>modalités</b> aux négociations — le diable est dans les chiffres et le rythme.</li>
+        </ul></div>
+
+        <h4 class="v">Le chiffre qui bloque</h4>
+        <p>La rés. 194 (1948) prévoit le retour «&nbsp;à tout moment&nbsp;» des réfugiés «&nbsp;désireux de vivre en paix&nbsp;» avec compensation des biens — texte voté, jamais appliqué. La position palestinienne y lit un <b>droit individuel imprescriptible</b>&nbsp;; la lecture israélienne (et une partie de la doctrine) y lit un droit <b>conditionnel</b> au retour dans l&rsquo;État palestinien à créer, pas en Israël&nbsp;; la négociation (Camp David 2000, Genève 2003) a toujours porté sur le même chiffre&nbsp;: <b>combien</b>, sur <b>quelle période</b>, sous quelle <b>sélection</b> — des dizaines de milliers&nbsp;? des centaines&nbsp;? Le doc. de travail nomme le mécanisme&nbsp;: <b>la peur du changement démographique entrave la mise en œuvre de droits fondamentaux</b> — et le débat israélien sur «&nbsp;l&rsquo;État juif&nbsp;» (loi 2018) durcit ce nœud chaque année <span class="src">(doc. de travail)</span>. Contexte 2024-2026&nbsp;: l&rsquo;UNRWA elle-même est devenue l&rsquo;enjeu — loi israélienne interdisant ses activités (déc. 2024, effective mars 2025), accusations de 12 employés du 7-Octobre (enquête FOX/ONU), coupes de financements, et un programme de distribution alternatif contesté (GHF, mai 2025) — le statut même de l&rsquo;agence qui <i>certifie</i> la qualité de réfugié est attaqué <span class="src">(ONU&nbsp;; presse 2024-2026)</span>.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: le registre UNRWA (5,9 M, méthodologie publique)&nbsp;; la rés. 194 et son vote&nbsp;; les offres de compensation documentées (Genève 2003&nbsp;; commissions ONU de conciliation 1949-1951 sur les biens).</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;droit individuel&nbsp;» vs «&nbsp;droit collectif conditionnel&nbsp;» — la doctrine est divisée&nbsp;; la CIJ 2004 a cité la 194 sans trancher la modalité individuelle.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: 1948 lui-même — expulsion et fuite (Nakba) vs «&nbsp;transferts de population réciproques&nbsp;» (lecture israélienne&nbsp;; noter que ~850 000 Juifs des pays arabes sont arrivés en Israël sans compensation, fait souvent invoqué en symétrie — les deux histoires sont vraies, leurs cadres juridiques diffèrent).</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Fiche «&nbsp;trois positions&nbsp;».</li>
+            <li>Distinguer ce que dit le droit (194&nbsp;: retour <i>ou</i> compensation) de ce que demandent les parties (retour intégral vs refus intégral).</li>
+            <li>Calculer&nbsp;: que signifierait «&nbsp;1&nbsp;% par an&nbsp;» — arithmétique d&rsquo;un compromis.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">Les colonies</span><span class="c">point 4</span></summary>
       <div class="body">
-        <p>Quatrième point dur : les colonies — fait accompli sur le terrain, statut juridique (voir l&rsquo;avis CIJ 2024, chap. 7), en trois positions.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>fiche « trois positions ».</li><li>carte : l&rsquo;évolution de la colonisation et son effet sur les scénarios de solution.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Le fait</b>&nbsp;: 700 000+ colons israéliens en Cisjordanie et Jérusalem-Est (hors Golan) — passés de ~250 000 (1993) à aujourd&rsquo;hui&nbsp;; ~15&nbsp;% de la Cisjordanie bâtie, mais 100&nbsp;% du territoire sous contrôle.</li>
+          <li><b>Position palestinienne</b>&nbsp;: illégalité totale (4<sup>e</sup> Convention de Genève)&nbsp;; les colonies fragmentent le territoire et rendent l&rsquo;État impossible — démantèlement et réparation.</li>
+          <li><b>Position israélienne</b>&nbsp;: certains blocs «&nbsp;stratégiques ou symboliques&nbsp;» non démantelables&nbsp;; des dirigeants prônent l&rsquo;annexion formelle&nbsp;; la présence est présentée comme historique et sécuritaire.</li>
+          <li><b>Communauté internationale</b>&nbsp;: illégalité constante (CS 2334&nbsp;; CIJ 2004 et 2024)&nbsp;; <b>mais</b> l&rsquo;expansion continue sans conséquence — le point dur où le droit parle le plus et coûte le moins.</li>
+        </ul></div>
+
+        <h4 class="v">Le point dur qui dévore les trois autres</h4>
+        <p>Les colonies ne sont pas un point dur parmi quatre&nbsp;: elles <b>décident des trois autres</b>&nbsp;— du tracé des frontières (les blocs rendent la ligne de 1967 fictive), de Jérusalem (E1 et les ceintures coloniales vident la ville de son Est palestinien), et du retour (les terres des réfugiés de 1948 sont souvent sous les colonies — le retour matériel est devenu objectivement impossible sur une part des sites). Depuis 2023-2026, l&rsquo;accélération est documentée&nbsp;: autorisations de dizaines de milliers d&rsquo;unités, légalisation d&rsquo;avant-postes, 22 nouvelles implantations approuvées en 2025, et la relance officielle d&rsquo;«&nbsp;E1&nbsp;» <span class="src">(Peace Now&nbsp;; doc. de travail)</span>. La question politique posée par le chapitre&nbsp;: un fait accompli suffit-il à créer un droit&nbsp;? — la réponse du droit international est non (ch. 7)&nbsp;; la réponse du terrain est la question du siècle.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: chiffres Peace Now/B&rsquo;Tselem (sources israéliennes), avis CIJ 2004/2024, rés. 2334&nbsp;; la croissance 2023-2026 est documentée par les appels d&rsquo;offres publics du ministère du Logement israélien.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;les colons sont une minorité idéologique&nbsp;» vs «&nbsp;la colonisation est le projet national&nbsp;» — les deux existent&nbsp;; la majorité des colons invoquent des motifs mixtes (économiques, religieux, sécuritaires) — le cours évite la caricature des colons comme des deux côtés.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: la souveraineté biblique vs l&rsquo;interdit de 49(6) — le débat du ch. 7&nbsp;; et la question «&nbsp;un retrait forcé de 700 000 personnes est-il réaliste&nbsp;?&nbsp;» —objection sérieuse (Gaza 2005 a failli politiquement) qui pèse sur toute négociation.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Fiche «&nbsp;trois positions&nbsp;».</li>
+            <li>Carte&nbsp;: évolution de la colonisation (1993 / 2013 / 2026) et effet sur les scénarios — superposer zones A/B/C.</li>
+            <li>Débat&nbsp;: «&nbsp;le fait accompli finit-il par créer le droit&nbsp;?&nbsp;» — arguments pour/contre, sourcés.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s6">
       <summary><span class="seq-num">6</span><span class="t">Mise en pratique : le comparatif des trois positions</span><span class="c">synthèse</span></summary>
       <div class="body">
-        <p>Recouper les quatre fiches pour voir la structure d&rsquo;ensemble : où les positions se répondent, où elles s&rsquo;excluent, ce que chaque camp considère comme non négociable.</p>
-        <div class="todo"><b>À travailler ici :</b> exercice de reformulation : chaque élève résume la position qu&rsquo;il ne défend pas — avec les arguments de cette position, pas les siens.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Recouper les quatre fiches&nbsp;: où les positions <b>se répondent</b>, où elles <b>s&rsquo;excluent</b>, ce que chaque camp tient pour <b>non négociable</b>.</li>
+          <li>La structure du blocage&nbsp;: chaque camp propose un compromis <b>qui touche le non-négociable de l&rsquo;autre</b> — le territoire contre la démographie, la capitale contre le sacré.</li>
+          <li>Exercice central&nbsp;: <b>reformuler la position adverse avec ses propres arguments</b> — le steelman comme discipline citoyenne.</li>
+          <li>Vers le chap. 10&nbsp;: ces nœuds ont été négociés — Oslo, Camp David, Genève&nbsp;: pourquoi ça a échoué, et ce que les tentatives enseignent.</li>
+        </ul></div>
+
+        <h4 class="v">Le tableau de synthèse</h4>
+        <table>
+          <tr><th>Point dur</th><th>Non-négociable palestinien</th><th>Non-négociable israélien</th><th>Zone de compromis possible</th></tr>
+          <tr><td><b>Frontières</b></td><td>La ligne de 1967 comme base</td><td>Pas de retour intégral&nbsp;; sécurité de la vallée</td><td>Échanges mineurs et équivalents (formule constante)</td></tr>
+          <tr><td><b>Jérusalem</b></td><td>Capitale à l&rsquo;Est</td><td>La ville «&nbsp;unifiée&nbsp;»&nbsp;; le Mur occidental</td><td>Souveraineté par couches&nbsp;; «&nbsp;ville ouverte&nbsp;»</td></tr>
+          <tr><td><b>Réfugiés</b></td><td>Le principe du droit (194)</td><td>Pas de retour massif en Israël</td><td>Retour limité + compensation + État palestinien</td></tr>
+          <tr><td><b>Colonies</b></td><td>Démantèlement (illégalité)</td><td>Les grands blocs</td><td>Échange des blocs contre territoire équivalent</td></tr>
+        </table>
+        <p>La lecture croisée révèle le mécanisme&nbsp;: chaque case «&nbsp;compromis&nbsp;» existe sur le papier depuis Camp David 2000 — et chaque case touche, vue de l&rsquo;autre côté, un <b>noyau dur</b>&nbsp;: pour les Israéliens, la démographie et la sécurité&nbsp;; pour les Palestiniens, le retour et la souveraineté réelle. C&rsquo;est pourquoi les accords partiels (Oslo) fonctionnent tant que le noyau n&rsquo;est pas touché — et explosent dès qu&rsquo;on l&rsquo;approche <span class="src">(doc. de travail&nbsp;; ch. 10)</span>.</p>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les offres sur la table (Clinton 2000, Genève 2003) sont publiques&nbsp;; les tableaux de négociation sont reconstitués par les deux camps — comparer les reconstitutions est un exercice en soi.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;les compromis proposés étaient raisonnables&nbsp;» — raisonnable pour qui&nbsp;? chaque offre est jugée historiquement généreuse par un camp et insuffisante par l&rsquo;autre&nbsp;; le cours demande&nbsp;: <i>quels critères</i> pour juger&nbsp;?</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;la paix est impossible tant que…&nbsp;» (chaque camp a sa clause) — le cours tient la formule inverse&nbsp;: <b>rien n&rsquo;est négociable avec qui que ce soit tant que la légitimité de l&rsquo;autre n&rsquo;est pas reconnue</b> — et c&rsquo;est là, pas dans les cartes, que se joue le blocage.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Exercice de reformulation&nbsp;: chaque élève résume la position qu&rsquo;il ne défend pas — <b>avec les arguments de cette position</b>, pas les siens.</li>
+            <li>Remplir le tableau de synthèse à quatre, puis discuter&nbsp;: quelle case est la plus proche d&rsquo;un accord réel&nbsp;? laquelle est la plus bloquée&nbsp;?</li>
+            <li>Vers le chap. 10&nbsp;: reprendre chaque case et demander «&nbsp;à Oslo, qu&rsquo;est-ce qui a été fait&nbsp;?&nbsp;»</li>
+          </ul>
+        </div>
       </div>
     </details>
 
@@ -145,9 +306,9 @@
 
       <p class="srcs"><b>Jurisprudence —</b> <a href="https://www.icj-cij.org/case/143">affaire 143</a> — avis «&nbsp;Mur&nbsp;» (2004), Jérusalem-Est comprise &nbsp;· <a href="https://www.icj-cij.org/case/186">affaire 186</a> — avis du 19 juillet 2024 (colonies, ressources, fin de l&rsquo;occupation).</p>
 
-      <p class="srcs"><b>Références —</b> Geneva Initiative (2003) — projet détaillé de statut final &nbsp;· initiatives citoyennes bilatérales (voir chapitre 11).</p>
+      <p class="srcs"><b>Références —</b> Geneva Initiative (2003) — projet détaillé de statut final (jeune-palestine.org&nbsp;; geneva-accord.org) &nbsp;· paramètres Clinton (2000)&nbsp;; initiative arabe de paix (2002) &nbsp;· UNRWA — registre des réfugiés et mandat (unrwa.org) &nbsp;· Peace Now — cartographies de la colonisation (peacenow.org.il) &nbsp;· OCHA — zones A/B/C &nbsp;· initiatives citoyennes bilatérales (voir chapitre 11).</p>
 
-      
+      <p class="srcs"><b>Actualité 2024-2026 —</b> vague de reconnaissances de l&rsquo;État de Palestine (sept.-oct. 2025&nbsp;: France, Royaume-Uni, Canada, Belgique, Australie, Portugal, etc.) &nbsp;· plan américain de 20 points sur Gaza (oct. 2025) &nbsp;· loi israélienne contre l&rsquo;UNRWA (déc. 2024)&nbsp;· projet «&nbsp;E1&nbsp;» relancé (2025) &nbsp;· 22 nouvelles implantations approuvées (2025).</p>
     </div>
 
     <div class="foot">Chapitre 9 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
