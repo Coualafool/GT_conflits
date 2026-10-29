@@ -56,6 +56,23 @@
   .srcs a{color:var(--accent);text-decoration:none}
   .srcs a:hover{color:var(--brand);text-decoration:underline}
   .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--faint);font-size:13px}
+  .acc .body h4.v{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);margin:20px 0 6px;font-weight:700}
+  .acc .body .pv{border-left:3px solid var(--border);padding:2px 0 2px 14px;margin:12px 0}
+  .acc .body .who{font-weight:700;color:var(--ink)}
+  .acc .body ul{margin:6px 0 6px 20px;padding:0}
+  .acc .body li{margin:5px 0}
+  .acc .body .src{color:var(--faint);font-size:12.5px}
+  .essentiel{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel-2);border-radius:0 10px 10px 0;padding:12px 14px;margin:2px 0 16px}
+  .essentiel .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-weight:800;margin-bottom:6px}
+  .essentiel ul{margin:0;padding-left:18px}
+  .essentiel li{margin:4px 0;font-size:14px;color:var(--ink)}
+  .pv .these{display:block;color:var(--ink);font-weight:600;font-size:14.5px;margin:5px 0 7px}
+  .etages{display:grid;gap:8px;margin:8px 0}
+  .etage{border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13.5px;color:var(--muted);background:var(--panel)}
+  .tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;border-radius:999px;padding:2px 9px;margin-right:8px;vertical-align:1px}
+  .t-ok{background:rgba(95,179,128,.15);color:var(--good);border:1px solid rgba(95,179,128,.4)}
+  .t-int{background:rgba(224,164,88,.15);color:var(--brand);border:1px solid rgba(224,164,88,.4)}
+  .t-dis{background:rgba(154,168,182,.12);color:var(--muted);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -82,47 +99,163 @@
       <span class="tools"><button id="openAll" type="button">Tout ouvrir</button><button id="closeAll" type="button">Tout replier</button></span>
     </div></div>
 
-    <p class="lead"><b>Objectif :</b> développer l&rsquo;esprit critique face au traitement médiatique et aux réseaux sociaux.</p>
+    <p class="lead"><b>Objectif :</b> développer l&rsquo;esprit critique face au traitement médiatique et aux réseaux sociaux — comment l&rsquo;information qui nous parvient construit notre perception du conflit.</p>
 
     <h2 class="s">Séquences du chapitre — cliquez pour dérouler</h2>
 
     <details class="acc" open id="s1">
       <summary><span class="seq-num">1</span><span class="t">Comment ces événements nous parviennent-ils&nbsp;?</span><span class="c">construction de l&rsquo;ennemi</span></summary>
       <div class="body">
-        <p>La construction médiatique de l&rsquo;« ennemi » ; la déshistoricisation — pourquoi tout semble commencer le 7 octobre. Le cadrage de l&rsquo;information comme objet d&rsquo;analyse.</p>
-        <div class="todo"><b>À travailler ici&nbsp;:</b><ul><li>comparer la « une » de plusieurs journaux le même jour.</li><li>relever ce qui est montré, ce qui est passé sous silence, et depuis quand.</li></ul></div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Le chapitre analyse <b>nos</b> médias — belges et européens — pas ceux d&rsquo;Israël ou de Gaza&nbsp;: ce que nous voyons, et surtout ce que nous ne voyons pas.</li>
+          <li><b>Construction de l&rsquo;ennemi</b>&nbsp;: Israël présenté comme «&nbsp;seule démocratie du Moyen-Orient&nbsp;», les Palestiniens comme un groupe homogène et violent — une hiérarchie morale qui trie les vies dignes d&rsquo;empathie.</li>
+          <li><b>Déshistoricisation</b>&nbsp;: tout commence le 7 octobre&nbsp;; les décennies de colonisation, blocus et restrictions disparaissent du récit.</li>
+          <li>Le cadrage («&nbsp;framing&nbsp;») n&rsquo;est pas un complot&nbsp;: c&rsquo;est un tri structurel — l&rsquo;actualité est un récit, et tout récit choisit son point de départ.</li>
+        </ul></div>
+
+        <h4 class="v">Les mécanismes à l&rsquo;œuvre</h4>
+        <p>L&rsquo;analyse dont s&rsquo;inspire ce chapitre (Zin TV, doc. de travail) relève trois procédés classiques de la propagande de guerre — ceux qu&rsquo;Anne Morelli a systématisés&nbsp;: <b>occultation des causes structurelles</b> (contrôle territorial, expulsions, circulation entravée — rarement résumés avant le 7 octobre)&nbsp;; <b>essentialisation</b> («&nbsp;les Palestiniens&nbsp;» comme masse violente, sans diversité d&rsquo;expériences)&nbsp;; <b>élection du point de départ</b> — la date choisie fait le récit&nbsp;: «&nbsp;guerre déclenchée par le Hamas&nbsp;» n&rsquo;est pas faux, mais «&nbsp;59<sup>e</sup> année d&rsquo;occupation&nbsp;» non plus — les deux sont vrais, un seul occupe le bandeau. Exemples belges relevés par le doc. de travail&nbsp;: les titres du <i>Soir</i> et de la RTBF du 7-10 octobre 2023 («&nbsp;face à la barbarie&nbsp;», «&nbsp;crimes de guerre du Hamas&nbsp;») — un vocabulaire moral avant toute analyse, alors que le blocus de Gaza datait de 2007 et la colonisation de 1967 <span class="src">(doc. de travail&nbsp;; presse belge 2023)</span>.</p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">«&nbsp;Contexte&nbsp;» n&rsquo;est pas «&nbsp;justification&nbsp;».</span> Rappeler l&rsquo;occupation n&rsquo;excuse pas le 7 octobre — et l&rsquo;inverse est vrai aussi&nbsp;: la condamnation du 7 octobre n&rsquo;efface pas le contexte. Le piège médiatique est le «&nbsp;cadrage d&rsquo;abord&nbsp;» (tout expliquer par l&rsquo;attaque) comme le «&nbsp;contexte d&rsquo;abord&nbsp;» (tout dissoudre en lui) — le cours tient les deux faits ensemble, sans hiérarchie morale entre eux.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les titres et dates cités sont dans les archives des journaux&nbsp;; les études de cadrage du conflit (plusieurs thèses, dont Columbia 2024) montrent un déséquilibre de citation — les responsables israéliens cités plus souvent que les représentants palestiniens.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;nos médias sont partiaux&nbsp;» vs «&nbsp;ils reflètent l&rsquo;opinion de leur public&nbsp;» — les deux mécanismes coexistent&nbsp;; la partialité perçue dépend aussi de la position du lecteur.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: l&rsquo;accusation de parti médiatique est elle-même instrumentalisée des deux côtés — «&nbsp;bias systématique contre Israël&nbsp;» comme «&nbsp;consensus sioniste des rédactions&nbsp;» sont des grilles-tout faites pour clore le débat, pas pour l&rsquo;ouvrir.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Comparer la «&nbsp;une&nbsp;» de plusieurs journaux le même jour&nbsp;: ce qui est montré, ce qui est tu, depuis quand.</li>
+            <li>Reconstituer la chronologie que propose un JT moyen&nbsp;: à quelle date commence-t-il&nbsp;? Que sait un élève de 2020 (annexion de fait, «&nbsp;plan de la paix&nbsp;», normalisations)&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s2">
       <summary><span class="seq-num">2</span><span class="t">Déshumanisation et double standard lexical</span><span class="c">vocabulaire</span></summary>
       <div class="body">
-        <p>Le vocabulaire et le double standard lexical (« otage » / « prisonnier »), l&rsquo;effacement des enfants dans le récit médiatique : comment les mots trient les vies.</p>
-        <div class="todo"><b>À travailler ici :</b> relevés lexicaux sur un corpus de titres : compter les occurrences, comparer les termes selon les victimes — puis discuter.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Tri lexical</b>&nbsp;: les victimes israéliennes ont des noms, âges, professions&nbsp;; les palestiniennes sont des chiffres — «&nbsp;plus de 40 000 morts&nbsp;» sans biographies.</li>
+          <li><b>«&nbsp;Otage&nbsp;» / «&nbsp;prisonnier&nbsp;»</b>&nbsp;: le premier mot suscite l&rsquo;indignation, le second la distance — alors que des dizaines de milliers de Palestiniens sont détenus sans procès (détention administrative).</li>
+          <li><b>Animalisation</b>&nbsp;: «&nbsp;hordes&nbsp;», «&nbsp;gesticulations&nbsp;», «&nbsp;comportements instinctifs&nbsp;» — un vocabulaire qui retire l&rsquo;humanité et rend la violence pensable.</li>
+          <li><b>«&nbsp;Désenfantement&nbsp;»</b>&nbsp;: les enfants palestiniens dits «&nbsp;mineurs&nbsp;» — un terme administratif qui neutralise l&rsquo;émotion&nbsp;; un «&nbsp;enfant de 8 ans&nbsp;» n&rsquo;est pas un «&nbsp;mineur&nbsp;».</li>
+        </ul></div>
+
+        <h4 class="v">Ce que les mots trient</h4>
+        <p>Le doc. de travail documente le contraste&nbsp;: les otages israéliens du 7 octobre ont été nommés, filmés, pleurés en continu — les enfants tués à Gaza comptés par milliers, anonymes. Ce n&rsquo;est pas un hasard éditorial isolé&nbsp;: les bases de données des morts publiées par le ministère de Gaza (remises au HCDH en 2024, nom, âge, sexe pour chaque entrée) ont été rarement reprises en détail par la presse européenne <span class="src">(doc. de travail&nbsp;; HCDH)</span>. Sur les enfants, deux faits documentés que «&nbsp;nos journaux&nbsp;» rapportent peu&nbsp;: Israël est le seul pays au monde à faire passer systématiquement des enfants devant des <b>tribunaux militaires</b> (environ 500 à 1 300 mineurs par an — UNICEF, Défense des Enfants International)&nbsp;; et les rapports onusiens 2024-2025 comptent Gaza comme le <b>record historique d&rsquo;enfants tués</b> dans un conflit jamais vérifié par l&rsquo;ONU <span class="src">(rapport du Secrétaire général, enfants et conflits armés&nbsp;; DCI-P)</span>.</p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">«&nbsp;Otage&nbsp;» et «&nbsp;prisonnier&nbsp;» ne sont pas synonymes — et c&rsquo;est le «&nbsp;toujours&nbsp;» qui est faux.</span> Juridiquement, l&rsquo;otage est un civil enlevé (crime de guerre)&nbsp;; le prisonnier peut être un combattant légitime ou un détenu de droit commun. La critique juste n&rsquo;est pas que la distinction soit illégitime, mais qu&rsquo;elle soit <b>à sens unique</b>&nbsp;: les quelque 8 000 Palestiniens en détention administrative (sans inculpation ni procès, documentés par les ONG israéliennes B&rsquo;Tselem et Addameer) méritent le mot «&nbsp;détenu arbitraire&nbsp;» — que nos titres n&rsquo;emploient presque jamais.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: le comptage anonyme vs nominatif est mesurable (études de contenu)&nbsp;; la détention administrative palestinienne est documentée par les ONG israéliennes elles-mêmes&nbsp;; les tribunaux militaires pour mineurs par l&rsquo;UNICEF (rapports 2013-2020).</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: le chiffre total des morts à Gaza — le ministère de Gaza est dirigé par le Hamas, ce qui sert à disqualifier <i>a priori</i> tout le chiffre&nbsp;; le HCDH et les études médicales (The Lancet) jugent le décompte globalement fiable, avec une marge pour les personnes sous les décombres. Le débat sur le chiffre EST un fait du débat public — le cours le montre, ne le tranche pas.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;le vocabulaire est manipulé contre Israël&nbsp;» vs «&nbsp;contre les Palestiniens&nbsp;» — chaque camp accuse l&rsquo;autre de «&nbsp;guerre des mots&nbsp;»&nbsp;; la méthode du chapitre&nbsp;: compter les mots, pas les intentions.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Relevé lexical sur un corpus de titres&nbsp;: compter les occurrences «&nbsp;otage&nbsp;/&nbsp;prisonnier&nbsp;/&nbsp;détenu&nbsp;», «&nbsp;enfant&nbsp;/&nbsp;mineur&nbsp;», nommés vs chiffrés — puis discuter les résultats.</li>
+            <li>Reprendre trois dépêches de la même agence (AFP) sur deux victimes comparables&nbsp;: que change la structure de la phrase&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s3">
       <summary><span class="seq-num">3</span><span class="t">La désinformation : précédents et exemples</span><span class="c">canulars · montages</span></summary>
       <div class="body">
-        <p>Les précédents historiques — les couveuses du Koweït, les armes de destruction massive en Irak — et les exemples israélo-palestiniens documentés.</p>
-        <div class="todo"><b>À travailler ici :</b> décortiquer un cas de désinformation : qui l&rsquo;a lancée, comment elle a circulé, comment elle a été démontée.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li>Précédents classiques&nbsp;: <b>couveuses du Koweït</b> (1990 — témoignage fabriqué par l&rsquo;agence Hill &amp; Knowlton, la «&nbsp;infirmière&nbsp;» était la fille de l&rsquo;ambassadeur)&nbsp;; <b>armes de destruction massive</b> d&rsquo;Irak (2003 — relayées sans preuve).</li>
+          <li><b>«&nbsp;40 bébés décapités&nbsp;»</b>&nbsp;: le chiffre, lancé par i24News puis repris jusqu&rsquo;à la Maison-Blanche, n&rsquo;a jamais été étayé — des décapitations ont bien eu lieu le 7 octobre (documentées par la presse), mais ce n&rsquo;est pas le récit fabriqué&nbsp;: c&rsquo;est le <b>chiffre</b> qui l&rsquo;est.</li>
+          <li><b>«&nbsp;Enfants en cage&nbsp;»</b>&nbsp;: photos présentées comme des otages du Hamas — en réalité des enfants palestiniens arrêtés par l&rsquo;armée israélienne, sur une campagne datant de 2021 (vérifié AP/Reuters).</li>
+          <li><b>Mal-information</b>&nbsp;: l&rsquo;image est vraie, le contexte est faux — la story «&nbsp;Praying for Israel&nbsp;» de Justin Bieber sur fond de destructions… de Gaza.</li>
+        </ul></div>
+
+        <h4 class="v">Anatomie d&rsquo;un récit de guerre</h4>
+        <p>Le mécanisme est décrit par la propagande de guerre depuis 1914 — les «&nbsp;enfants belges aux mains coupées&nbsp;» — ce que les historiens appellent l&rsquo;<b>atrocity propaganda</b>&nbsp;: l&rsquo;horreur rapportée sert de catalyseur émotionnel, et sa vérification arrive toujours trop tard. Le cas des «&nbsp;bébés décapités&nbsp;» est instructeur&nbsp;: le 7 octobre a inclus des crimes réels d&rsquo;une brutalité extrême — les documenter n&rsquo;est pas les inventer&nbsp;— mais le chiffre de 40 nourrissons, cité par le porte-parole israélien et repris par Biden, n&rsquo;a jamais été corroboré par les enquêtes ultérieures <span class="src">(doc. de travail&nbsp;; vérifications AP/Washington Post)</span>. La leçon méthodologique tient en une phrase&nbsp;: <b>vérifier, c&rsquo;est distinguer l&rsquo;horreur confirmée de l&rsquo;horreur fabriquée — sans jamais utiliser l&rsquo;une pour nier l&rsquo;autre.</b></p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">Lister les fausses informations d&rsquo;un camp ne prouve rien sur le crime de l&rsquo;autre.</span> Le doc. de travail compile des désinformations pro-israéliennes&nbsp;; il en existe aussi côté palestiniste (fausses photos reprises, chiffres gonflés par des comptes militants)&nbsp;— et les documenter tous les deux est la seule posture honnête. Le chapitre ne classe pas les camps&nbsp;: il entraîne la méthode — source, date, recoupement — appliquée symétriquement.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: couveuses (AP 1990, enquête du Congrès US), ADM d&rsquo;Irak (commission Robb-Silberman 2004&nbsp;: aucune), «&nbsp;cages&nbsp;» (AP/Reuters 2023), Bieber (multiples vérifications) — chaque cas est documenté par un fact-checkeur tiers.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;désinformation d&rsquo;État&nbsp;» vs «&nbsp;erreur de communication&nbsp;» — la frontière entre propagande organisée et affolement est difficile à établir cas par cas&nbsp;; l&rsquo;intention n&rsquo;est jamais observable, seuls ses effets le sont.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: le 7 octobre lui-même a produit des récits contestés (les allégations initiales de viols — certaines confirmées par l&rsquo;ONU, d&rsquo;autres non étayées)&nbsp;; le cours note que <i>les deux camps</i> ont intérêt à la fixité des récits, et que l&rsquo;enquête prend du temps — c&rsquo;est tout le sujet de la séquence.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Décortiquer un cas&nbsp;: qui l&rsquo;a lancé, comment il a circulé, comment il a été démonté — et ce qui en reste aujourd&rsquo;hui.</li>
+            <li>Atelier symétrique&nbsp;: trois contenus viraux pro-israéliens, trois pro-palestiniens — vérifier les six avec la méthode, classer vrai / faux / hors contexte.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s4">
       <summary><span class="seq-num">4</span><span class="t">Comment fonctionnent les réseaux sociaux</span><span class="c">algorithmes</span></summary>
       <div class="body">
-        <p>Économie de l&rsquo;attention, bulles algorithmiques, exposition à la violence, acteurs invisibles de la manipulation : la plateforme comme formatrice du récit.</p>
-        <div class="todo"><b>À travailler ici :</b> audit de son propre fil d&rsquo;actualité : d&rsquo;où viennent mes informations, ce que l&rsquo;algorithme voit de moi — en groupe et sans mise en cause individuelle.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Économie de l&rsquo;attention</b>&nbsp;: les plateformes vendent notre temps&nbsp;; l&rsquo;algorithme montre ce qui fait réagir — colère, choc, indignation — sans distinguer vrai et faux.</li>
+          <li><b>Bulles informationnelles</b>&nbsp;: chaque like confirme&nbsp;; deux personnes vivent le même conflit dans des réalités parallèles — la nuance disparaît.</li>
+          <li><b>Exposition à la violence</b>&nbsp;: trauma vicariant (anxiété, cauchemars, impuissance), puis désensibilisation — l&rsquo;horreur se banalise.</li>
+          <li><b>Acteurs invisibles</b>&nbsp;: États, propriétaires de plateformes, fermes à trolls&nbsp;; la modération n&rsquo;est jamais neutre — hashtags invisibilisés, suspensions sélectives.</li>
+        </ul></div>
+
+        <h4 class="v">La plateforme n&rsquo;est pas un miroir</h4>
+        <p>Notre génération est la première à vivre un conflit armé en continu dans une poche&nbsp;: Gaza est le premier «&nbsp;conflit TikTok&nbsp;» — le direct d&rsquo;Al Jazeera (chaîne la plus suivie de la plateforme en 2024), les vidéos de secouristes, les lives de correspondants. Ce que l&rsquo;algorithme a fait de cette abondance est révélateur&nbsp;: des études indépendantes (dont les fuites «&nbsp;Facebook Files&nbsp;» et les rapports de chercheurs) ont documenté la sous-portée de contenus palestiniens et la sur-portée de contenus israéliens sur certaines plateformes — et inversement selon les périodes <span class="src">(doc. de travail&nbsp;; littérature plateformes 2023-2025)</span>. Le fait nouveau 2024-2026&nbsp;: la <b>guerre des archives</b> — la suppression massive de comptes et de vidéos palestiniens signalés en masse (rapports Meta Transparency, 2024&nbsp;; excuses publiques de Meta en juillet 2024 pour des suppressions erronées), pendant qu&rsquo;aucun média étranger n&rsquo;a accès à Gaza — Israël interdisant la presse internationale du territoire, une interdiction confirmée par sa Cour suprême en août 2025. Résultat structurel&nbsp;: l&rsquo;information sur Gaza passe <b>d&rsquo;abord</b> par les journalistes palestiniens eux-mêmes — dont plus de cent ont été tués depuis octobre 2023 (CPJ&nbsp;: le conflit le plus meurtrier pour la presse jamais enregistré), comme Anas al-Sharif d&rsquo;Al Jazeera, tué avec cinq de ses collègues en mai 2025 <span class="src">(CPJ&nbsp;; RSF&nbsp;; presse 2025)</span>.</p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">«&nbsp;L&rsquo;algorithme nous manipule&nbsp;» est confortable — et faux à moitié.</span> L&rsquo;algorithme amplifie des préférences existantes&nbsp;; il ne les crée pas. Le déterminisme technologique («&nbsp;c&rsquo;est la faute de TikTok&nbsp;») est une excuse&nbsp;: nos choix de comptes, de partages, de temps d&rsquo;écran restent des choix — c&rsquo;est exactement la porte de sortie que la séquence 5 ouvre.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: le fonctionnement de l&rsquo;économie de l&rsquo;attention est documenté (O&rsquo;Neil 2016&nbsp;; «&nbsp;Social Dilemma&nbsp;»)&nbsp;; les chiffres CPJ de journalistes tués et l&rsquo;interdiction d&rsquo;accès presse à Gaza sont publics et contestés seulement à la marge.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: «&nbsp;shadow-ban organisé contre les contenus palestiniens&nbsp;» — des études existent, les plateformes les contestent&nbsp;; Meta a admis des erreurs ponctuelles sans politique systémique. Entre complot et accident&nbsp;: débat ouvert.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: l&rsquo;«&nbsp;hasbara&nbsp;» (diplomatie publique israélienne organisée, documentée par des fuites de câbles) vs le «&nbsp;campus Hamas&nbsp;» (récit d&rsquo;un militantisme palestiniste coordonné) — les deux camps décrivent l&rsquo;autre comme une machine&nbsp;; les deux machines existent, aucune n&rsquo;est totale.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Audit de son propre fil&nbsp;: d&rsquo;où viennent mes informations, ce que l&rsquo;algorithme voit de moi — en groupe, sans mise en cause individuelle.</li>
+            <li>Comparer le traitement d&rsquo;un même événement sur trois plateformes&nbsp;: quels contenus en tête, lesquels absents.</li>
+          </ul>
+        </div>
       </div>
     </details>
 
     <details class="acc" id="s5">
       <summary><span class="seq-num">5</span><span class="t">Reprendre le contrôle : vérifier</span><span class="c">outils</span></summary>
       <div class="body">
-        <p>Esprit critique et outils de vérification : image inversée, vérificateurs de faits, lecture de la source primaire — passer de la réception à l&rsquo;enquête.</p>
-        <div class="todo"><b>À travailler ici :</b> atelier pratique : vérifier ensemble une image et une publication virale avec la méthode en 5 étapes.</div>
+        <div class="essentiel"><div class="lbl">L&rsquo;essentiel</div><ul>
+          <li><b>Six questions</b> avant de partager&nbsp;: qui publie&nbsp;? sa crédibilité&nbsp;? l&rsquo;objectif — informer ou manipuler&nbsp;? l&rsquo;image est-elle décontextualisée&nbsp;? confirmée par plusieurs sources fiables&nbsp;? pourquoi ça me fait réagir si fort&nbsp;?</li>
+          <li><b>Outils</b>&nbsp;: recherche inversée d&rsquo;images (Google Images, TinEye), vérificateurs (AFP Factuel, Les Décodeurs, Bellingcat), InVID pour les vidéos, lecture de l&rsquo;URL.</li>
+          <li><b>Sortir de sa bulle</b> ≠ tout relativiser&nbsp;: chercher les contre-arguments, mais «&nbsp;tous les points de vue ne se valent pas&nbsp;» — comprendre la complexité, pas nier les faits vérifiés.</li>
+          <li><b>Santé mentale d&rsquo;abord</b>&nbsp;: temps d&rsquo;écran limité, lecture automatique désactivée, pauses, parole — «&nbsp;il est normal d&rsquo;être bouleversé&nbsp;».</li>
+        </ul></div>
+
+        <h4 class="v">La méthode en cinq étapes (atelier)</h4>
+        <p><b>1. Remonter</b> à la source première — qui a publié en premier, quand, avec quel accès aux faits&nbsp;? <b>2. Contextualiser</b> — la date, le lieu, l&rsquo;angle&nbsp;: une image vraie de 2021 racontée comme d&rsquo;aujourd&rsquo;hui est une information fausse. <b>3. Recouper</b> — deux sources indépendantes minimum&nbsp;; un fact-checkeur tiers (AFP Factuel, Bellingcat) vaut mieux que dix partages. <b>4. Interroger l&rsquo;effet</b> — pourquoi ce contenu provoque-t-il en moi colère ou joie&nbsp;? l&rsquo;émotion est le signal d&rsquo;alarme du manipulateur. <b>5. Choisir</b> — partager, corriger, ou ne rien faire&nbsp;: l&rsquo;abstention est une décision éditoriale légitime. Le corpus d&rsquo;entraînement est disponible&nbsp;: le site <i>Demystificator</i> (ressources anti-désinformation, doc. de travail) et les archives des vérificateurs cités — appliquer la méthode à trois cas du chapitre 3 (couveuses, cages, Bieber) puis à trois cas viraux de la semaine.</p>
+
+        <div class="pv"><span class="who">La nuance honnête.</span><span class="these">Le soupçon généralisé est aussi un piège.</span> «&nbsp;Tout se vérifie&nbsp;» ne veut pas dire «&nbsp;rien n&rsquo;est vrai tant que je ne l&rsquo;ai pas vérifié&nbsp;» — le scepticisme systématique est la porte d&rsquo;entrée du complotisme («&nbsp;tous des menteurs&nbsp;») et du retrait civique. La vérification est un effort <b>proportionné au doute</b> et dirigé <b>d&rsquo;abord contre ses propres certitudes</b> — vérifier ce qui nous arrange avant ce qui nous indigne.</div>
+
+        <div class="todo"><b>Honnêteté — trois étages.</b>
+          <div class="etages">
+            <div class="etage"><span class="tag t-ok">Établi</span>&nbsp;: les outils cités sont publics et gratuits&nbsp;; les pédagogies médiatiques belges (CSEM, Média Animation) publient des séquences prêtes à l&rsquo;emploi.</div>
+            <div class="etage"><span class="tag t-int">Interprétation</span>&nbsp;: qui vérifie les vérificateurs&nbsp;? les fact-checkeurs ont des financements et des angles (débat ouvert sur leurs propres biais)&nbsp;; la réponse méthodologique&nbsp;: recouper les vérificateurs entre eux, comme les sources.</div>
+            <div class="etage"><span class="tag t-dis">Récits disputés</span>&nbsp;: «&nbsp;l&rsquo;esprit critique&nbsp;» est le mot de passe de tout le monde — chaque camp se revendique de la vérification&nbsp;; le cours ancre la méthode dans des gestes concrets (source, date, recoupement), pas dans une posture identitaire.</div>
+          </div>
+        </div>
+        <div class="todo"><b>À travailler ici&nbsp;:</b>
+          <ul>
+            <li>Atelier pratique&nbsp;: vérifier ensemble une image et une publication virale avec la méthode en cinq étapes.</li>
+            <li>Produire une «&nbsp;charte du partage&nbsp;» de classe&nbsp;: dix règles issues du chapitre, testées pendant un mois.</li>
+            <li>Vers le chap. 9&nbsp;: nos propres réflexes — où sont nos angles morts, à nous&nbsp;?</li>
+          </ul>
+        </div>
       </div>
     </details>
 
@@ -130,15 +263,19 @@
     <div class="note">
       <p style="margin-top:0"><b>Espace de travail</b> : cette page est le dossier vivant du chapitre — brouillons, activités, sources et repères s&rsquo;y accumulent, séparément de l&rsquo;index. Les attributions entre parenthèses dans le texte renvoient aux entrées ci-dessous.</p>
 
-      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/15thPl812cTng1kt66-ivnKrOa3NPLP6D/view">&laquo;&nbsp;8. Résonnance médiatique.docx&nbsp;&raquo;</a> (document de base de ce chapitre) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
+      <p class="srcs"><b>Documents de travail (Drive) —</b> <a href="https://drive.google.com/file/d/15thPl812cTng1kt66-ivnKrOa3NPLP6D/view">&laquo;&nbsp;8. Résonnance médiatique.docx&nbsp;&raquo;</a> (document de base de ce chapitre — analyse Zin TV) &nbsp;· <a href="https://drive.google.com/file/d/1MNgsN_I2pemGDRhjpoGuun8OBe81lQ7U/view">&laquo;&nbsp;250407_bibliographie_Pal-Isr.docx&nbsp;&raquo;</a> (bibliographie générale de l&rsquo;équipe) &nbsp;· <a href="https://drive.google.com/file/d/1YoY0NPrawqnL_s6LB9_kXekWUuvtX1MD/view">&laquo;&nbsp;250701_dates clés_ISRAPAL.xlsx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/file/d/1S0jnJobLvCFl1pzkwbjqywNmO2Ce6CGJ/view">&laquo;&nbsp;250701_Lexique_ISRAPAL.docx&nbsp;&raquo;</a> &nbsp;· <a href="https://drive.google.com/drive/folders/1DNFOr5uEMC1cs6lHWPLRqoW4idBqWtlq">dossier racine &laquo;&nbsp;2026_Outil péda_Israël-Palestine&nbsp;&raquo;</a>.</p>
 
-      <p class="srcs"><b>Vérification des faits —</b> AFP Factuel &nbsp;· CheckNews (Libération) &nbsp;· Les Décodeurs (Le Monde) &nbsp;· France 24 Observers.</p>
+      <p class="srcs"><b>Vérification des faits —</b> <a href="https://factuel.afp.com/">AFP Factuel</a> &nbsp;· CheckNews (Libération) &nbsp;· <a href="https://www.lemonde.fr/les-decodeurs/">Les Décodeurs</a> (Le Monde) &nbsp;· <a href="https://www.bellingcat.com/">Bellingcat</a> &nbsp;· France 24 Observers &nbsp;· <a href="https://demystificator.vercel.app/">Demystificator</a> (ressources anti-désinformation, Justice&nbsp;&amp;&nbsp;Paix) &nbsp;· <a href="https://tineye.com/">TinEye</a> (recherche inversée) &nbsp;· InVID (vérification vidéo).</p>
 
-      <p class="srcs"><b>Propagande et précédents —</b> Anne Morelli, <i>Les Principes élémentaires de propagande de guerre</i> (2001) &nbsp;· précédents documentés&nbsp;: couveuses du Koweït (AP, 1990), «&nbsp;armes de destruction massive&nbsp;» d&rsquo;Irak (2003).</p>
+      <p class="srcs"><b>Propagande et précédents —</b> Anne Morelli, <i>Les Principes élémentaires de propagande de guerre</i> (2001) &nbsp;· précédents documentés&nbsp;: couveuses du Koweït (AP, 1990), «&nbsp;armes de destruction massive&nbsp;» d&rsquo;Irak (2003) &nbsp;· «&nbsp;War of Words&nbsp;: How Media Shapes Perceptions of Gaza&nbsp;» (mémoire Columbia University, déc. 2024).</p>
 
-      <p class="srcs"><b>Économie de l&rsquo;attention —</b> Cathy O&rsquo;Neil, <i>Armes de destruction mathématique</i> (2016) &nbsp;· Mathilde Aubin et Céline Vanier, <i>L&rsquo;Abus d&rsquo;algorithme</i> (2019).</p>
+      <p class="srcs"><b>Économie de l&rsquo;attention —</b> Cathy O&rsquo;Neil, <i>Armes de destruction mathématique</i> (2016) &nbsp;· Mathilde Aubin et Céline Vanier, <i>L&rsquo;Abus d&rsquo;algorithme</i> (2019) &nbsp;· documentaires «&nbsp;The Social Dilemma&nbsp;» / «&nbsp;Derrière nos écrans de fumée&nbsp;» &nbsp;· podcasts «&nbsp;Consomédias&nbsp;» (RTBF), Data Gueule.</p>
 
-      
+      <p class="srcs"><b>Presse et guerre —</b> <a href="https://cpj.org/">Comité pour la protection des journalistes</a> (décomptes, Gaza 2023-2026) &nbsp;· <a href="https://rsf.org/en/ranking">RSF — Classement mondial de la liberté de la presse</a> &nbsp;· interdiction d&rsquo;accès des médias étrangers à Gaza (confirmée par la Cour suprême israélienne, août 2025) &nbsp;· Meta Transparency Reports 2024 (suppressions de contenus palestiniens&nbsp;; excuses publiques juil. 2024).</p>
+
+      <p class="srcs"><b>Éducation aux médias (Belgique) —</b> <a href="https://www.csem.be/">CSEM</a> &nbsp;· <a href="https://media-animation.be/">Média Animation</a> &nbsp;· dossier RTBF «&nbsp;médias&nbsp;: mensonges et vérités&nbsp;».</p>
+
+      <p class="srcs"><b>Enfants et conflit —</b> <a href="https://childrenandarmedconflict.un.org/">Rapport du Secrétaire général — enfants et conflits armés</a> (niveaux record d&rsquo;enfants tués à Gaza, éditions 2024-2025) &nbsp;· Défense des Enfants International — Palestine (tribunaux militaires pour mineurs).</p>
     </div>
 
     <div class="foot">Chapitre 8 / 11 · Renvoie vers l&rsquo;index d&rsquo;origine via « Retour ». Contenu de travail — à enrichir et à sourcer.</div>
