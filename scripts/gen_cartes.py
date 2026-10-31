@@ -155,34 +155,58 @@ def carte_monde_muette(out):
     fig.savefig(out, facecolor=BG, bbox_inches="tight"); plt.close(fig)
 
 
+BRICS_ADHESIONS = [
+    ("2009 — fondateurs (BRIC)", ["Brésil", "Russie", "Inde", "Chine"]),
+    ("2010", ["Afrique du Sud"]),
+    ("2024", ["Égypte", "Éthiopie", "Iran", "Émirats arabes unis (EAU)"]),
+    ("2025", ["Indonésie"]),
+]
+
+
 def carte_brics(out):
+    import textwrap
     w = world()
     w["member"] = w["NAME"].isin(BRICS)
-    fig, ax = fig_setup("Les BRICS+ en 2025 — adhésion confirmée",
-                        "Membres : Brésil, Russie, Inde, Chine, Afrique du Sud + Égypte, Éthiopie, Iran, "
-                        "Émirats arabes unis (EAU, 2024), Indonésie (2025) — l’Arabie saoudite est invitée "
-                        "mais son adhésion n’est pas formalisée")
+    fig = plt.figure(figsize=(17, 8.8), dpi=125)
+    fig.patch.set_facecolor(BG)
+    fig.text(0.055, 0.955, "Les BRICS+ en 2025 — adhésion confirmée", fontsize=19, color=INK, fontweight="bold")
+    fig.text(0.055, 0.915, "L’Arabie saoudite est invitée mais son adhésion n’est pas formalisée — elle reste sombre sur la carte.\n"
+                           "Aucune étiquette sur la carte : le code couleur marque les membres, la liste complète est à droite.",
+             fontsize=10.5, color=MUTED, va="top")
+    gs = fig.add_gridspec(1, 2, width_ratios=[2.4, 1.0], wspace=0.03,
+                          left=0.03, right=0.985, top=0.86, bottom=0.06)
+    ax = fig.add_subplot(gs[0, 0])
+    ax.set_facecolor(BG); ax.set_axis_off()
     w[~w["member"]].plot(ax=ax, color=PANEL, edgecolor=BORDER, linewidth=0.5)
-    w[w["member"]].plot(ax=ax, color=GOLD, edgecolor="#1a1206", linewidth=0.6)
-    off = {"Arabie saoudite": (-1.3e6, 0.55e6), "Égypte": (-0.35e6, 0.15e6), "Éthiopie": (0.1e6, -0.15e6),
-           "Indonésie": (0.9e6, -0.75e6), "Russie": (2.5e6, 0.9e6), "Chine": (0.3e6, -0.2e6), "Iran": (0.15e6, 0.25e6)}
-    nonmem = {"France", "Germany", "Australia", "Argentina", "Japan", "Turkey", "Canada", "Mexico",
-              "United States of America"}
-    sel = w[(w["member"] & ~w["NAME"].isin(BRICS_SMALL)) | w["NAME"].isin(nonmem)]
-    for _, r in sel.iterrows():
-        name = fr_name(r); pt = r["geometry"].representative_point(); dx, dy = off.get(name, (0, 0))
-        label(ax, pt.x + dx, pt.y + dy, name, member=r["member"], size=10 if r["member"] else 8.5)
+    w[w["member"]].plot(ax=ax, color=GOLD, edgecolor="#1a1206", linewidth=0.7)
     uae = w[w["NAME"] == "United Arab Emirates"].geometry.iloc[0].representative_point()
     ax.scatter([uae.x], [uae.y], s=110, color=GOLD, edgecolor="#1a1206", linewidth=1.6, zorder=6)
-    label(ax, uae.x, uae.y - 0.75e6, "EAU", size=10)
-    ax.legend(handles=[Patch(facecolor=GOLD, edgecolor=BORDER, label="BRICS+ (confirmé)"),
+    ax.legend(handles=[Patch(facecolor=GOLD, edgecolor="#1a1206", label="BRICS+ (confirmé)"),
                        Patch(facecolor=PANEL, edgecolor=BORDER, label="Autres États"),
                        Line2D([0], [0], marker="o", color="none", markerfacecolor=GOLD,
                               markeredgecolor="#1a1206", markersize=10,
-                              label="État membre trop petit pour être étiqueté sur sa surface")],
+                              label="EAU — État membre trop petit pour être visible à cette échelle")],
               loc="lower left", frameon=False, fontsize=9.5, labelcolor=INK)
-    footer(ax, "projection Robinson")
-    fig.savefig(out, facecolor=BG, bbox_inches="tight"); plt.close(fig)
+    axr = fig.add_subplot(gs[0, 1])
+    axr.set_xlim(0, 1); axr.set_ylim(0, 1); axr.axis("off")
+    y = 0.985
+    axr.text(0, y, "Les 10 membres, par année d’adhésion", fontsize=12.5, color=INK, fontweight="bold", va="top")
+    y -= 0.055
+    for year, names in BRICS_ADHESIONS:
+        axr.text(0, y, year, fontsize=9.5, color=GOLD, fontweight="bold", va="top")
+        y -= 0.032
+        for ln in textwrap.wrap(" · ".join(names), width=36):
+            axr.text(0.02, y, ln, fontsize=9, color=INK, va="top")
+            y -= 0.030
+        y -= 0.012
+    y -= 0.02
+    for ln in textwrap.wrap("Non membre : l’Arabie saoudite, invitée en 2023, n’a pas formalisé son adhésion.", width=38):
+        axr.text(0, y, ln, fontsize=8.5, color=MUTED, va="top", style="italic")
+        y -= 0.028
+    fig.text(0.03, 0.015, f"Fond : Natural Earth (domaine public) · projection Robinson · généré le {TODAY} · scripts/gen_cartes.py",
+             fontsize=8.5, color=FAINT)
+    fig.savefig(out, facecolor=BG, bbox_inches="tight")
+    plt.close(fig)
 
 
 OTAN_ADHESIONS = [
