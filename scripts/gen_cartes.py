@@ -185,27 +185,71 @@ def carte_brics(out):
     fig.savefig(out, facecolor=BG, bbox_inches="tight"); plt.close(fig)
 
 
+OTAN_ADHESIONS = [
+    ("1949 — membres fondateurs", ["États-Unis", "Canada", "Royaume-Uni", "France", "Belgique", "Pays-Bas",
+                                   "Luxembourg", "Italie", "Portugal", "Norvège", "Danemark", "Islande"]),
+    ("1952", ["Grèce", "Türkiye"]),
+    ("1955", ["Allemagne (RFA, réintégrée en 1990)"]),
+    ("1982", ["Espagne"]),
+    ("1999", ["Pologne", "Hongrie", "Tchéquie"]),
+    ("2004", ["Estonie", "Lettonie", "Lituanie", "Slovaquie", "Slovénie", "Roumanie", "Bulgarie"]),
+    ("2009", ["Albanie", "Croatie"]),
+    ("2017", ["Monténégro"]),
+    ("2020", ["Macédoine du Nord"]),
+    ("2023", ["Finlande"]),
+    ("2024", ["Suède"]),
+]
+
+
 def carte_otan(out):
+    import textwrap
     w = world()
     w["member"] = w["NAME"].isin(NATO)
-    fig, ax = fig_setup("L’OTAN en 2025 — 32 États membres",
-                        "Adhésions récentes : Finlande (2023), Suède (2024) — l’Ukraine n’est pas membre")
+    # la France de Natural Earth inclut les DROM (Guyane, Réunion…) — non couverts
+    # de fait par le traité : on ne dore que la métropole
+    import pyproj
+    fr = w["NAME"] == "France"
+    if fr.any():
+        pr = pyproj.Transformer.from_crs("EPSG:4326", ROBIN, always_xy=True)
+        x1, y1 = pr.transform(-10, 41)
+        x2, y2 = pr.transform(10, 52)
+        met = box(x1, y1, x2, y2)
+        geom = w.loc[fr, "geometry"].iloc[0]
+        parts = [p for p in (geom.geoms if geom.geom_type == "MultiPolygon" else [geom])
+                 if p.intersects(met)]
+        w.loc[fr, "geometry"] = shapely.union_all(parts)
+    fig = plt.figure(figsize=(17, 8.8), dpi=125)
+    fig.patch.set_facecolor(BG)
+    fig.text(0.055, 0.955, "L’OTAN en 2025 — 32 États membres", fontsize=19, color=INK, fontweight="bold")
+    fig.text(0.055, 0.915, "Adhésions récentes : Finlande (2023), Suède (2024) — l’Ukraine n’est pas membre.\n"
+                           "Aucune étiquette sur la carte : le code couleur marque les membres, la liste complète est à droite.",
+             fontsize=10.5, color=MUTED, va="top")
+    gs = fig.add_gridspec(1, 2, width_ratios=[2.4, 1.0], wspace=0.03,
+                          left=0.03, right=0.985, top=0.86, bottom=0.06)
+    ax = fig.add_subplot(gs[0, 0])
+    ax.set_facecolor(BG); ax.set_axis_off()
     w[~w["member"]].plot(ax=ax, color=PANEL, edgecolor=BORDER, linewidth=0.5)
-    w[w["member"]].plot(ax=ax, color=GOLD, edgecolor="#1a1206", linewidth=0.6)
-    for _, r in w[w["NAME"].isin({"United States of America", "Canada", "France", "Germany", "Turkey",
-                                  "United Kingdom", "Italy", "Poland", "Spain", "Ukraine", "Russia",
-                                  "Finland", "Sweden"})].iterrows():
-        pt = r["geometry"].representative_point()
-        is_m = r["member"]
-        dy = 0.4e6 if r["NAME"] in {"Finland", "Sweden"} else 0
-        label(ax, pt.x, pt.y + dy, fr_name(r), member=is_m and r["NAME"] not in {"Turkey"},
-              size=9 if is_m else 8.5)
-    # Türkiye est membre ; l'étiquette reste lisible sur la masse dorée
-    ax.legend(handles=[Patch(facecolor=GOLD, edgecolor=BORDER, label="OTAN (32 membres)"),
-                       Patch(facecolor=PANEL, edgecolor=BORDER, label="Non membres")],
+    w[w["member"]].plot(ax=ax, color=GOLD, edgecolor="#1a1206", linewidth=0.7)
+    axr = fig.add_subplot(gs[0, 1])
+    axr.set_xlim(0, 1); axr.set_ylim(0, 1); axr.axis("off")
+    y = 0.985
+    axr.text(0, y, "Les 32 membres, par année d’adhésion", fontsize=12.5, color=INK, fontweight="bold", va="top")
+    y -= 0.055
+    for year, names in OTAN_ADHESIONS:
+        axr.text(0, y, year, fontsize=9.5, color=GOLD, fontweight="bold", va="top")
+        y -= 0.032
+        body = " · ".join(names)
+        for ln in textwrap.wrap(body, width=36):
+            axr.text(0.02, y, ln, fontsize=9, color=INK, va="top")
+            y -= 0.030
+        y -= 0.012
+    ax.legend(handles=[Patch(facecolor=GOLD, edgecolor="#1a1206", label="Membre de l’OTAN"),
+                       Patch(facecolor=PANEL, edgecolor=BORDER, label="Non membre")],
               loc="lower left", frameon=False, fontsize=9.5, labelcolor=INK)
-    footer(ax, "projection Robinson")
-    fig.savefig(out, facecolor=BG, bbox_inches="tight"); plt.close(fig)
+    fig.text(0.03, 0.015, f"Fond : Natural Earth (domaine public) · projection Robinson · généré le {TODAY} · scripts/gen_cartes.py",
+             fontsize=8.5, color=FAINT)
+    fig.savefig(out, facecolor=BG, bbox_inches="tight")
+    plt.close(fig)
 
 
 def carte_monde_physique(out):
