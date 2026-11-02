@@ -54,7 +54,7 @@ PRINT_BLOCK = """<!-- BEGIN commun:print -->
   .hero{background:none!important;color:#15181c;padding:0 0 12pt}
   .hero .logo{display:none}
   code{background:#f0efec;color:#333}
-  @page{margin:15mm 14mm}
+  @page{size:A4;margin:15mm 14mm}
   h1,h2,h3,h4{break-after:avoid;page-break-after:avoid}
   figure,li,blockquote{break-inside:avoid}
   summary{font-weight:700}
