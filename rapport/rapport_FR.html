@@ -1084,5 +1084,39 @@
   });
 })();
 </script>
+<!-- BEGIN commun:clavier -->
+<script>
+/* Clavier : E = tout déplier, R = tout replier. (bloc commun) */
+(function(){
+  function setAllPages(o){
+    document.querySelectorAll('details').forEach(function(d){d.open=o;});
+    document.querySelectorAll('.card').forEach(function(c){c.classList.toggle('open',o);});
+    /* les accordéons exclusifs se referment via l’événement toggle (asynchrone) :
+       une seconde passe, après leur exécution, garantit que tout reste ouvert. */
+    setTimeout(function(){document.querySelectorAll('details').forEach(function(d){d.open=o;});},0);
+  }
+  if(!window.setAll)window.setAll=setAllPages;
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var t=e.target;
+    if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+    var k=(e.key||'').toLowerCase();
+    if(k==='e')window.setAll(true);
+    else if(k==='r')window.setAll(false);
+  });
+})();
+</script>
+<!-- END commun:clavier -->
+<!-- BEGIN commun:outils -->
+<div class="outils-flottants no-print" role="group" aria-label="Contrôles des séquences">
+  <button type="button" onclick="setAll(true)" title="Raccourci clavier : touche E">Tout déplier</button>
+  <button type="button" onclick="setAll(false)" title="Raccourci clavier : touche R">Tout replier</button>
+</div>
+<style>
+  .outils-flottants{position:fixed;right:16px;bottom:16px;z-index:9;display:flex;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+  .outils-flottants button{font:inherit;font-size:13px;color:var(--ink);background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer}
+  .outils-flottants button:hover{border-color:var(--brand)}
+</style>
+<!-- END commun:outils -->
 </body>
 </html>

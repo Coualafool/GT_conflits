@@ -608,5 +608,28 @@
   window.addEventListener('DOMContentLoaded',openHash);
   openHash();
 </script>
+<!-- BEGIN commun:clavier -->
+<script>
+/* Clavier : E = tout déplier, R = tout replier. (bloc commun) */
+(function(){
+  function setAllPages(o){
+    document.querySelectorAll('details').forEach(function(d){d.open=o;});
+    document.querySelectorAll('.card').forEach(function(c){c.classList.toggle('open',o);});
+    /* les accordéons exclusifs se referment via l’événement toggle (asynchrone) :
+       une seconde passe, après leur exécution, garantit que tout reste ouvert. */
+    setTimeout(function(){document.querySelectorAll('details').forEach(function(d){d.open=o;});},0);
+  }
+  if(!window.setAll)window.setAll=setAllPages;
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var t=e.target;
+    if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+    var k=(e.key||'').toLowerCase();
+    if(k==='e')window.setAll(true);
+    else if(k==='r')window.setAll(false);
+  });
+})();
+</script>
+<!-- END commun:clavier -->
 </body>
 </html>
