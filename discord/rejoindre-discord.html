@@ -113,6 +113,43 @@
     .cta-btn{width:100%;text-align:center;}
   }
 </style>
+<!-- BEGIN commun:print -->
+<style id="print-style">
+/* ===== Print (bloc commun, ne pas éditer à la main -- inject_common.py) ===== */
+@media print{
+  :root{--bg:#ffffff;--panel:#ffffff;--panel-2:#f5f4f1;--border:#c8cdd3;--ink:#15181c;--muted:#3c434c;--faint:#5a626c;--fg:#15181c;--white:#15181c;--brand:#8a5a1f;--brand-2:#963d22;--accent:#1f5a78;--good:#1e6a44}
+  html{scroll-behavior:auto}
+  body{background:#fff!important;color:#15181c!important;font-size:12pt}
+  .bar,.no-print,.tools,.cta-row,.cta-btn,.hero-cta,.outils-flottants{display:none!important}
+  .wrap{max-width:none;padding:0 4mm}
+  .hero{background:none!important;color:#15181c;padding:0 0 12pt}
+  .hero .logo{display:none}
+  code{background:#f0efec;color:#333}
+  @page{margin:15mm 14mm}
+  h1,h2,h3,h4{break-after:avoid;page-break-after:avoid}
+  figure,li,blockquote{break-inside:avoid}
+  summary{font-weight:700}
+  a{color:#1f5a78;text-decoration:none}
+  p a[href^="http"]::after,li a[href^="http"]::after{content:" — " attr(href);font-size:.7em;color:#5a626c;word-break:break-all}
+  .pied-commun a::after{content:none}
+}
+</style>
+<script>
+/* Print : tout ouvrir avant l’impression, restaurer ensuite. (bloc commun) */
+(function(){
+  var saved=[];
+  window.addEventListener('beforeprint',function(){
+    saved=[];
+    document.querySelectorAll('details').forEach(function(d){saved.push(d.open);d.open=true;});
+    document.querySelectorAll('.card').forEach(function(c){c.classList.add('open');});
+  });
+  window.addEventListener('afterprint',function(){
+    var i=0;
+    document.querySelectorAll('details').forEach(function(d){if(i<saved.length)d.open=saved[i++];});
+  });
+})();
+</script>
+<!-- END commun:print -->
 </head>
 <body>
 
