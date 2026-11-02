@@ -123,7 +123,7 @@ PIED_HEAD_BLOCK = """<!-- BEGIN commun:pied-head -->
 PIED_BODY_FR = """<!-- BEGIN commun:pied -->
 <footer class="pied-commun">
   <p><b>Outil pédagogique Israël–Palestine</b> · réalisé par le GT (Groupe de travail) · Licence <a rel="license" href="{license_deed}">CC BY-NC-SA 4.0</a></p>
-  <p>Dernière revue de cette page : <time datetime="{iso}">{shown_fr}</time> · Dépôt : <a href="{repo}">{repo_short}</a></p>
+  <p>Dernière mise à jour de cette page : <time datetime="{iso}">{shown_fr}</time> · Dépôt : <a href="{repo}">{repo_short}</a></p>
 </footer>
 <style>
   .pied-commun{{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}}
@@ -136,7 +136,7 @@ PIED_BODY_FR = """<!-- BEGIN commun:pied -->
 PIED_BODY_EN = """<!-- BEGIN commun:pied -->
 <footer class="pied-commun">
   <p><b>Israel–Palestine teaching kit</b> · built by the GT (working group) · License <a rel="license" href="{license_deed}">CC BY-NC-SA 4.0</a></p>
-  <p>This page last reviewed: <time datetime="{iso}">{shown_en}</time> · Repository: <a href="{repo}">{repo_short}</a></p>
+  <p>This page last updated: <time datetime="{iso}">{shown_en}</time> · Repository: <a href="{repo}">{repo_short}</a></p>
 </footer>
 <style>
   .pied-commun{{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}}

@@ -40,6 +40,13 @@ scripts/make_distrib.sh    builds the tester zip
 - `scripts/make_distrib.sh` — builds the **test zip** to send to external testers
   (`./scripts/make_distrib.sh [suffix]` → `../outil-peda-israel-palestine_<suffix>.zip`;
   preserves the folder tree, excludes `interne/`).
+- `scripts/inject_common.py` — injects the **shared blocks** into every shipped page:
+  print stylesheet (+ auto-open on print), keyboard shortcuts (`E`/`R` expand/collapse,
+  floating controls on pages without inline ones) and the CC BY-NC-SA / last-update footer.
+  Idempotent (marker comments), `--only print|clavier|pied`, `--check` reports missing blocks.
+  Re-run after adding a new page. Footer dates come from git.
+- `scripts/make_pdf.sh` — exports **every page to PDF** via headless Chrome/Chromium/Edge
+  (`BROWSER=/path/to/browser ./scripts/make_pdf.sh [outdir]`, default `dist/pdf/`).
 - `interne/versions-noyau/` — the three index prototypes (`version_A/B/C.html`) that were explored;
   Version B was adopted for the index cards and the workspace pages. **Internal — not shipped.**
 
