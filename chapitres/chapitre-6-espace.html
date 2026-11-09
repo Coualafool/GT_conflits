@@ -665,9 +665,10 @@
         if(!m)continue;
         var debut=m.index+m[1].length,len=m[2].length;
         var span=document.createElement("span");span.className="gl";span.tabIndex=0;
-        var avant=n.splitText(debut);n.splitText(len);
-        var cible=n.cloneNode(true);n.parentNode.replaceChild(span,n);
-        span.appendChild(cible);
+        var apres=n.splitText(debut);
+        apres.splitText(len);
+        n.parentNode.replaceChild(span,apres);
+        span.appendChild(apres);
         span.dataset.def=TERMES[terme];span.dataset.term=m[2];
         marks[terme]=1;found=true;break}}
   }
