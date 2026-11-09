@@ -41,7 +41,8 @@
     "date": "2021-10-13",
     "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Map_of_the_Old_City_and_surroundings_of_Jerusalem.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "bytes": 580114,
-    "author": "Obendorf"
+    "author": "Obendorf",
+    "note": "QC 6/10 (étiquettes anglais, symboles sans légende) — non embarqué, utilisable plus tard avec légende rédigée."
   },
   {
     "file": "carte-telechargee-gaza-localisation.png",
@@ -86,7 +87,8 @@
     "date": "2023-10-18",
     "source_url": "https://upload.wikimedia.org/wikipedia/commons/b/bd/AccordAbrahamMap-01.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "bytes": 245059,
-    "author": "PBrieux"
+    "author": "PBrieux",
+    "note": "RENDU SANS LÉGENDE NI ÉTIQUETTES (contrôle vision nov. 2026) : ne pas embarquer tel quel."
   },
   {
     "file": "carte-telechargee-moyen-orient-muet.png",
@@ -113,5 +115,89 @@
     "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/13/West_Bank_Access_Restrictions_July_2025.pdf?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "bytes": 356370,
     "note": "WebP q82, 1600 px de large (dérivé compressé de l'original Commons ; régénérable depuis source_url)"
+  },
+  {
+    "file": "carte-telechargee-palestine-mandataire-1946.webp",
+    "commons_title": "File:Map of Mandatory Palestine in 1946 with districts cities and towns.svg",
+    "license": "CC BY-SA 4.0",
+    "date": "2020-08-20",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Map_of_Mandatory_Palestine_in_1946_with_districts_cities_and_towns.svg/1920px-Map_of_Mandatory_Palestine_in_1946_with_districts_cities_and_towns.svg.png",
+    "bytes": 44292,
+    "author": "Bolter21",
+    "dims": [
+      861,
+      1600
+    ],
+    "note": ""
+  },
+  {
+    "file": "photo-palais-paix-la-haye.webp",
+    "commons_title": "File:Palais de la paix à La Haye - btv1b53080721m.jpg",
+    "license": "Public domain",
+    "date": "2025-02-25",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Palais_de_la_paix_%C3%A0_La_Haye_-_btv1b53080721m.jpg/1920px-Palais_de_la_paix_%C3%A0_La_Haye_-_btv1b53080721m.jpg",
+    "bytes": 431076,
+    "author": "Agence Rol. Agence photographique (commanditaire)",
+    "dims": [
+      1600,
+      1137
+    ],
+    "note": ""
+  },
+  {
+    "file": "carte-telechargee-emprises-colonies-2012.webp",
+    "commons_title": "File:Settlements allocated land, January-2012.png",
+    "license": "Public domain",
+    "date": "2013-11-14",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Settlements_allocated_land%2C_January-2012.png/1920px-Settlements_allocated_land%2C_January-2012.png",
+    "bytes": 96960,
+    "author": "Wickey-nl",
+    "dims": [
+      624,
+      1600
+    ],
+    "note": ""
+  },
+  {
+    "file": "carte-telechargee-liberte-presse-mondiale.webp",
+    "commons_title": "File:Press freedom index rsf, World, 2021.svg",
+    "license": "CC BY 4.0",
+    "date": "2026-03-25",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Press_freedom_index_rsf%2C_World%2C_2021.svg/1920px-Press_freedom_index_rsf%2C_World%2C_2021.svg.png",
+    "bytes": 128492,
+    "author": "Our World In Data",
+    "dims": [
+      1600,
+      1130
+    ],
+    "note": ""
+  },
+  {
+    "file": "carte-telechargee-sykes-picot-overlay.webp",
+    "commons_title": "File:Approximate Sykes-Picot overlay on current borders.jpg",
+    "license": "CC BY-SA 4.0",
+    "date": "2019-05-18",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Approximate_Sykes-Picot_overlay_on_current_borders.jpg",
+    "bytes": 14284,
+    "dims": [
+      747,
+      580
+    ],
+    "author": "Selfstudier",
+    "note": ""
+  },
+  {
+    "file": "carte-telechargee-controle-militaire-1949-1967.webp",
+    "commons_title": "File:Palestinian territories under military control of Israel Egypt and Jordan 1949.jpg",
+    "license": "CC0",
+    "date": "2013-01-28",
+    "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Palestinian_territories_under_military_control_of_Israel_Egypt_and_Jordan_1949.jpg/1920px-Palestinian_territories_under_military_control_of_Israel_Egypt_and_Jordan_1949.jpg",
+    "bytes": 3521038,
+    "dims": [
+      1920,
+      5573
+    ],
+    "author": "Survey of Palestine; Talknic",
+    "note": ""
   }
 ]

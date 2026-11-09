@@ -441,6 +441,14 @@ def carte_eau_jourdain(out):
         pr = pyproj.Transformer.from_crs("EPSG:4326", crs, always_xy=True)
         x, y = pr.transform(*xy)
         label(ax, x, y, nm, size=9, anchor_dy=0)
+    for nm, fr in [("Israel", "Israël"), ("Jordan", "Jordanie"), ("Lebanon", "Liban"),
+                   ("Syria", "Syrie"), ("Egypt", "Égypte")]:
+        sub = w[w["NAME"] == nm]
+        if sub.empty:
+            continue
+        pt = sub.geometry.iloc[0].representative_point()
+        label(ax, pt.x, pt.y, fr, size=9)
+    draw_cities(ax, ext, crs, [n for n in ("Jérusalem", "Tel Aviv", "Amman", "Damas", "Beyrouth", "Gaza") if n in CITIES])
     footer(ax, "projection équirectangulaire (lat. 31,5°)")
     fig.savefig(out, facecolor=BG, bbox_inches="tight"); plt.close(fig)
 

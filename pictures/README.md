@@ -39,7 +39,6 @@ Merci de conserver la ligne d'attribution correspondante sous l'image dans la pa
 |---|---|---|
 | `carte-telechargee-reconnaissance-palestine-decennies.png` | Reconnaissance de la Palestine par décennie (à jour sept. 2025) | CC0 |
 | `carte-telechargee-plan-partition-1947-fr.png` | Plan de partage ONU 1947 (en français) | Domaine public |
-| `carte-telechargee-partition-1947-vs-armistice-1949.png` | Comparaison plan 1947 / lignes d'armistice 1949 | Domaine public |
 | `carte-telechargee-territoires-1967-fr.png` | Territoires occupés depuis 1967 (en français) | CC BY-SA 2.5 |
 | `carte-telechargee-rive-ouest-zones-abc.png` | ⚠️ **NE PAS UTILISER EN L'ÉTAT** : la dernière version Commons est un rendu sans légende ni étiquettes (vérifié nov. 2026) | CC BY-SA 3.0 |
 | `carte-telechargee-ocha-rive-ouest-acces-2025.webp` | Restrictions d'accès Rive occidentale (juil. 2025, OCHA) — WebP compressé depuis le PDF d'origine | Domaine public (OCHA) |
@@ -48,7 +47,7 @@ Merci de conserver la ligne d'attribution correspondante sous l'image dans la pa
 | `carte-telechargee-gaza-localisation.png` | Gaza dans la région | CC BY-SA 3.0 |
 | `carte-telechargee-vieille-ville-jerusalem.png` | Vieille ville de Jérusalem et environs | CC BY-SA 3.0 |
 | `carte-telechargee-aqueduc-national-israel.png` | Aqueduc national d'Israël | CC BY-SA 4.0 |
-| `carte-telechargee-accords-abraham.png` | Accords d'Abraham (normalisations 2020) | CC BY-SA 4.0 |
+| `carte-telechargee-accords-abraham.png` | ⚠️ **NE PAS UTILISER EN L'ÉTAT** : rendu sans légende ni étiquettes (vérifié nov. 2026) | CC BY-SA 4.0 |
 | `carte-telechargee-moyen-orient-muet.png` | Moyen-Orient muet | Domaine public |
 
 ## Règles d'usage
@@ -60,3 +59,11 @@ Merci de conserver la ligne d'attribution correspondante sous l'image dans la pa
   la date à côté de l'image, ces réalités évoluent.
 - Pour les cartes générées : régénérer plutôt qu'éditer l'image ; le script est la
   source de vérité.
+
+| Fichier (ajouts nov. 2026) | Contenu | Licence |
+|---|---|---|
+| `carte-telechargee-sykes-picot-overlay.webp` | Accord Sykes-Picot 1916 superposé aux frontières actuelles | CC BY-SA 4.0 (Selfstudier) |
+| `carte-telechargee-controle-militaire-1949-1967.webp` | Palestine 1949-1967 : contrôles israélien / jordanien / égyptien | CC0 |
+| `carte-telechargee-emprises-colonies-2012.webp` | Emprises des colonies de Cisjordanie, janv. 2012 (OCHA-like) | Domaine public (Wickey-nl) |
+| `carte-telechargee-liberte-presse-mondiale.webp` | Indice mondial liberté de la presse 2021 (RSF/OWID) | CC BY 4.0 |
+| `photo-palais-paix-la-haye.webp` | Palais de la Paix, La Haye (photo Agence Rol, BnF) | Domaine public |
