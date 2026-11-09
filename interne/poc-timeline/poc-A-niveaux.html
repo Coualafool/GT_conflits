@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fraction A — Frise chronologique à niveaux (vanilla JS, zéro dépendance)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --bg:#f7f5f0; --ink:#22252a; --muted:#6b7078; --card:#ffffff;
+  --border:#d9d4c8; --accent:#994d1a; --gold:#c9a227; --lane:34px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+header{padding:14px 20px 10px;border-bottom:1px solid var(--border);background:var(--card)}
+header h1{margin:0 0 2px;font-size:19px}
+header .sub{color:var(--muted);font-size:13px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.controls button{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:5px 11px;font-size:13px;cursor:pointer;color:var(--ink)}
+.controls button:hover{border-color:var(--accent);color:var(--accent)}
+.controls .spacer{flex:1}
+.controls label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+#zoomSlider{width:150px}
+#zoomReadout{min-width:78px;font-size:12px;color:var(--muted);text-align:right}
+main{flex:1;position:relative;overflow:hidden}
+#viz{position:absolute;inset:0;cursor:grab;user-select:none;overflow:hidden}
+#viz.grabbing{cursor:grabbing}
+#eras{position:absolute;top:0;left:0;right:0;height:52px}
+.era{position:absolute;top:6px;height:34px;border-radius:7px;overflow:hidden;cursor:pointer;opacity:.88;border:1px solid rgba(0,0,0,.15)}
+.era:hover{opacity:1}
+.era span{position:absolute;left:8px;top:7px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+#field{position:absolute;top:60px;left:0;right:0;bottom:52px;overflow:hidden}
+.ev{position:absolute;display:flex;align-items:center;gap:6px;height:var(--lane)}
+.ev i{width:11px;height:11px;border-radius:50%;flex:none;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.ev.t1 i{width:14px;height:14px;border-color:var(--gold)}
+.ev.t3 i{width:8px;height:8px;opacity:.75}
+.ev .lab{font-size:12.5px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;max-width:260px;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.ev .lab b{color:var(--muted);font-weight:600}
+.ev:hover .lab{border-color:var(--accent)}
+.ev.t1 .lab{font-weight:600}
+#axis{position:absolute;bottom:28px;left:0;right:0;height:24px;border-top:1px solid var(--border)}
+.tick{position:absolute;top:0;border-left:1px solid var(--border);height:8px}
+.tick.big{border-color:#8a8578;height:14px}
+.tick span{position:absolute;top:14px;left:-30px;width:60px;text-align:center;font-size:11.5px;color:var(--muted)}
+#minimap{position:absolute;bottom:0;left:0;right:0;height:24px;background:#ece8de;border-top:1px solid var(--border);cursor:pointer}
+#minimap i{position:absolute;bottom:3px;width:3px;height:7px;border-radius:2px;opacity:.7}
+#viewRect{position:absolute;top:0;bottom:0;background:rgba(153,77,26,.16);border-left:2px solid var(--accent);border-right:2px solid var(--accent);pointer-events:none}
+#hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);background:rgba(34,37,42,.85);color:#fff;font-size:12.5px;padding:7px 14px;border-radius:20px;pointer-events:none;transition:opacity 1s}
+#panel{position:absolute;top:14px;right:14px;width:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);padding:14px 16px;display:none}
+#panel.open{display:block}
+#panel .close{float:right;border:0;background:none;font-size:18px;cursor:pointer;color:var(--muted)}
+#panel h3{margin:0 0 4px;font-size:16px}
+#panel .meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+#panel p{margin:0 0 10px;font-size:13.5px}
+#panel a{color:var(--accent);font-size:13px}
+footer{padding:6px 20px;border-top:1px solid var(--border);background:var(--card);font-size:11.5px;color:var(--muted)}
+#levelBadge{position:absolute;top:64px;left:14px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--muted);pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Fraction A — Frise « lecture par paliers »</h1>
+  <div class="sub">Chaque événement porte un <b>niveau de détail défini dans les données</b> (majeur / standard / détail). Le zoom révèle les paliers : dézoomé → les ères seules ; zoomé → tous les événements et les mois. Zéro dépendance, fonctionne hors ligne en file://.</div>
+  <div class="controls">
+    <button data-span="0">Tout</button>
+    <button data-span="30">30 dernières années</button>
+    <button data-span="10">10 ans</button>
+    <button data-span="4">Depuis 2023</button>
+    <span class="spacer"></span>
+    <label>Zoom <input type="range" id="zoomSlider" min="0" max="100" value="0"></label>
+    <span id="zoomReadout"></span>
+  </div>
+</header>
+<main>
+  <div id="viz">
+    <div id="eras"></div>
+    <div id="field"></div>
+    <div id="axis"></div>
+    <div id="minimap"><div id="viewRect"></div></div>
+  </div>
+  <div id="levelBadge"></div>
+  <div id="hint">Molette = zoom · Glisser = naviguer · Clic sur un point = détail · Clic sur une bande d’ère = zoom sur l’ère</div>
+  <aside id="panel"><button class="close" title="Fermer">×</button><h3></h3><div class="meta"></div><p></p><a target="_blank"></a></aside>
+</main>
+<footer>Données d’exemple tirées du chapitre 4 (Historique du conflit) — à terme, générées par un export des 55 séquences du kit. PoC interne, pas une page distribuée.</footer>
+<script>
+"use strict";
+/* ---------- Données ----------
+   Événement : [année(+mois/12), palier 1..3, titre, description, chapitre, ancre séquence]
+   palier 1 = majeur (visible même très dézoomé), 2 = standard, 3 = détail. */
+const T_MIN=1915, T_MAX=2028.6;
+const ERAS=[
+  {a:1917,b:1948,  label:"Empire, Mandat et origines",  c:"#8a6d3b"},
+  {a:1948,b:1968,  label:"Guerres froides régionales",  c:"#3d6b8a"},
+  {a:1968,b:1993,  label:"Guerres, Intifada, impuissance", c:"#8a3d3d"},
+  {a:1993,b:2007,  label:"Oslo et son effondrement",    c:"#4d7a4d"},
+  {a:2007,b:2023,  label:"Blocus et normalisations",    c:"#6b4d7a"},
+  {a:2023,b:2028.6,label:"Guerre et bascule",           c:"#994d1a"}
+];
+const EV=[
+  [1917.9,2,"Déclaration Balfour","Lettre britannique favorable à un « foyer national juif » en Palestine. Point de départ symbolique du récit conflictuel.",4,1],
+  [1920.3,2,"Mandat de la SDN","La Société des Nations confie la Palestine au Royaume-Uni ; les promesses contradictoires de 1915-1918 deviennent un mandat.",4,1],
+  [1936.3,3,"Grande Révolte (1936-1939)","Révolte arabe palestinienne contre le mandat britannique et l'immigration juive ; réprimée, elle structure les mémoires opposées.",4,1],
+  [1939.42,3,"Livre blanc britannique","Londres limite l'immigration juive à 75 000 personnes sur cinq ans — tournant pour les sionistes comme pour les Arabes.",4,1],
+  [1947.9,1,"Plan de partage (rés. 181)","L'ONU vote le partage de la Palestine en deux États et un statut international pour Jérusalem. Refusé par les leaders arabes.",4,2],
+  [1948.42,1,"Proclamation d'Israël et première guerre","Fin du mandat, proclamation de l'État d'Israël (14 mai), intervention des États arabes voisins. Guerre victorieuse pour Israël.",4,2],
+  [1948.45,1,"La Nakba","Déplacement et fuite d'environ 700 000 Palestinien·ne·s ; plus de 400 villages vidés. Date fondatrice du récit palestinien.",4,2],
+  [1949.15,2,"Lignes d'armistice","Cessez-le-feu avec l'Égypte, le Liban, la Jordanie et la Syrie ; la Cisjordanie est occupée puis annexée par la Jordanie, Gaza administrée par l'Égypte.",4,2],
+  [1956.85,2,"Crise de Suez","Guerre tripartite Égypte-Israël-France-Royaume-Uni ; retour au statu quo négocié sous pression américano-soviétique.",4,3],
+  [1964.42,3,"Création de l'OLP","Fondation de l'Organisation de libération de la Palestine au Caire — la cause palestinienne se structure en mouvement national.",4,3],
+  [1967.5,1,"Guerre des Six Jours","Israël occupe Cisjordanie, Gaza, Golan et Sinaï. Début de l'occupation et des colonies ; résolution 242 du Conseil de sécurité.",4,3],
+  [1970.72,3,"Septembre noir","Conflit ouvert entre l'OLP et le Royaume de Jordanie ; défaite palestinienne, transfert du mouvement au Liban.",4,4],
+  [1973.76,1,"Guerre de Kippour","Attaque égypto-syrienne surprise, puis contre-offensive israélienne. Ouvrira la voie à la paix avec l'Égypte.",4,4],
+  [1978.72,2,"Accords de Camp David","Paix Égypte-Israël (1979) : l'Égypte reconnaît Israël, le Sinaï est rendu. Les Palestinien·ne·s se sentent exclu·e·s de l'accord.",4,4],
+  [1982.6,2,"Guerre du Liban ; Sabra et Chatila","Invasion israélienne du Liban, départ de l'OLP de Beyrouth ; massacres dans les camps, commission d'enquête israélienne.",4,4],
+  [1987.95,1,"Première Intifada","Soulèvement populaire en Cisjordanie et à Gaza ; montée du leadership unifié palestinien et internationalisation de la question.",4,4],
+  [1988.88,3,"Indépendance déclarée ; fondation du Hamas","Déclaration d'indépendance palestinienne (Alger) reconnaissant implicitement Israël ; fondation du Hamas la même année.",4,4],
+  [1991.83,3,"Conférence de Madrid","Première conférence de paix multilatérale après la guerre du Golfe ; négociations bilatérales israélo-arabes.",4,4],
+  [1993.7,1,"Accords d'Oslo","Reconnaissance mutuelle OLP-Israël, autonomie palestinienne transitoire. Promesse d'État non tenue : l'engrenage commence.",10,1],
+  [1994.4,3,"Gaza-Jéricho ; paix avec la Jordanie","Première autonomie palestinienne effective ; traité de paix israélo-jordanien.",4,5],
+  [1995.92,2,"Assassinat de Yitzhak Rabin","Un extrémiste juif tue le Premier ministre israélien ; la dynamique d'Oslo perd son impulsion politique.",4,5],
+  [2000.54,1,"Échec de Camp David ; seconde Intifada","Les pourparlers de paix rompent ; visite d'Ariel Sharon sur l'esplanade des Mosquées, soulèvement puis répression massive.",10,1],
+  [2002.23,2,"Rempart ; Initiative arabe de paix","Réoccupation israélienne de Cisjordanie ; les États arabes proposent la normalisation contre le retrait de 1967.",10,1],
+  [2004.6,3,"Mort d'Arafat ; avis de la CIJ","La Cour internationale de justice juge le mur de séparation contraire au droit international ; mort de Yasser Arafat.",4,5],
+  [2005.67,2,"Désengagement de Gaza","Retrait unilatéral israélien de Gaza : colonies et armée quittent la bande, frontière et espace restent contrôlés.",4,5],
+  [2006.06,2,"Victoire électorale du Hamas ; guerre du Liban","Le Hamas remporte les élections législatives ; guerre de juillet au Liban après une capture de soldats.",4,5],
+  [2007.6,1,"Prise de Gaza ; début du blocus","Guerre civile palestinienne : le Hamas prend la bande de Gaza. Israël et l'Égypte instaurent le blocus, toujours en vigueur.",4,5],
+  [2008.99,3,"Opération Plomb durci","Offensive israélienne d'un mois à Gaza ; plus de 1 400 Palestinien·ne·s et 13 Israélien·ne·s tués, rapports d'enquête opposés.",4,6],
+  [2010.42,3,"Assaut contre la flottille de Gaza","Commandos israéliens arraisonnent une flottille humanitaire ; 10 militants tués, crise diplomatique régionale.",4,6],
+  [2012.88,3,"Pilier de défense","Huit jours de frappes aériennes sur Gaza après des tirs de roquettes ; cessez-le-feu négocié par l'Égypte.",4,6],
+  [2014.58,2,"Bordure protectrice","50 jours de guerre à Gaza : plus de 2 200 Palestinien·ne·s tué·e·s ; débat international sur la proportionnalité.",4,6],
+  [2017.96,2,"Jérusalem reconnue capitale","Les États-Unis reconnaissent Jérusalem capitale d'Israël ; rupture avec le consensus international sur le statut de la ville.",4,6],
+  [2018.24,3,"Grande Marche du retour ; loi de l'État-nation","Manifestations à la clôture de Gaza ; loi fondamentale définissant Israël comme État-nation du peuple juif.",4,6],
+  [2020.75,1,"Accords d'Abraham","Israël normalise avec les Émirats et Bahreïn ; la question palestinienne est court-circuitée.",10,1],
+  [2021.38,2,"Guerre de mai ; Cheikh Jarrah","Évictions à Jérusalem-Est, roquettes sur Israël, 11 jours de guerre ; « unité des épées ».",4,6],
+  [2023.8,1,"7 octobre ; début de la guerre à Gaza","Attaque du Hamas : environ 1 200 mort·e·s, ~250 otages. Campagne militaire israélienne massive à Gaza.",4,6],
+  [2024.2,2,"CIJ et escalade régionale","Procès pour génocide devant la CIJ ; ouvertures de fronts au Liban, en Syrie, au Yémen et avec l'Iran.",4,6],
+  [2026.3,2,"Et après ?","Trêve et otages, reconnaissance d'un État palestinien par plusieurs pays, reconstruction et comptes à rendre : le kit (ch. 10-11) pose les pistes.",10,1]
+];
+/* ---------- État ---------- */
+let d0=T_MIN, d1=T_MAX;
+const $=s=>document.querySelector(s);
+const viz=$("#viz"), field=$("#field"), erasEl=$("#eras"), axis=$("#axis"), mm=$("#minimap"), viewRect=$("#viewRect"), panel=$("#panel");
+const MONTHS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+let W=0,H=0;
+function measure(){const r=viz.getBoundingClientRect();W=r.width;H=r.height;}
+const span=()=>d1-d0;
+const xOf=y=>(y-d0)/span()*W;
+const yearOf=px=>d0+px/W*span();
+function eraOf(y){for(let i=0;i<ERAS.length;i++){if(y>=ERAS[i].a&&y<ERAS[i].b)return ERAS[i];}return ERAS[ERAS.length-1];}
+function fmtYear(y){
+  const yr=Math.floor(y+1e-9), m=Math.round((y-yr)*12);
+  return m>0 ? MONTHS[m-1]+" "+yr : String(yr);
+}
+/* ---------- Rendu ---------- */
+let raf=null;
+function scheduleRender(){if(!raf)raf=requestAnimationFrame(()=>{raf=null;render();});}
+function render(){
+  measure();
+  const sp=span(), ppy=W/sp;
+  const maxTier = ppy<3 ? 1 : ppy<9 ? 2 : 3;
+  /* badge de niveau */
+  $("#levelBadge").textContent = ppy<3 ? "Vue générale : ères + événements majeurs" : ppy<9 ? "Vue décennale : événements standards" : "Vue fine : tous les événements, dates au mois";
+  $("#zoomReadout").textContent = Math.round(sp)+" ans visibles";
+  /* bandes d'ères */
+  let html="";
+  for(const e of ERAS){
+    const xa=Math.max(0,xOf(e.a)), xb=Math.min(W,xOf(e.b));
+    if(xb<=2||xa>=W-2)continue;
+    const w=xb-xa;
+    html+='<div class="era" title="'+e.label+' — cliquer pour zoomer" data-a="'+e.a+'" data-b="'+e.b+'" style="left:'+xa+'px;width:'+w+'px;background:'+e.c+'">'+(w>150?'<span>'+e.label+'</span>':'')+'</div>';
+  }
+  erasEl.innerHTML=html;
+  /* événements : filtrage par palier + étagement en couloirs */
+  const vis=[];
+  for(let i=0;i<EV.length;i++){const ev=EV[i];
+    if(ev[1]<=maxTier && ev[0]>=d0-0.6 && ev[0]<=d1+0.6) vis.push([i,ev]);
+  }
+  const showLabels = ppy>=16 || (maxTier===1 && ppy>=5);
+  const lanes=[]; const rows=[];
+  for(const [i,ev] of vis){
+    const x=xOf(ev[0]);
+    const lab=showLabels && (ev[1]<=2 || ppy>=40);
+    const wLab=lab?Math.min(ev[2].length*7.1+46,260):16;
+    let li=0; while(li<lanes.length && x<lanes[li])li++;
+    lanes[li]=x+wLab+12;
+    const top=li*34; if(top+34>H-112)continue; /* au-delà de la hauteur du champ : on laisse l'interaction le révéler en zoomant */
+    rows.push('<div class="ev t'+ev[1]+'" data-i="'+i+'" style="left:'+x+'px;top:'+top+'px"><i style="background:'+eraOf(ev[0]).c+'"></i>'
+      +(lab?'<span class="lab">'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>');
+  }
+  field.innerHTML=rows.join("");
+  /* axe : pas « joli » selon la densité */
+  const steps=[100,50,20,10,5,2,1];
+  let step=steps[steps.length-1];
+  for(const s of steps){if(s*ppy>=85){step=s;break;}}
+  let ax="";
+  const first=Math.ceil(d0/step)*step;
+  for(let t=first;t<=d1;t+=step){
+    const x=xOf(t), major=(t%(step*2)===0);
+    ax+='<div class="tick'+(major?" big":"")+'" style="left:'+x+'px">'+(major?'<span>'+Math.round(t)+'</span>':'')+'</div>';
+  }
+  axis.innerHTML=ax;
+  /* minimap */
+  const mmx=y=>(y-T_MIN)/(T_MAX-T_MIN)*W;
+  let dots="";
+  for(const ev of EV){dots+='<i style="left:'+mmx(ev[0])+'px;background:'+eraOf(ev[0]).c+'"></i>';}
+  mm.innerHTML=dots+'<div id="viewRect" style="left:'+mmx(d0)+'px;width:'+(mmx(d1)-mmx(d0))+'px"></div>';
+}
+/* ---------- Zoom / pan ---------- */
+const SL_MIN=4, SL_LOG=Math.log(T_MAX-T_MIN), SL_SPAN=Math.log(T_MAX-T_MIN)-Math.log(SL_MIN);
+function setDomain(a,b){
+  let s=Math.min(T_MAX-T_MIN,Math.max(SL_MIN,b-a));
+  const c=(a+b)/2; a=c-s/2; b=c+s/2;
+  if(a<T_MIN){a=T_MIN;b=a+s;} if(b>T_MAX){b=T_MAX;a=b-s;}
+  d0=a;d1=b;
+  const sl=$("#zoomSlider"); sl.value=Math.round(100*(1-(Math.log(d1-d0)-Math.log(SL_MIN))/SL_SPAN));
+  scheduleRender();
+}
+function zoomAt(px,f){
+  const ay=yearOf(px), sp=span(); let ns=Math.min(T_MAX-T_MIN,Math.max(SL_MIN,sp/f));
+  let a=ay-(ay-d0)*ns/sp; setDomain(a,a+ns);
+}
+viz.addEventListener("wheel",e=>{e.preventDefault();hideHint();zoomAt(e.clientX-viz.getBoundingClientRect().left,Math.pow(2,-e.deltaY*0.0022));},{passive:false});
+let dragging=null;
+viz.addEventListener("pointerdown",e=>{
+  if(e.target.closest(".lab")||e.target.closest(".era"))return;
+  dragging={x:e.clientX,d0,d1};viz.classList.add("grabbing");viz.setPointerCapture(e.pointerId);hideHint();
+});
+viz.addEventListener("pointermove",e=>{
+  if(!dragging)return;
+  const dx=(e.clientX-dragging.x)/W*(dragging.d1-dragging.d0);
+  let a=dragging.d0-dx,b=dragging.d1-dx;
+  if(a<T_MIN){b+=T_MIN-a;a=T_MIN;} if(b>T_MAX){a-=b-T_MAX;b=T_MAX;}
+  d0=a;d1=b;scheduleRender();
+});
+const endDrag=()=>{dragging=null;viz.classList.remove("grabbing");};
+viz.addEventListener("pointerup",endDrag);viz.addEventListener("pointercancel",endDrag);
+document.addEventListener("keydown",e=>{
+  const c=(d0+d1)/2;
+  if(e.key==="+"||e.key==="="){setDomain(c-span()/(2*1.4),c+span()/(2*1.4));hideHint();}
+  else if(e.key==="-"){setDomain(c-span()*1.4/2,c+span()*1.4/2);hideHint();}
+  else if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const d=(e.key==="ArrowRight"?1:-1)*span()*0.12;setDomain(d0+d,d1+d);hideHint();}
+});
+$("#zoomSlider").addEventListener("input",e=>{
+  const t=Number(e.target.value)/100;
+  const s=Math.exp(Math.log(T_MAX-T_MIN)*(1-t)+Math.log(SL_MIN)*t);
+  const c=(d0+d1)/2;setDomain(c-s/2,c+s/2);hideHint();
+});
+document.querySelectorAll(".controls button[data-span]").forEach(b=>b.addEventListener("click",()=>{
+  const s=Number(b.dataset.span);
+  if(!s)setDomain(T_MIN,T_MAX); else setDomain(T_MAX-s,T_MAX);
+  hideHint();
+}));
+/* clic sur une ère = zoom sur l'ère */
+erasEl.addEventListener("click",e=>{const el=e.target.closest(".era");if(el)setDomain(Number(el.dataset.a)-1,Number(el.dataset.b)+1);});
+/* minimap : clic = recentrer */
+mm.addEventListener("click",e=>{const r=mm.getBoundingClientRect();const y=T_MIN+(e.clientX-r.left)/W*(T_MAX-T_MIN);setDomain(y-span()/2,y+span()/2);});
+/* panneau de détail */
+field.addEventListener("click",e=>{
+  const el=e.target.closest(".ev");if(!el)return;
+  const ev=EV[Number(el.dataset.i)];
+  panel.querySelector("h3").textContent=fmtYear(ev[0])+" — "+ev[2];
+  panel.querySelector(".meta").textContent="Palier "+ev[1]+" · "+eraOf(ev[0]).label+" · kit : chapitre "+ev[4]+", séquence "+ev[5];
+  panel.querySelector("p").textContent=ev[3];
+  const a=panel.querySelector("a");
+  a.href="../chapitres/chapitre-"+ev[4]+"-espace.html#s"+ev[5];
+  a.textContent="Ouvrir le chapitre "+ev[4]+" (séquence "+ev[5]+") →";
+  panel.classList.add("open");
+});
+panel.querySelector(".close").addEventListener("click",()=>panel.classList.remove("open"));
+let hintTimer=setTimeout(hideHint,8000);
+function hideHint(){const h=$("#hint");if(h){h.style.opacity="0";setTimeout(()=>h.remove(),1200);clearTimeout(hintTimer);}}
+window.addEventListener("resize",scheduleRender);
+const qp=new URLSearchParams(location.search);
+if(qp.get("zoom")){const s=Math.min(T_MAX-T_MIN,Math.max(4,Number(qp.get("zoom"))));d0=T_MAX-s;d1=T_MAX;}
+render();
+</script>
+</body>
+</html>

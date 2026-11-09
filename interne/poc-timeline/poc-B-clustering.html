@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fraction B — Frise à clustering automatique (D3, zoom sémantique)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --bg:#f7f5f0; --ink:#22252a; --muted:#6b7078; --card:#ffffff;
+  --border:#d9d4c8; --accent:#994d1a; --gold:#c9a227;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+header{padding:14px 20px 10px;border-bottom:1px solid var(--border);background:var(--card)}
+header h1{margin:0 0 2px;font-size:19px}
+header .sub{color:var(--muted);font-size:13px}
+.banner{display:none;background:#fdecea;border:1px solid #e5b4ae;color:#8a1f11;font-size:13px;padding:8px 14px;border-radius:8px;margin:10px 20px 0}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.controls button{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:5px 11px;font-size:13px;cursor:pointer;color:var(--ink)}
+.controls button:hover{border-color:var(--accent);color:var(--accent)}
+.controls .spacer{flex:1}
+#zoomReadout{font-size:12px;color:var(--muted)}
+main{flex:1;position:relative;overflow:hidden}
+svg{display:block;width:100%;height:100%;cursor:grab}
+svg:active{cursor:grabbing}
+text{font-family:inherit}
+.eraBand rect{opacity:.85}
+.eraBand text{font-size:12px;font-weight:600;fill:#fff;paint-order:stroke;stroke:rgba(0,0,0,.25);stroke-width:2px}
+.cluster{cursor:pointer}
+.cluster circle{stroke:#fff;stroke-width:1.5}
+.cluster text{font-size:11px;font-weight:700;fill:#fff;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.dot{stroke:#fff;stroke-width:1.5;cursor:pointer}
+.labEvent{font-size:12px;fill:var(--ink);pointer-events:none;paint-order:stroke;stroke:var(--bg);stroke-width:3px}
+.labEvent tspan.yr{fill:var(--muted);font-weight:600}
+.axis line,.axis path{stroke:#8a8578}
+.axis text{fill:var(--muted);font-size:11.5px}
+#tooltip{position:absolute;display:none;background:#22252a;color:#fff;font-size:12.5px;padding:6px 10px;border-radius:8px;pointer-events:none;max-width:280px;z-index:5}
+#legend{position:absolute;bottom:12px;right:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--muted);pointer-events:none}
+#legend b{color:var(--ink)}
+footer{padding:6px 20px;border-top:1px solid var(--border);background:var(--card);font-size:11.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Fraction B — Frise « clustering par densité »</h1>
+  <div class="sub">Aucune hiérarchie dans les données : un seul jeu d'événements à plat. <b>La densité à l'écran décide du niveau de détail</b> — trop serrés, les événements se regroupent en bulles comptées ; en zoomant (molette ou clic sur une bulle), ils se déplient. Bandes d'ères fixes en haut pour ne jamais perdre la vue d'ensemble.</div>
+  <div id="d3warn" class="banner">⚠ D3 n'a pas pu être chargé (pas de connexion ?). Cette preuve de concept utilise le CDN jsdelivr — en production, placer <b>d3.v7.min.js</b> à côté du fichier et charger en local.</div>
+  <div class="controls">
+    <button id="btnAll">Tout</button>
+    <button data-years="30">30 dernières années</button>
+    <button data-years="10">10 ans</button>
+    <button id="btnReset">Réinitialiser le zoom</button>
+    <span class="spacer"></span>
+    <span id="zoomReadout"></span>
+  </div>
+</header>
+<main id="main">
+  <svg id="svg"><g id="erasG"></g><g id="axisG" class="axis"></g><g id="eventsG"></g></svg>
+  <div id="tooltip"></div>
+  <div id="legend"><b>La taille des bulles = nombre d'événements regroupés.</b><br>Cliquer une bulle = zoom pour la déplier.</div>
+</main>
+<footer>Données d'exemple tirées du chapitre 4 (Historique du conflit) — à terme, générées par un export des 55 séquences du kit. PoC interne, pas une page distribuée.</footer>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script>
+"use strict";
+if(!window.d3){document.getElementById("d3warn").style.display="block";}
+else (function(){
+/* ---------- Données à plat : [année(+mois/12), titre, description, chapitre, séquence] ---------- */
+const T0=new Date(1915,0,1), T1=new Date(2028,8,1);
+const ERAS=[
+  {a:new Date(1917,2,1),b:new Date(1948,4,1),label:"Empire, Mandat et origines",c:"#8a6d3b"},
+  {a:new Date(1948,4,1),b:new Date(1968,0,1),label:"Guerres froides régionales",c:"#3d6b8a"},
+  {a:new Date(1968,0,1),b:new Date(1993,7,1),label:"Guerres, Intifada, impuissance",c:"#8a3d3d"},
+  {a:new Date(1993,7,1),b:new Date(2007,5,1),label:"Oslo et son effondrement",c:"#4d7a4d"},
+  {a:new Date(2007,5,1),b:new Date(2023,9,1),label:"Blocus et normalisations",c:"#6b4d7a"},
+  {a:new Date(2023,9,1),b:new Date(2028,8,1),label:"Guerre et bascule",c:"#994d1a"}
+];
+function D(y){const yr=Math.floor(y),m=Math.round((y-yr)*12);return new Date(yr,Math.max(0,m-1)||0,1);}
+const RAW=[
+  [1917.9,"Déclaration Balfour","Lettre britannique favorable à un « foyer national juif » en Palestine.",4,1],
+  [1920.3,"Mandat de la SDN","La SDN confie la Palestine au Royaume-Uni.",4,1],
+  [1936.3,"Grande Révolte (1936-1939)","Révolte arabe palestinienne contre le mandat et l'immigration.",4,1],
+  [1939.42,"Livre blanc britannique","Londres limite l'immigration juive ; tournant pour les deux camps.",4,1],
+  [1947.9,"Plan de partage (rés. 181)","L'ONU vote le partage en deux États ; refusé par les leaders arabes.",4,2],
+  [1948.42,"Proclamation d'Israël","Fin du mandat, proclamation, entrée en guerre des États arabes.",4,2],
+  [1948.45,"La Nakba","≈700 000 personnes déplacées ; date fondatrice du récit palestinien.",4,2],
+  [1949.15,"Lignes d'armistice","Cessez-le-feu ; Cisjordanie et Gaza passent sous contrôle jordanien et égyptien.",4,2],
+  [1956.85,"Crise de Suez","Guerre tripartite ; retour au statu quo sous pression USA-URSS.",4,3],
+  [1964.42,"Création de l'OLP","La cause palestinienne se structure en mouvement national.",4,3],
+  [1967.5,"Guerre des Six Jours","Occupation de Cisjordanie, Gaza, Golan, Sinaï ; début des colonies.",4,3],
+  [1970.72,"Septembre noir","Conflit OLP-Jordanie ; le mouvement palestinien se déplace au Liban.",4,4],
+  [1973.76,"Guerre de Kippour","Attaque surprise puis contre-offensive ; ouvrira la voie à la paix égyptienne.",4,4],
+  [1978.72,"Accords de Camp David","Paix Égypte-Israël ; les Palestinien·ne·s se sentent exclu·e·s.",4,4],
+  [1982.6,"Guerre du Liban","Départ de l'OLP de Beyrouth ; Sabra et Chatila.",4,4],
+  [1987.95,"Première Intifada","Soulèvement populaire ; internationalisation de la question palestinienne.",4,4],
+  [1988.88,"Indépendance déclarée ; Hamas","Déclaration d'Alger ; fondation du Hamas la même année.",4,4],
+  [1991.83,"Conférence de Madrid","Première conférence de paix multilatérale.",4,4],
+  [1993.7,"Accords d'Oslo","Reconnaissance mutuelle ; autonomie transitoire ; promesse non tenue.",10,1],
+  [1994.4,"Gaza-Jéricho ; paix jordanienne","Première autonomie effective ; traité avec la Jordanie.",4,5],
+  [1995.92,"Assassinat de Rabin","L'impulsion politique d'Oslo est tuée.",4,5],
+  [2000.54,"Échec de Camp David","Rupture des pourparlers ; seconde Intifada.",10,1],
+  [2002.23,"Rempart ; Initiative arabe","Réoccupation de Cisjordanie ; offre arabe de normalisation.",10,1],
+  [2004.6,"Avis CIJ sur le mur ; mort d'Arafat","La CIJ juge le mur illégal ; mort de Yasser Arafat.",4,5],
+  [2005.67,"Désengagement de Gaza","Retrait israélien unilatéral ; contrôle extérieur maintenu.",4,5],
+  [2006.06,"Victoire du Hamas ; guerre de juillet","Législatives palestiniennes ; guerre au Liban.",4,5],
+  [2007.6,"Prise de Gaza ; blocus","Guerre civile palestinienne ; blocus toujours en vigueur.",4,5],
+  [2008.99,"Plomb durci","Un mois d'offensive à Gaza ; bilans et enquêtes opposés.",4,6],
+  [2010.42,"Flottille de Gaza","Arraisonnement ; 10 militants tués, crise diplomatique.",4,6],
+  [2012.88,"Pilier de défense","Huit jours de frappes aériennes.",4,6],
+  [2014.58,"Bordure protectrice","50 jours de guerre ; débat sur la proportionnalité.",4,6],
+  [2017.96,"Jérusalem capitale","Reconnaissance américaine ; rupture du consensus international.",4,6],
+  [2018.24,"Marche du retour ; loi État-nation","Gaza ; loi fondamentale définissant Israël comme État-nation juif.",4,6],
+  [2020.75,"Accords d'Abraham","Normalisations sans règlement de la question palestinienne.",10,1],
+  [2021.38,"Guerre de mai","Cheikh Jarrah, roquettes, onze jours de guerre.",4,6],
+  [2023.8,"7 octobre","Attaque du Hamas : ~1 200 mort·e·s, ~250 otages ; guerre à Gaza.",4,6],
+  [2024.2,"CIJ ; escalade régionale","Procès pour génocide ; fronts au Liban, en Syrie, au Yémen, en Iran.",4,6],
+  [2026.3,"Et après ?","Trêve, reconnaissance d'un État, reconstruction : pistes du kit (ch. 10-11).",10,1]
+];
+const EV=RAW.map(r=>({t:D(r[0]),title:r[1],desc:r[2],ch:r[3],seq:r[4],era:ERAS.find(e=>r[0]>=e.a.getFullYear()+e.a.getMonth()/12&&r[0]<e.b.getFullYear()+e.b.getMonth()/12)||ERAS[0]}));
+/* ---------- Scène ---------- */
+const svg=d3.select("#svg"), gEras=svg.select("#erasG"), gAxis=svg.select("#axisG"), gEv=svg.select("#eventsG");
+const main=document.getElementById("main"), tooltip=document.getElementById("tooltip");
+const x0=d3.scaleTime().domain([T0,T1]);
+const ERAS_H=46, PAD_B=46, FIELD_TOP=ERAS_H+14;
+let W=0,H=0, xs=x0;
+const zoom=d3.zoom().scaleExtent([1,600]).on("zoom",ev=>{xs=ev.transform.rescaleX(x0);draw();});
+svg.call(zoom).on("dblclick.zoom",null); /* double-clic = zoom ×2 conservé ? non : on garde le clic-bulle, désactivé pour éviter les clashs */
+svg.on("dblclick",()=>svg.transition().duration(400).call(zoom.scaleBy,1.8));
+const tip=(html,x,y)=>{tooltip.innerHTML=html;tooltip.style.display="block";
+  const r=main.getBoundingClientRect();
+  tooltip.style.left=Math.min(x+14,r.width-300)+"px";tooltip.style.top=(y+14)+"px";};
+const hideTip=()=>tooltip.style.display="none";
+/* ---------- Clustering : les événements à moins de N px se replient en bulle ---------- */
+function clusterEvents(){
+  const sorted=EV.slice().sort((a,b)=>a.t-b.t);
+  const GAP=38, out=[]; let cur=null;
+  for(const e of sorted){
+    const x=xs(e.t);
+    if(cur && x-cur.xRight<=GAP){cur.members.push(e);cur.xRight=x;}
+    else{if(cur)out.push(cur);cur={members:[e],xLeft:x,xRight:x};}
+  }
+  if(cur)out.push(cur);
+  return out;
+}
+function draw(){
+  const r=main.getBoundingClientRect();W=r.width;H=r.height;
+  x0.range([8,W-8]);
+  const t=xs;
+  const ppy=(W-16)/(xs.invert(W-8)-xs.invert(8))/86400000/30.44; /* px par mois */
+  /* bandes d'ères : toujours là, quelle que soit l'échelle */
+  let eh="";
+  for(const e of ERAS){
+    const xa=Math.max(8,t(e.a)),xb=Math.min(W-8,t(e.b));
+    if(xb<=8||xa>=W-8)continue;
+    eh+='<g class="eraBand"><rect x="'+xa+'" y="8" width="'+(xb-xa)+'" height="30" rx="7" fill="'+e.c+'"></rect>'
+      +(xb-xa>150?'<text x="'+(xa+10)+'" y="27">'+e.label+'</text>':'')+'</g>';
+  }
+  gEras.innerHTML=eh;
+  /* axe : d3 choisit le pas « joli » tout seul selon la largeur visible */
+  gAxis.attr("transform","translate(0,"+(H-PAD_B)+")")
+       .call(d3.axisBottom(t).ticks(Math.max(4,Math.round(W/110))).tickSizeOuter(0));
+  /* événements : clusters + libellés à droite de la bulle */
+  const clusters=clusterEvents();
+  const showLabel=ppy>36; /* ~ plus de 3 px par jour… seuil empirique */
+  let html="";
+  for(const c of clusters){
+    const cx=(c.xLeft+c.xRight)/2, n=c.members.length;
+    const cy=FIELD_TOP+38;
+    if(n===1){
+      const e=c.members[0];
+      html+='<circle class="dot" data-t="'+e.t.getTime()+'" cx="'+cx+'" cy="'+cy+'" r="'+(6)+'" fill="'+e.era.c+'"></circle>';
+      if(showLabel){
+        html+='<text class="labEvent" x="'+(cx+10)+'" y="'+(cy+4)+'">'+e.title+' <tspan class="yr">'+d3.timeFormat("%b %Y")(e.t)+'</tspan></text>';
+      }
+    }else{
+      const rad=8+Math.min(14,Math.sqrt(n)*3.4);
+      const col=d3.interpolateRgb(c.members[0].era.c,"#22252a")(0.15);
+      html+='<g class="cluster" data-t0="'+c.members[0].t.getTime()+'" data-t1="'+c.members[n-1].t.getTime()+'">'
+        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+rad+'" fill="'+col+'"></circle>'
+        +'<text x="'+cx+'" y="'+cy+'">'+n+'</text></g>';
+    }
+  }
+  gEv.innerHTML=html;
+  const yrs=(xs.invert(W)-xs.invert(0))/86400000/365.25;
+  document.getElementById("zoomReadout").textContent="≈ "+(yrs>=1?Math.round(yrs)+" ans visibles":(Math.round(yrs*12)+" mois visibles"))+" · seuil de regroupement : 38 px";
+}
+/* ---------- Interactions ---------- */
+gEv.addEventListener("mouseover",e=>{
+  const dot=e.target.closest(".dot");const cl=e.target.closest(".cluster");
+  if(dot){const ev=EV.find(v=>v.t.getTime()===Number(dot.dataset.t));
+    tip("<b>"+d3.timeFormat("%-d %B %Y")(ev.t)+"</b> — "+ev.title+"<br>"+ev.desc,e.clientX-main.getBoundingClientRect().left,e.clientY-main.getBoundingClientRect().top);
+  }else if(cl){
+    const a=new Date(Number(cl.dataset.t0)),b=new Date(Number(cl.dataset.t1));
+    tip("<b>"+cl.querySelectorAll("text")[0].textContent+" événements</b> de "+d3.timeFormat("%b %Y")(a)+" à "+d3.timeFormat("%b %Y")(b)+"<br>Cliquer pour déplier",e.clientX-main.getBoundingClientRect().left,e.clientY-main.getBoundingClientRect().top);
+  }
+});
+gEv.addEventListener("mouseout",e=>{if(e.target.closest(".dot,.cluster"))hideTip();});
+gEv.addEventListener("click",e=>{
+  const cl=e.target.closest(".cluster");
+  if(!cl)return;
+  hideTip();
+  const a=new Date(Number(cl.dataset.t0)),b=new Date(Number(cl.dataset.t1));
+  const xa=x0(a),xb=x0(b),cx=(xa+xb)/2;
+  const k=Math.min(600,Math.max(4,(W-160)/Math.max(20,xb-xa)));
+  svg.transition().duration(600).ease(d3.easeCubicOut)
+     .call(zoom.transform,d3.zoomIdentity.translate(W/2,0).scale(k).translate(-cx));
+});
+document.getElementById("btnAll").addEventListener("click",()=>svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity));
+document.getElementById("btnReset").addEventListener("click",()=>svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity));
+function zoomToYears(y){
+  const a=new Date(T1); a.setFullYear(a.getFullYear()-y);
+  const xa=x0(a),k=Math.max(1,(W-160)/Math.max(20,x0(T1)-xa));
+  svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity.translate(W/2,0).scale(k).translate(-(xa+x0(T1))/2));
+}
+document.querySelectorAll("[data-years]").forEach(b=>b.addEventListener("click",()=>zoomToYears(Number(b.dataset.years))));
+window.addEventListener("resize",draw);
+draw();
+const qp=new URLSearchParams(location.search);
+if(qp.get("years")){const y=Number(qp.get("years"));const a=new Date(T1);a.setFullYear(a.getFullYear()-y);
+  const xa=x0(a),k=Math.max(1,(W-160)/Math.max(20,x0(T1)-xa));
+  svg.call(zoom.transform,d3.zoomIdentity.translate(W/2,0).scale(k).translate(-(xa+x0(T1))/2));}
+})();
+</script>
+</body>
+</html>
