@@ -72,6 +72,20 @@ await page.waitForTimeout(2500);
   log("(d3) reset clears", dotsAfter === 0, "dots=" + dotsAfter);
 }
 
+// (d4) timeline scroll affordances: right arrow visible, scroll works, left arrow appears
+{
+  const R = page.locator("#tl-right");
+  const visR0 = await R.isVisible();
+  const L0 = await page.locator("#tl-left").isVisible();
+  const before = await page.locator("#tl-track").evaluate((el) => el.scrollLeft);
+  await R.click();
+  await page.waitForTimeout(800);
+  const after = await page.locator("#tl-track").evaluate((el) => el.scrollLeft);
+  const visL1 = await page.locator("#tl-left").isVisible();
+  log("(d4) scroll arrows", visR0 && !L0 && after > before && visL1,
+      "right0=" + visR0 + " left0=" + L0 + " scrollLeft " + before + "->" + after + " left1=" + visL1);
+}
+
 // (e) screenshots
 {
   await page.screenshot({ path: "C:/gt_check/fullpage2.png", fullPage: true });

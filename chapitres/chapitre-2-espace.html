@@ -272,11 +272,31 @@ upd();
 </script>
 </div>
         <div class="tl" id="tl-s1">
-<p class="tl-note"><b>Le fil du siècle</b> — 14 dates pour situer l&rsquo;espace étudié. Cliquer une carte déplie une phrase&nbsp;; cliquer de nouveau la referme.</p>
+<p class="tl-note"><b>Le fil du si&egrave;cle</b> — 14 dates pour situer l&rsquo;espace &eacute;tudi&eacute;. <span class="tl-hint">La frise se d&eacute;file &rarr;</span> Cliquer une carte d&eacute;plie une phrase&nbsp;; cliquer de nouveau la referme.</p>
+<div class="tl-wrap">
 <div class="tl-track" id="tl-track" role="list" aria-label="Frise chronologique du Moyen-Orient, 1916 à 2025"></div>
+<button type="button" class="tl-arrow" id="tl-left" aria-label="Faire défiler la frise vers la gauche">&lsaquo;</button>
+<button type="button" class="tl-arrow" id="tl-right" aria-label="Faire défiler la frise vers la droite">&rsaquo;</button>
+</div>
 <style>
 .tl-note{font-size:.86rem;color:var(--text-3,#9aa8b6);margin:.6rem 0}
+.tl-hint{color:var(--gold,#e0a458);font-weight:600;animation:tl-blink 2.4s ease-in-out 2}
+@keyframes tl-blink{0%,100%{opacity:1}50%{opacity:.35}}
+.tl-wrap{position:relative}
+.tl-wrap::before,.tl-wrap::after{content:"";position:absolute;top:1.1rem;bottom:.8rem;width:2.6rem;z-index:2;pointer-events:none;opacity:0;transition:opacity .25s}
+.tl-wrap::before{left:0;background:linear-gradient(90deg,var(--bg,#0f1419),transparent)}
+.tl-wrap::after{right:0;background:linear-gradient(270deg,var(--bg,#0f1419),transparent)}
+.tl-wrap.can-left::before{opacity:1}
+.tl-wrap.can-right::after{opacity:1}
+.tl-arrow{position:absolute;top:50%;transform:translateY(-30%);z-index:3;width:2rem;height:2rem;border-radius:50%;border:1px solid var(--edge,#28323e);background:var(--card,#1c2530);color:var(--gold,#e0a458);font-size:1.35rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.45);transition:opacity .25s,border-color .15s;padding:0}
+.tl-arrow:hover{border-color:var(--gold,#e0a458)}
+.tl-arrow[hidden]{display:none}
+#tl-left{left:.3rem}
+#tl-right{right:.3rem}
 .tl-track{display:flex;gap:.55rem;overflow-x:auto;padding:1.1rem .2rem .8rem;scroll-snap-type:x proximity;scrollbar-width:thin}
+.tl-track::-webkit-scrollbar{height:6px}
+.tl-track::-webkit-scrollbar-thumb{background:var(--edge,#28323e);border-radius:3px}
+.tl-track::-webkit-scrollbar-thumb:hover{background:var(--gold,#e0a458)}
 .tl-item{flex:0 0 auto;width:12.5rem;scroll-snap-align:start;position:relative}
 .tl-item::before{content:"";position:absolute;top:-.55rem;left:0;right:0;height:2px;background:var(--edge,#28323e)}
 .tl-dot{position:absolute;top:-.62rem;left:.6rem;width:.3rem;height:.3rem;border-radius:50%;background:var(--gold,#e0a458);box-shadow:0 0 0 3px rgba(224,164,88,.25)}
@@ -287,7 +307,7 @@ upd();
 .tl-desc{display:none;font-size:.76rem;line-height:1.45;color:var(--text-3,#9aa8b6);padding:.45rem .65rem;border:1px dashed var(--edge,#28323e);border-top:none;border-radius:0 0 6px 6px;margin-top:-1px;background:rgba(224,164,88,.04)}
 .tl-item.open .tl-desc{display:block}
 .tl-item.open .tl-btn{border-radius:6px 6px 0 0;border-color:var(--gold,#e0a458)}
-@media print{.tl-desc{display:block!important}.tl-track{overflow:visible;flex-wrap:wrap}}
+@media print{.tl-desc{display:block!important}.tl-track{overflow:visible;flex-wrap:wrap}.tl-arrow{display:none!important}.tl-wrap::before,.tl-wrap::after{content:none}}
 </style>
 <script>
 (function(){
@@ -314,6 +334,14 @@ T.forEach(function(e){
   var dot=document.createElement("span");dot.className="tl-dot";
   b.addEventListener("click",function(){var o=it.classList.toggle("open");b.setAttribute("aria-expanded",o?"true":"false");});
   it.appendChild(dot);it.appendChild(b);it.appendChild(d);tr.appendChild(it);});
+var wrap=document.querySelector(".tl-wrap"),L=document.getElementById("tl-left"),R=document.getElementById("tl-right");
+function sync(){
+  var max=tr.scrollWidth-tr.clientWidth,cl=tr.scrollLeft>4,cr=tr.scrollLeft<max-4;
+  wrap.classList.toggle("can-left",cl);wrap.classList.toggle("can-right",cr);
+  L.hidden=!cl;R.hidden=!cr;}
+L.addEventListener("click",function(){tr.scrollBy({left:-420,behavior:"smooth"})});
+R.addEventListener("click",function(){tr.scrollBy({left:420,behavior:"smooth"})});
+tr.addEventListener("scroll",sync);window.addEventListener("resize",sync);sync();
 })();
 </script>
 </div>
