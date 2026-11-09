@@ -26,6 +26,9 @@ MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July",
              "August", "September", "October", "November", "December"]
 
 REPO_URL = "https://github.com/Coualafool/GT_conflits"
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from blocs_seance import SEANCE_BLOCK
 LICENSE_URL = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 
 # ---------------------------------------------------------------- pages ----
@@ -196,6 +199,7 @@ def render_pied(path, lang):
 
 KINDS = {"print": ["commun:print"],
          "clavier": ["commun:clavier", "commun:outils"],
+         "seance": ["commun:seance"],
          "pied": ["commun:pied-head", "commun:pied"]}
 
 def wanted_blocks(path, accordions, inline_tools, lang, keep=None):
@@ -205,6 +209,7 @@ def wanted_blocks(path, accordions, inline_tools, lang, keep=None):
         w.append(("commun:clavier", CLAVIER_BLOCK, "body"))
         if not inline_tools:
             w.append(("commun:outils", OUTILS_BLOCK, "body"))
+        w.append(("commun:seance", SEANCE_BLOCK, "body"))
     w.append(("commun:pied-head", PIED_HEAD_BLOCK.format(license_url=LICENSE_URL), "head"))
     w.append(("commun:pied", render_pied(path, lang), "body"))
     if keep:
