@@ -30,6 +30,7 @@ REPO_URL = "https://github.com/Coualafool/GT_conflits"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from blocs_seance import SEANCE_BLOCK
 from blocs_glossaire import GLOSSAIRE_BLOCK
+from blocs_quiz import QUIZ_BLOCK
 LICENSE_URL = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 
 # ---------------------------------------------------------------- pages ----
@@ -202,6 +203,7 @@ KINDS = {"print": ["commun:print"],
          "clavier": ["commun:clavier", "commun:outils"],
          "seance": ["commun:seance"],
          "glossaire": ["commun:glossaire"],
+         "quiz": ["commun:quiz"],
          "pied": ["commun:pied-head", "commun:pied"]}
 
 def wanted_blocks(path, accordions, inline_tools, lang, keep=None):
@@ -213,6 +215,7 @@ def wanted_blocks(path, accordions, inline_tools, lang, keep=None):
             w.append(("commun:outils", OUTILS_BLOCK, "body"))
         w.append(("commun:seance", SEANCE_BLOCK, "body"))
         w.append(("commun:glossaire", GLOSSAIRE_BLOCK, "body"))
+        w.append(("commun:quiz", QUIZ_BLOCK, "body"))
     w.append(("commun:pied-head", PIED_HEAD_BLOCK.format(license_url=LICENSE_URL), "head"))
     w.append(("commun:pied", render_pied(path, lang), "body"))
     if keep:
