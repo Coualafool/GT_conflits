@@ -6,55 +6,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root{
-  --bg:#f7f5f0; --ink:#22252a; --muted:#6b7078; --card:#ffffff;
+  --bg:#f7f5f0; --ink:#22252a; --muted:#5a5f68; --card:#ffffff;
   --border:#d9d4c8; --accent:#994d1a; --gold:#c9a227; --lane:34px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 header{padding:14px 20px 10px;border-bottom:1px solid var(--border);background:var(--card)}
 header h1{margin:0 0 2px;font-size:19px}
-header .sub{color:var(--muted);font-size:13px}
+header .sub{color:var(--muted);font-size:13.5px}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
-.controls button{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:5px 11px;font-size:13px;cursor:pointer;color:var(--ink)}
+.controls button{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:6px 12px;font-size:13.5px;cursor:pointer;color:var(--ink);min-height:32px}
 .controls button:hover{border-color:var(--accent);color:var(--accent)}
+.controls button.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .controls .spacer{flex:1}
-.controls label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.controls label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
 #zoomSlider{width:150px}
-#zoomReadout{min-width:78px;font-size:12px;color:var(--muted);text-align:right}
+#zoomReadout{min-width:92px;font-size:12.5px;color:var(--muted);text-align:right}
 main{flex:1;position:relative;overflow:hidden}
-#viz{position:absolute;inset:0;cursor:grab;user-select:none;overflow:hidden}
+#viz{position:absolute;inset:0;cursor:grab;user-select:none;overflow:hidden;touch-action:none}
+#viz:focus-visible{outline-offset:-2px}
 #viz.grabbing{cursor:grabbing}
 #eras{position:absolute;top:0;left:0;right:0;height:52px}
-.era{position:absolute;top:6px;height:34px;border-radius:7px;overflow:hidden;cursor:pointer;opacity:.88;border:1px solid rgba(0,0,0,.15)}
+.era{position:absolute;top:6px;height:34px;border-radius:7px;overflow:hidden;cursor:zoom-in;opacity:.88;border:1px solid rgba(0,0,0,.15)}
 .era:hover{opacity:1}
-.era span{position:absolute;left:8px;top:7px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.era span{position:absolute;left:8px;top:7px;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.35)}
 #field{position:absolute;top:60px;left:0;right:0;bottom:52px;overflow:hidden}
 .ev{position:absolute;display:flex;align-items:center;gap:6px;height:var(--lane)}
 .ev i{width:11px;height:11px;border-radius:50%;flex:none;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
 .ev.t1 i{width:14px;height:14px;border-color:var(--gold)}
 .ev.t3 i{width:8px;height:8px;opacity:.75}
-.ev .lab{font-size:12.5px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;max-width:260px;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.ev .dotHit{width:26px;height:26px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:-7px;border-radius:50%}
+.ev .lab{font-size:13px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;max-width:260px;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .ev .lab b{color:var(--muted);font-weight:600}
 .ev:hover .lab{border-color:var(--accent)}
 .ev.t1 .lab{font-weight:600}
 #axis{position:absolute;bottom:28px;left:0;right:0;height:24px;border-top:1px solid var(--border)}
 .tick{position:absolute;top:0;border-left:1px solid var(--border);height:8px}
 .tick.big{border-color:#8a8578;height:14px}
-.tick span{position:absolute;top:14px;left:-30px;width:60px;text-align:center;font-size:11.5px;color:var(--muted)}
-#minimap{position:absolute;bottom:0;left:0;right:0;height:24px;background:#ece8de;border-top:1px solid var(--border);cursor:pointer}
+.tick span{position:absolute;top:14px;left:-30px;width:60px;text-align:center;font-size:12px;color:var(--muted)}
+#minimap{position:absolute;bottom:0;left:0;right:0;height:24px;background:#ece8de;border-top:1px solid var(--border);cursor:crosshair;touch-action:none}
 #minimap i{position:absolute;bottom:3px;width:3px;height:7px;border-radius:2px;opacity:.7}
 #viewRect{position:absolute;top:0;bottom:0;background:rgba(153,77,26,.16);border-left:2px solid var(--accent);border-right:2px solid var(--accent);pointer-events:none}
-#hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);background:rgba(34,37,42,.85);color:#fff;font-size:12.5px;padding:7px 14px;border-radius:20px;pointer-events:none;transition:opacity 1s}
-#panel{position:absolute;top:14px;right:14px;width:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);padding:14px 16px;display:none}
+#panel{position:absolute;top:14px;right:14px;width:min(320px,calc(100vw - 24px));max-height:calc(100% - 32px);overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);padding:14px 16px;display:none;z-index:5}
 #panel.open{display:block}
-#panel .close{float:right;border:0;background:none;font-size:18px;cursor:pointer;color:var(--muted)}
-#panel h3{margin:0 0 4px;font-size:16px}
-#panel .meta{font-size:12px;color:var(--muted);margin-bottom:8px}
-#panel p{margin:0 0 10px;font-size:13.5px}
-#panel a{color:var(--accent);font-size:13px}
-footer{padding:6px 20px;border-top:1px solid var(--border);background:var(--card);font-size:11.5px;color:var(--muted)}
-#levelBadge{position:absolute;top:64px;left:14px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--muted);pointer-events:none}
+#panel .close{float:right;border:0;background:none;font-size:20px;line-height:1;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:6px}
+#panel .close:hover{color:var(--ink);background:#f0ece2}
+#panel h3{margin:0 0 4px;font-size:17px}
+#panel .meta{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+#panel p{margin:0 0 10px;font-size:14.5px}
+#panel a{color:var(--accent);font-size:13.5px}
+footer{padding:6px 20px;border-top:1px solid var(--border);background:var(--card);font-size:12px;color:var(--muted)}
+#levelBadge{position:absolute;top:64px;left:14px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--muted);pointer-events:none}
+/* boutons de zoom sur le canvas (sans molette) */
+#zoomCtl{position:absolute;right:14px;bottom:62px;display:flex;flex-direction:column;gap:6px;z-index:4}
+#zoomCtl button{width:34px;height:34px;border:1px solid var(--border);background:var(--card);border-radius:9px;font-size:18px;line-height:1;cursor:pointer;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+#zoomCtl button:hover{border-color:var(--accent);color:var(--accent)}
+/* carte d'aide (rappelable avec ? ou le bouton) */
+#help{position:absolute;left:50%;transform:translateX(-50%);bottom:64px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.14);padding:12px 16px;font-size:13.5px;max-width:min(600px,calc(100vw - 32px));z-index:6}
+#help.hidden{display:none}
+#help .x{position:absolute;top:8px;right:10px;border:0;background:none;font-size:17px;line-height:1;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:6px}
+#help .x:hover{color:var(--ink);background:#f0ece2}
+#help h2{font-size:14.5px;margin:0 0 6px}
+#help ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px 18px}
+kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 5px;font:12px ui-monospace,Consolas,monospace;background:#faf8f4;color:var(--ink)}
+#help .legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:10px;border-top:1px solid var(--border);padding-top:9px;color:var(--muted)}
+#help .lg{display:flex;align-items:center;gap:6px}
+#help .lg i{border-radius:50%;background:#8a6d3b;flex:none}
+#help .lg .d1{width:14px;height:14px;border:2px solid var(--gold)}
+#help .lg .d2{width:11px;height:11px;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+#help .lg .d3{width:8px;height:8px;opacity:.75}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -62,25 +85,48 @@ footer{padding:6px 20px;border-top:1px solid var(--border);background:var(--card
   <h1>Fraction A — Frise « lecture par paliers »</h1>
   <div class="sub">Chaque événement porte un <b>niveau de détail défini dans les données</b> (majeur / standard / détail). Le zoom révèle les paliers : dézoomé → les ères seules ; zoomé → tous les événements et les mois. Zéro dépendance, fonctionne hors ligne en file://.</div>
   <div class="controls">
-    <button data-span="0">Tout</button>
+    <button data-span="0" class="on">Tout</button>
     <button data-span="30">30 dernières années</button>
-    <button data-span="10">10 ans</button>
-    <button data-span="4">Depuis 2023</button>
+    <button data-span="10">10 dernières années</button>
+    <button data-since="2023">Depuis 2023</button>
     <span class="spacer"></span>
-    <label>Zoom <input type="range" id="zoomSlider" min="0" max="100" value="0"></label>
-    <span id="zoomReadout"></span>
+    <label>Zoom <input type="range" id="zoomSlider" min="0" max="100" value="0" aria-label="Niveau de zoom"></label>
+    <span id="zoomReadout" aria-live="polite"></span>
+    <button id="btnHelp" title="Aide et raccourcis clavier" aria-label="Afficher l’aide et les raccourcis clavier">?</button>
   </div>
 </header>
 <main>
-  <div id="viz">
+  <div id="viz" tabindex="0" role="region" aria-label="Frise chronologique interactive — molette ou touches +/- pour zoomer, flèches pour naviguer">
     <div id="eras"></div>
     <div id="field"></div>
     <div id="axis"></div>
-    <div id="minimap"><div id="viewRect"></div></div>
+    <div id="minimap" aria-hidden="true"><div id="viewRect"></div></div>
   </div>
-  <div id="levelBadge"></div>
-  <div id="hint">Molette = zoom · Glisser = naviguer · Clic sur un point = détail · Clic sur une bande d’ère = zoom sur l’ère</div>
-  <aside id="panel"><button class="close" title="Fermer">×</button><h3></h3><div class="meta"></div><p></p><a target="_blank"></a></aside>
+  <div id="levelBadge" aria-live="polite"></div>
+  <div id="zoomCtl">
+    <button id="zIn" title="Zoomer" aria-label="Zoomer">+</button>
+    <button id="zOut" title="Dézoomer" aria-label="Dézoomer">−</button>
+  </div>
+  <aside id="panel" role="dialog" aria-label="Détail de l’événement"><button class="close" title="Fermer" aria-label="Fermer le détail">×</button><h3></h3><div class="meta"></div><p></p><a target="_blank"></a></aside>
+  <div id="help" role="dialog" aria-label="Aide">
+    <button class="x" title="Fermer" aria-label="Fermer l’aide">×</button>
+    <h2>Comment lire la frise</h2>
+    <ul>
+      <li><b>Molette</b> ou pincement = zoom</li>
+      <li><b>Glisser</b> = naviguer</li>
+      <li><b>Double-clic</b> = zoom au point</li>
+      <li><b>Clic sur un point</b> = détail</li>
+      <li><b>Clic sur une ère</b> = zoom sur l’ère</li>
+      <li>Bas de l’écran : <b>vue d’ensemble</b> cliquable</li>
+      <li><kbd>←</kbd><kbd>→</kbd> naviguer · <kbd>+</kbd><kbd>−</kbd> zoom · <kbd>0</kbd> tout · <kbd>?</kbd> aide · <kbd>Échap</kbd> fermer</li>
+    </ul>
+    <div class="legend">
+      <span class="lg"><i class="d1"></i> événement majeur</span>
+      <span class="lg"><i class="d2"></i> standard</span>
+      <span class="lg"><i class="d3"></i> détail</span>
+      <span class="lg">couleur du point = ère</span>
+    </div>
+  </div>
 </main>
 <footer>Données d’exemple tirées du chapitre 4 (Historique du conflit) — à terme, générées par un export des 55 séquences du kit. PoC interne, pas une page distribuée.</footer>
 <script>
@@ -89,6 +135,7 @@ footer{padding:6px 20px;border-top:1px solid var(--border);background:var(--card
    Événement : [année(+mois/12), palier 1..3, titre, description, chapitre, ancre séquence]
    palier 1 = majeur (visible même très dézoomé), 2 = standard, 3 = détail. */
 const T_MIN=1915, T_MAX=2028.6;
+const NOW=2026.3; /* date du dernier événement : ancre honnête des vues « dernières années » */
 const ERAS=[
   {a:1917,b:1948,  label:"Empire, Mandat et origines",  c:"#8a6d3b"},
   {a:1948,b:1968,  label:"Guerres froides régionales",  c:"#3d6b8a"},
@@ -140,7 +187,7 @@ const EV=[
 /* ---------- État ---------- */
 let d0=T_MIN, d1=T_MAX;
 const $=s=>document.querySelector(s);
-const viz=$("#viz"), field=$("#field"), erasEl=$("#eras"), axis=$("#axis"), mm=$("#minimap"), viewRect=$("#viewRect"), panel=$("#panel");
+const viz=$("#viz"), field=$("#field"), erasEl=$("#eras"), axis=$("#axis"), mm=$("#minimap"), viewRect=$("#viewRect"), panel=$("#panel"), help=$("#help");
 const MONTHS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 let W=0,H=0;
 function measure(){const r=viz.getBoundingClientRect();W=r.width;H=r.height;}
@@ -152,6 +199,7 @@ function fmtYear(y){
   const yr=Math.floor(y+1e-9), m=Math.round((y-yr)*12);
   return m>0 ? MONTHS[m-1]+" "+yr : String(yr);
 }
+function escAttr(s){return String(s).replace(/"/g,"&quot;");}
 /* ---------- Rendu ---------- */
 let raf=null;
 function scheduleRender(){if(!raf)raf=requestAnimationFrame(()=>{raf=null;render();});}
@@ -168,7 +216,7 @@ function render(){
     const xa=Math.max(0,xOf(e.a)), xb=Math.min(W,xOf(e.b));
     if(xb<=2||xa>=W-2)continue;
     const w=xb-xa;
-    html+='<div class="era" title="'+e.label+' — cliquer pour zoomer" data-a="'+e.a+'" data-b="'+e.b+'" style="left:'+xa+'px;width:'+w+'px;background:'+e.c+'">'+(w>150?'<span>'+e.label+'</span>':'')+'</div>';
+    html+='<div class="era" title="'+escAttr(e.label+" — cliquer pour zoomer")+'" data-a="'+e.a+'" data-b="'+e.b+'" style="left:'+xa+'px;width:'+w+'px;background:'+e.c+'">'+(w>150?'<span>'+e.label+'</span>':'')+'</div>';
   }
   erasEl.innerHTML=html;
   /* événements : filtrage par palier + étagement en couloirs */
@@ -181,11 +229,14 @@ function render(){
   for(const [i,ev] of vis){
     const x=xOf(ev[0]);
     const lab=showLabels && (ev[1]<=2 || ppy>=40);
-    const wLab=lab?Math.min(ev[2].length*7.1+46,260):16;
+    const wLab=lab?Math.min(ev[2].length*7.1+46,260):26;
     let li=0; while(li<lanes.length && x<lanes[li])li++;
     lanes[li]=x+wLab+12;
     const top=li*34; if(top+34>H-112)continue; /* au-delà de la hauteur du champ : on laisse l'interaction le révéler en zoomant */
-    rows.push('<div class="ev t'+ev[1]+'" data-i="'+i+'" style="left:'+x+'px;top:'+top+'px"><i style="background:'+eraOf(ev[0]).c+'"></i>'
+    const col=eraOf(ev[0]).c, titleAttr=escAttr(fmtYear(ev[0])+" — "+ev[2]+" (cliquer pour le détail)");
+    const dot=lab?'<i style="background:'+col+'" title="'+titleAttr+'"></i>'
+                 :'<span class="dotHit" title="'+titleAttr+'"><i style="background:'+col+'"></i></span>';
+    rows.push('<div class="ev t'+ev[1]+'" data-i="'+i+'" style="left:'+x+'px;top:'+top+'">'+dot
       +(lab?'<span class="lab">'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>');
   }
   field.innerHTML=rows.join("");
@@ -203,7 +254,7 @@ function render(){
   /* minimap */
   const mmx=y=>(y-T_MIN)/(T_MAX-T_MIN)*W;
   let dots="";
-  for(const ev of EV){dots+='<i style="left:'+mmx(ev[0])+'px;background:'+eraOf(ev[0]).c+'"></i>';}
+  for(const ev of EV){dots+='<i style="left:'+mmx(ev[0])+'px;background:'+eraOf(ev[0]).c+'" title="'+escAttr(fmtYear(ev[0])+" — "+ev[2])+'"></i>';}
   mm.innerHTML=dots+'<div id="viewRect" style="left:'+mmx(d0)+'px;width:'+(mmx(d1)-mmx(d0))+'px"></div>';
 }
 /* ---------- Zoom / pan ---------- */
@@ -220,41 +271,95 @@ function zoomAt(px,f){
   const ay=yearOf(px), sp=span(); let ns=Math.min(T_MAX-T_MIN,Math.max(SL_MIN,sp/f));
   let a=ay-(ay-d0)*ns/sp; setDomain(a,a+ns);
 }
-viz.addEventListener("wheel",e=>{e.preventDefault();hideHint();zoomAt(e.clientX-viz.getBoundingClientRect().left,Math.pow(2,-e.deltaY*0.0022));},{passive:false});
+/* repères actifs : on décoche dès que l'utilisateur sort du préréglage */
+function clearPresets(){document.querySelectorAll(".controls button.on").forEach(b=>b.classList.remove("on"));}
+/* aide : visible au chargement, fermée à la première interaction, rappelable avec ? */
+function hideHelp(){help.classList.add("hidden");}
+function toggleHelp(){help.classList.toggle("hidden");}
+function closePanel(){panel.classList.remove("open");}
+viz.addEventListener("wheel",e=>{e.preventDefault();hideHelp();clearPresets();zoomAt(e.clientX-viz.getBoundingClientRect().left,Math.pow(2,-e.deltaY*0.0022));},{passive:false});
+/* pointeur + pincement tactile */
 let dragging=null;
+const ptrs=new Map();
+let pinch=null, pinchLast=1;
 viz.addEventListener("pointerdown",e=>{
+  if(e.target.closest("#minimap"))return;
+  ptrs.set(e.pointerId,e.clientX);
+  if(ptrs.size===2){
+    dragging=null; viz.classList.remove("grabbing");
+    const p=[...ptrs.values()]; pinchLast=Math.abs(p[0]-p[1])||1; pinch=true;
+    e.preventDefault(); return;
+  }
   if(e.target.closest(".lab")||e.target.closest(".era"))return;
-  dragging={x:e.clientX,d0,d1};viz.classList.add("grabbing");viz.setPointerCapture(e.pointerId);hideHint();
+  if(!e.target.closest(".ev")&&!e.target.closest("#panel")&&!e.target.closest("#zoomCtl"))closePanel();
+  dragging={x:e.clientX,d0,d1};
+  viz.classList.add("grabbing"); viz.setPointerCapture(e.pointerId); hideHelp(); clearPresets();
 });
 viz.addEventListener("pointermove",e=>{
+  if(ptrs.has(e.pointerId))ptrs.set(e.pointerId,e.clientX);
+  if(pinch&&ptrs.size>=2){
+    const p=[...ptrs.values()];
+    const d=Math.abs(p[0]-p[1])||1;
+    const mid=(p[0]+p[1])/2-viz.getBoundingClientRect().left;
+    zoomAt(mid,d/pinchLast); pinchLast=d;
+    return;
+  }
   if(!dragging)return;
   const dx=(e.clientX-dragging.x)/W*(dragging.d1-dragging.d0);
   let a=dragging.d0-dx,b=dragging.d1-dx;
   if(a<T_MIN){b+=T_MIN-a;a=T_MIN;} if(b>T_MAX){a-=b-T_MAX;b=T_MAX;}
   d0=a;d1=b;scheduleRender();
 });
-const endDrag=()=>{dragging=null;viz.classList.remove("grabbing");};
-viz.addEventListener("pointerup",endDrag);viz.addEventListener("pointercancel",endDrag);
+function endPtr(e){
+  ptrs.delete(e.pointerId);
+  if(ptrs.size<2)pinch=null;
+  if(ptrs.size===0){dragging=null;viz.classList.remove("grabbing");}
+}
+viz.addEventListener("pointerup",endPtr);viz.addEventListener("pointercancel",endPtr);
+viz.addEventListener("dblclick",e=>{
+  if(e.target.closest(".era")||e.target.closest("#minimap"))return;
+  hideHelp();clearPresets();
+  zoomAt(e.clientX-viz.getBoundingClientRect().left,e.shiftKey?0.5:2);
+});
+/* clavier */
 document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){if(panel.classList.contains("open"))closePanel();else if(!help.classList.contains("hidden"))hideHelp();return;}
+  if(e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||e.target.tagName==="BUTTON"))return;
+  if(e.key==="?"||e.key==="h"||e.key==="H"){toggleHelp();return;}
   const c=(d0+d1)/2;
-  if(e.key==="+"||e.key==="="){setDomain(c-span()/(2*1.4),c+span()/(2*1.4));hideHint();}
-  else if(e.key==="-"){setDomain(c-span()*1.4/2,c+span()*1.4/2);hideHint();}
-  else if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const d=(e.key==="ArrowRight"?1:-1)*span()*0.12;setDomain(d0+d,d1+d);hideHint();}
+  if(e.key==="+"||e.key==="="){clearPresets();setDomain(c-span()/(2*1.4),c+span()/(2*1.4));hideHelp();}
+  else if(e.key==="-"||e.key==="_"){clearPresets();setDomain(c-span()*1.4/2,c+span()*1.4/2);hideHelp();}
+  else if(e.key==="0"){clearPresets();setDomain(T_MIN,T_MAX);$(".controls button[data-span='0']").classList.add("on");hideHelp();}
+  else if(e.key==="ArrowRight"||e.key==="ArrowLeft"){clearPresets();const d=(e.key==="ArrowRight"?1:-1)*span()*0.12;setDomain(d0+d,d1+d);hideHelp();}
 });
 $("#zoomSlider").addEventListener("input",e=>{
   const t=Number(e.target.value)/100;
   const s=Math.exp(Math.log(T_MAX-T_MIN)*(1-t)+Math.log(SL_MIN)*t);
-  const c=(d0+d1)/2;setDomain(c-s/2,c+s/2);hideHint();
+  const c=(d0+d1)/2;clearPresets();setDomain(c-s/2,c+s/2);hideHelp();
 });
-document.querySelectorAll(".controls button[data-span]").forEach(b=>b.addEventListener("click",()=>{
-  const s=Number(b.dataset.span);
-  if(!s)setDomain(T_MIN,T_MAX); else setDomain(T_MAX-s,T_MAX);
-  hideHint();
+document.querySelectorAll(".controls button[data-span],.controls button[data-since]").forEach(b=>b.addEventListener("click",()=>{
+  clearPresets();b.classList.add("on");
+  if(b.dataset.since)setDomain(Number(b.dataset.since),NOW);
+  else{const s=Number(b.dataset.span);if(!s)setDomain(T_MIN,T_MAX);else setDomain(NOW-s,NOW);}
+  hideHelp();
 }));
+$("#zIn").addEventListener("click",()=>{clearPresets();zoomAt(W/2,1.6);hideHelp();});
+$("#zOut").addEventListener("click",()=>{clearPresets();zoomAt(W/2,1/1.6);hideHelp();});
+$("#btnHelp").addEventListener("click",toggleHelp);
+help.querySelector(".x").addEventListener("click",hideHelp);
 /* clic sur une ère = zoom sur l'ère */
-erasEl.addEventListener("click",e=>{const el=e.target.closest(".era");if(el)setDomain(Number(el.dataset.a)-1,Number(el.dataset.b)+1);});
-/* minimap : clic = recentrer */
-mm.addEventListener("click",e=>{const r=mm.getBoundingClientRect();const y=T_MIN+(e.clientX-r.left)/W*(T_MAX-T_MIN);setDomain(y-span()/2,y+span()/2);});
+erasEl.addEventListener("click",e=>{const el=e.target.closest(".era");if(el){clearPresets();setDomain(Number(el.dataset.a)-1,Number(el.dataset.b)+1);}});
+/* minimap : clic ou glisser = repositionner la fenêtre visible */
+function mmJump(e){
+  const r=mm.getBoundingClientRect();
+  const y=T_MIN+(e.clientX-r.left)/r.width*(T_MAX-T_MIN);
+  clearPresets();setDomain(y-span()/2,y+span()/2);
+}
+let mmDrag=false;
+mm.addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault();mmDrag=true;mm.setPointerCapture(e.pointerId);mmJump(e);hideHelp();});
+mm.addEventListener("pointermove",e=>{if(mmDrag)mmJump(e);});
+mm.addEventListener("pointerup",e=>{mmDrag=false;});
+mm.addEventListener("pointercancel",()=>{mmDrag=false;});
 /* panneau de détail */
 field.addEventListener("click",e=>{
   const el=e.target.closest(".ev");if(!el)return;
@@ -266,13 +371,12 @@ field.addEventListener("click",e=>{
   a.href="../chapitres/chapitre-"+ev[4]+"-espace.html#s"+ev[5];
   a.textContent="Ouvrir le chapitre "+ev[4]+" (séquence "+ev[5]+") →";
   panel.classList.add("open");
+  panel.querySelector(".close").focus();
 });
-panel.querySelector(".close").addEventListener("click",()=>panel.classList.remove("open"));
-let hintTimer=setTimeout(hideHint,8000);
-function hideHint(){const h=$("#hint");if(h){h.style.opacity="0";setTimeout(()=>h.remove(),1200);clearTimeout(hintTimer);}}
+panel.querySelector(".close").addEventListener("click",()=>{closePanel();viz.focus();});
 window.addEventListener("resize",scheduleRender);
 const qp=new URLSearchParams(location.search);
-if(qp.get("zoom")){const s=Math.min(T_MAX-T_MIN,Math.max(4,Number(qp.get("zoom"))));d0=T_MAX-s;d1=T_MAX;}
+if(qp.get("zoom")){const s=Math.min(T_MAX-T_MIN,Math.max(4,Number(qp.get("zoom"))));d0=T_MAX-s;d1=T_MAX;clearPresets();}
 render();
 </script>
 </body>
