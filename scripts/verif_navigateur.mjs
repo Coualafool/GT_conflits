@@ -84,12 +84,16 @@ await page.waitForTimeout(2500);
   const visR0 = await R.isVisible();
   const L0 = await page.locator("#tl-left").isVisible();
   const before = await page.locator("#tl-track").evaluate((el) => el.scrollLeft);
+  await page.locator("#tl-s1").screenshot({ path: "C:/gt_check/tl-1.png" });
   await R.click();
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(900);
   const after = await page.locator("#tl-track").evaluate((el) => el.scrollLeft);
   const visL1 = await page.locator("#tl-left").isVisible();
+  await page.locator("#tl-s1").screenshot({ path: "C:/gt_check/tl-2.png" });
   log("(d4) scroll arrows", visR0 && !L0 && after > before && visL1,
       "right0=" + visR0 + " left0=" + L0 + " scrollLeft " + before + "->" + after + " left1=" + visL1);
+  await page.locator("#tl-track").evaluate((el) => el.scrollTo(0, 0));
+  await page.waitForTimeout(400);
 }
 
 // (e) screenshots
