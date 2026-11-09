@@ -31,7 +31,8 @@
     "date": "2025-07-06",
     "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/99/Zones_A_and_B_in_the_occupied_Palestinian_territories.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "bytes": 407804,
-    "author": "TUBS"
+    "author": "TUBS",
+    "note": "NE PAS UTILISER EN L'ETAT : rendu SVG sans legende ni etiquettes (verifie 2026-11-09, 0 element text + controle vision)."
   },
   {
     "file": "carte-telechargee-vieille-ville-jerusalem.png",
@@ -96,19 +97,21 @@
     "bytes": 155704
   },
   {
-    "file": "carte-telechargee-ocha-gaza-2023.png",
+    "file": "carte-telechargee-ocha-gaza-2023.webp",
     "commons_title": "File:OCHA OpT September 2023 map of the Gaza Strip.pdf",
     "license": "Public domain",
     "date": "2024-01-03",
     "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/OCHA_OpT_September_2023_map_of_the_Gaza_Strip.pdf?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "bytes": 8717924
+    "bytes": 242978,
+    "note": "WebP q82, 1600 px de large (dérivé compressé de l'original Commons ; régénérable depuis source_url)"
   },
   {
-    "file": "carte-telechargee-ocha-rive-ouest-acces-2025.png",
+    "file": "carte-telechargee-ocha-rive-ouest-acces-2025.webp",
     "commons_title": "File:West Bank Access Restrictions July 2025.pdf",
     "license": "Public domain",
     "date": "2026-04-16",
     "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/13/West_Bank_Access_Restrictions_July_2025.pdf?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "bytes": 17360591
+    "bytes": 356370,
+    "note": "WebP q82, 1600 px de large (dérivé compressé de l'original Commons ; régénérable depuis source_url)"
   }
 ]

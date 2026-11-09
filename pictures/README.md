@@ -41,9 +41,9 @@ Merci de conserver la ligne d'attribution correspondante sous l'image dans la pa
 | `carte-telechargee-plan-partition-1947-fr.png` | Plan de partage ONU 1947 (en français) | Domaine public |
 | `carte-telechargee-partition-1947-vs-armistice-1949.png` | Comparaison plan 1947 / lignes d'armistice 1949 | Domaine public |
 | `carte-telechargee-territoires-1967-fr.png` | Territoires occupés depuis 1967 (en français) | CC BY-SA 2.5 |
-| `carte-telechargee-rive-ouest-zones-abc.png` | Zones A/B/C de la Rive occidentale (2025) | CC BY-SA 3.0 |
-| `carte-telechargee-ocha-rive-ouest-acces-2025.png` | Restrictions d'accès Rive occidentale (juil. 2025, OCHA) | Domaine public (OCHA) |
-| `carte-telechargee-ocha-gaza-2023.png` | Bande de Gaza, gouvernorats (OCHA, sept. 2023) | Domaine public (OCHA) |
+| `carte-telechargee-rive-ouest-zones-abc.png` | ⚠️ **NE PAS UTILISER EN L'ÉTAT** : la dernière version Commons est un rendu sans légende ni étiquettes (vérifié nov. 2026) | CC BY-SA 3.0 |
+| `carte-telechargee-ocha-rive-ouest-acces-2025.webp` | Restrictions d'accès Rive occidentale (juil. 2025, OCHA) — WebP compressé depuis le PDF d'origine | Domaine public (OCHA) |
+| `carte-telechargee-ocha-gaza-2023.webp` | Bande de Gaza, gouvernorats (OCHA, sept. 2023) — WebP compressé depuis le PDF d'origine | Domaine public (OCHA) |
 | `carte-telechargee-territoires-palestiniens-ocha.png` | Localisation des territoires palestiniens (OCHA) | CC BY 3.0 |
 | `carte-telechargee-gaza-localisation.png` | Gaza dans la région | CC BY-SA 3.0 |
 | `carte-telechargee-vieille-ville-jerusalem.png` | Vieille ville de Jérusalem et environs | CC BY-SA 3.0 |
