@@ -47,6 +47,18 @@ scripts/make_distrib.sh    builds the tester zip
   Re-run after adding a new page. Footer dates come from git.
 - `scripts/make_pdf.sh` — exports **every page to PDF** via headless Chrome/Chromium/Edge
   (`BROWSER=/path/to/browser ./scripts/make_pdf.sh [outdir]`, default `dist/pdf/`).
+- `scripts/audit_fraicheur.py` — extracts every inline `(source, date)` attribution from
+  the shipped pages, classifies it (historical fact / data / citation) and flags **data
+  claims older than 24 months** for re-verification (`--max-age`, `--md report.md`, `-v`).
+  Old maps are dated documents, never flagged. Exit code 1 when anything is flagged.
+- `scripts/check_links.py` — verifies every internal `href/src` resolves on disk and
+  probes every external URL (HEAD→GET, 3 attempts for flaky CDNs; bot-walls like 403/429
+  are reported as "à l'œil", never as broken). Exit 1 only for real breakage.
+- `scripts/make_changelog.py` — regenerates `rapport/NOUVEAUTES.html` (public development
+  log, grouped by month, technical noise folded) from `git log`. Re-run after content
+  commits, then re-run `inject_common.py` (the page is in `shipped_pages()`).
+  Suggested cadence: `audit_fraicheur.py` + `check_links.py` once a month;
+  `make_changelog.py` before any distribution.
 - `interne/versions-noyau/` — the three index prototypes (`version_A/B/C.html`) that were explored;
   Version B was adopted for the index cards and the workspace pages. **Internal — not shipped.**
 

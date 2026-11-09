@@ -11,6 +11,7 @@ Usage:
   python3 scripts/inject_common.py --check        # report missing blocks, write nothing
 """
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -37,6 +38,7 @@ def shipped_pages():
         pages.append((p, True, False, "fr"))
     pages.append((ROOT / "rapport" / "rapport_FR.html", True, False, "fr"))
     pages.append((ROOT / "rapport" / "rapport_EN.html", False, False, "en"))
+    pages.append((ROOT / "rapport" / "NOUVEAUTES.html", False, False, "fr"))
     pages.append((ROOT / "discord" / "rejoindre-discord.html", False, False, "fr"))
     pages.append((ROOT / "LISEZ-MOI.html", False, False, "fr"))
     return pages
@@ -123,7 +125,7 @@ PIED_HEAD_BLOCK = """<!-- BEGIN commun:pied-head -->
 PIED_BODY_FR = """<!-- BEGIN commun:pied -->
 <footer class="pied-commun">
   <p><b>Outil pédagogique Israël–Palestine</b> · réalisé par le GT (Groupe de travail) · Licence <a rel="license" href="{license_deed}">CC BY-NC-SA 4.0</a></p>
-  <p>Dernière mise à jour de cette page : <time datetime="{iso}">{shown_fr}</time> · Dépôt : <a href="{repo}">{repo_short}</a></p>
+  <p>Dernière mise à jour de cette page : <time datetime="{iso}">{shown_fr}</time> · <a href="{nouv}">Nouveautés du kit</a> · Dépôt : <a href="{repo}">{repo_short}</a></p>
 </footer>
 <style>
   .pied-commun{{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}}
@@ -136,7 +138,7 @@ PIED_BODY_FR = """<!-- BEGIN commun:pied -->
 PIED_BODY_EN = """<!-- BEGIN commun:pied -->
 <footer class="pied-commun">
   <p><b>Israel–Palestine teaching kit</b> · built by the GT (working group) · License <a rel="license" href="{license_deed}">CC BY-NC-SA 4.0</a></p>
-  <p>This page last updated: <time datetime="{iso}">{shown_en}</time> · Repository: <a href="{repo}">{repo_short}</a></p>
+  <p>This page last updated: <time datetime="{iso}">{shown_en}</time> · <a href="{nouv}">What's new</a> · Repository: <a href="{repo}">{repo_short}</a></p>
 </footer>
 <style>
   .pied-commun{{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}}
@@ -182,13 +184,15 @@ def fmt(d, months):
 def render_pied(path, lang):
     d = git_date(path)
     tpl = PIED_BODY_EN if lang == "en" else PIED_BODY_FR
+    nouv = Path(os.path.relpath(ROOT / "rapport" / "NOUVEAUTES.html", path.parent)).as_posix()
     return tpl.format(
         license_deed=LICENSE_URL + ("deed.en" if lang == "en" else "deed.fr"),
         iso=d.isoformat(),
         shown_fr=fmt(d, MONTHS_FR),
         shown_en=fmt(d, MONTHS_EN),
         repo=REPO_URL,
-        repo_short=REPO_URL.split("//", 1)[1])
+        repo_short=REPO_URL.split("//", 1)[1],
+        nouv=nouv)
 
 KINDS = {"print": ["commun:print"],
          "clavier": ["commun:clavier", "commun:outils"],
