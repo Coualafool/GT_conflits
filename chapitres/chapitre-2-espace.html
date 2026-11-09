@@ -186,6 +186,91 @@
           <img src="../pictures/carte-telechargee-moyen-orient-muet.png" alt="Carte muette du Moyen-Orient, frontières visibles sans aucun nom de pays ni de ville" width="1280" height="650" loading="lazy">
           <figcaption><b>Le même espace sans récit — à remplir par la classe.</b> Support de l&rsquo;exercice du «&nbsp;premier geste&nbsp;»&nbsp;: faire calquer les trois cadrages évoqués plus haut («&nbsp;Israël de la mer au Jourdain&nbsp;», «&nbsp;Palestine historique&nbsp;», «&nbsp;zones A/B/C&nbsp;») dans trois couleurs différentes, puis comparer ce que chaque groupe a dessiné et oublié. <span class="src">Source&nbsp;: Wikimedia Commons, «&nbsp;BlankMap-Middle East&nbsp;» (domaine public, 2014)</span></figcaption>
         </figure>
+<div class="muet" id="muet-s1">
+<p class="muet-note"><b>Exercice interactif</b> — clique sur une étiquette, puis sur la carte pour la placer. « Vérifier » corrige (les étiquettes justes deviennent vertes ; les erreurs restent rouges et un <b>point vert</b> montre la bonne position). Astuce : le trait d&rsquo;échelle en bas de la carte sert à la consigne &laquo; grandeurs et échelles &raquo;.</p>
+<div class="muet-mapwrap">
+<img src="../pictures/carte-generee-muet-mena.png" width="1600" height="1047" loading="lazy" decoding="async" alt="Carte muette générée du Moyen-Orient et de l&rsquo;Afrique du Nord (frontières sans noms) pour l&rsquo;exercice de placement.">
+<div class="muet-layer" id="muet-layer" role="application" aria-label="Zone de placement des étiquettes sur la carte muette"></div>
+</div>
+<div class="muet-bar" id="muet-chips" aria-label="Étiquettes à placer"></div>
+<div class="muet-bar">
+<button type="button" class="muet-btn muet-primary" id="muet-check" disabled>Vérifier (0/16)</button>
+<button type="button" class="muet-btn" id="muet-reset">Tout effacer</button>
+<span class="muet-score" id="muet-score" role="status" aria-live="polite"></span>
+</div>
+<details class="muet-legend"><summary>Corrigé (bornes et positions)</summary><p id="muet-corrige" class="muet-note"></p></details>
+<style>
+.muet-note{font-size:.86rem;color:var(--text-3,#9aa8b6);margin:.6rem 0}
+.muet-mapwrap{position:relative;line-height:0;border:1px solid var(--edge,#28323e);border-radius:6px;overflow:hidden}
+.muet-mapwrap img{width:100%;height:auto}
+.muet-layer{position:absolute;inset:0;line-height:normal;cursor:crosshair}
+.muet-layer.pick{cursor:copy}
+.muet-dot{position:absolute;transform:translate(-50%,-50%);background:var(--card,#1c2530);border:1.5px solid var(--gold,#e0a458);color:var(--ink,#e8edf2);font-size:11px;line-height:1.25;padding:2px 6px;border-radius:4px;white-space:nowrap;cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.muet-dot.ok{border-color:#3fb950;background:rgba(63,185,80,.18);color:#7ee787}
+.muet-dot.ko{border-color:#f85149;background:rgba(248,81,73,.15)}
+.muet-target{position:absolute;width:9px;height:9px;border-radius:50%;background:#3fb950;transform:translate(-50%,-50%);box-shadow:0 0 0 2px rgba(63,185,80,.3)}
+.muet-bar{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.55rem 0}
+#muet-chips{max-width:100%}
+.muet-chip{background:var(--card,#1c2530);border:1px solid var(--edge,#28323e);color:var(--ink,#e8edf2);border-radius:999px;padding:.25rem .7rem;font-size:.84rem;cursor:pointer}
+.muet-chip:hover{border-color:var(--gold,#e0a458)}
+.muet-chip.sel{border-color:var(--gold,#e0a458);background:rgba(224,164,88,.15);outline:2px solid var(--gold,#e0a458)}
+.muet-chip.placed{opacity:.35;pointer-events:none}
+.muet-btn{background:var(--card,#1c2530);border:1px solid var(--edge,#28323e);color:var(--ink,#e8edf2);border-radius:6px;padding:.35rem .9rem;font-size:.86rem;cursor:pointer}
+.muet-btn:hover:not(:disabled){border-color:var(--gold,#e0a458)}
+.muet-btn:disabled{opacity:.45;cursor:default}
+.muet-primary{border-color:var(--gold,#e0a458)}
+.muet-score{font-size:.86rem;color:var(--text-3,#9aa8b6)}
+.muet-legend{margin:.4rem 0 .8rem}
+@media print{.muet-bar,#muet-corrige,.muet-legend{display:none!important}}
+</style>
+<script>
+(function(){
+var C=[["Turquie",38.9,8.8],["Chypre",35.4,20.3],["Syrie",44.7,20.6],["Liban",39.6,23.8],["Israël",38.4,31.5],["Jordanie",41.2,32.9],["Irak",53.9,25.9],["Iran",71.2,28.2],["Égypte",31.2,44.7],["Arabie saoudite",56.3,53.2],["Koweït",60.7,37.1],["Yémen",60.7,77.9],["mer Méditerranée",23.7,25.0],["mer Rouge",44.7,54.4],["golfe Persique",67.5,42.6],["canal de Suez",31.9,33.7]];
+var layer=document.getElementById("muet-layer"),chips=document.getElementById("muet-chips"),
+    check=document.getElementById("muet-check"),reset=document.getElementById("muet-reset"),
+    score=document.getElementById("muet-score"),corrige=document.getElementById("muet-corrige");
+var sel=null,placed={},TOL=4.0;
+C.forEach(function(c,i){
+  var b=document.createElement("button");b.type="button";b.className="muet-chip";b.textContent=c[0];b.dataset.i=i;
+  b.setAttribute("aria-pressed","false");
+  b.addEventListener("click",function(){
+    if(b.classList.contains("placed"))return;
+    if(sel===b){sel=null;b.classList.remove("sel");b.setAttribute("aria-pressed","false");layer.classList.remove("pick");return;}
+    if(sel){sel.classList.remove("sel");sel.setAttribute("aria-pressed","false");}
+    sel=b;b.classList.add("sel");b.setAttribute("aria-pressed","true");layer.classList.add("pick");});
+  chips.appendChild(b);});
+layer.addEventListener("click",function(e){
+  if(!sel||e.target.classList.contains("muet-dot"))return;
+  var r=layer.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+  var i=+sel.dataset.i,chip=sel;
+  var d=document.createElement("button");d.type="button";d.className="muet-dot";d.textContent=C[i][0];
+  d.style.left=x+"%";d.style.top=y+"%";d.title="Cliquer pour retirer";
+  d.addEventListener("click",function(ev){ev.stopPropagation();delete placed[i];chip.classList.remove("placed");d.remove();upd();});
+  layer.appendChild(d);placed[i]={el:d,x:x,y:y};
+  chip.classList.remove("sel");chip.classList.add("placed");chip.setAttribute("aria-pressed","false");
+  sel=null;layer.classList.remove("pick");upd();});
+function upd(){var n=Object.keys(placed).length;check.disabled=n<C.length;check.textContent="Vérifier ("+n+"/"+C.length+")";}
+check.addEventListener("click",function(){
+  var ok=0;
+  Object.keys(placed).forEach(function(k){
+    var p=placed[k],t=C[k],dx=Math.min(Math.abs(p.x-t[1]),100-Math.abs(p.x-t[1])),dy=Math.abs(p.y-t[2]);
+    var good=Math.sqrt(dx*dx+dy*dy)<=TOL;
+    p.el.classList.remove("ok","ko");p.el.classList.add(good?"ok":"ko");
+    if(good){ok++;}else{
+      var g=layer.querySelector('.muet-target[data-i="'+k+'"]');
+      if(!g){g=document.createElement("span");g.className="muet-target";g.dataset.i=k;g.style.left=t[1]+"%";g.style.top=t[2]+"%";layer.appendChild(g);}}});
+  score.textContent=ok+" / "+C.length+" bons placements"+(ok===C.length?" — bravo !":"");});
+reset.addEventListener("click",function(){
+  Object.keys(placed).forEach(function(k){placed[k].el.remove();});
+  placed={};
+  Array.prototype.forEach.call(chips.children,function(b){b.classList.remove("placed","sel");});
+  Array.prototype.forEach.call(layer.querySelectorAll(".muet-target"),function(t){t.remove();});
+  sel=null;layer.classList.remove("pick");score.textContent="";upd();});
+corrige.textContent="16 éléments : "+C.map(function(c){return c[0];}).join(" · ")+". Repère de la carte : longitude 13°E–70°E, latitude 8°N–42°N — donc x% = (longitude−13)/57 et y% = (42−latitude)/34.";
+upd();
+})();
+</script>
+</div>
         <p><b>Piste péda (doc. de travail)&nbsp;:</b> analyser le timelapse satellite de la région sur Google Earth Engine (1984-2026) — expansion urbaine, colonies, terres agricoles, et à Gaza l&rsquo;effacement puis la reconstruction impossible. Le document brut parle sans commentaire&nbsp;; c&rsquo;est à la classe de le lire.</p>
 
         <h4 class="v">Pourquoi les chiffres sont si difficiles à établir ici</h4>

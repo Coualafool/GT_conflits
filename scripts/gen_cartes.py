@@ -348,6 +348,36 @@ def carte_pib(out):
     fig.savefig(out, facecolor=BG, bbox_inches="tight"); plt.close(fig)
 
 
+MUET_EXT = (13.0, 8.0, 70.0, 42.0)
+
+
+def carte_muet_mena(out):
+    """Carte muette MENA — bornes géographiques EXACTES connues (widget interactif).
+
+    Les axes couvrent exactement le rectangle projeté, sans titre ni pied dans
+    l&rsquo;image : la correspondance pixel &harr; (lon, lat) du PNG est donc strictement
+    linéaire (x% = (lon-13)/57, y% = (42-lat)/34). Ne PAS ajouter titre/pied ici —
+    légende et consigne vivent dans la page HTML (figure.ill).
+    La Palestine est au même gris que les autres pays : une carte muette ne doit
+    pas désigner la réponse.
+    """
+    import pyproj
+    ext = MUET_EXT
+    crs = "+proj=eqc +lat_ts=25 +ellps=WGS84 +units=m +no_defs"
+    w = regional(ext=ext).to_crs(crs)
+    pr = pyproj.Transformer.from_crs("EPSG:4326", crs, always_xy=True)
+    x0, y0 = pr.transform(ext[0], ext[1]); x1, y1 = pr.transform(ext[2], ext[3])
+    W = 1600; H = int(round(W * (y1 - y0) / (x1 - x0)))
+    fig = plt.figure(figsize=(W / 100, H / 100), dpi=100)
+    ax = fig.add_axes([0, 0, 1, 1])
+    fig.patch.set_facecolor(BG); ax.set_facecolor(BG)
+    w.plot(ax=ax, color=PANEL, edgecolor=FAINT, linewidth=0.9)
+    lakes = gpd.read_file(os.path.join(CACHE, "ne_110m_lakes.geojson")).clip(box(*ext)).to_crs(crs)
+    lakes.plot(ax=ax, color=WATER, edgecolor=WATER_LINE, linewidth=0.6)
+    ax.set_xlim(x0, x1); ax.set_ylim(y0, y1); ax.axis("off")
+    fig.savefig(out, facecolor=BG); plt.close(fig)
+
+
 def carte_moyen_orient(out):
     ext = (13, 19, 61, 42)
     w = regional(ext=ext)
@@ -510,6 +540,7 @@ CARTE = [
     ("carte-generee-monde-densite.png", carte_densite),
     ("carte-generee-monde-pib.png", carte_pib),
     ("carte-generee-moyen-orient.png", carte_moyen_orient),
+    ("carte-generee-muet-mena.png", carte_muet_mena),
     ("carte-generee-isra-palestine.png", carte_isra_palestine),
     ("carte-generee-bassin-jourdain.png", carte_eau_jourdain),
     ("carte-generee-golfe-ormuz.png", carte_golfe),
