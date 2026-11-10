@@ -30,6 +30,24 @@ await page.waitForTimeout(800);
   log("(a) zero page errors", real.length === 0, real.length ? "errors: " + real.join(" | ") : "none");
 }
 
+// (a2) vue zoomee a etiquettes : aucune etiquette ne depasse du champ (replay du rognage du 10/11 —
+// a pleine amplitude la vue est sans etiquettes ; on zoome d'abord la ou les etiquettes apparaissent)
+{
+  await page.evaluate(() => { const z = document.getElementById("zoomSlider"); z.value = 50; z.dispatchEvent(new Event("input", { bubbles: true })); });
+  await page.waitForTimeout(400);
+  const over = await page.evaluate(() => {
+    const box = document.getElementById("field").getBoundingClientRect();
+    const bad = [...document.querySelectorAll("#field .ev .lab")].filter((l) => {
+      const r = l.getBoundingClientRect();
+      return r.right > box.right + 1 || r.left < box.left - 1;
+    });
+    return { total: document.querySelectorAll("#field .ev .lab").length, n: bad.length, sample: bad.slice(0, 3).map((l) => l.textContent.slice(0, 30)) };
+  });
+  log("(a2) labeled view: no label overflows viewport", over.total > 0 && over.n === 0, "labels=" + over.total + " overflows=" + over.n + " " + JSON.stringify(over.sample));
+  await page.keyboard.press("0");
+  await page.waitForTimeout(300);
+}
+
 // (b) help card visible on load, closes on first wheel, reopens with ?
 {
   const vis0 = await page.locator("#help").isVisible();

@@ -50,6 +50,7 @@ main{flex:1;position:relative;overflow:hidden}
 .ev .lab{font-size:12.5px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:3px 10px;cursor:pointer;max-width:260px;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--sh1);transition:border-color var(--tr),box-shadow var(--tr)}
 .ev .lab b{color:var(--muted);font-weight:600}
 .ev:hover .lab{border-color:var(--ink);box-shadow:0 2px 8px rgba(23,24,26,.12)}
+.ev.flip{flex-direction:row-reverse}
 .ev.t1 .lab{font-weight:600}
 #axis{position:absolute;bottom:28px;left:0;right:0;height:24px;border-top:1px solid var(--border)}
 .tick{position:absolute;top:0;border-left:1px solid #c5c1b8;height:8px}
@@ -297,11 +298,14 @@ function render(){
     const x=xOf(ev[0]);
     let lab=showLabels && (ev[1]<=2 || ppy>=40);
     let wLab=lab?Math.min(ev[2].length*7.1+46,260):26;
-    let li=0; while(li<lanes.length && x<lanes[li])li++;
-    if(lab && li*34+34>H-112){lab=false;wLab=26;li=0;while(li<lanes.length && x<lanes[li])li++;} /* plus de couloir pour l'étiquette : garder le point nu */
-    lanes[li]=x+wLab+12;
+    let flip=lab && x+wLab+24>W; /* prés du bord droit : l'étiquette passe à gauche du point au lieu d'être rognée */
+    let li=0;
+    if(flip){const st=x-wLab-6;while(li<lanes.length && st<lanes[li])li++;}
+    else{while(li<lanes.length && x<lanes[li])li++;}
+    if(lab && li*34+34>H-112){lab=false;flip=false;wLab=26;li=0;while(li<lanes.length && x<lanes[li])li++;} /* plus de couloir pour l'étiquette : garder le point nu */
+    lanes[li]=flip?x+26:x+wLab+12;
     const top=li*34; if(top+34>H-112)continue; /* au-delà de la hauteur du champ : on laisse l'interaction le révéler en zoomant */
-    placed.push({i,ev,x,li,lab});
+    placed.push({i,ev,x,li,lab,flip,wLab});
   }
   /* vues peu denses (≤2 couloirs) : serpentin alterné — une seule ligne collée en haut gaspille la hauteur */
   if(lanes.length<=2 && placed.length>=3) placed.forEach((p,idx)=>{p.li=idx%2;});
@@ -309,13 +313,15 @@ function render(){
   const laneN=Math.max(lanes.length,1);
   const rowStep=Math.min(96,Math.max(34,Math.floor((H-120)/laneN)));
   const rows=[];
-  for(const {i,ev,x,li,lab} of placed){
+  for(const {i,ev,x,li,lab,flip,wLab} of placed){
     const top=4+li*rowStep;
     const col=eraOf(ev[0]).c, titleAttr=escAttr(fmtYear(ev[0])+" — "+ev[2]+" (cliquer pour le détail)");
     const dot=lab?'<i style="background:'+col+'" title="'+titleAttr+'"></i>'
                  :'<span class="dotHit" title="'+titleAttr+'"><i style="background:'+col+'"></i></span>';
-    rows.push('<div class="ev t'+ev[1]+'" data-i="'+i+'" style="left:'+x+'px;top:'+top+'px">'+dot
-      +(lab?'<span class="lab">'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>');
+    let left=x, labStyle='';
+    if(lab && flip){const cw=Math.max(60,Math.min(wLab,x-12)); left=x-cw-6; labStyle=' style="width:'+cw+'px"';} /* puce reste pile sur l'année ; puce = largeur réelle => alignement exact */
+    rows.push('<div class="ev t'+ev[1]+(lab && flip?' flip':'')+'" data-i="'+i+'" style="left:'+left+'px;top:'+top+'px">'+dot
+      +(lab?'<span class="lab"'+labStyle+'>'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>');
   }
   field.innerHTML=rows.join("");
   /* axe : plus PETIT pas d'au moins ~85px (table croissante — l'ordre decroissant ne rendait qu'un graduage seculaire) */
