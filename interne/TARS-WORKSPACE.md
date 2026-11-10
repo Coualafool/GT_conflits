@@ -39,6 +39,18 @@ ssh khadi@192.168.129.177 "cd D:\GT_conflits; & 'C:\Users\khadi\AppData\Local\he
 ssh khadi@192.168.129.177 "powershell -ExecutionPolicy Bypass -File D:\GT_conflits\scripts\tars_run_verifs.ps1"
 ```
 
+**Git transport both ways.** Pushing from TARS to GitHub over HTTPS fails inside a
+non-interactive ssh session (Git Credential Manager cannot prompt:
+`could not read Username for 'https://github.com'`). When TARS has local commits to
+hand off (artifacts, logs), pull them from the Linux side over git-over-ssh instead —
+this is still pure git transport:
+
+```bash
+git fetch win:D:/GT_conflits main && git merge --ff-only FETCH_HEAD && git push
+```
+
+(use the `win` host alias; scp of any kind remains forbidden).
+
 `tars_run_verifs.ps1` starts `scripts/tars_serve.mjs` **in the same session** (Windows
 sshd kills detached children when the session closes, so a pre-started server dies),
 runs every harness, stops the server. Screenshots land in `D:\GT_conflits\artifacts\`;
@@ -50,6 +62,7 @@ pull them back with scp for vision QC.
 |---|---|---|
 | `scripts/verif_poc_A.mjs` | `interne/poc-timeline/poc-A-niveaux.html` (PoC frise) | 13 |
 | `scripts/verif_navigateur.mjs` | `chapitres/chapitre-2-espace.html` (kit ch2) | 12 |
+| `scripts/verif_variantes.mjs` | les 3 variantes de frise (`variante-A/B/C…html`) | 18 |
 | `scripts/tars_run_verifs.ps1` | runs server + all harnesses, one shot | — |
 
 Both are self-contained: playwright resolves only from this repo's `node_modules`,
