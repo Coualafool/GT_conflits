@@ -1,4 +1,4 @@
-# tars_setup_runtime.ps1 — one-time (idempotent) runtime setup INSIDE the repo folder.
+# tars_setup_runtime.ps1 -- one-time (idempotent) runtime setup INSIDE the repo folder.
 # Everything lands in <repo>\.runtime (portable node + playwright browser cache) and
 # <repo>\node_modules (playwright). No folders outside the repo, nothing on C:.
 # Usage (PowerShell, from the repo root):  powershell -ExecutionPolicy Bypass -File scripts\tars_setup_runtime.ps1
@@ -44,4 +44,4 @@ if (-not (Test-Path (Join-Path $ROOT "node_modules\playwright\package.json"))) {
   try { & (Join-Path $RT "node\npm.cmd") install --no-audit --no-fund }
   finally { Pop-Location }
 }
-Write-Host "[setup] OK — run: $NODE scripts\tars_serve.mjs   puis   $NODE scripts\verif_poc_A.mjs"
+Write-Host "[setup] OK -- run: $NODE scripts\tars_serve.mjs   puis   $NODE scripts\verif_poc_A.mjs"
