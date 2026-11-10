@@ -26,6 +26,7 @@ const domEvents = () => page.evaluate(() => EV.filter((e) => e[0] >= d0 - 0.25 &
 /* ----------------variante A : une ligne par ère---------------- */
 await page.goto(BASE + "/variante-A-lignes.html", { waitUntil: "load" });
 await page.waitForTimeout(700);
+let labelsTout = 0;
 {
   const n = await page.evaluate(() => document.querySelectorAll(".ev").length);
   log("(A0) diag initial", true, await page.evaluate(() => {
@@ -33,7 +34,8 @@ await page.waitForTimeout(700);
     try { render(); stack = "render ok"; } catch (e) { stack = String(e && e.stack || e).slice(0, 400); }
     return JSON.stringify({ rows: document.querySelectorAll("#rows .row").length, evs: document.querySelectorAll(".ev").length, stack });
   }));
-  log("(A1) 93 points en vue Tout", n === 93, "points: " + n);
+  labelsTout = await page.evaluate(() => document.querySelectorAll(".ev .lab").length);
+  log("(A1) 93 points en vue Tout", n === 93, "points: " + n + " — étiquettes Tout: " + labelsTout);
   await shot("varA-tout");
 }
 await page.mouse.move(700, 400);
@@ -52,7 +54,14 @@ for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, -240); await page.waitFo
     return { overlaps: v, count: labs.length };
   });
   log("(A3) zéro chevauchement d'étiquettes en zoom", ov.overlaps === 0, JSON.stringify(ov));
-  log("(A4) le zoom fait apparaître des étiquettes", ov.count > 20, "étiquettes: " + ov.count);
+  log("(A4) le zoom fait APARAÎTRE des étiquettes", ov.count >= labelsTout + 5, `Tout=${labelsTout} → zoom=${ov.count}`);
+  for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, -240); await page.waitForTimeout(120); }
+  const deep = await page.evaluate(() => ({
+    dots: document.querySelectorAll(".ev").length, exp: EV.filter((e) => e[0] >= d0 - 0.25 && e[0] <= d1 + 0.25).length,
+    labels: document.querySelectorAll(".ev .lab").length,
+  }));
+  log("(A7) zoom profond — toujours zéro point perdu + plus d'étiquettes", deep.dots === deep.exp && deep.labels > ov.count, JSON.stringify(deep));
+  await shot("varA-zoom-profond");
 }
 await page.click('button[data-a="1918"]'); await page.waitForTimeout(350);
 {

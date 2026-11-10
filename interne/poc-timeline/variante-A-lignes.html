@@ -148,7 +148,7 @@ function labelWidth(t){
 function render(){
   const P=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--padl"));
   const span=d1-d0, ppy=(W-P)/span;
-  const showLabels=ppy>=9;
+  const showLabels=ppy>=14; /* en vue « Tout », trop dense : juste les points ; le zoom révèle les étiquettes */
   const rowEls=[...rowsEl.children];
   rowEls.forEach(r=>r.querySelectorAll(".ev").forEach(n=>n.remove()));
   /* grille + axe : pas d'au moins ~90px */
