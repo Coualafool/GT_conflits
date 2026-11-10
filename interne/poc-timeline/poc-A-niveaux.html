@@ -312,7 +312,7 @@ function render(){
   }
   for(const [i,ev] of vis){
     const x=xOf(ev[0]);
-    let lab=showLabels && (ev[1]<=2 || ppy>=40);
+    let lab=showLabels && (ev[1]<=2 || ppy>=40) && x>=2 && x<=W-8; /* puce partiellement hors-champ : étiquette impossible à caser — point nu cliquable seulement */
     let wLab=lab?Math.max(60,wReal.get(ev[2])||26):26;
     let flip=lab && x+wLab+18>W; /* prés du bord droit : l'étiquette passe à gauche du point au lieu d'être rognée */
     let li=0;
