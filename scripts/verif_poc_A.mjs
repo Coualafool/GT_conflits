@@ -1,17 +1,17 @@
 // verif_poc_A.mjs — vérification du PoC frise "Fraction A" (interne/poc-timeline)
-// Usage (on TARS): serve the repo root (python -m http.server 8899), then:
-//   node C:\gt_check\scripts\verif_poc_A.mjs
+// Usage: repo root served on :8899 (node scripts/tars_serve.mjs), then from the repo root:
+//   node scripts/verif_poc_A.mjs
+// Self-contained: playwright must live in this repo's node_modules (scripts/tars_setup_runtime.ps1).
 // Exits 0 if every check passes; prints a PASS/FAIL RESULTS block to paste back.
 import { createRequire } from "module";
-let chromium = null;
-for (const base of [
-  "C:/Users/khadi/Documents/Messenger/Crawler/v1/package.json",
-  "D:/Messenger/games/TowerDefense/v0_2/package.json",
-]) {
-  try { chromium = createRequire(base)("playwright").chromium; break; } catch {}
-}
-if (!chromium) chromium = createRequire(import.meta.url)("playwright").chromium;
+import { mkdirSync } from "fs";
+import { fileURLToPath } from "url";
+let chromium;
+try { chromium = createRequire(import.meta.url)("playwright").chromium; }
+catch { console.error("playwright absent du node_modules du repo — lancer scripts/tars_setup_runtime.ps1 d'abord"); process.exit(2); }
 
+const ART = fileURLToPath(new URL("../artifacts/", import.meta.url));
+mkdirSync(ART, { recursive: true });
 const URL = process.env.POC_URL || "http://localhost:8899/interne/poc-timeline/poc-A-niveaux.html";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
@@ -129,7 +129,7 @@ await page.waitForTimeout(800);
   const open2 = await page.locator("#panel").isVisible();
   log("(h) panel open/close", open1 && !open2 && title.length > 4 && /chapitre/.test(meta) && /chapitre-\d+-espace\.html#s\d/.test(href),
       `open=${open1} closed=${!open2} title='${title.slice(0, 40)}' href=${href}`);
-  await page.screenshot({ path: "C:/gt_check/poc-open.png" });
+  await page.screenshot({ path: ART + "poc-open.png" });
 }
 
 // (i) keyboard: 0 = full view, arrows pan (tested from a zoomed state — full view legitimately can't pan)
@@ -162,9 +162,9 @@ await page.waitForTimeout(800);
   await page.click('button[data-span="0"]');
   await page.click("#btnHelp");
   await page.waitForTimeout(300);
-  await page.screenshot({ path: "C:/gt_check/poc-desktop.png" });
+  await page.screenshot({ path: ART + "poc-desktop.png" });
   await page.click("#help .x");
-  log("(k) desktop screenshot", true, "C:/gt_check/poc-desktop.png");
+  log("(k) desktop screenshot", true, ART + "poc-desktop.png");
 }
 
 // (l) mobile 390px: no horizontal overflow; panel fits viewport when opened
@@ -179,7 +179,7 @@ await page.waitForTimeout(800);
     const r = el.getBoundingClientRect();
     return r.right <= window.innerWidth + 1 && r.left >= -1;
   });
-  await page.screenshot({ path: "C:/gt_check/poc-mobile.png" });
+  await page.screenshot({ path: ART + "poc-mobile.png" });
   log("(l) mobile fits", overflow <= 0 && (!hasEv || fits), `overflow=${overflow}px panelFits=${fits} evs=${hasEv}`);
 }
 

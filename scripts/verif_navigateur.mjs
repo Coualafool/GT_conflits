@@ -1,20 +1,19 @@
-// recheck.mjs — GT_conflits chapter-2 verification (glossaire fix ad9bee3 + widgets)
-// Usage (on TARS): git clone/pull the repo, serve it, then:
-//   cd D:\Messenger\games\TowerDefense\v0_2   (any dir whose node_modules has playwright)
-//   python -m http.server 8899   (from repo root, separate window)
-//   node C:\gt_check\scripts\verif_navigateur.mjs
+// verif_navigateur.mjs — GT_conflits chapter-2 verification (glossaire fix ad9bee3 + widgets)
+// Usage: repo root served on :8899 (node scripts/tars_serve.mjs), then from the repo root:
+//   node scripts/verif_navigateur.mjs
+// Self-contained: playwright must live in this repo's node_modules (scripts/tars_setup_runtime.ps1).
 // Exits 0 if every check passes; prints a PASS/FAIL RESULTS block to paste back.
 import { createRequire } from "module";
-let chromium = null;
-for (const base of [
-  "C:/Users/khadi/Documents/Messenger/Crawler/v1/package.json",
-  "D:/Messenger/games/TowerDefense/v0_2/package.json",
-]) {
-  try { chromium = createRequire(base)("playwright").chromium; break; } catch {}
-}
-if (!chromium) chromium = createRequire(import.meta.url)("playwright").chromium;
+import { mkdirSync } from "fs";
+import { fileURLToPath } from "url";
+let chromium;
+try { chromium = createRequire(import.meta.url)("playwright").chromium; }
+catch { console.error("playwright absent du node_modules du repo — lancer scripts/tars_setup_runtime.ps1 d'abord"); process.exit(2); }
 
-const URL = "http://localhost:8899/chapitres/chapitre-2-espace.html";
+const ART = fileURLToPath(new URL("../artifacts/", import.meta.url));
+mkdirSync(ART, { recursive: true });
+
+const URL = process.env.KIT_URL || "http://localhost:8899/chapitres/chapitre-2-espace.html";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
 
@@ -84,12 +83,12 @@ await page.waitForTimeout(2500);
   const visR0 = await R.isVisible();
   const L0 = await page.locator("#tl-left").isVisible();
   const before = await page.locator("#tl-track").evaluate((el) => el.scrollLeft);
-  await page.locator("#tl-s1").screenshot({ path: "C:/gt_check/tl-1.png" });
+  await page.locator("#tl-s1").screenshot({ path: ART + "tl-1.png" });
   await R.click();
   await page.waitForTimeout(900);
   const after = await page.locator("#tl-track").evaluate((el) => el.scrollLeft);
   const visL1 = await page.locator("#tl-left").isVisible();
-  await page.locator("#tl-s1").screenshot({ path: "C:/gt_check/tl-2.png" });
+  await page.locator("#tl-s1").screenshot({ path: ART + "tl-2.png" });
   log("(d4) scroll arrows", visR0 && !L0 && after > before && visL1,
       "right0=" + visR0 + " left0=" + L0 + " scrollLeft " + before + "->" + after + " left1=" + visL1);
   await page.locator("#tl-track").evaluate((el) => el.scrollTo(0, 0));
@@ -98,9 +97,9 @@ await page.waitForTimeout(2500);
 
 // (e) screenshots
 {
-  await page.screenshot({ path: "C:/gt_check/fullpage2.png", fullPage: true });
-  await page.locator("#tl-s1").screenshot({ path: "C:/gt_check/tl-s1.png" });
-  log("(e) screenshots", true, "C:/gt_check/fullpage2.png + C:/gt_check/tl-s1.png");
+  await page.screenshot({ path: ART + "fullpage2.png", fullPage: true });
+  await page.locator("#tl-s1").screenshot({ path: ART + "tl-s1.png" });
+  log("(e) screenshots", true, ART + "fullpage2.png + tl-s1.png");
 }
 
 log("(z) http >= 400 responses (favicon expected)", httpErrors.every((e) => /favicon/i.test(e)) && httpErrors.length <= 2, JSON.stringify(httpErrors));

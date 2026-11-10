@@ -1,1 +1,9 @@
 dist/
+.verif-tmp/
+__pycache__/
+# Runtime + verification output live INSIDE the repo folder (single TARS workspace,
+# nothing outside it, nothing on C:) — see interne/TARS-WORKSPACE.md
+node_modules/
+package-lock.json
+.runtime/
+artifacts/
