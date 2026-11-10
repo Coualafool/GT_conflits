@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frise — Variante E : bascule des récits</title>
+<style>
+:root{
+  --bg:#fafaf9; --card:#ffffff; --ink:#1c1f24; --muted:#5b6068;
+  --border:#e6e4de; --border-strong:#cfccc3;
+  --accent:#9a511c;
+  --pc:#5b6068; --pcLight:rgba(91,96,104,.08);
+  --sh1:0 1px 2px rgba(23,24,26,.06);
+  --sh2:0 2px 6px rgba(23,24,26,.06),0 14px 34px rgba(23,24,26,.12);
+  --tr:150ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+header{padding:13px 20px 11px;border-bottom:1px solid var(--border);background:var(--card)}
+header h1{margin:0 0 3px;font-size:17.5px;font-weight:650;letter-spacing:-.01em}
+header .sub{color:var(--muted);font-size:13px}
+header .badgeE{display:inline-block;background:#355e52;color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;margin-right:6px;vertical-align:1px}
+/* sélecteur de récit */
+#segbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--card)}
+#seg{display:inline-flex;border:1px solid var(--border-strong);border-radius:11px;overflow:hidden}
+#seg button{border:none;background:var(--card);padding:7px 15px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--muted);border-right:1px solid var(--border)}
+#seg button:last-child{border-right:none}
+#seg button[aria-pressed=true]{background:var(--pc);color:#fff}
+#segbar .hint{font-size:12.5px;color:var(--muted)}
+/* thèse du récit */
+#thesis{padding:12px 20px;border-bottom:1px solid var(--border);background:var(--pcLight);transition:background var(--tr)}
+#thesis .th{font-size:14px;max-width:100ch}
+#thesis .om{font-size:12.5px;color:var(--muted);margin-top:5px;max-width:100ch}
+#thesis .om b{color:var(--ink)}
+/* navigateur mince */
+#strip{position:relative;height:64px;border-bottom:1px solid var(--border);background:var(--card);overflow:hidden;flex:none}
+#strip .eband{position:absolute;top:6px;height:15px;border-radius:5px;overflow:hidden}
+#strip .eband span{position:absolute;left:6px;top:50%;transform:translateY(-50%);color:#fff;font-size:9px;font-weight:650;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.35)}
+#strip i{position:absolute;top:26px;width:7px;height:7px;border-radius:50%;transform:translateX(-50%);cursor:pointer;box-shadow:0 0 0 1px var(--card)}
+#strip i.c2{width:9px;height:9px}
+#strip .yr{position:absolute;bottom:2px;font-size:10px;color:var(--muted);transform:translateX(-50%)}
+/* liste */
+#list{flex:1;overflow:auto;padding:6px 20px 30px}
+.item{display:flex;gap:14px;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer}
+.item:hover{background:var(--pcLight)}
+.item .yr{flex:none;width:86px;font-weight:650;font-size:14px;color:var(--pc)}
+.item .bd{flex:1;min-width:0}
+.item .ti{font-size:15px;font-weight:550}
+.item .de{font-size:13px;color:var(--muted);margin-top:2px}
+.item .lvl{flex:none;align-self:flex-start;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--pcLight);color:var(--pc)}
+/* mode comparaison : les trois voix par ligne */
+.item.cmp{flex-direction:column;gap:7px}
+.item.cmp .yr{width:auto;font-size:13.5px;color:var(--muted)}
+.voices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.voice{border:1px solid var(--border);border-radius:10px;padding:7px 10px;font-size:12.5px}
+.voice .vn{font-size:10px;font-weight:700;display:flex;gap:5px;align-items:center;margin-bottom:3px}
+.voice .vn i{width:8px;height:8px;border-radius:50%}
+.voice.absent{border-style:dashed;opacity:.55;font-style:italic;color:var(--muted)}
+.item .divbadge{font-size:10.5px;font-weight:700;color:#9a511c;background:rgba(154,81,28,.09);border-radius:999px;padding:1px 9px;align-self:flex-start}
+/* panneau */
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);background:var(--card);border-left:1px solid var(--border);box-shadow:var(--sh2);transform:translateX(102%);transition:transform var(--tr);z-index:20;display:flex;flex-direction:column}
+#panel.open{transform:none}
+#panel .phead{padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+#panel .phead .yr{font-size:13px;color:var(--muted)}
+#panel .phead h3{margin:2px 0 0;font-size:16.5px}
+#panel .pbody{flex:1;overflow:auto;padding:14px 20px}
+#panel .desc{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+.vrow{border:1px solid var(--border);border-radius:12px;padding:10px 13px;margin-bottom:9px}
+.vrow .vh{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.vrow .vh i{width:9px;height:9px;border-radius:50%}
+.vrow .vh .lvl{margin-left:auto;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 8px}
+.vrow .vt{font-size:14px;margin-top:4px}
+.vrow.absent{opacity:.55;border-style:dashed}
+.vrow.absent .vt{font-style:italic;color:var(--muted)}
+#panel .pfoot{padding:12px 20px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted)}
+#panel .pclose{position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+@media (max-width:760px){.voices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="badgeE">Variante E</span>Bascule — raconte-moi la même histoire</h1>
+  <p class="sub">La même frise, vue depuis un seul récit à la fois — ou les trois en parallèle. Changer de récit change la sélection, les titres et la periodisation, jamais les faits.</p>
+</header>
+<div id="segbar">
+  <div id="seg" role="group" aria-label="Choix du récit">
+    <button data-k="pal" aria-pressed="false">Palestinien</button>
+    <button data-k="isr" aria-pressed="false">Israelien</button>
+    <button data-k="occ" aria-pressed="false">Occidental</button>
+    <button data-k="cmp" aria-pressed="true">Comparaison</button>
+  </div>
+  <span class="hint" id="hint"></span>
+</div>
+<div id="thesis"><div class="th" id="thT"></div><div class="om" id="thO"></div></div>
+<div id="strip" aria-hidden="true"></div>
+<div id="list" tabindex="0" aria-label="Chronologie du récit sélectionné"></div>
+<div id="panel" role="dialog" aria-label="Comparaison des récits">
+  <div class="phead"><div class="yr" id="pYr"></div><h3 id="pT">Le même fait, trois récits</h3><button class="pclose" id="pClose" aria-label="Fermer">×</button></div>
+  <div class="pbody"><p class="desc" id="pDesc"></p><div id="pRows"></div></div>
+  <div class="pfoot" id="pFoot"></div>
+</div>
+<script src="poc-data.js"></script>
+<script src="poc-perspectives.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+let cur="cmp";
+function fmtY(y){const i=Math.floor(y),m=Math.floor((y-i)*12)+1;return i+" "+MONTHS[Math.min(11,m-1)]}
+const ndiv=EV.reduce((s,_,i)=>s+(divergent(i)?1:0),0);
+const LVL={2:["Central","rgba(23,24,26,.08)"],1:["Second plan","rgba(23,24,26,.05)"],0:["Absent","transparent"]};
+
+function applyPerspCSS(){
+  const p=cur==="cmp"?null:PERS[cur];
+  document.documentElement.style.setProperty("--pc",p?p.c:"#5b6068");
+  document.documentElement.style.setProperty("--pcLight",p?p.cLight:"rgba(91,96,104,.08)");
+}
+function voicesHTML(i){
+  return '<div class="voices">'+PERS_KEYS.map(k=>{
+    const p=PERS[k],l=lvOf(i,k);
+    return '<div class="voice'+(l?"":" absent")+'"><div class="vn"><i style="background:'+p.c+'"></i>'+p.short+'</div>'+(l?escAttr(titleOf(i,k)).replace(/&quot;/g,'"'):"hors du récit")+'</div>';
+  }).join("")+'</div>';
+}
+function render(){
+  /* thèse */
+  if(cur==="cmp"){
+    $("#thT").innerHTML="<b>Mode comparaison</b> — les 93 dates du corpus, et les trois récits côte à côte. « Hors du récit » : cette date n'existe pas dans ce récit-là.";
+    $("#thO").innerHTML="<b>"+"("+ndiv+" dates sur 93 sont nommées différemment selon le récit qui la porte.</b>";
+    $("#hint").textContent=ndiv+" dates divergentes sur 93";
+  }else{
+    const p=PERS[cur];
+    $("#thT").innerHTML="<b>"+p.name+".</b> "+p.thesie;
+    $("#thO").innerHTML="<b>Ce que ce récit laisse dans l'ombre :</b> "+p.ombre;
+    $("#hint").textContent=nTold(cur)+" des 93 événements du kit sont racontés";
+  }
+  /* strip */
+  const strip=$("#strip");
+  const X=y=>(y-T_MIN)/(T_MAX-T_MIN)*strip.clientWidth;
+  let h="";
+  if(cur==="cmp"){
+    for(let y=1900;y<=2020;y+=20)h+='<span class="yr" style="left:'+X(y)+'px">'+y+'</span>';
+    h+='<span class="yr" style="left:'+X(2026)+'px;transform:translateX(-100%)">2026</span>';
+    for(let i=0;i<EV.length;i++){
+      const dots=PERS_KEYS.filter(k=>lvOf(i,k)===2);
+      const col=dots.length?PERS[dots[0]].c:"#b0aca4";
+      h+='<i data-i="'+i+'" class="'+(dots.length?"c2":"")+'" style="left:'+X(EV[i][0])+'px;background:'+col+'" title="'+escAttr(fmtY(EV[i][0])+" — "+EV[i][2])+'"></i>';
+    }
+  }else{
+    const p=PERS[cur];
+    for(const e of p.eras){h+='<div class="eband" style="left:'+X(e.a)+'px;width:'+(X(e.b)-X(e.a))+'px;background:'+e.c+'" title="'+escAttr(e.label)+'"><span>'+e.label+'</span></div>';}
+    for(let y=1900;y<=2020;y+=20)h+='<span class="yr" style="left:'+X(y)+'px">'+y+'</span>';
+    for(const o of pEvs(cur)){h+='<i data-i="'+o.i+'" class="'+(o.l===2?"c2":"")+'" style="left:'+X(o.ev[0])+'px;background:'+p.c+'" title="'+escAttr(fmtY(o.ev[0])+" — "+o.t)+'"></i>';}
+  }
+  strip.innerHTML=h;
+  /* liste */
+  const list=$("#list");let out="";
+  if(cur==="cmp"){
+    for(let i=0;i<EV.length;i++){
+      out+='<div class="item cmp" data-i="'+i+'"><span class="yr">'+fmtY(EV[i][0])+'</span><span class="divbadge">'+(divergent(i)?"noms différents":(PERS_KEYS.filter(k=>lvOf(i,k)>0).length===1?"un seul récit":"mêmes mots"))+'</span>'+voicesHTML(i)+'</div>';
+    }
+  }else{
+    for(const o of pEvs(cur)){
+      out+='<div class="item" data-i="'+o.i+'"><span class="yr">'+fmtY(o.ev[0])+'</span><div class="bd"><div class="ti">'+escAttr(o.t).replace(/&quot;/g,'"')+'</div><div class="de">'+escAttr(o.ev[3]).replace(/&quot;/g,'"')+'</div></div><span class="lvl">'+(o.l===2?"central":"second plan")+'</span></div>';
+    }
+  }
+  list.innerHTML=out;
+}
+function openCompare(i){
+  const ev=EV[i];
+  $("#pYr").textContent=fmtY(ev[0]);
+  $("#pDesc").textContent=ev[3];
+  $("#pRows").innerHTML=PERS_KEYS.map(k=>{
+    const p=PERS[k],l=lvOf(i,k);
+    return '<div class="vrow'+(l?"":" absent")+'"><div class="vh"><i style="background:'+p.c+'"></i>'+p.name+
+      '<span class="lvl" style="background:'+LVL[l][1]+'">'+LVL[l][0]+'</span></div>'+
+      '<div class="vt">'+escAttr(titleOf(i,k)).replace(/&quot;/g,'"')+'</div></div>';
+  }).join("");
+  const shown=PERS_KEYS.filter(k=>lvOf(i,k)>0);
+  $("#pFoot").textContent=divergent(i)?"Même date, des noms différents — c'est là que le conflit se voit.":
+    (shown.length===1?"Un seul récit porte cette date.":"Les trois récits nomment cette date pareillement.");
+  $("#panel").classList.add("open");
+}
+$("#seg").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  cur=b.dataset.k;
+  document.querySelectorAll("#seg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  applyPerspCSS();render();
+});
+$("#list").addEventListener("click",e=>{const it=e.target.closest(".item");if(it)openCompare(+it.dataset.i);});
+$("#strip").addEventListener("click",e=>{
+  const dot=e.target.closest("i");if(!dot)return;
+  const it=document.querySelector('#list .item[data-i="'+dot.dataset.i+'"]');
+  if(it){it.scrollIntoView({block:"center",behavior:"smooth"});openCompare(+dot.dataset.i);}
+});
+$("#pClose").onclick=()=>$("#panel").classList.remove("open");
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")$("#panel").classList.remove("open");
+  if(e.key==="1"||e.key==="2"||e.key==="3"||e.key==="4"){
+    const ks=["pal","isr","occ","cmp"],k=ks[+e.key-1];
+    document.querySelector('#seg button[data-k="'+k+'"]').click();
+  }
+});
+window.addEventListener("resize",render);
+applyPerspCSS();render();
+</script>
+</body>
+</html>

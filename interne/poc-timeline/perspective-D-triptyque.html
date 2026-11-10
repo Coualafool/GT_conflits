@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frise — Variante D : triptyque des trois récits</title>
+<style>
+:root{
+  --bg:#fafaf9; --card:#ffffff; --ink:#1c1f24; --muted:#5b6068;
+  --border:#e6e4de; --border-strong:#cfccc3;
+  --accent:#9a511c;
+  --sh1:0 1px 2px rgba(23,24,26,.06);
+  --sh2:0 2px 6px rgba(23,24,26,.06),0 14px 34px rgba(23,24,26,.12);
+  --tr:150ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+header{padding:13px 20px 11px;border-bottom:1px solid var(--border);background:var(--card)}
+header h1{margin:0 0 3px;font-size:17.5px;font-weight:650;letter-spacing:-.01em}
+header .sub{color:var(--muted);font-size:13px;max-width:100ch}
+header .badgeD{display:inline-block;background:#4a3560;color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;margin-right:6px;vertical-align:1px}
+/* barre d'état */
+#status{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:8px 20px;border-bottom:1px solid var(--border);background:var(--bg)}
+#status button{border:1px solid var(--border-strong);background:var(--card);border-radius:8px;min-width:30px;height:28px;font-size:13px;cursor:pointer;box-shadow:var(--sh1)}
+#status button:hover{border-color:var(--ink)}
+#status input[type=range]{width:150px;accent-color:var(--accent)}
+#status .sum{margin-left:auto;font-size:12.5px;color:var(--muted)}
+#status .sum b{font-weight:650}
+/* triptyque */
+#wrap{flex:1;min-height:0;display:flex;flex-direction:column}
+#field{flex:1;min-height:0;position:relative;overflow:hidden;touch-action:none}
+#grid{position:absolute;inset:0;pointer-events:none}
+.gline{position:absolute;top:0;bottom:26px;width:1px;background:var(--border)}
+.gline.big{background:var(--border-strong)}
+#axis{position:absolute;left:0;right:0;bottom:0;height:26px;border-top:1px solid var(--border);background:var(--card);font-size:11px;color:var(--muted)}
+#axis span{position:absolute;bottom:6px;transform:translateX(-50%)}
+.lane{position:relative;border-bottom:1px solid var(--border);display:flex;min-height:0}
+.laneHead{width:132px;flex:none;padding:10px 12px;border-right:1px solid var(--border);background:var(--card);z-index:2}
+.laneHead .nm{font-size:13.5px;font-weight:650;display:flex;align-items:center;gap:7px}
+.laneHead .nm i{width:11px;height:11px;border-radius:50%;flex:none}
+.laneHead .ct{font-size:11.5px;color:var(--muted);margin-top:3px}
+.laneBody{flex:1;position:relative;overflow:hidden}
+.eband{position:absolute;top:8px;height:20px;border-radius:6px;overflow:hidden}
+.eband span{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:#fff;font-size:10px;font-weight:650;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.35)}
+.dot{position:absolute;border-radius:50%;transform:translateX(-50%);cursor:pointer;box-shadow:0 0 0 2px var(--card);z-index:3}
+.dot:hover{box-shadow:0 0 0 3px var(--card),0 0 0 5px currentColor}
+.lab{position:absolute;transform:translateX(-50%);font-size:11.5px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1px 8px;cursor:pointer;max-width:280px;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--sh1);z-index:4}
+#guide{position:absolute;top:0;bottom:26px;width:0;border-left:2px dashed var(--accent);opacity:0;pointer-events:none;z-index:5;transition:opacity var(--tr)}
+/* panneau comparé */
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);background:var(--card);border-left:1px solid var(--border);box-shadow:var(--sh2);transform:translateX(102%);transition:transform var(--tr);z-index:20;display:flex;flex-direction:column}
+#panel.open{transform:none}
+#panel .phead{padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+#panel .phead .yr{font-size:13px;color:var(--muted)}
+#panel .phead h3{margin:2px 0 0;font-size:16.5px}
+#panel .pbody{flex:1;overflow:auto;padding:14px 20px}
+#panel .desc{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+.vrow{border:1px solid var(--border);border-radius:12px;padding:10px 13px;margin-bottom:9px}
+.vrow .vh{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.vrow .vh i{width:9px;height:9px;border-radius:50%}
+.vrow .vh .lvl{margin-left:auto;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 8px}
+.vrow .vt{font-size:14px;margin-top:4px}
+.vrow.absent{opacity:.55;border-style:dashed}
+.vrow.absent .vt{font-style:italic;color:var(--muted)}
+#panel .pfoot{padding:12px 20px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted)}
+#panel .pclose{position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+.note{padding:7px 20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:var(--card)}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="badgeD">Variante D</span>Triptyque — trois récits, un même axe</h1>
+  <p class="sub">Mêmes dates, même échelle, trois lignes du temps : chaque récit ne garde pas les mêmes événements et ne nomme pas les mêmes dates pareillement. Survolez un point : le trait vertical révèle ce que les autres récits posent sur la même année.</p>
+</header>
+<div id="status">
+  <button id="zOut" aria-label="Dézoomer">−</button>
+  <input id="zSlider" type="range" min="0" max="1000" value="0" aria-label="Zoom">
+  <button id="zIn" aria-label="Zoomer">+</button>
+  <button id="zAll">Tout</button>
+  <button data-a="1917" data-b="1948">1917–1947</button>
+  <button data-a="1947" data-b="1968">1947–1967</button>
+  <button data-a="1987" data-b="1996">1987–1995</button>
+  <button data-a="2023" data-b="2026.5">Depuis 2023</button>
+  <span class="sum" id="sum"></span>
+</div>
+<div id="wrap">
+  <div id="field" tabindex="0" aria-label="Triptyque des trois récits, zoomable">
+    <div id="grid"></div>
+    <div id="guide"></div>
+    <div id="axis"></div>
+  </div>
+  <div class="note">Exercice d'histoire : les trois colonnes sont des <b>récits</b>, pas trois vérités — chacun sélectionne, nomme, interprète le même corpus de faits (93 événements du kit). Les points fantômes n'existent pas : un événement absent d'un récit y est marqué « hors du récit ».</div>
+</div>
+<div id="panel" role="dialog" aria-label="Comparaison des récits">
+  <div class="phead"><div class="yr" id="pYr"></div><h3 id="pT"></h3><button class="pclose" id="pClose" aria-label="Fermer">×</button></div>
+  <div class="pbody"><p class="desc" id="pDesc"></p><div id="pRows"></div></div>
+  <div class="pfoot" id="pFoot"></div>
+</div>
+<script src="poc-data.js"></script>
+<script src="poc-perspectives.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const field=$("#field"), grid=$("#grid"), axis=$("#axis"), guide=$("#guide");
+let d0=T_MIN,d1=T_MAX,W=0,H=0;
+const LANE_H=()=>Math.max(150,(field.clientHeight-26)/3);
+function measure(){const r=field.getBoundingClientRect();W=r.width-132;H=field.clientHeight-26;}
+function xOf(y){return (y-d0)/(d1-d0)*W;}
+function yOfX(x){return d0+x/W*(d1-d0);}
+function setDomain(a,b){const span=Math.max(2.5,Math.min(T_MAX-T_MIN,b-a));let c=(a+b)/2;a=c-span/2;b=c+span/2;if(a<T_MIN){b+=T_MIN-a;a=T_MIN;}if(b>T_MAX){a-=b-T_MAX;b=T_MAX;}d0=a;d1=b;scheduleRender();}
+function zoomAt(px,f){const y=yOfX(px);setDomain(y-(y-d0)*f,y+(d1-y)*f);}
+function fmtY(y){const i=Math.floor(y),m=Math.floor((y-i)*12)+1;return i+" · "+MONTHS[Math.min(11,m-1)];}
+
+/* construction des lignes (une fois) */
+const lanesEls={};
+PERS_KEYS.forEach(k=>{
+  const p=PERS[k];
+  const lane=document.createElement("div");lane.className="lane";lane.dataset.p=k;
+  lane.innerHTML='<div class="laneHead"><div class="nm"><i style="background:'+p.c+'"></i>'+p.name+'</div><div class="ct">'+nTold(k)+' événements racontés</div></div><div class="laneBody" id="lb-'+k+'"></div>';
+  field.insertBefore(lane,$("#axis"));
+  lanesEls[k]=lane.querySelector(".laneBody");
+});
+$("#sum").innerHTML="<b>"+nTold("pal")+"</b> racontés côté palestinien · <b>"+nTold("isr")+"</b> côté israélien · <b>"+nTold("occ")+"</b> côté occidental";
+
+/* sonde d'étiquette */
+let probe;
+function labelWidth(t){
+  if(!probe){probe=document.createElement("span");probe.className="lab";probe.style.cssText="position:absolute;left:-9999px;top:0;max-width:280px";document.body.appendChild(probe);}
+  probe.textContent=t;return Math.min(probe.offsetWidth,280);
+}
+const free=(arr,x0,x1)=>{for(const iv of arr){if(x0<iv[1]&&iv[0]<x1)return false;}return true;};
+
+let raf;
+function scheduleRender(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;render();});}
+function render(){
+  measure();
+  const lh=LANE_H();
+  document.querySelectorAll(".lane").forEach(l=>{l.style.height=lh+"px";});
+  const span=d1-d0, ppy=W/span;
+  const steps=[1,2,5,10,20,50,100];
+  let step=steps.find(s=>s*ppy>=90)||100;
+  let g="",a="";
+  for(let y=Math.ceil(d0/step)*step;y<=d1;y+=step){
+    const x=xOf(y)+132;const big=(y%(step*5)===0);
+    g+='<div class="gline'+(big?" big":"")+'" style="left:'+x+'px"></div>';
+    if(big)a+='<span style="left:'+x+'px">'+y+'</span>';
+  }
+  grid.innerHTML=g;axis.innerHTML=a;
+  PERS_KEYS.forEach(k=>{
+    const body=lanesEls[k], p=PERS[k];
+    body.style.background=p.cLight;
+    let html="";
+    /* bandes d'ère propres au récit */
+    for(const e of p.eras){
+      const x0=Math.max(0,xOf(e.a)),x1=Math.min(W,xOf(e.b));
+      if(x1<=2||x0>=W-2)continue;
+      html+='<div class="eband" style="left:'+x0+'px;width:'+(x1-x0)+'px;background:'+e.c+'" title="'+escAttr(e.label+" · "+Math.round(e.a)+"–"+Math.round(e.b))+'"><span>'+e.label+'</span></div>';
+    }
+    /* points */
+    const evs=pEvs(k);
+    for(const o of evs){
+      const x=xOf(o.ev[0]);
+      if(x<-6||x>W+6)continue;
+      const d=o.l===2?9:6;
+      html+='<div class="dot" data-i="'+o.i+'" data-p="'+k+'" style="left:'+x+'px;top:'+(lh*0.62-d/2)+'px;width:'+d+'px;height:'+d+'px;background:'+p.c+';color:'+p.c+'" title="'+escAttr(fmtY(o.ev[0])+" — "+o.t)+'"></div>';
+    }
+    body.innerHTML=html;
+    /* étiquettes quand la densité le permet — placement par créneaux réels */
+    if(ppy>=14){
+      const rows=[[],[]];let out="";
+      for(const o of evs){
+        const x=xOf(o.ev[0]);if(x<0||x>W)continue;
+        const t=o.t.length>44?o.t.slice(0,43)+"…":o.t;
+        const w=labelWidth(t);
+        for(let r=0;r<2;r++){
+          const x0=x-w/2;
+          if(x0<2||x0+w>W-2)continue;
+          if(!free(rows[r],x0-6,x0+w+6))continue;
+          rows[r].push([x0,x0+w]);
+          out+='<div class="lab" data-i="'+o.i+'" data-p="'+k+'" style="left:'+x+'px;top:'+(lh*0.62-24-(r*24))+'px">'+t+'</div>';
+          break;
+        }
+      }
+      body.insertAdjacentHTML("beforeend",out);
+    }
+  });
+}
+
+/* zoom : molette, slider, boutons, touches */
+field.addEventListener("wheel",e=>{e.preventDefault();zoomAt(e.clientX-field.getBoundingClientRect().left-132,e.deltaY>0?1.18:0.85);},{passive:false});
+function syncSlider(){$("#zSlider").value=Math.round(1000*Math.log((d1-d0)/2.5)/Math.log((T_MAX-T_MIN)/2.5));}
+$("#zSlider").addEventListener("input",e=>{const t=+e.target.value/1000;const span=2.5*Math.pow((T_MAX-T_MIN)/2.5,t);setDomain((d0+d1)/2-span/2,(d0+d1)/2+span/2);});
+$("#zIn").onclick=()=>zoomAt(W/2,0.7);
+$("#zOut").onclick=()=>zoomAt(W/2,1.42);
+$("#zAll").onclick=()=>{d0=T_MIN;d1=T_MAX;scheduleRender();};
+document.querySelectorAll("#status [data-a]").forEach(b=>{b.onclick=()=>setDomain(+b.dataset.a,+b.dataset.b);});
+document.addEventListener("keydown",e=>{
+  if(e.key==="0"){d0=T_MIN;d1=T_MAX;scheduleRender();}
+  if(e.key==="+"||e.key==="=")zoomAt(W/2,0.7);
+  if(e.key==="-")zoomAt(W/2,1.42);
+  if(e.key==="Escape")$("#panel").classList.remove("open");
+});
+
+/* guide + panneau comparé */
+field.addEventListener("mouseover",e=>{
+  const d=e.target.closest(".dot");
+  if(!d){guide.style.opacity=0;return;}
+  const x=xOf(EV[+d.dataset.i][0])+132;
+  guide.style.left=x+"px";guide.style.opacity=1;
+});
+field.addEventListener("click",e=>{
+  const d=e.target.closest(".dot,.lab");
+  if(!d)return;
+  openCompare(+d.dataset.i);
+});
+const LVL={2:["Central","rgba(23,24,26,.08)"],1:["Second plan","rgba(23,24,26,.05)"],0:["Absent","transparent"]};
+function openCompare(i){
+  const ev=EV[i];
+  $("#pYr").textContent=fmtY(ev[0]);
+  $("#pT").textContent="Le même fait, trois récits";
+  $("#pDesc").textContent=ev[3];
+  $("#pRows").innerHTML=PERS_KEYS.map(k=>{
+    const p=PERS[k],l=lvOf(i,k);
+    return '<div class="vrow'+(l?"":" absent")+'"><div class="vh"><i style="background:'+p.c+'"></i>'+p.name+
+      '<span class="lvl" style="background:'+LVL[l][1]+'">'+LVL[l][0]+'</span></div>'+
+      '<div class="vt">'+escAttr(titleOf(i,k)).replace(/&quot;/g,'"')+'</div></div>';
+  }).join("");
+  const shown=PERS_KEYS.filter(k=>lvOf(i,k)>0);
+  $("#pFoot").textContent=divergent(i)?"Même date, des noms différents — c'est là que le conflit se voit.":
+    (shown.length===1?"Un seul récit porte cette date.":"Les trois récits nomment cette date pareillement.");
+  $("#panel").classList.add("open");
+}
+$("#pClose").onclick=()=>$("#panel").classList.remove("open");
+window.addEventListener("resize",scheduleRender);
+render();syncSlider();
+/* le slider suit le zoom molette */
+const _sr=scheduleRender;scheduleRender=function(){_sr();syncSlider();};
+</script>
+</body>
+</html>
