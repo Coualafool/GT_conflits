@@ -28,7 +28,11 @@ await page.goto(BASE + "/variante-A-lignes.html", { waitUntil: "load" });
 await page.waitForTimeout(700);
 {
   const n = await page.evaluate(() => document.querySelectorAll(".ev").length);
-  log("(A0) diag initial", true, await page.evaluate(() => JSON.stringify({ rows: document.querySelectorAll("#rows .row").length, evs: document.querySelectorAll(".ev").length, d: [d0, d1] })));
+  log("(A0) diag initial", true, await page.evaluate(() => {
+    let stack = "n/a";
+    try { render(); stack = "render ok"; } catch (e) { stack = String(e && e.stack || e).slice(0, 400); }
+    return JSON.stringify({ rows: document.querySelectorAll("#rows .row").length, evs: document.querySelectorAll(".ev").length, stack });
+  }));
   log("(A1) 93 points en vue Tout", n === 93, "points: " + n);
   await shot("varA-tout");
 }
@@ -72,15 +76,18 @@ await page.goto(BASE + "/variante-B-grappes.html", { waitUntil: "load" });
 await page.waitForTimeout(700);
 {
   const b = await page.evaluate(() => {
-    const dots = document.querySelectorAll(".dot[data-ev]").length;
-    const grouped = [...document.querySelectorAll("[data-g]")].map((c) => +c.textContent.match(/×(\d+)/)[1]).reduce((s, n) => s + n, 0);
+    const dots = document.querySelectorAll('.dot[data-ev]').length;
+    const grouped = [...document.querySelectorAll("[data-g] .n")].map((c) => +c.textContent.replace("×", "")).reduce((s, n) => s + n, 0);
     return { dots, grouped, groups: document.querySelectorAll("[data-g]").length };
   });
   log("(B1) Tout — points + membres de grappes = 93", b.dots + b.grouped === 93, JSON.stringify(b));
   await shot("varB-tout");
   await page.evaluate(() => {
-    const ch = [...document.querySelectorAll("[data-g]")].sort((a, b) => +b.textContent.match(/×(\d+)/)[1] - +a.textContent.match(/×(\d+)/)[1])[0];
-    ch.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    // choisir une grappe « moyenne » (portée < 20 ans) pour tester l'éclatement
+    const chips = [...document.querySelectorAll("[data-g]")];
+    const pick = chips.sort((a, b) => +a.querySelector(".n").textContent.replace("×", "") - +b.querySelector(".n").textContent.replace("×", ""))
+      .find((c) => { const m = c.textContent.match(/(\d+)–(\d+)/); return m && +m[2] - +m[1] < 20; }) || chips[0];
+    pick.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   await page.waitForTimeout(450);
   const after = await page.evaluate(() => ({ open: document.querySelector("#panel").classList.contains("open"), li: document.querySelectorAll("#panel ul.grp li").length, span: d1 - d0 }));
@@ -99,6 +106,7 @@ await page.waitForTimeout(700);
   await shot("varC-tout");
 }
 {
+  await page.click("#zIn"); await page.click("#zIn"); await page.waitForTimeout(250);
   const wb = await page.locator("#navWin").boundingBox();
   await page.mouse.move(wb.x + wb.width / 2, wb.y + wb.height / 2);
   await page.mouse.down();
