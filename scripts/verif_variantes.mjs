@@ -39,9 +39,11 @@ let labelsTout = 0;
   await shot("varA-tout");
 }
 await page.mouse.move(700, 400);
+let expMid = 1;
 for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, -240); await page.waitForTimeout(120); }
 {
   const [dots, exp] = [await page.evaluate(() => document.querySelectorAll(".ev").length), await domEvents()];
+  expMid = exp;
   log("(A2) zoom avant — aucun point perdu", dots === exp, `points=${dots} attendus=${exp}`);
   await shot("varA-zoom");
   const ov = await page.evaluate(() => {
@@ -60,7 +62,8 @@ for (let i = 0; i < 6; i++) { await page.mouse.wheel(0, -240); await page.waitFo
     dots: document.querySelectorAll(".ev").length, exp: EV.filter((e) => e[0] >= d0 - 0.25 && e[0] <= d1 + 0.25).length,
     labels: document.querySelectorAll(".ev .lab").length,
   }));
-  log("(A7) zoom profond — toujours zéro point perdu + plus d'étiquettes", deep.dots === deep.exp && deep.labels > ov.count, JSON.stringify(deep));
+  const covMid = ov.count / expMid, covDeep = deep.labels / deep.exp;
+  log("(A7) zoom profond — zéro point perdu + couverture d'étiquettes croissante", deep.dots === deep.exp && covDeep > covMid, JSON.stringify(deep) + ` couverture: milieu=${ov.count}/21, profond=${deep.labels}/${deep.exp}`);
   await shot("varA-zoom-profond");
 }
 await page.click('button[data-a="1918"]'); await page.waitForTimeout(350);
