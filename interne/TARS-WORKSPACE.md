@@ -35,15 +35,14 @@ never use `python -m http.server`; `scripts/tars_serve.mjs` replaces it.)
 ## Verification loop (from any machine, here: Otis on Linux)
 
 ```bash
-ssh khadi@192.168.129.177 "cd D:\GT_conflits; git pull --ff-only"
-# start the static server (once per session):
-ssh khadi@192.168.129.177 "cd D:\GT_conflits; Start-Process -WindowStyle Hidden -FilePath .runtime\node\node.exe -ArgumentList 'scripts\tars_serve.mjs'"
-# run a harness (screenshots land in D:\GT_conflits\artifacts\):
-ssh khadi@192.168.129.177 "cd D:\GT_conflits; `$env:PLAYWRIGHT_BROWSERS_PATH='D:\GT_conflits\.runtime\ms-playwright'; .runtime\node\node.exe scripts\verif_poc_A.mjs"
-ssh khadi@192.168.129.177 "cd D:\GT_conflits; `$env:PLAYWRIGHT_BROWSERS_PATH='D:\GT_conflits\.runtime\ms-playwright'; .runtime\node\node.exe scripts\verif_navigateur.mjs"
+ssh khadi@192.168.129.177 "cd D:\GT_conflits; & 'C:\Users\khadi\AppData\Local\hermes\tools\git-2.53.0+3-win32-x64\bin\git.exe' pull --ff-only"
+ssh khadi@192.168.129.177 "powershell -ExecutionPolicy Bypass -File D:\GT_conflits\scripts\tars_run_verifs.ps1"
 ```
 
-Pull screenshots back for vision QC with scp from `D:\GT_conflits\artifacts\`.
+`tars_run_verifs.ps1` starts `scripts/tars_serve.mjs` **in the same session** (Windows
+sshd kills detached children when the session closes, so a pre-started server dies),
+runs every harness, stops the server. Screenshots land in `D:\GT_conflits\artifacts\`;
+pull them back with scp for vision QC.
 
 ## Harness inventory
 
@@ -51,6 +50,7 @@ Pull screenshots back for vision QC with scp from `D:\GT_conflits\artifacts\`.
 |---|---|---|
 | `scripts/verif_poc_A.mjs` | `interne/poc-timeline/poc-A-niveaux.html` (PoC frise) | 13 |
 | `scripts/verif_navigateur.mjs` | `chapitres/chapitre-2-espace.html` (kit ch2) | 12 |
+| `scripts/tars_run_verifs.ps1` | runs server + all harnesses, one shot | — |
 
 Both are self-contained: playwright resolves only from this repo's `node_modules`,
 output only to `artifacts/`. URLs overridable via `POC_URL` / `KIT_URL`.
