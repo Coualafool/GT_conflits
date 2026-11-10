@@ -34,8 +34,7 @@ header .badgeC{display:inline-block;background:#4a5d23;color:#fff;font-size:11px
 #navWin .h.l{left:-7px}#navWin .h.r{right:-7px}
 #navYears{position:absolute;bottom:0;left:0;right:0;height:16px;font-size:10.5px;color:var(--muted)}
 #navYears span{position:absolute;transform:translateX(-50%)}
-#nav .navbar{position:absolute;top:6px;right:8px;display:flex;gap:6px;z-index:3;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:3px;box-shadow:var(--sh1)}
-#nav .navbar button{border:1px solid var(--border-strong);background:var(--card);border-radius:8px;min-width:30px;height:26px;font-size:14px;cursor:pointer;box-shadow:var(--sh1)}
+#nav .navbar{display:none}
 /* barre d'état */
 #status{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--border);background:var(--bg)}
 #status .per{font-weight:650;font-size:14px}
@@ -81,10 +80,10 @@ footer a{color:var(--accent)}
   <div id="navDots"></div>
   <div id="navWin"><div class="h l"></div><div class="h r"></div></div>
   <div id="navYears"></div>
-  <div class="navbar"><button id="zOut" title="Dézoomer" aria-label="Dézoomer">−</button><button id="zIn" title="Zoomer" aria-label="Zoomer">+</button><button id="zAll" title="Tout" aria-label="Tout afficher">⇤⇥</button></div>
 </div>
 <div id="status">
   <span class="per" id="perLabel"></span><span class="cnt" id="cntLabel"></span>
+  <button id="zOut" title="Dézoomer" aria-label="Dézoomer">−</button><button id="zIn" title="Zoomer" aria-label="Zoomer">+</button><button id="zAll" title="Tout afficher" aria-label="Tout afficher">Tout</button>
   <span class="spacer"></span>
   <button data-a="1895" data-b="1918">1895–1917</button>
   <button data-a="1918" data-b="1949">1918–1948</button>

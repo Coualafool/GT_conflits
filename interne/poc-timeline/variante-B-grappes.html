@@ -67,7 +67,7 @@ main{flex:1;position:relative;overflow:hidden}
 #panel .grp li{padding:6px 0;border-top:1px solid var(--border);font-size:13.5px;cursor:pointer}
 #panel .grp li:hover{color:var(--accent)}
 #panel .grp li small{display:block;color:var(--muted);font-size:11.5px}
-#help{position:absolute;left:14px;bottom:36px;max-width:340px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh2);padding:13px 16px;font-size:13px;z-index:6;transition:opacity var(--tr)}
+#help{position:absolute;left:14px;top:14px;max-width:340px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh2);padding:13px 16px;font-size:13px;z-index:6;transition:opacity var(--tr)}
 #help.hidden{opacity:0;pointer-events:none}
 #help h4{margin:0 0 6px;font-size:13.5px}
 #help ul{margin:0;padding-left:18px}
@@ -128,6 +128,13 @@ function setDomain(a,b){
   d0=a;d1=b;scheduleRender();
 }
 function zoomAt(px,f){const y=yOfX(px);setDomain(y-(y-d0)*f,y+(d1-y)*f);}
+/* sonde de largeur pour les pastilles de grappe (largeur réelle, pas d'estimation) */
+let cprobe;
+function chipWidth(n,a,b){
+  if(!cprobe){cprobe=document.createElement("button");cprobe.className="chip";cprobe.style.cssText="position:absolute;left:-9999px;top:0";document.body.appendChild(cprobe);}
+  cprobe.innerHTML='<span class="n">×'+n+'</span>'+Math.round(a)+'–'+Math.round(b)+' <b>détailer</b>';
+  return cprobe.offsetWidth;
+}
 
 function render(){
   measure();
@@ -152,29 +159,31 @@ function render(){
     if(last&&x-last.x1<34){last.items.push(o);last.x1=x;last.b=o.ev[0];}
     else groups.push({x0:x,x1:x,a:o.ev[0],b:o.ev[0],items:[o]});
   }
-  /* 3) placement en couloirs (points et pastilles) — collectés puis recentrés verticalement */
+  /* 3) placement en couloirs (points et pastilles) — largeurs mesurées, grappes centrées sur leur période, couloirs recentrés verticalement */
   const lanes=[]; const items=[]; let grouped=0;
   for(const gr of groups){
     const single=gr.items.length===1;
-    const w=single?(ppy>=12?Math.min(gr.items[0].ev[2].length*7+70,230):26):(34+String(gr.items.length).length*9+82);
-    let li=0;while(li<lanes.length&&gr.x0-4<lanes[li])li++;
+    let w,left;
+    if(single){ w=(ppy>=12?Math.min(gr.items[0].ev[2].length*7+70,230):26); left=gr.x0; }
+    else { w=chipWidth(gr.items.length,gr.a,gr.b); const c=(gr.x0+gr.x1)/2; left=Math.max(4,Math.min(W-w-6,c-w/2)); }
+    let li=0;while(li<lanes.length&&left-4<lanes[li])li++;
     lanes[li]=(li===lanes.length?(lanes[li]=0):lanes[li])+w+14;
-    items.push({li,gr,single,w});
+    items.push({li,gr,single,left});
   }
   const laneH=38, usedH=Math.max(1,lanes.length)*laneH;
   const offsetY=Math.max(8,(H-96-8-usedH)/2+8);
   let html="";
-  for(const {li,gr,single} of items){
+  for(const {li,gr,single,left} of items){
     const top=offsetY+li*laneH; if(top>H-96)continue;
     if(single){
       const ev=gr.items[0].ev, col=eraOf(ev[0]).c;
       const title=String(fmtYear(ev[0])+" — "+ev[2]).replace(/"/g,"&quot;");
-      html+='<div class="item rowflex" style="left:'+gr.x0+'px;top:'+top+'px"><div class="dot t'+ev[1]+'" data-ev="'+gr.items[0].i+'" style="background:'+col+'" title="'+title+'"></div>'
+      html+='<div class="item rowflex" style="left:'+left+'px;top:'+top+'px"><div class="dot t'+ev[1]+'" data-ev="'+gr.items[0].i+'" style="background:'+col+'" title="'+title+'"></div>'
         +(ppy>=12?'<span class="lab" data-ev="'+gr.items[0].i+'">'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>';
     } else {
       grouped+=gr.items.length;
       const preview=gr.items.slice(0,3).map(o=>fmtYear(o.ev[0])+" "+o.ev[2].slice(0,24)).join(" · ");
-      html+='<div class="item" style="left:'+gr.x0+'px;top:'+top+'px"><button class="chip" data-g="'+groups.indexOf(gr)+'" title="'+String(preview+(gr.items.length>3?" · …":"")+" — cliquer pour zoomer").replace(/"/g,"&quot;")+'"><span class="n">×'+gr.items.length+'</span>'+Math.round(gr.a)+'–'+Math.round(gr.b)+' <b>détailer</b></button></div>';
+      html+='<div class="item" style="left:'+left+'px;top:'+top+'px"><button class="chip" data-g="'+groups.indexOf(gr)+'" title="'+String(preview+(gr.items.length>3?" · …":"")+" — cliquer pour zoomer").replace(/"/g,"&quot;")+'"><span class="n">×'+gr.items.length+'</span>'+Math.round(gr.a)+'–'+Math.round(gr.b)+' <b>détailer</b></button></div>';
     }
   }
   field.innerHTML=html;
