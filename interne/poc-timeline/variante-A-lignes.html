@@ -162,7 +162,7 @@ function render(){
   }
   grid.innerHTML=g; axis.innerHTML=a;
   /* points : TOUS les événements du domaine, toujours ; étiquettes avides à 2 niveaux par ligne */
-  const placedByRow=rowTops.map(()=>[[P],[P]]); /* intervals occupés [début,fin] par niveau */
+  const placedByRow=rowTops.map(()=>[[],[]]); /* intervalles occupés [début,fin] par niveau */
   let count=0;
   const frag=[];
   for(const ev of EV){
