@@ -117,7 +117,14 @@ await page.waitForTimeout(800);
 {
   await page.click('button[data-since="2023"]');
   await page.waitForTimeout(300);
-  const ev = page.locator(".ev").first();
+  // premier point ENTIÈREMENT dans le champ : les puces frontières (x<0 ou x>W) ne sont que des affleurements visuels, non cliquables par Playwright
+  const idx = await page.evaluate(() => {
+    const b = document.getElementById("field").getBoundingClientRect();
+    const els = [...document.querySelectorAll(".ev")];
+    return els.findIndex((e) => { const r = e.getBoundingClientRect(); return r.left >= b.left - 0.5 && r.right <= b.right + 0.5; });
+  });
+  if (idx < 0) throw new Error("aucun .ev entièrement dans le champ");
+  const ev = page.locator(".ev").nth(idx);
   await ev.click();
   await page.waitForTimeout(250);
   const open1 = await page.locator("#panel").isVisible();
