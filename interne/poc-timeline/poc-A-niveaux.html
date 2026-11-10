@@ -297,14 +297,16 @@ function render(){
   /* largeur réelle des étiquettes (sonde hors écran) : l'estimation « 7.1px/car » rognait les titres longs au bord droit */
   let wReal=new Map();
   if(showLabels){
-    const probe=document.createElement("span");
-    probe.className="lab"; probe.style.cssText="position:absolute;left:-9999px;top:0;max-width:none;width:auto";
+    const probe=document.createElement("div");
+    probe.className="ev"; probe.style.cssText="position:absolute;left:-9999px;top:0";
+    const plab=document.createElement("span"); plab.className="lab";
+    plab.style.cssText="max-width:none;width:auto"; probe.appendChild(plab);
     field.appendChild(probe);
     for(const [,ev] of vis){
       if(!(ev[1]<=2 || ppy>=40)) continue;
-      probe.textContent=ev[2]+" ";
-      const yb=document.createElement("b"); yb.textContent=fmtYear(ev[0]); probe.appendChild(yb);
-      wReal.set(ev[2],Math.min(probe.offsetWidth,260));
+      plab.textContent=ev[2]+" ";
+      const yb=document.createElement("b"); yb.textContent=fmtYear(ev[0]); plab.appendChild(yb);
+      wReal.set(ev[2],Math.min(plab.offsetWidth,260));
     }
     probe.remove();
   }
