@@ -260,8 +260,8 @@ function render(){
       +(lab?'<span class="lab">'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>');
   }
   field.innerHTML=rows.join("");
-  /* axe : pas « joli » selon la densité */
-  const steps=[100,50,20,10,5,2,1];
+  /* axe : plus PETIT pas d'au moins ~85px (table croissante — l'ordre decroissant ne rendait qu'un graduage seculaire) */
+  const steps=[1,2,5,10,20,50,100];
   let step=steps[steps.length-1];
   for(const s of steps){if(s*ppy>=85){step=s;break;}}
   let ax="";
