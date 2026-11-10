@@ -12,7 +12,7 @@ for (const base of [
 }
 if (!chromium) chromium = createRequire(import.meta.url)("playwright").chromium;
 
-const URL = "http://localhost:8899/interne/poc-timeline/poc-A-niveaux.html";
+const URL = process.env.POC_URL || "http://localhost:8899/interne/poc-timeline/poc-A-niveaux.html";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
 
@@ -132,17 +132,20 @@ await page.waitForTimeout(800);
   await page.screenshot({ path: "C:/gt_check/poc-open.png" });
 }
 
-// (i) keyboard: 0 = full view, arrows pan
+// (i) keyboard: 0 = full view, arrows pan (tested from a zoomed state — full view legitimately can't pan)
 {
   await page.locator("#viz").click({ position: { x: 700, y: 700 } });
-  await page.keyboard.press("0");
+  await page.mouse.move(700, 500);
+  await page.mouse.wheel(0, -1200);
   await page.waitForTimeout(300);
-  const r0 = await page.locator("#zoomReadout").innerText();
   const leftA = await page.locator("#viewRect").evaluate((el) => el.style.left);
   await page.keyboard.press("ArrowRight");
   await page.waitForTimeout(300);
   const leftB = await page.locator("#viewRect").evaluate((el) => el.style.left);
-  log("(i) keyboard 0 + arrows", /11[0-9] ans/.test(r0) && leftA !== leftB, `full='${r0}' viewRect ${leftA}->${leftB}`);
+  await page.keyboard.press("0");
+  await page.waitForTimeout(300);
+  const r0 = await page.locator("#zoomReadout").innerText();
+  log("(i) keyboard arrows + 0", leftA !== leftB && /11[0-9] ans/.test(r0), `viewRect ${leftA}->${leftB} full='${r0}'`);
 }
 
 // (j) double-click zooms in, shift+double-click out

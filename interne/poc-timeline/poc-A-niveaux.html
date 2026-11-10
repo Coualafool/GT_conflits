@@ -22,7 +22,7 @@ header .sub{color:var(--muted);font-size:13.5px}
 .controls button.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .controls .spacer{flex:1}
 .controls label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
-#zoomSlider{width:150px}
+#zoomSlider{width:150px;accent-color:var(--accent)}
 #zoomReadout{min-width:92px;font-size:12.5px;color:var(--muted);text-align:right}
 main{flex:1;position:relative;overflow:hidden}
 #viz{position:absolute;inset:0;cursor:grab;user-select:none;overflow:hidden;touch-action:none}
@@ -36,18 +36,18 @@ main{flex:1;position:relative;overflow:hidden}
 .ev{position:absolute;display:flex;align-items:center;gap:6px;height:var(--lane)}
 .ev i{width:11px;height:11px;border-radius:50%;flex:none;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
 .ev.t1 i{width:14px;height:14px;border-color:var(--gold)}
-.ev.t3 i{width:8px;height:8px;opacity:.75}
+.ev.t3 i{width:8px;height:8px}
 .ev .dotHit{width:26px;height:26px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:-7px;border-radius:50%}
 .ev .lab{font-size:13px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;max-width:260px;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .ev .lab b{color:var(--muted);font-weight:600}
 .ev:hover .lab{border-color:var(--accent)}
 .ev.t1 .lab{font-weight:600}
 #axis{position:absolute;bottom:28px;left:0;right:0;height:24px;border-top:1px solid var(--border)}
-.tick{position:absolute;top:0;border-left:1px solid var(--border);height:8px}
+.tick{position:absolute;top:0;border-left:1px solid #bdb7a9;height:8px}
 .tick.big{border-color:#8a8578;height:14px}
 .tick span{position:absolute;top:14px;left:-30px;width:60px;text-align:center;font-size:12px;color:var(--muted)}
 #minimap{position:absolute;bottom:0;left:0;right:0;height:24px;background:#ece8de;border-top:1px solid var(--border);cursor:crosshair;touch-action:none}
-#minimap i{position:absolute;bottom:3px;width:3px;height:7px;border-radius:2px;opacity:.7}
+#minimap i{position:absolute;bottom:3px;width:3px;height:9px;border-radius:2px;opacity:.85}
 #viewRect{position:absolute;top:0;bottom:0;background:rgba(153,77,26,.16);border-left:2px solid var(--accent);border-right:2px solid var(--accent);pointer-events:none}
 #panel{position:absolute;top:14px;right:14px;width:min(320px,calc(100vw - 24px));max-height:calc(100% - 32px);overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.12);padding:14px 16px;display:none;z-index:5}
 #panel.open{display:block}
@@ -58,13 +58,13 @@ main{flex:1;position:relative;overflow:hidden}
 #panel p{margin:0 0 10px;font-size:14.5px}
 #panel a{color:var(--accent);font-size:13.5px}
 footer{padding:6px 20px;border-top:1px solid var(--border);background:var(--card);font-size:12px;color:var(--muted)}
-#levelBadge{position:absolute;top:64px;left:14px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--muted);pointer-events:none}
+#levelBadge{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12.5px;color:var(--muted)}
 /* boutons de zoom sur le canvas (sans molette) */
 #zoomCtl{position:absolute;right:14px;bottom:62px;display:flex;flex-direction:column;gap:6px;z-index:4}
 #zoomCtl button{width:34px;height:34px;border:1px solid var(--border);background:var(--card);border-radius:9px;font-size:18px;line-height:1;cursor:pointer;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
 #zoomCtl button:hover{border-color:var(--accent);color:var(--accent)}
 /* carte d'aide (rappelable avec ? ou le bouton) */
-#help{position:absolute;left:50%;transform:translateX(-50%);bottom:64px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.14);padding:12px 16px;font-size:13.5px;max-width:min(600px,calc(100vw - 32px));z-index:6}
+#help{position:absolute;left:50%;transform:translateX(-50%);bottom:70px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.14);padding:12px 16px;font-size:13.5px;max-width:min(600px,calc(100vw - 32px));z-index:6}
 #help.hidden{display:none}
 #help .x{position:absolute;top:8px;right:10px;border:0;background:none;font-size:17px;line-height:1;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:6px}
 #help .x:hover{color:var(--ink);background:#f0ece2}
@@ -82,7 +82,7 @@ kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;pad
 </head>
 <body>
 <header>
-  <h1>Fraction A — Frise « lecture par paliers »</h1>
+  <h1>Fraction A — Frise «&nbsp;lecture par paliers&nbsp;»</h1>
   <div class="sub">Chaque événement porte un <b>niveau de détail défini dans les données</b> (majeur / standard / détail). Le zoom révèle les paliers : dézoomé → les ères seules ; zoomé → tous les événements et les mois. Zéro dépendance, fonctionne hors ligne en file://.</div>
   <div class="controls">
     <button data-span="0" class="on">Tout</button>
@@ -92,6 +92,7 @@ kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;pad
     <span class="spacer"></span>
     <label>Zoom <input type="range" id="zoomSlider" min="0" max="100" value="0" aria-label="Niveau de zoom"></label>
     <span id="zoomReadout" aria-live="polite"></span>
+    <span id="levelBadge" aria-live="polite"></span>
     <button id="btnHelp" title="Aide et raccourcis clavier" aria-label="Afficher l’aide et les raccourcis clavier">?</button>
   </div>
 </header>
@@ -102,7 +103,6 @@ kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;pad
     <div id="axis"></div>
     <div id="minimap" aria-hidden="true"><div id="viewRect"></div></div>
   </div>
-  <div id="levelBadge" aria-live="polite"></div>
   <div id="zoomCtl">
     <button id="zIn" title="Zoomer" aria-label="Zoomer">+</button>
     <button id="zOut" title="Dézoomer" aria-label="Dézoomer">−</button>
@@ -225,7 +225,7 @@ function render(){
     if(ev[1]<=maxTier && ev[0]>=d0-0.6 && ev[0]<=d1+0.6) vis.push([i,ev]);
   }
   const showLabels = ppy>=16 || (maxTier===1 && ppy>=5);
-  const lanes=[]; const rows=[];
+  const lanes=[]; const placed=[];
   for(const [i,ev] of vis){
     const x=xOf(ev[0]);
     const lab=showLabels && (ev[1]<=2 || ppy>=40);
@@ -233,10 +233,17 @@ function render(){
     let li=0; while(li<lanes.length && x<lanes[li])li++;
     lanes[li]=x+wLab+12;
     const top=li*34; if(top+34>H-112)continue; /* au-delà de la hauteur du champ : on laisse l'interaction le révéler en zoomant */
+    placed.push({i,ev,x,li,lab});
+  }
+  /* centrage vertical du bloc de couloirs : pas de vide sous les événements peu denses */
+  const offset=Math.max(0,Math.floor((H-112-lanes.length*34)/2));
+  const rows=[];
+  for(const {i,ev,x,li,lab} of placed){
+    const top=li*34+offset;
     const col=eraOf(ev[0]).c, titleAttr=escAttr(fmtYear(ev[0])+" — "+ev[2]+" (cliquer pour le détail)");
     const dot=lab?'<i style="background:'+col+'" title="'+titleAttr+'"></i>'
                  :'<span class="dotHit" title="'+titleAttr+'"><i style="background:'+col+'"></i></span>';
-    rows.push('<div class="ev t'+ev[1]+'" data-i="'+i+'" style="left:'+x+'px;top:'+top+'">'+dot
+    rows.push('<div class="ev t'+ev[1]+'" data-i="'+i+'" style="left:'+x+'px;top:'+top+'px">'+dot
       +(lab?'<span class="lab">'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>');
   }
   field.innerHTML=rows.join("");
