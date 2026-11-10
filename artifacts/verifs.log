@@ -1,0 +1,35 @@
+﻿
+===== verif_poc_A.mjs =====
+
+===== RESULTS =====
+PASS  (a) zero page errors ÔÇö none
+PASS  (b) help lifecycle ÔÇö load=true afterWheel=false afterQuestion=true
+PASS  (c) wheel zoom ÔÇö "73 ans visibles" -> "5 ans visibles" | badge "Vue fine : tous les ├®v├®nements, dates au mois" -> "Vue fine : tous les ├®v├®nements, dates au mois"
+PASS  (d) drag + presets ÔÇö viewRect 694.861px->708.827px tout.on=true actives=1
+PASS  (e) zoom +/ÔêÆ buttons ÔÇö "134 ans visibles" -> "84 ans visibles" -> "134 ans visibles"
+PASS  (f) era click zooms ÔÇö "134 ans visibles" -> "24 ans visibles"
+PASS  (g) minimap click+drag ÔÇö viewRect 0px->1022.66px->302.659px
+PASS  (h) panel open/close ÔÇö open=true closed=true title='oct. 2023 ÔÇö 7 octobre ; d├®but de la guer' href=../chapitres/chapitre-4-espace.html#s6
+PASS  (i) keyboard arrows + 0 ÔÇö viewRect 1375.87px->1381.04px full='134 ans visibles' attendu='134 ans visibles'
+PASS  (j) double-click zoom ÔÇö "134 ans visibles" -> "67 ans visibles"
+PASS  (a2) labeled view: no label overflows viewport ÔÇö labels=11 overflows=0 []
+PASS  (k) desktop screenshot ÔÇö D:\GT_conflits\artifacts\poc-desktop.png
+PASS  (l) mobile fits ÔÇö overflow=0px panelFits=true evs=26
+PASS  (z) no page errors (final) ÔÇö []
+===== END =====
+
+===== verif_navigateur.mjs =====
+
+===== RESULTS =====
+PASS  (a) zero page errors ÔÇö pageErrors=[]
+PASS  (b) .gl highlights >= 15 ÔÇö count=19
+PASS  (c) tooltip shows ÔÇö display=block boldTerms=1 text='G├®opolitique
+Lire un territoire comme un rapport de forces┬á:'
+PASS  (d0) 16 chips ÔÇö count=16
+PASS  (d1) check shows 16 / 16 ÔÇö score='16 / 16 bons placements ÔÇö bravo !'
+PASS  (d2) 16 dots on map ÔÇö dots=16
+PASS  (d3) reset clears ÔÇö dots=0
+PASS  (d4) scroll arrows ÔÇö right0=true left0=false scrollLeft 0->418 left1=true
+PASS  (e) screenshots ÔÇö D:\GT_conflits\artifacts\fullpage2.png + tl-s1.png
+PASS  (z) http >= 400 responses (favicon expected) ÔÇö []
+===== END =====
