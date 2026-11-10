@@ -43,7 +43,7 @@ main{flex:1;position:relative;overflow:hidden}
 .ev:hover i{transform:scale(1.25)}
 .ev.t1 i{width:14px;height:14px;border-color:var(--gold)}
 .ev.t3 i{width:8px;height:8px}
-.ev .lab{position:absolute;left:50%;bottom:calc(50% + 12px);transform:translateX(-50%);font-size:12px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:2px 9px;cursor:pointer;max-width:240px;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--sh1);transition:border-color var(--tr),box-shadow var(--tr)}
+.ev .lab{position:absolute;left:50%;bottom:calc(50% + 12px);transform:translateX(-50%);font-size:12px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:2px 9px;cursor:pointer;max-width:300px;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--sh1);transition:border-color var(--tr),box-shadow var(--tr)}
 .ev .lab b{color:var(--muted);font-weight:600}
 .ev .lab.below{bottom:auto;top:calc(50% + 12px)}
 .ev:hover .lab{border-color:var(--ink);box-shadow:0 2px 8px rgba(23,24,26,.12)}
@@ -141,8 +141,8 @@ function rowIndexOf(y){for(let i=0;i<ERAS.length;i++){if(y>=ERAS[i].a&&y<ERAS[i]
 /* largeur réelle d'étiquette (sonde) */
 let probe;
 function labelWidth(t){
-  if(!probe){probe=document.createElement("span");probe.className="lab";probe.style.cssText="position:absolute;left:-9999px;top:0;max-width:240px";document.body.appendChild(probe);}
-  probe.textContent=t; return Math.min(probe.offsetWidth,240);
+  if(!probe){probe=document.createElement("span");probe.className="lab";probe.style.cssText="position:absolute;left:-9999px;top:0;max-width:300px";document.body.appendChild(probe);}
+  probe.textContent=t; return Math.min(probe.offsetWidth,300);
 }
 
 function render(){

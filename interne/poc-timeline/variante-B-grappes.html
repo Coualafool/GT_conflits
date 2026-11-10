@@ -67,7 +67,7 @@ main{flex:1;position:relative;overflow:hidden}
 #panel .grp li{padding:6px 0;border-top:1px solid var(--border);font-size:13.5px;cursor:pointer}
 #panel .grp li:hover{color:var(--accent)}
 #panel .grp li small{display:block;color:var(--muted);font-size:11.5px}
-#help{position:absolute;left:14px;top:14px;max-width:340px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh2);padding:13px 16px;font-size:13px;z-index:6;transition:opacity var(--tr)}
+#help{position:absolute;left:14px;bottom:36px;max-width:340px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh2);padding:13px 16px;font-size:13px;z-index:6;transition:opacity var(--tr)}
 #help.hidden{opacity:0;pointer-events:none}
 #help h4{margin:0 0 6px;font-size:13.5px}
 #help ul{margin:0;padding-left:18px}
@@ -152,14 +152,20 @@ function render(){
     if(last&&x-last.x1<34){last.items.push(o);last.x1=x;last.b=o.ev[0];}
     else groups.push({x0:x,x1:x,a:o.ev[0],b:o.ev[0],items:[o]});
   }
-  /* 3) placement en couloirs (points et pastilles) */
-  const lanes=[]; let html="", grouped=0;
+  /* 3) placement en couloirs (points et pastilles) — collectés puis recentrés verticalement */
+  const lanes=[]; const items=[]; let grouped=0;
   for(const gr of groups){
     const single=gr.items.length===1;
     const w=single?(ppy>=12?Math.min(gr.items[0].ev[2].length*7+70,230):26):(34+String(gr.items.length).length*9+82);
     let li=0;while(li<lanes.length&&gr.x0-4<lanes[li])li++;
     lanes[li]=(li===lanes.length?(lanes[li]=0):lanes[li])+w+14;
-    const top=8+li*38; if(top>H-96)continue;
+    items.push({li,gr,single,w});
+  }
+  const laneH=38, usedH=Math.max(1,lanes.length)*laneH;
+  const offsetY=Math.max(8,(H-96-8-usedH)/2+8);
+  let html="";
+  for(const {li,gr,single} of items){
+    const top=offsetY+li*laneH; if(top>H-96)continue;
     if(single){
       const ev=gr.items[0].ev, col=eraOf(ev[0]).c;
       const title=String(fmtYear(ev[0])+" — "+ev[2]).replace(/"/g,"&quot;");

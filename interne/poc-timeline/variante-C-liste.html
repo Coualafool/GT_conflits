@@ -34,7 +34,7 @@ header .badgeC{display:inline-block;background:#4a5d23;color:#fff;font-size:11px
 #navWin .h.l{left:-7px}#navWin .h.r{right:-7px}
 #navYears{position:absolute;bottom:0;left:0;right:0;height:16px;font-size:10.5px;color:var(--muted)}
 #navYears span{position:absolute;transform:translateX(-50%)}
-#nav .navbar{position:absolute;top:8px;right:10px;display:flex;gap:6px;z-index:3}
+#nav .navbar{position:absolute;top:6px;right:8px;display:flex;gap:6px;z-index:3;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:3px;box-shadow:var(--sh1)}
 #nav .navbar button{border:1px solid var(--border-strong);background:var(--card);border-radius:8px;min-width:30px;height:26px;font-size:14px;cursor:pointer;box-shadow:var(--sh1)}
 /* barre d'état */
 #status{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--border);background:var(--bg)}
@@ -119,7 +119,7 @@ let raf=null;function scheduleRender(){if(!raf)raf=requestAnimationFrame(()=>{ra
 /* décor statique du navigateur */
 function buildNav(){
   measure();
-  navEras.innerHTML=ERAS.map(e=>'<div class="nEra" style="left:'+xOf(e.a)+'px;width:'+(xOf(e.b)-xOf(e.a))+'px;background:'+e.c+'"><span>'+e.label+'</span></div>').join("");
+  navEras.innerHTML=ERAS.map(e=>'<div class="nEra" style="left:'+xOf(e.a)+'px;width:'+(xOf(e.b)-xOf(e.a))+'px;background:'+e.c+'" title="'+escAttr(e.label+' · '+Math.round(e.a)+'–'+Math.round(e.b))+'"><span>'+e.label+'</span></div>').join("");
   navDots.innerHTML=EV.map(ev=>'<i data-ev="'+EV.indexOf(ev)+'" style="left:'+xOf(ev[0])+'px;top:'+(ev[1]===1?2:(ev[1]===2?18:32))+'px;background:'+eraOf(ev[0]).c+'" title="'+String(fmtYear(ev[0])+" — "+ev[2]).replace(/"/g,"&quot;")+'"></i>').join("");
   const st=Math.max(10,Math.round((T_MAX-T_MIN)/10)*1);
   let ys="";for(let y=1900;y<=2020;y+=20)ys+='<span style="left:'+xOf(y)+'px">'+y+'</span>';
