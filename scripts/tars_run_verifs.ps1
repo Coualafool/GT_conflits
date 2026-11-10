@@ -13,7 +13,7 @@ $server = Start-Process -PassThru -WindowStyle Hidden -FilePath $NODE `
 Start-Sleep 2
 
 $fail = 0
-foreach ($h in "verif_poc_A.mjs", "verif_navigateur.mjs") {
+foreach ($h in "verif_poc_A.mjs", "verif_navigateur.mjs", "verif_variantes.mjs") {
   Write-Host "`n===== $h ====="
   & $NODE (Join-Path $ROOT "scripts\$h")
   if ($LASTEXITCODE -ne 0) { $fail = 1; Write-Host "!!! $h a echoue" }
