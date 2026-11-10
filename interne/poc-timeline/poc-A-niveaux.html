@@ -39,8 +39,8 @@ main{flex:1;position:relative;overflow:hidden}
 .era span{position:absolute;left:10px;top:6.5px;font-size:12.5px;font-weight:600;letter-spacing:.01em;color:#fff;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.25)}
 #field{position:absolute;top:60px;left:0;right:0;bottom:52px;overflow:hidden}
 #grid{position:absolute;top:60px;left:0;right:0;bottom:52px;pointer-events:none}
-.gline{position:absolute;top:0;bottom:0;border-left:1px solid #e0ddd4}
-.gline.big{border-color:#cfcabf}
+.gline{position:absolute;top:0;bottom:0;border-left:1px solid #dbd6cb}
+.gline.big{border-color:#c4beb1}
 .ev{position:absolute;display:flex;align-items:center;gap:6px;height:var(--lane)}
 .ev i{width:11px;height:11px;border-radius:50%;flex:none;border:2px solid var(--card);box-shadow:0 0 0 1px rgba(28,31,36,.3);transition:transform var(--tr)}
 .ev:hover i{transform:scale(1.18)}
@@ -247,6 +247,8 @@ function render(){
     const top=li*34; if(top+34>H-112)continue; /* au-delà de la hauteur du champ : on laisse l'interaction le révéler en zoomant */
     placed.push({i,ev,x,li,lab});
   }
+  /* vues peu denses (≤2 couloirs) : serpentin alterné — une seule ligne collée en haut gaspille la hauteur */
+  if(lanes.length<=2 && placed.length>=3) placed.forEach((p,idx)=>{p.li=idx%2;});
   /* étagement réparti sur la hauteur utile : pas de vide mort en vue générale (borne basse 34px = hauteur de rangée) */
   const laneN=Math.max(lanes.length,1);
   const rowStep=Math.min(96,Math.max(34,Math.floor((H-120)/laneN)));
