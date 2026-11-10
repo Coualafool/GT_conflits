@@ -23,6 +23,7 @@ header .sub{color:var(--muted);font-size:13px}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
 .controls button{border:1px solid var(--border-strong);background:var(--card);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;color:var(--ink);min-height:32px;box-shadow:var(--sh1);transition:border-color var(--tr),background var(--tr),color var(--tr)}
 .controls button:hover{border-color:var(--ink)}
+.controls button:disabled{color:var(--muted);border-color:var(--border);opacity:.5;cursor:not-allowed;box-shadow:none}
 .controls button.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .controls .spacer{flex:1}
 .controls label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
@@ -33,8 +34,8 @@ main{flex:1;position:relative;overflow:hidden}
 #viz:focus-visible{outline-offset:-2px}
 #viz.grabbing{cursor:grabbing}
 #eras{position:absolute;top:0;left:0;right:0;height:52px}
-.era{position:absolute;top:8px;height:32px;border-radius:9px;overflow:hidden;cursor:zoom-in;transition:filter var(--tr),box-shadow var(--tr)}
-.era:hover{filter:brightness(1.08);box-shadow:0 2px 8px rgba(23,24,26,.18)}
+.era{position:absolute;top:8px;height:32px;border-radius:9px;overflow:hidden;cursor:zoom-in;box-shadow:inset -2px 0 0 var(--bg);transition:filter var(--tr),box-shadow var(--tr)}
+.era:hover{filter:brightness(1.08);box-shadow:inset -2px 0 0 var(--bg),0 2px 8px rgba(23,24,26,.18)}
 .era span{position:absolute;left:10px;top:6.5px;font-size:12.5px;font-weight:600;letter-spacing:.01em;color:#fff;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.25)}
 #field{position:absolute;top:60px;left:0;right:0;bottom:52px;overflow:hidden}
 .ev{position:absolute;display:flex;align-items:center;gap:6px;height:var(--lane)}
@@ -50,7 +51,7 @@ main{flex:1;position:relative;overflow:hidden}
 #axis{position:absolute;bottom:28px;left:0;right:0;height:24px;border-top:1px solid var(--border)}
 .tick{position:absolute;top:0;border-left:1px solid #c5c1b8;height:8px}
 .tick.big{border-color:#8f8a80;height:14px}
-.tick span{position:absolute;top:14px;left:-30px;width:60px;text-align:center;font-size:11.5px;color:var(--muted)}
+.tick span{position:absolute;top:11px;left:-30px;width:60px;text-align:center;font-size:11.5px;line-height:1.3;color:var(--muted)}
 #minimap{position:absolute;bottom:0;left:0;right:0;height:24px;background:#f1efea;border-top:1px solid var(--border);cursor:crosshair;touch-action:none}
 #minimap i{position:absolute;bottom:3px;width:3px;height:9px;border-radius:2px;opacity:.85}
 #viewRect{position:absolute;top:0;bottom:0;background:rgba(154,81,28,.10);border-left:2px solid var(--accent);border-right:2px solid var(--accent);pointer-events:none}
@@ -230,19 +231,20 @@ function render(){
   for(let i=0;i<EV.length;i++){const ev=EV[i];
     if(ev[1]<=maxTier && ev[0]>=d0-0.6 && ev[0]<=d1+0.6) vis.push([i,ev]);
   }
-  const showLabels = ppy>=16 || (maxTier===1 && ppy>=5);
+  const showLabels = ppy>=11 || (maxTier===1 && ppy>=5);
   const lanes=[]; const placed=[];
   for(const [i,ev] of vis){
     const x=xOf(ev[0]);
-    const lab=showLabels && (ev[1]<=2 || ppy>=40);
-    const wLab=lab?Math.min(ev[2].length*7.1+46,260):26;
+    let lab=showLabels && (ev[1]<=2 || ppy>=40);
+    let wLab=lab?Math.min(ev[2].length*7.1+46,260):26;
     let li=0; while(li<lanes.length && x<lanes[li])li++;
+    if(lab && li*34+34>H-112){lab=false;wLab=26;li=0;while(li<lanes.length && x<lanes[li])li++;} /* plus de couloir pour l'étiquette : garder le point nu */
     lanes[li]=x+wLab+12;
     const top=li*34; if(top+34>H-112)continue; /* au-delà de la hauteur du champ : on laisse l'interaction le révéler en zoomant */
     placed.push({i,ev,x,li,lab});
   }
-  /* centrage vertical du bloc de couloirs : pas de vide sous les événements peu denses */
-  const offset=Math.max(0,Math.floor((H-112-lanes.length*34)/2));
+  /* ancrage haut du bloc de couloirs (≤1,5 rangée sous les ères) : pas de vide mort sous la bande d'ères */
+  const offset=Math.min(Math.max(0,Math.floor((H-112-lanes.length*34)/2)),51);
   const rows=[];
   for(const {i,ev,x,li,lab} of placed){
     const top=li*34+offset;
