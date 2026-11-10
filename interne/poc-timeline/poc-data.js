@@ -106,15 +106,8 @@ const EV=[
   [2026.15,2,"Extension des lois israéliennes à la zone C","Enregistrement foncier et application du droit civil israélien aux territoires occupés : l’annexion par les textes.",1,6],
   [2026.3,2,"Et après ?","Trêve et otages, reconnaissance d'un État palestinien par plusieurs pays, reconstruction et comptes à rendre : le kit (ch. 10-11) pose les pistes.",10,1]
 ];
-/* ---------- État ---------- */
-let d0=T_MIN, d1=T_MAX;
-const $=s=>document.querySelector(s);
-const viz=$("#viz"), field=$("#field"), erasEl=$("#eras"), axis=$("#axis"), mm=$("#minimap"), viewRect=$("#viewRect"), panel=$("#panel"), help=$("#help");
+/* ---------- Helpers (state/DOM appartient à chaque variante) ---------- */
 const MONTHS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 
 function eraOf(y){for(let i=0;i<ERAS.length;i++){if(y>=ERAS[i].a&&y<ERAS[i].b)return ERAS[i];}return ERAS[ERAS.length-1];}
-function fmtYear(y){
-  const yr=Math.floor(y+1e-9), m=Math.round((y-yr)*12);
-  return m>0 ? MONTHS[m-1]+" "+yr : String(yr);
-}
 function escAttr(s){return String(s).replace(/"/g,"&quot;");}

@@ -28,6 +28,7 @@ await page.goto(BASE + "/variante-A-lignes.html", { waitUntil: "load" });
 await page.waitForTimeout(700);
 {
   const n = await page.evaluate(() => document.querySelectorAll(".ev").length);
+  log("(A0) diag initial", true, await page.evaluate(() => JSON.stringify({ rows: document.querySelectorAll("#rows .row").length, evs: document.querySelectorAll(".ev").length, d: [d0, d1] })));
   log("(A1) 93 points en vue Tout", n === 93, "points: " + n);
   await shot("varA-tout");
 }
@@ -54,9 +55,16 @@ await page.click('button[data-a="1918"]'); await page.waitForTimeout(350);
   const [dots, exp] = [await page.evaluate(() => document.querySelectorAll(".ev").length), await domEvents()];
   log("(A5) preset Mandat — exhaustivité", dots === exp, `points=${dots} attendus=${exp}`);
   await shot("varA-mandat");
-  await page.evaluate(() => document.querySelector(".ev i").dispatchEvent(new MouseEvent("click", { bubbles: true })));
+  const diag = await page.evaluate(() => ({
+    rows: document.querySelectorAll("#rows .row").length,
+    evs: document.querySelectorAll(".ev").length,
+    d: [Math.round(d0 * 10) / 10, Math.round(d1 * 10) / 10],
+    W: viz.getBoundingClientRect().width, H: viz.getBoundingClientRect().height,
+  }));
+  log("(A5b) diag après preset", true, JSON.stringify(diag));
+  const clicked = await page.evaluate(() => { const el = document.querySelector(".ev i"); if (!el) return false; el.dispatchEvent(new MouseEvent("click", { bubbles: true })); return true; });
   await page.waitForTimeout(300);
-  log("(A6) clic point → panneau", await page.evaluate(() => document.querySelector("#panel").classList.contains("open")), "panneau");
+  log("(A6) clic point → panneau", clicked && await page.evaluate(() => document.querySelector("#panel").classList.contains("open")), "panneau");
 }
 
 /* ----------------variante B : grappes---------------- */

@@ -185,7 +185,7 @@ function render(){
       }
     }
     const titleAttr=String(fmtYear(ev[0])+" — "+ev[2]).replace(/"/g,"&quot;");
-    frag.push({ri,html:'<div class="ev t'+ev[1]+'" data-ev="'+EV.indexOf(ev)+'" style="left:'+x+'px;top:'+(r.mid)+'px;transform:translate(-50%,-50%)"><i style="background:'+col+'" title="'+titleAttr+'"></i>'+labHtml+'</div>'});
+    frag.push({ri,html:'<div class="ev t'+ev[1]+'" data-ev="'+EV.indexOf(ev)+'" style="left:'+x+'px;top:'+(r.h/2)+'px;transform:translate(-50%,-50%)"><i style="background:'+col+'" title="'+titleAttr+'"></i>'+labHtml+'</div>'});
   }
   frag.forEach(f=>rowEls[f.ri].insertAdjacentHTML("beforeend",f.html));
   /* minimap + fenêtre */
