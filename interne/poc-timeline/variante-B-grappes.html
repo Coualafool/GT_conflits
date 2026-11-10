@@ -167,7 +167,7 @@ function render(){
     if(single){ w=(ppy>=12?Math.min(gr.items[0].ev[2].length*7+70,230):26); left=gr.x0; }
     else { w=chipWidth(gr.items.length,gr.a,gr.b); const c=(gr.x0+gr.x1)/2; left=Math.max(4,Math.min(W-w-6,c-w/2)); }
     let li=0;while(li<lanes.length&&left-4<lanes[li])li++;
-    lanes[li]=(li===lanes.length?(lanes[li]=0):lanes[li])+w+14;
+    lanes[li]=left+w+14;
     items.push({li,gr,single,left});
   }
   const laneH=38, usedH=Math.max(1,lanes.length)*laneH;
