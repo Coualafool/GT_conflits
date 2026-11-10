@@ -2,6 +2,7 @@
 
 **Rule:** all GT_conflits work lives in this repository. On the Windows machine (TARS),
 the ONLY folder used for GT_conflits is the repo checkout itself: **`D:\GT_conflits`**.
+(Repo: https://github.com/Coualafool/GT_conflits, branch `main`.)
 No ad-hoc folders anywhere else, and specifically **nothing on C:** (the former
 `C:\gt_check` scratch dir is deleted; the harnesses no longer reach into other
 projects' `node_modules`).

@@ -13,7 +13,7 @@ catch { console.error("playwright absent du node_modules du repo — lancer scri
 const ART = fileURLToPath(new URL("../artifacts/", import.meta.url));
 mkdirSync(ART, { recursive: true });
 
-const URL = process.env.KIT_URL || "http://localhost:8899/chapitres/chapitre-2-espace.html";
+const PAGE_URL = process.env.KIT_URL || "http://localhost:8899/chapitres/chapitre-2-espace.html";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
 
@@ -25,7 +25,7 @@ page.on("pageerror", (e) => pageErrors.push(String(e)));
 page.on("requestfailed", (r) => {});
 page.on("response", (r) => { if (r.status() >= 400) httpErrors.push(r.status() + " " + r.url()); });
 
-await page.goto(URL, { waitUntil: "load" });
+await page.goto(PAGE_URL, { waitUntil: "load" });
 await page.waitForTimeout(2500);
 
 // (a) page errors — favicon 404 tolerated (it's an http 404, not a page error)

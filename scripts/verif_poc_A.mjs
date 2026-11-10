@@ -12,7 +12,7 @@ catch { console.error("playwright absent du node_modules du repo — lancer scri
 
 const ART = fileURLToPath(new URL("../artifacts/", import.meta.url));
 mkdirSync(ART, { recursive: true });
-const URL = process.env.POC_URL || "http://localhost:8899/interne/poc-timeline/poc-A-niveaux.html";
+const PAGE_URL = process.env.POC_URL || "http://localhost:8899/interne/poc-timeline/poc-A-niveaux.html";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
 
@@ -21,7 +21,7 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const pageErrors = [];
 page.on("pageerror", (e) => pageErrors.push(String(e)));
 
-await page.goto(URL, { waitUntil: "load" });
+await page.goto(PAGE_URL, { waitUntil: "load" });
 await page.waitForTimeout(800);
 
 // (a) zero page errors
