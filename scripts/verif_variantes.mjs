@@ -109,13 +109,13 @@ await page.waitForTimeout(700);
   log("(B3) touche 0 → retour Tout groupé", await page.evaluate(() => document.querySelectorAll("[data-g]").length > 0), "groupes revenus");
   await page.waitForTimeout(200);
   const bo = await page.evaluate(() => {
-    const els = [...document.querySelectorAll("#field .chip")].map((e) => e.getBoundingClientRect());
-    let ov = 0;
+    const els = [...document.querySelectorAll("#field .chip")].map((e) => { const r = e.getBoundingClientRect(); return { l: Math.round(r.left), r: Math.round(r.right), t: Math.round(r.top), b: Math.round(r.bottom), txt: e.textContent.trim().slice(0, 24) }; });
+    let ov = 0; const pairs = [];
     for (let i = 0; i < els.length; i++) for (let j = i + 1; j < els.length; j++) {
       const a = els[i], b = els[j];
-      if (a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1) ov++;
+      if (a.l < b.r - 1 && b.l < a.r - 1 && a.t < b.b - 1 && b.t < a.b - 1) { ov++; pairs.push([a.txt, b.txt, a.l, a.r, b.l, b.r, a.t, a.b, b.t, b.b]); }
     }
-    return { chips: els.length, overlaps: ov };
+    return { chips: els.length, overlaps: ov, pairs, lanes: field._lanes, placed: field._placed };
   });
   log("(B4) zéro chevauchement de pastilles (Tout)", bo.overlaps === 0, JSON.stringify(bo));
 }
