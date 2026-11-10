@@ -22,5 +22,24 @@ await page.screenshot({ path: out('poc-vue-intermediaire.png') });
 const labels = await page.locator('#field .lab').count();
 const dots = await page.locator('#field .ev').count();
 console.log(`INTERMEDIAIRE labels=${labels} dots=${dots}`);
+// métriques DOM : grille présente ? couloirs étalés ?
+const metrics = async () => page.evaluate(() => {
+  const f = document.querySelector('#field').getBoundingClientRect();
+  const tops = [...document.querySelectorAll('#field .ev')].map((e) => parseFloat(e.style.top));
+  return {
+    glines: document.querySelectorAll('#grid .gline').length,
+    glinesBig: document.querySelectorAll('#grid .gline.big').length,
+    maxTop: Math.round(Math.max(0, ...tops)),
+    fieldH: Math.round(f.height),
+  };
+});
+console.log('METRIQUES defaut:', JSON.stringify(await (async () => {
+  await page.locator('#zoomSlider').evaluate((el) => { el.value = 0; el.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.waitForTimeout(400);
+  return metrics();
+})()));
+await page.locator('#zoomSlider').evaluate((el) => { el.value = 50; el.dispatchEvent(new Event('input', { bubbles: true })); });
+await page.waitForTimeout(400);
+console.log('METRIQUES intermediaire:', JSON.stringify(await metrics()));
 await browser.close();
 console.log('CAPTURES_OK');
