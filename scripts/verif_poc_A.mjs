@@ -145,7 +145,8 @@ await page.waitForTimeout(800);
   await page.keyboard.press("0");
   await page.waitForTimeout(300);
   const r0 = await page.locator("#zoomReadout").innerText();
-  log("(i) keyboard arrows + 0", leftA !== leftB && /11[0-9] ans/.test(r0), `viewRect ${leftA}->${leftB} full='${r0}'`);
+  const fullSpan = await page.evaluate(() => Math.round(T_MAX - T_MIN)); // dérivé du jeu de données, pas codé en dur
+  log("(i) keyboard arrows + 0", leftA !== leftB && r0 === fullSpan + " ans visibles", `viewRect ${leftA}->${leftB} full='${r0}' attendu='${fullSpan} ans visibles'`);
 }
 
 // (j) double-click zooms in, shift+double-click out
