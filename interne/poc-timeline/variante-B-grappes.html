@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frise — Variante B : grappes de densité</title>
+<style>
+:root{
+  --bg:#fafaf9; --card:#ffffff; --ink:#1c1f24; --muted:#5b6068;
+  --border:#e6e4de; --border-strong:#cfccc3;
+  --accent:#9a511c; --gold:#c9a227;
+  --sh1:0 1px 2px rgba(23,24,26,.06);
+  --sh2:0 2px 6px rgba(23,24,26,.06),0 14px 34px rgba(23,24,26,.12);
+  --tr:150ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+header{padding:14px 20px 12px;border-bottom:1px solid var(--border);background:var(--card)}
+header h1{margin:0 0 3px;font-size:17.5px;font-weight:650;letter-spacing:-.01em}
+header .sub{color:var(--muted);font-size:13px}
+header .badgeB{display:inline-block;background:#1d5b7a;color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;margin-right:6px;vertical-align:1px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.controls button{border:1px solid var(--border-strong);background:var(--card);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;color:var(--ink);min-height:32px;box-shadow:var(--sh1);transition:border-color var(--tr),background var(--tr),color var(--tr)}
+.controls button:hover{border-color:var(--ink)}
+.controls button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.controls .spacer{flex:1}
+.controls label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+#zoomSlider{width:150px;accent-color:var(--accent)}
+#zoomReadout{min-width:215px;font-size:12.5px;color:var(--muted);text-align:right}
+main{flex:1;position:relative;overflow:hidden}
+#viz{position:absolute;inset:0;cursor:grab;user-select:none;overflow:hidden;touch-action:none}
+#viz.grabbing{cursor:grabbing}
+#field{position:absolute;top:8px;left:0;right:0;bottom:54px}
+.item{position:absolute;z-index:2}
+.dot{width:11px;height:11px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px rgba(28,31,36,.3);cursor:pointer;transition:transform var(--tr)}
+.dot:hover{transform:scale(1.25)}
+.dot.t1{width:14px;height:14px;border-color:var(--gold)}
+.dot.t3{width:8px;height:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border-strong);border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:650;cursor:zoom-in;box-shadow:var(--sh1);transition:border-color var(--tr),box-shadow var(--tr);white-space:nowrap}
+.chip:hover{border-color:var(--ink);box-shadow:0 2px 8px rgba(23,24,26,.14)}
+.chip b{font-size:11px;color:var(--muted);font-weight:600}
+.chip .n{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:999px;background:var(--ink);color:#fff;font-size:11px;padding:0 5px}
+.lab{font-size:12px;white-space:nowrap;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:2px 9px;cursor:pointer;max-width:230px;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--sh1);transition:border-color var(--tr)}
+.lab:hover{border-color:var(--ink)}
+.lab b{color:var(--muted);font-weight:600}
+.rowflex{display:flex;align-items:center;gap:6px;height:30px}
+#grid{position:absolute;top:8px;left:0;right:0;bottom:54px;pointer-events:none}
+.gline{position:absolute;top:0;bottom:0;border-left:1px solid #dbd6cb}
+.gline.big{border-color:#c4beb1}
+#axis{position:absolute;bottom:30px;left:0;right:0;height:24px;border-top:1px solid var(--border)}
+.tick{position:absolute;top:0;border-left:1px solid #c5c1b8;height:8px}
+.tick.big{border-color:#8f8a80;height:14px}
+.tick span{position:absolute;top:11px;left:-30px;width:60px;text-align:center;font-size:11.5px;line-height:1.3;color:var(--muted)}
+#minimap{position:absolute;bottom:0;left:0;right:0;height:26px;background:#f1efea;border-top:1px solid var(--border);cursor:crosshair;touch-action:none}
+#minimap i{position:absolute;bottom:4px;width:3px;height:10px;border-radius:2px;opacity:.85}
+#panel{position:absolute;top:14px;right:14px;width:min(320px,calc(100vw - 24px));max-height:calc(100% - 32px);overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh2);padding:15px 17px;display:none;z-index:5}
+#panel.open{display:block}
+#panel .close{float:right;width:28px;height:28px;border:0;background:none;font-size:18px;line-height:1;cursor:pointer;color:var(--muted);border-radius:50%}
+#panel .close:hover{color:var(--ink);background:var(--bg)}
+#panel h3{margin:0 0 4px;font-size:16.5px;font-weight:650;letter-spacing:-.01em}
+#panel .meta{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+#panel p{margin:0 0 10px;font-size:14px}
+#panel a{color:var(--accent);font-weight:600;font-size:13.5px}
+#panel .grp{list-style:none;margin:0;padding:0}
+#panel .grp li{padding:6px 0;border-top:1px solid var(--border);font-size:13.5px;cursor:pointer}
+#panel .grp li:hover{color:var(--accent)}
+#panel .grp li small{display:block;color:var(--muted);font-size:11.5px}
+#help{position:absolute;left:14px;top:14px;max-width:340px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh2);padding:13px 16px;font-size:13px;z-index:6;transition:opacity var(--tr)}
+#help.hidden{opacity:0;pointer-events:none}
+#help h4{margin:0 0 6px;font-size:13.5px}
+#help ul{margin:0;padding-left:18px}
+#help .x{position:absolute;top:6px;right:8px;border:0;background:none;font-size:16px;cursor:pointer;color:var(--muted)}
+footer{padding:7px 20px;border-top:1px solid var(--border);background:var(--card);font-size:12px;color:var(--muted)}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="badgeB">B</span>Frise à grappes — la densité se replie, rien ne se perd</h1>
+  <div class="sub">Les événements trop proches forment une pastille « ×N ». Cliquer dessus zoome sur la période : la grappe éclate en événements détaillés. Aucun événement n'est jamais masqué — seulement groupé.</div>
+  <div class="controls">
+    <button data-span="0">Tout</button>
+    <button data-a="1895" data-b="1918">Empire finissant</button>
+    <button data-a="1918" data-b="1949">Mandat</button>
+    <button data-a="1949" data-b="1988">Guerre froide</button>
+    <button data-a="1988" data-b="2001">Après 88</button>
+    <button data-a="2001" data-b="2029">Depuis 2001</button>
+    <span class="spacer"></span>
+    <label>Zoom<input id="zoomSlider" type="range" min="0" max="100" value="0"></label>
+    <span id="zoomReadout"></span>
+  </div>
+</header>
+<main>
+  <div id="viz" tabindex="0" role="application" aria-label="Frise chronologique : molette pour zoomer, glisser pour parcourir, cliquer un point ou une grappe">
+    <div id="field"></div>
+    <div id="grid"></div>
+    <div id="axis"></div>
+    <div id="minimap"></div>
+    <aside id="panel" role="dialog" aria-label="Détail"><button class="close" title="Fermer" aria-label="Fermer le détail">×</button><h3></h3><div class="meta"></div><p></p><a target="_blank" hidden></a></aside>
+    <div id="help"><button class="x" aria-label="Fermer">×</button><h4>Comment lire cette frise</h4>
+      <ul><li>Les événements proches se replient en pastilles <b>×N</b>. <b>Cliquer une pastille zoome</b> sur sa période : elle éclate.</li>
+      <li>Un point simple s'ouvre en détail au clic ; survoler une pastille montre les premières dates.</li>
+      <li><kbd>?</kbd> rappelle cette aide, <kbd>0</kbd> revient à « Tout ».</li></ul>
+    </div>
+  </div>
+</main>
+<footer>Variante B de comparaison — données identiques aux autres variantes (93 événements, kit 11 chapitres). <a href="index-comparatif.html">Comparer les variantes</a></footer>
+<script src="poc-data.js"></script>
+<script>
+const viz=document.getElementById("viz"), field=document.getElementById("field"),
+      grid=document.getElementById("grid"), axis=document.getElementById("axis"),
+      mm=document.getElementById("minimap"), panel=document.getElementById("panel"),
+      help=document.getElementById("help"), slider=document.getElementById("zoomSlider"),
+      readout=document.getElementById("zoomReadout");
+let d0=T_MIN, d1=T_MAX, W=0, H=0;
+function measure(){const r=viz.getBoundingClientRect();W=r.width;H=r.height;}
+function xOf(y){return (y-d0)/(d1-d0)*W;}
+function yOfX(px){return d0+px/W*(d1-d0);}
+function fmtYear(y){const yi=Math.floor(y),m=Math.min(11,Math.floor((y-yi)*12));return MONTHS[m]+" "+yi;}
+let raf=null;function scheduleRender(){if(!raf)raf=requestAnimationFrame(()=>{raf=null;render();});}
+function setDomain(a,b){
+  if(b-a<3)return;
+  if(a<T_MIN){b+=T_MIN-a;a=T_MIN;}
+  if(b>T_MAX){a-=b-T_MAX;b=T_MAX;}
+  if(a<T_MIN)a=T_MIN;
+  d0=a;d1=b;scheduleRender();
+}
+function zoomAt(px,f){const y=yOfX(px);setDomain(y-(y-d0)*f,y+(d1-y)*f);}
+
+function render(){
+  measure();
+  const span=d1-d0, ppy=W/span;
+  /* grille + axe */
+  const steps=[1,2,5,10,20,50,100];
+  let step=steps.find(s=>s*ppy>=90)||100;
+  let g="",a="";
+  for(let y=Math.ceil(d0/step)*step;y<=d1;y+=step){
+    const x=xOf(y);const big=(y%(step*5)===0);
+    g+='<div class="gline'+(big?' big':'')+'" style="left:'+x+'px"></div>';
+    a+='<div class="tick'+(big?' big':'')+'" style="left:'+x+'px">'+(ppy>=3?'<span>'+y+'</span>':'')+'</div>';
+  }
+  grid.innerHTML=g; axis.innerHTML=a;
+  /* 1) événements du domaine, triés */
+  const vis=EV.map((ev,i)=>({ev,i})).filter(o=>o.ev[0]>=d0-0.25&&o.ev[0]<=d1+0.25);
+  /* 2) grappes : fusion gloutonne quand deux points suivants sont à <34px */
+  const groups=[];
+  for(const o of vis){
+    const x=xOf(o.ev[0]);
+    const last=groups[groups.length-1];
+    if(last&&x-last.x1<34){last.items.push(o);last.x1=x;last.b=o.ev[0];}
+    else groups.push({x0:x,x1:x,a:o.ev[0],b:o.ev[0],items:[o]});
+  }
+  /* 3) placement en couloirs (points et pastilles) */
+  const lanes=[]; let html="", grouped=0;
+  for(const gr of groups){
+    const single=gr.items.length===1;
+    const w=single?(ppy>=12?Math.min(gr.items[0].ev[2].length*7+70,230):26):(34+String(gr.items.length).length*9+82);
+    let li=0;while(li<lanes.length&&gr.x0-4<lanes[li])li++;
+    lanes[li]=(li===lanes.length?(lanes[li]=0):lanes[li])+w+14;
+    const top=8+li*38; if(top>H-96)continue;
+    if(single){
+      const ev=gr.items[0].ev, col=eraOf(ev[0]).c;
+      const title=String(fmtYear(ev[0])+" — "+ev[2]).replace(/"/g,"&quot;");
+      html+='<div class="item rowflex" style="left:'+gr.x0+'px;top:'+top+'px"><div class="dot t'+ev[1]+'" data-ev="'+gr.items[0].i+'" style="background:'+col+'" title="'+title+'"></div>'
+        +(ppy>=12?'<span class="lab" data-ev="'+gr.items[0].i+'">'+ev[2]+' <b>'+fmtYear(ev[0])+'</b></span>':'')+'</div>';
+    } else {
+      grouped+=gr.items.length;
+      const preview=gr.items.slice(0,3).map(o=>fmtYear(o.ev[0])+" "+o.ev[2].slice(0,24)).join(" · ");
+      html+='<div class="item" style="left:'+gr.x0+'px;top:'+top+'px"><button class="chip" data-g="'+groups.indexOf(gr)+'" title="'+String(preview+(gr.items.length>3?" · …":"")+" — cliquer pour zoomer").replace(/"/g,"&quot;")+'"><span class="n">×'+gr.items.length+'</span>'+Math.round(gr.a)+'–'+Math.round(gr.b)+' <b>détailer</b></button></div>';
+    }
+  }
+  field.innerHTML=html;
+  field._groups=groups;
+  /* 4) minimap + fenêtre */
+  let mmHtml='<div style="position:absolute;top:0;bottom:0;left:'+((d0-T_MIN)/(T_MAX-T_MIN)*100)+'%;width:'+((d1-d0)/(T_MAX-T_MIN)*100)+'%;background:rgba(154,81,28,.10);border-left:2px solid var(--accent);border-right:2px solid var(--accent)"></div>';
+  for(const ev of EV){mmHtml+='<i style="left:'+((ev[0]-T_MIN)/(T_MAX-T_MIN)*100)+'%;background:'+eraOf(ev[0]).c+'"></i>';}
+  mm.innerHTML=mmHtml;
+  readout.textContent=Math.round(d0)+" – "+Math.round(d1)+" · "+vis.length+" évén."+(grouped?" · "+grouped+" groupés":"");
+  const spanMax=T_MAX-T_MIN;
+  const v=Math.round(100*Math.log(spanMax/span)/Math.log(spanMax/3));
+  slider.value=Math.max(0,Math.min(100,isNaN(v)?0:v));
+}
+/* interactions */
+viz.addEventListener("wheel",e=>{e.preventDefault();hideHelp();zoomAt(e.clientX-viz.getBoundingClientRect().left,e.deltaY<0?0.8:1.25);},{passive:false});
+viz.addEventListener("dblclick",e=>{if(e.target.closest("#panel,#help"))return;zoomAt(e.clientX-viz.getBoundingClientRect().left,e.shiftKey?1.5:1/1.5);});
+let drag=null;
+viz.addEventListener("pointerdown",e=>{
+  if(e.target.closest("#panel,#help,#minimap,.item"))return;
+  drag={x:e.clientX,d0,d1};viz.classList.add("grabbing");viz.setPointerCapture(e.pointerId);hideHelp();
+});
+viz.addEventListener("pointermove",e=>{
+  if(!drag)return;
+  const dy=(e.clientX-drag.x)/W*(drag.d1-drag.d0);
+  setDomain(drag.d0-dy,drag.d1-dy);
+});
+viz.addEventListener("pointerup",()=>{drag=null;viz.classList.remove("grabbing");});
+mm.addEventListener("pointerdown",e=>{
+  const r=mm.getBoundingClientRect();const f=(e.clientX-r.left)/r.width;
+  const y=T_MIN+f*(T_MAX-T_MIN);setDomain(y-(d1-d0)/2,y+(d1-d0)/2);
+});
+slider.addEventListener("input",()=>{
+  hideHelp();
+  const spanMax=T_MAX-T_MIN;
+  const span=Math.max(3,spanMax*Math.pow(spanMax/3,-slider.value/100));
+  const c=(d0+d1)/2;setDomain(c-span/2,c+span/2);
+  document.querySelectorAll(".controls button").forEach(b=>b.classList.remove("on"));
+});
+document.querySelectorAll(".controls button[data-a],.controls button[data-span]").forEach(b=>{
+  b.addEventListener("click",()=>{
+    hideHelp();
+    document.querySelectorAll(".controls button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    if(b.dataset.span!==undefined)setDomain(T_MIN,T_MAX);else setDomain(+b.dataset.a,+b.dataset.b);
+  });
+});
+function openEvent(i){
+  const ev=EV[i];
+  panel.querySelector("a").hidden=false;
+  panel.querySelector("h3").textContent=fmtYear(ev[0])+" — "+ev[2];
+  panel.querySelector(".meta").textContent=eraOf(ev[0]).label+" · kit : chapitre "+ev[4]+", séquence "+ev[5];
+  panel.querySelector("p").textContent=ev[3];
+  const a=panel.querySelector("a");a.hidden=false;a.textContent="Ouvrir la séquence du kit →";
+  a.href="../chapitres/chapitre-"+ev[4]+"-espace.html#s"+ev[5];
+  const old=panel.querySelector("ul.grp");if(old)old.remove();
+  panel.classList.add("open");
+}
+function openGroup(gi){
+  const gr=field._groups[gi];
+  /* zoom sur la période de la grappe (avec marge), et liste des événements dans le panneau */
+  const pad=Math.max(0.5,(gr.b-gr.a)*0.6+0.4);
+  setDomain(gr.a-pad,gr.b+pad);
+  panel.querySelector("h3").textContent="Groupe : "+Math.round(gr.a)+" – "+Math.round(gr.b);
+  panel.querySelector(".meta").textContent=gr.items.length+" événements — cliquer pour ouvrir le détail, ou zoomer pour les voir sur la frise";
+  panel.querySelector("p").textContent="";
+  panel.querySelector("a").hidden=true;
+  const old=panel.querySelector("ul.grp");if(old)old.remove();
+  const ul=document.createElement("ul");ul.className="grp";
+  ul.innerHTML=gr.items.map(o=>'<li data-ev="'+o.i+'">'+fmtYear(o.ev[0])+' — '+String(o.ev[2]).replace(/</g,"&lt;")+'<small>chapitre '+o.ev[4]+' · séquence '+o.ev[5]+'</small></li>').join("");
+  panel.appendChild(ul);
+  panel.classList.add("open");
+}
+field.addEventListener("click",e=>{
+  const dot=e.target.closest("[data-ev]"), chip=e.target.closest("[data-g]");
+  if(dot){e.stopPropagation();openEvent(+dot.dataset.ev);}
+  else if(chip){e.stopPropagation();openGroup(+chip.dataset.g);}
+});
+panel.addEventListener("click",e=>{const li=e.target.closest("li[data-ev]");if(li)openEvent(+li.dataset.ev);});
+document.addEventListener("click",e=>{if(!e.target.closest("#panel")&&!e.target.closest(".item"))panel.classList.remove("open");});
+panel.querySelector(".close").addEventListener("click",()=>panel.classList.remove("open"));
+function hideHelp(){help.classList.add("hidden");}
+function toggleHelp(){help.classList.toggle("hidden");}
+help.querySelector(".x").addEventListener("click",hideHelp);
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")panel.classList.remove("open");
+  if(e.key==="0")setDomain(T_MIN,T_MAX);
+  if(e.key==="?"||e.key==="h")toggleHelp();
+});
+new ResizeObserver(()=>scheduleRender()).observe(viz);
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frise — Variante C : navigateur + liste chronologique</title>
+<style>
+:root{
+  --bg:#fafaf9; --card:#ffffff; --ink:#1c1f24; --muted:#5b6068;
+  --border:#e6e4de; --border-strong:#cfccc3;
+  --accent:#9a511c; --gold:#c9a227;
+  --sh1:0 1px 2px rgba(23,24,26,.06);
+  --sh2:0 2px 6px rgba(23,24,26,.06),0 14px 34px rgba(23,24,26,.12);
+  --tr:150ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+header{padding:14px 20px 12px;border-bottom:1px solid var(--border);background:var(--card)}
+header h1{margin:0 0 3px;font-size:17.5px;font-weight:650;letter-spacing:-.01em}
+header .sub{color:var(--muted);font-size:13px}
+header .badgeC{display:inline-block;background:#4a5d23;color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;margin-right:6px;vertical-align:1px}
+/* navigateur */
+#nav{position:relative;height:132px;border-bottom:1px solid var(--border);background:var(--card);touch-action:none}
+#navEras{position:absolute;top:8px;left:0;right:0;height:26px}
+.nEra{position:absolute;top:0;height:26px;border-radius:7px;overflow:hidden}
+.nEra span{position:absolute;left:7px;top:5px;font-size:10.5px;font-weight:650;color:#fff;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.3)}
+#navDots{position:absolute;top:40px;left:0;right:0;height:44px}
+#navDots i{position:absolute;top:0;width:7px;height:7px;border-radius:50%;transform:translateX(-50%);cursor:pointer;box-shadow:0 0 0 1px var(--card)}
+#navWin{position:absolute;top:34px;bottom:14px;background:rgba(154,81,28,.08);border-left:3px solid var(--accent);border-right:3px solid var(--accent);cursor:grab;border-radius:2px}
+#navWin:hover{background:rgba(154,81,28,.13)}
+#navWin .h{position:absolute;top:50%;transform:translateY(-50%);width:11px;height:44px;background:var(--accent);border-radius:4px;cursor:ew-resize}
+#navWin .h.l{left:-7px}#navWin .h.r{right:-7px}
+#navYears{position:absolute;bottom:0;left:0;right:0;height:16px;font-size:10.5px;color:var(--muted)}
+#navYears span{position:absolute;transform:translateX(-50%)}
+#nav .navbar{position:absolute;top:8px;right:10px;display:flex;gap:6px;z-index:3}
+#nav .navbar button{border:1px solid var(--border-strong);background:var(--card);border-radius:8px;min-width:30px;height:26px;font-size:14px;cursor:pointer;box-shadow:var(--sh1)}
+/* barre d'état */
+#status{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--border);background:var(--bg)}
+#status .per{font-weight:650;font-size:14px}
+#status .cnt{color:var(--muted);font-size:13px}
+#status .spacer{flex:1}
+#status button{border:1px solid var(--border-strong);background:var(--card);border-radius:999px;padding:4px 12px;font-size:12.5px;cursor:pointer;box-shadow:var(--sh1)}
+#status button:hover{border-color:var(--ink)}
+/* liste */
+main{flex:1;overflow:auto;padding:10px 20px 30px}
+.decade{position:sticky;top:0;background:linear-gradient(var(--bg) 70%,transparent);padding:14px 0 6px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--muted);z-index:2}
+.item{display:flex;gap:13px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 15px;margin-bottom:8px;cursor:pointer;box-shadow:var(--sh1);transition:border-color var(--tr),box-shadow var(--tr)}
+.item:hover{border-color:var(--ink);box-shadow:0 2px 10px rgba(23,24,26,.1)}
+.item .when{min-width:88px;font-weight:650;font-size:13.5px;display:flex;align-items:center;gap:7px}
+.item .when i{width:9px;height:9px;border-radius:50%;flex:none}
+.item.t1 .when{color:var(--accent)}
+.item .what{flex:1}
+.item .what b{display:block;font-size:14.5px;letter-spacing:-.01em}
+.item .what p{margin:2px 0 0;font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item .era{font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:1px 9px;white-space:nowrap;margin-top:2px}
+.empty{padding:40px 10px;text-align:center;color:var(--muted)}
+/* panneau détail en modale légère */
+#panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(430px,calc(100vw - 30px));max-height:80vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh2);padding:18px 20px;display:none;z-index:9}
+#panel.open{display:block}
+#panel .close{float:right;width:28px;height:28px;border:0;background:none;font-size:18px;line-height:1;cursor:pointer;color:var(--muted);border-radius:50%}
+#panel h3{margin:0 0 4px;font-size:17px;font-weight:650}
+#panel .meta{font-size:12.5px;color:var(--muted);margin-bottom:9px}
+#panel p{margin:0 0 12px;font-size:14.5px}
+#panel a{color:var(--accent);font-weight:600;font-size:14px}
+#scrim{position:fixed;inset:0;background:rgba(23,24,26,.25);display:none;z-index:8}
+#scrim.open{display:block}
+footer{padding:7px 20px;border-top:1px solid var(--border);background:var(--card);font-size:12px;color:var(--muted)}
+footer a{color:var(--accent)}
+@media (max-width:640px){.item{flex-wrap:wrap}.item .when{min-width:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="badgeC">C</span>Chronologie lisible — navigateur en haut, liste en bas</h1>
+  <div class="sub">La frise devient un navigateur : faites glisser la fenêtre orange (ou ses bords), ou zoomez dessus. La liste affiche <b>tous</b> les événements de la période sélectionnée, dans l'ordre.</div>
+</header>
+<div id="nav" aria-label="Navigateur temporel : faites glisser la fenêtre pour changer la période affichée">
+  <div id="navEras"></div>
+  <div id="navDots"></div>
+  <div id="navWin"><div class="h l"></div><div class="h r"></div></div>
+  <div id="navYears"></div>
+  <div class="navbar"><button id="zOut" title="Dézoomer" aria-label="Dézoomer">−</button><button id="zIn" title="Zoomer" aria-label="Zoomer">+</button><button id="zAll" title="Tout" aria-label="Tout afficher">⇤⇥</button></div>
+</div>
+<div id="status">
+  <span class="per" id="perLabel"></span><span class="cnt" id="cntLabel"></span>
+  <span class="spacer"></span>
+  <button data-a="1895" data-b="1918">1895–1917</button>
+  <button data-a="1918" data-b="1949">1918–1948</button>
+  <button data-a="1949" data-b="1988">1949–1987</button>
+  <button data-a="1988" data-b="2001">1988–2000</button>
+  <button data-a="2001" data-b="2029">2001–aujourd'hui</button>
+</div>
+<main id="list"></main>
+<div id="scrim"></div>
+<aside id="panel" role="dialog" aria-label="Détail de l'événement"><button class="close" title="Fermer" aria-label="Fermer">×</button><h3></h3><div class="meta"></div><p></p><a target="_blank"></a></aside>
+<footer>Variante C de comparaison — données identiques aux autres variantes (93 événements, kit 11 chapitres). <a href="index-comparatif.html">Comparer les variantes</a></footer>
+<script src="poc-data.js"></script>
+<script>
+const nav=document.getElementById("nav"), navEras=document.getElementById("navEras"),
+      navDots=document.getElementById("navDots"), navWin=document.getElementById("navWin"),
+      navYears=document.getElementById("navYears"), list=document.getElementById("list"),
+      perLabel=document.getElementById("perLabel"), cntLabel=document.getElementById("cntLabel"),
+      panel=document.getElementById("panel"), scrim=document.getElementById("scrim");
+let d0=T_MIN,d1=T_MAX,NW=0;
+function measure(){NW=nav.getBoundingClientRect().width;}
+function xOf(y){return (y-T_MIN)/(T_MAX-T_MIN)*NW;}
+function yOfX(px){return T_MIN+px/NW*(T_MAX-T_MIN);}
+function fmtYear(y){const yi=Math.floor(y),m=Math.min(11,Math.floor((y-yi)*12));return MONTHS[m]+" "+yi;}
+function setDomain(a,b){
+  if(b-a<4)return;
+  if(a<T_MIN){b+=T_MIN-a;a=T_MIN;}
+  if(b>T_MAX){a-=b-T_MAX;b=T_MAX;}
+  if(a<T_MIN)a=T_MIN;
+  d0=a;d1=b;render();
+}
+let raf=null;function scheduleRender(){if(!raf)raf=requestAnimationFrame(()=>{raf=null;render();});}
+/* décor statique du navigateur */
+function buildNav(){
+  measure();
+  navEras.innerHTML=ERAS.map(e=>'<div class="nEra" style="left:'+xOf(e.a)+'px;width:'+(xOf(e.b)-xOf(e.a))+'px;background:'+e.c+'"><span>'+e.label+'</span></div>').join("");
+  navDots.innerHTML=EV.map(ev=>'<i data-ev="'+EV.indexOf(ev)+'" style="left:'+xOf(ev[0])+'px;top:'+(ev[1]===1?2:(ev[1]===2?18:32))+'px;background:'+eraOf(ev[0]).c+'" title="'+String(fmtYear(ev[0])+" — "+ev[2]).replace(/"/g,"&quot;")+'"></i>').join("");
+  const st=Math.max(10,Math.round((T_MAX-T_MIN)/10)*1);
+  let ys="";for(let y=1900;y<=2020;y+=20)ys+='<span style="left:'+xOf(y)+'px">'+y+'</span>';
+  navYears.innerHTML=ys;
+}
+function render(){
+  navWin.style.left=xOf(d0)+"px";
+  navWin.style.width=Math.max(10,xOf(d1)-xOf(d0))+"px";
+  perLabel.textContent=Math.round(d0)+" – "+Math.round(d1);
+  const vis=EV.filter(ev=>ev[0]>=d0&&ev[0]<=d1);
+  cntLabel.textContent=vis.length+" événement"+(vis.length>1?"s":"")+" dans la fenêtre";
+  /* liste groupée par décennie */
+  let html="",curDec=-1;
+  for(const ev of vis){
+    const dec=Math.floor(ev[0]/10)*10;
+    if(dec!==curDec){curDec=dec;html+='<div class="decade">années '+dec+'</div>';}
+    html+='<div class="item t'+ev[1]+'" data-ev="'+EV.indexOf(ev)+'">'
+      +'<div class="when"><i style="background:'+eraOf(ev[0]).c+'"></i>'+fmtYear(ev[0])+'</div>'
+      +'<div class="what"><b>'+ev[2]+'</b><p>'+ev[3]+'</p></div>'
+      +'<div class="era">'+eraOf(ev[0]).label.split(" ").slice(0,3).join(" ")+' · kit ch.'+ev[4]+'</div></div>';
+  }
+  list.innerHTML=html||'<div class="empty">Aucun événement dans cette fenêtre — élargissez la sélection.</div>';
+}
+/* interactions navigateur */
+let drag=null;
+navWin.addEventListener("pointerdown",e=>{
+  const h=e.target.classList.contains("h")?e.target:(e.target.closest(".h")||null);
+  drag={mode:h?(h.classList.contains("l")?"l":"r"):"move",x:e.clientX,d0,d1};
+  navWin.setPointerCapture(e.pointerId);e.preventDefault();e.stopPropagation();
+});
+navWin.addEventListener("pointermove",e=>{
+  if(!drag)return;
+  const dy=(e.clientX-drag.x)/NW*(T_MAX-T_MIN);
+  if(drag.mode==="move")setDomain(drag.d0+dy,drag.d1+dy);
+  else if(drag.mode==="l")setDomain(Math.min(drag.d0+dy,d1-4),d1);
+  else setDomain(d0,Math.max(drag.d1+dy,d0+4));
+});
+navWin.addEventListener("pointerup",()=>drag=null);
+nav.addEventListener("pointerdown",e=>{
+  if(e.target.closest("#navWin,.navbar"))return;
+  const r=nav.getBoundingClientRect();const y=yOfX(e.clientX-r.left);
+  setDomain(y-(d1-d0)/2,y+(d1-d0)/2);
+});
+nav.addEventListener("wheel",e=>{
+  e.preventDefault();
+  const r=nav.getBoundingClientRect();const px=e.clientX-r.left;
+  const y=yOfX(px),f=e.deltaY<0?0.8:1.25;
+  setDomain(y-(y-d0)*f,y+(d1-y)*f);
+},{passive:false});
+document.getElementById("zIn").addEventListener("click",()=>{const c=(d0+d1)/2,s=(d1-d0)/2*0.7;setDomain(c-s,c+s);});
+document.getElementById("zOut").addEventListener("click",()=>{const c=(d0+d1)/2,s=(d1-d0)/2*1.4;setDomain(c-s,c+s);});
+document.getElementById("zAll").addEventListener("click",()=>setDomain(T_MIN,T_MAX));
+document.querySelectorAll("#status button[data-a]").forEach(b=>b.addEventListener("click",()=>setDomain(+b.dataset.a,+b.dataset.b)));
+/* liste → détail */
+navDots.addEventListener("click",e=>{const i=e.target.closest("[data-ev]");if(i)openPanel(+i.dataset.ev);});
+list.addEventListener("click",e=>{const it=e.target.closest("[data-ev]");if(it)openPanel(+it.dataset.ev);});
+function openPanel(i){
+  const ev=EV[i];
+  panel.querySelector("h3").textContent=fmtYear(ev[0])+" — "+ev[2];
+  panel.querySelector(".meta").textContent=eraOf(ev[0]).label+" · kit : chapitre "+ev[4]+", séquence "+ev[5];
+  panel.querySelector("p").textContent=ev[3];
+  const a=panel.querySelector("a");a.textContent="Ouvrir la séquence du kit →";
+  a.href="../chapitres/chapitre-"+ev[4]+"-espace.html#s"+ev[5];
+  panel.classList.add("open");scrim.classList.add("open");
+}
+function closePanel(){panel.classList.remove("open");scrim.classList.remove("open");}
+panel.querySelector(".close").addEventListener("click",closePanel);
+scrim.addEventListener("click",closePanel);
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")closePanel();
+  if(e.key==="0")setDomain(T_MIN,T_MAX);
+  if(e.key==="+"||e.key==="="){const c=(d0+d1)/2,s=(d1-d0)/2*0.7;setDomain(c-s,c+s);}
+  if(e.key==="-"){const c=(d0+d1)/2,s=(d1-d0)/2*1.4;setDomain(c-s,c+s);}
+});
+new ResizeObserver(()=>{buildNav();render();}).observe(document.body);
+buildNav();render();
+</script>
+</body>
+</html>
