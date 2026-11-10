@@ -44,8 +44,8 @@ await page.waitForTimeout(800);
     return { total: document.querySelectorAll("#field .ev .lab").length, n: bad.length, sample: bad.slice(0, 3).map((l) => l.textContent.slice(0, 30)) };
   });
   log("(a2) labeled view: no label overflows viewport", over.total > 0 && over.n === 0, "labels=" + over.total + " overflows=" + over.n + " " + JSON.stringify(over.sample));
-  await page.keyboard.press("0");
-  await page.waitForTimeout(300);
+  await page.keyboard.press("Escape"); // referme la carte d'aide que le zoom a déjà fermée — état propre pour (b)
+  await page.waitForTimeout(200);
 }
 
 // (b) help card visible on load, closes on first wheel, reopens with ?
