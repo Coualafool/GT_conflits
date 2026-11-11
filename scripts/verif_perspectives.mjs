@@ -238,6 +238,19 @@ await page.click('#status button[data-a="1949"]'); await page.waitForTimeout(450
   await shot("perspG-zoom");
 }
 
+{
+  const r = await page.evaluate(() => {
+    const pills = [...document.querySelectorAll("#nav .laneLbl")].map(e => e.getBoundingClientRect());
+    const dots = [...document.querySelectorAll("#navLanes i")].map(e => e.getBoundingClientRect());
+    let overlaps = 0;
+    for (const p of pills) for (const d of dots)
+      if (p.left < d.right && d.left < p.right && p.top < d.bottom && d.top < p.bottom) overlaps++;
+    return { pills: pills.length, dots: dots.length, overlaps };
+  });
+  log("(G7) pastilles de légende des lignes — zéro chevauchement avec les dots",
+    r.pills === 3 && r.overlaps === 0, JSON.stringify(r));
+}
+
 log("(Z) zéro erreur console (4 pages)", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | ") || "none");
 
 await browser.close();

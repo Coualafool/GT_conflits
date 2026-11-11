@@ -32,7 +32,7 @@ header .badgeG{display:inline-block;background:#7a3b52;color:#fff;font-size:11px
 #navWin .h.l{left:-7px}#navWin .h.r{right:-7px}
 #navYears{position:absolute;bottom:2px;left:0;right:0;height:16px;font-size:10.5px;color:var(--muted)}
 #navYears span{position:absolute;transform:translateX(-50%)}
-#nav .laneLbl{position:absolute;left:6px;font-size:10px;font-weight:700;letter-spacing:.04em;z-index:2}
+#nav .laneLbl{position:absolute;left:6px;width:76px;font-size:10px;font-weight:700;letter-spacing:.02em;z-index:3;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 /* ——— barre d'état (C) + filtre charnières (F) ——— */
 #status{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:8px 20px;border-bottom:1px solid var(--border);background:var(--bg)}
 #status .per{font-weight:650;font-size:14px}
@@ -125,10 +125,11 @@ main{flex:1;overflow:auto;padding:0 0 30px;background:linear-gradient(90deg,rgba
 const $=s=>document.querySelector(s);
 const nav=$("#nav"),navLanes=$("#navLanes"),navWin=$("#navWin"),navYears=$("#navYears"),braid=$("#braid");
 let d0=T_MIN,d1=T_MAX,NW=0,filt="all";
+const PADL=86;
 function fmtY(y){const i=Math.floor(y),m=Math.floor((y-i)*12)+1;return i+" "+MONTHS[Math.min(11,m-1)]}
 function measure(){NW=nav.getBoundingClientRect().width}
-function xOf(y){return (y-T_MIN)/(T_MAX-T_MIN)*NW}
-function yOfX(px){return T_MIN+px/NW*(T_MAX-T_MIN)}
+function xOf(y){return PADL+(y-T_MIN)/(T_MAX-T_MIN)*(NW-PADL)}
+function yOfX(px){return T_MIN+(px-PADL)/(NW-PADL)*(T_MAX-T_MIN)}
 /* ——— navigateur : trois mini-lignes de dots colorés par récit (D) ——— */
 $("#colheads").innerHTML=PERS_KEYS.map(k=>{
   const p=PERS[k];
@@ -148,7 +149,7 @@ function buildNav(){
     }
   });
   navLanes.innerHTML=h;
-  let ys="";for(let y=1900;y<=2020;y+=20)ys+='<span style="left:'+xOf(y)+'px">'+y+'</span>';
+  let ys="";for(let y=1910;y<=2020;y+=10)ys+='<span style="left:'+xOf(y)+'px">'+y+'</span>';
   navYears.innerHTML=ys;
 }
 /* ——— fenêtre (C) ——— */
@@ -199,7 +200,7 @@ navWin.addEventListener("pointerdown",e=>{
 });
 navWin.addEventListener("pointermove",e=>{
   if(!drag)return;
-  const dy=(e.clientX-drag.x)/NW*(T_MAX-T_MIN);
+  const dy=(e.clientX-drag.x)/(NW-PADL)*(T_MAX-T_MIN);
   if(drag.mode==="move")setDomain(drag.d0+dy,drag.d1+dy);
   else if(drag.mode==="l")setDomain(Math.min(drag.d0+dy,d1-4),d1);
   else setDomain(d0,Math.max(drag.d1+dy,d0+4));
