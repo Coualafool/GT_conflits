@@ -153,7 +153,92 @@ await page.click('#chips button[data-f="central"]'); await page.waitForTimeout(5
   log("(F3) clic carte → panneau trois voix", r.open && r.rows === 3, JSON.stringify(r));
 }
 
-log("(Z) zéro erreur console (3 pages)", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | ") || "none");
+/* ----------------G : fusion C+D+F ---------------- */
+await page.goto(BASE + "/perspective-G-fusion.html", { waitUntil: "load" });
+await page.waitForTimeout(800);
+{
+  const r = await page.evaluate(() => ({
+    rows: document.querySelectorAll("#braid .row").length,
+    cards: document.querySelectorAll("#braid .card").length,
+    dots: document.querySelectorAll("#navLanes i").length,
+    expCards: nTold("pal") + nTold("isr") + nTold("occ"),
+  }));
+  log("(G1) tout — fenêtre entière = 93 lignes, tresse complète, mini-lignes complètes",
+    r.rows === 93 && r.cards === r.expCards && r.dots === r.expCards, JSON.stringify(r));
+  await shot("perspG-tout");
+}
+await page.click('#status button[data-a="1949"]'); await page.waitForTimeout(450);
+{
+  const r = await page.evaluate(() => {
+    const lo = Math.ceil(d0), hi = Math.floor(d1);
+    const years = [...document.querySelectorAll("#braid .card .yr")].map(t => parseInt(t.textContent, 10));
+    return {
+      rows: document.querySelectorAll("#braid .row").length,
+      allInRange: years.length > 0 && years.every(y => y >= lo - 1 && y <= hi + 1),
+      per: document.querySelector("#perLabel").textContent,
+      expRows: EV.filter(ev => ev[0] >= d0 && ev[0] <= d1).length,
+    };
+  });
+  log("(G2) prédéfini 1949–1987 — la tresse suit exactement la fenêtre",
+    r.rows === r.expRows && r.allInRange && r.rows < 93, JSON.stringify(r));
+  await shot("perspG-fenetre");
+}
+{
+  const r = await page.evaluate(() => {
+    document.querySelector('#status button[data-f="central"]').click();
+    const exp = PERS_KEYS.reduce((s, k) => s + pEvs(k).filter(o => o.l === 2 && o.ev[0] >= d0 && o.ev[0] <= d1).length, 0);
+    return { cards: document.querySelectorAll("#braid .card").length, exp };
+  });
+  log("(G3) filtre charnières dans la fenêtre", r.cards === r.exp && r.cards > 0, JSON.stringify(r));
+  await page.click('#status button[data-f="all"]');
+}
+{
+  const box = await page.locator("#navWin").boundingBox();
+  const y = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width / 2, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + 300, y, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(400);
+  const r = await page.evaluate(() => {
+    const lo = Math.ceil(d0), hi = Math.floor(d1);
+    const years = [...document.querySelectorAll("#braid .card .yr")].map(t => parseInt(t.textContent, 10));
+    return {
+      lo, hi, shifted: lo > 1949,
+      rows: document.querySelectorAll("#braid .row").length,
+      expRows: EV.filter(ev => ev[0] >= d0 && ev[0] <= d1).length,
+      allInRange: years.every(y2 => y2 >= lo - 1 && y2 <= hi + 1),
+    };
+  });
+  log("(G4) glisser la fenêtre — la tresse se resynchronise",
+    r.shifted && r.rows === r.expRows && r.allInRange, JSON.stringify(r));
+  await shot("perspG-drag");
+}
+{
+  const r = await page.evaluate(() => {
+    document.querySelector("#braid .card").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    return { open: document.querySelector("#panel").classList.contains("open"), rows: document.querySelectorAll("#pRows .vrow").length };
+  });
+  log("(G5) clic carte → panneau trois voix", r.open && r.rows === 3, JSON.stringify(r));
+  await page.keyboard.press("Escape");
+}
+{
+  const box = await page.locator("#navLanes").boundingBox();
+  await page.mouse.move(box.x + box.width * 0.35, box.y + box.height / 2);
+  for (let i = 0; i < 4; i++) { await page.mouse.wheel(0, -240); await page.waitForTimeout(130); }
+  const r = await page.evaluate(() => {
+    const lo = Math.ceil(d0), hi = Math.floor(d1);
+    const dots = [...document.querySelectorAll("#navLanes i")];
+    const win = dots.filter(d => { const i = +d.dataset.i; return EV[i][0] >= d0 && EV[i][0] <= d1; });
+    const cards = document.querySelectorAll("#braid .card").length;
+    return { lo, hi, winDots: win.length, cards };
+  });
+  log("(G6) molette sur le navigateur — dots sous fenêtre = cartes de la tresse",
+    r.winDots === r.cards && (r.hi - r.lo) < 40, JSON.stringify(r));
+  await shot("perspG-zoom");
+}
+
+log("(Z) zéro erreur console (4 pages)", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | ") || "none");
 
 await browser.close();
 console.log("\n===== RESULTATS =====");

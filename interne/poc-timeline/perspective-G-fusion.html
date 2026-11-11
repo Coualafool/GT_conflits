@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frise — Variante G : navigateur de récits (fusion C+D+F)</title>
+<style>
+:root{
+  --bg:#fafaf9; --card:#ffffff; --ink:#1c1f24; --muted:#5b6068;
+  --border:#e6e4de; --border-strong:#cfccc3;
+  --accent:#9a511c;
+  --cpal:#2e7d5b; --cisr:#2f6f9e; --cocc:#8a5a3c;
+  --sh1:0 1px 2px rgba(23,24,26,.06);
+  --sh2:0 2px 6px rgba(23,24,26,.06),0 14px 34px rgba(23,24,26,.12);
+  --tr:150ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+header{padding:12px 20px 10px;border-bottom:1px solid var(--border);background:var(--card)}
+header h1{margin:0 0 3px;font-size:17.5px;font-weight:650;letter-spacing:-.01em}
+header .sub{color:var(--muted);font-size:13px}
+header .badgeG{display:inline-block;background:#7a3b52;color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;margin-right:6px;vertical-align:1px}
+/* ——— le navigateur : fenêtre C, trois lignes D ——— */
+#nav{position:relative;height:118px;border-bottom:1px solid var(--border);background:var(--card);touch-action:none}
+#navLanes{position:absolute;top:22px;left:0;right:0;bottom:24px}
+#navLanes i{position:absolute;width:7px;height:7px;border-radius:50%;transform:translateX(-50%);cursor:pointer;box-shadow:0 0 0 1px var(--card)}
+#navWin{position:absolute;top:14px;bottom:16px;background:rgba(122,59,82,.07);border-left:3px solid var(--accent);border-right:3px solid var(--accent);cursor:grab;border-radius:2px}
+#navWin:hover{background:rgba(122,59,82,.12)}
+#navWin .h{position:absolute;top:50%;transform:translateY(-50%);width:11px;height:44px;background:var(--accent);border-radius:4px;cursor:ew-resize}
+#navWin .h.l{left:-7px}#navWin .h.r{right:-7px}
+#navYears{position:absolute;bottom:2px;left:0;right:0;height:16px;font-size:10.5px;color:var(--muted)}
+#navYears span{position:absolute;transform:translateX(-50%)}
+#nav .laneLbl{position:absolute;left:6px;font-size:10px;font-weight:700;letter-spacing:.04em;z-index:2}
+/* ——— barre d'état (C) + filtre charnières (F) ——— */
+#status{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:8px 20px;border-bottom:1px solid var(--border);background:var(--bg)}
+#status .per{font-weight:650;font-size:14px}
+#status .cnt{color:var(--muted);font-size:13px}
+#status .spacer{flex:1}
+#status button{border:1px solid var(--border-strong);background:var(--card);border-radius:999px;padding:4px 12px;font-size:12.5px;cursor:pointer;box-shadow:var(--sh1)}
+#status button:hover{border-color:var(--ink)}
+#status button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* ——— en-têtes de colonnes (F) ——— */
+#colheads{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-bottom:1px solid var(--border)}
+#colheads .ch{padding:7px 16px;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:7px;border-right:1px solid var(--border)}
+#colheads .ch:last-child{border-right:none}
+#colheads .ch i{width:9px;height:9px;border-radius:50%}
+#colheads .ch small{color:var(--muted);font-weight:500}
+/* ——— la tresse (F), pilotée par la fenêtre (C) ——— */
+main{flex:1;overflow:auto;padding:0 0 30px;background:linear-gradient(90deg,rgba(46,125,91,.045) 0 33.33%,rgba(47,111,158,.045) 33.33% 66.66%,rgba(138,90,60,.045) 66.66% 100%)}
+.decade{position:sticky;top:0;background:linear-gradient(var(--bg) 72%,transparent);padding:13px 20px 5px;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;z-index:3}
+.row{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:6px 16px}
+.row .tie{position:absolute;left:16px;right:16px;top:50%;border-top:1px dashed var(--border-strong);z-index:0}
+.card{position:relative;z-index:1;border:1px solid var(--border);border-radius:13px;background:var(--card);padding:9px 13px;cursor:pointer;box-shadow:var(--sh1);transition:border-color var(--tr)}
+.card:hover{border-color:var(--ink)}
+.card .yr{font-size:11.5px;font-weight:700}
+.card .ti{font-size:14px;font-weight:600;margin-top:1px}
+.card .de{font-size:12.5px;color:var(--muted);margin-top:4px}
+.card.compact{padding:6px 12px}
+.card.compact .ti{font-size:12.8px;font-weight:550}
+.card .db{position:absolute;top:-8px;right:9px;font-size:10px;font-weight:800;background:#9a511c;color:#fff;border-radius:999px;padding:1px 8px}
+.card.c-pal{border-top:3px solid var(--cpal)} .card.c-pal .yr{color:var(--cpal)}
+.card.c-isr{border-top:3px solid var(--cisr)} .card.c-isr .yr{color:var(--cisr)}
+.card.c-occ{border-top:3px solid var(--cocc)} .card.c-occ .yr{color:var(--cocc)}
+.empty{padding:44px 20px;text-align:center;color:var(--muted)}
+/* ——— panneau trois voix (D/E/F) ——— */
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);background:var(--card);border-left:1px solid var(--border);box-shadow:var(--sh2);transform:translateX(102%);transition:transform var(--tr);z-index:20;display:flex;flex-direction:column}
+#panel.open{transform:none}
+#panel .phead{padding:16px 20px 12px;border-bottom:1px solid var(--border);position:relative}
+#panel .phead .yr{font-size:13px;color:var(--muted)}
+#panel .phead h3{margin:2px 0 0;font-size:16.5px}
+#panel .pbody{flex:1;overflow:auto;padding:14px 20px}
+#panel .desc{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+.vrow{border:1px solid var(--border);border-radius:12px;padding:10px 13px;margin-bottom:9px}
+.vrow .vh{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.vrow .vh i{width:9px;height:9px;border-radius:50%}
+.vrow .vh .lvl{margin-left:auto;font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 8px}
+.vrow .vt{font-size:14px;margin-top:4px}
+.vrow.absent{opacity:.55;border-style:dashed}
+.vrow.absent .vt{font-style:italic;color:var(--muted)}
+#panel .pfoot{padding:12px 20px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted)}
+#panel .pclose{position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+@media (max-width:780px){
+  #colheads{grid-template-columns:1fr}
+  #colheads .ch{border-right:none;border-bottom:1px solid var(--border)}
+  .row{grid-template-columns:1fr}
+  main{background:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="badgeG">G · C+D+F</span>Navigateur de récits — la tresse pilotée par une fenêtre</h1>
+  <p class="sub">En haut, les trois lignes du temps (D) réduites en navigateur : glissez la fenêtre ou ses bords, molette pour zoomer. En bas, la tresse des trois récits (F) affiche uniquement la période encadrée — tout ce qui est hors fenêtre reste visible en miniature, jamais perdu.</p>
+</header>
+<div id="nav" aria-label="Navigateur temporel : faites glisser la fenêtre pour changer la période affichée">
+  <div class="laneLbl" id="l0"></div><div class="laneLbl" id="l1"></div><div class="laneLbl" id="l2"></div>
+  <div id="navLanes"></div>
+  <div id="navWin"><div class="h l"></div><div class="h r"></div></div>
+  <div id="navYears"></div>
+</div>
+<div id="status">
+  <span class="per" id="perLabel"></span><span class="cnt" id="cntLabel"></span>
+  <button id="zOut" title="Dézoomer" aria-label="Dézoomer">−</button><button id="zIn" title="Zoomer" aria-label="Zoomer">+</button><button id="zAll" title="Tout afficher" aria-label="Tout afficher">Tout</button>
+  <button data-a="1895" data-b="1918">1895–1917</button>
+  <button data-a="1918" data-b="1949">1918–1948</button>
+  <button data-a="1949" data-b="1988">1949–1987</button>
+  <button data-a="1988" data-b="2001">1988–2000</button>
+  <button data-a="2001" data-b="2029">2001–aujourd'hui</button>
+  <span class="spacer"></span>
+  <button data-f="all" aria-pressed="true">Tout (avec seconds plans)</button>
+  <button data-f="central" aria-pressed="false">Charnières seules</button>
+</div>
+<div id="colheads" aria-hidden="true"></div>
+<main id="braid"></main>
+<div id="panel" role="dialog" aria-label="Comparaison des récits">
+  <div class="phead"><div class="yr" id="pYr"></div><h3 id="pT">Le même fait, trois récits</h3><button class="pclose" id="pClose" aria-label="Fermer">×</button></div>
+  <div class="pbody"><p class="desc" id="pDesc"></p><div id="pRows"></div></div>
+  <div class="pfoot" id="pFoot"></div>
+</div>
+<script src="poc-data.js"></script>
+<script src="poc-perspectives.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const nav=$("#nav"),navLanes=$("#navLanes"),navWin=$("#navWin"),navYears=$("#navYears"),braid=$("#braid");
+let d0=T_MIN,d1=T_MAX,NW=0,filt="all";
+function fmtY(y){const i=Math.floor(y),m=Math.floor((y-i)*12)+1;return i+" "+MONTHS[Math.min(11,m-1)]}
+function measure(){NW=nav.getBoundingClientRect().width}
+function xOf(y){return (y-T_MIN)/(T_MAX-T_MIN)*NW}
+function yOfX(px){return T_MIN+px/NW*(T_MAX-T_MIN)}
+/* ——— navigateur : trois mini-lignes de dots colorés par récit (D) ——— */
+$("#colheads").innerHTML=PERS_KEYS.map(k=>{
+  const p=PERS[k];
+  return '<div class="ch"><i style="background:'+p.c+'"></i>'+p.name+' <small>· '+nTold(k)+' dates</small></div>';
+}).join("");
+function buildNav(){
+  measure();
+  PERS_KEYS.forEach((k,j)=>{
+    const L=$("#l"+j);
+    L.textContent=PERS[k].name.toUpperCase();
+    L.style.top=(24+j*24)+"px";L.style.color=PERS[k].c;
+  });
+  let h="";
+  PERS_KEYS.forEach((k,j)=>{
+    for(const o of pEvs(k)){
+      h+='<i data-i="'+o.i+'" data-k="'+k+'" style="left:'+xOf(o.ev[0])+'px;top:'+(j*24+(o.l===2?2:10))+'px;background:'+PERS[k].c+';'+(o.l===2?"":"opacity:.45")+'" title="'+escAttr(fmtY(o.ev[0])+" — "+o.t).replace(/&quot;/g,'"')+'"></i>';
+    }
+  });
+  navLanes.innerHTML=h;
+  let ys="";for(let y=1900;y<=2020;y+=20)ys+='<span style="left:'+xOf(y)+'px">'+y+'</span>';
+  navYears.innerHTML=ys;
+}
+/* ——— fenêtre (C) ——— */
+function setDomain(a,b){
+  if(b-a<4)return;
+  if(a<T_MIN){b+=T_MIN-a;a=T_MIN;}
+  if(b>T_MAX){a-=b-T_MAX;b=T_MAX;}
+  if(a<T_MIN)a=T_MIN;
+  d0=a;d1=b;render();
+}
+let raf=null;function scheduleRender(){if(!raf)raf=requestAnimationFrame(()=>{raf=null;render();});}
+/* ——— tresse (F), filtrée par la fenêtre ——— */
+const LVL={2:["Central","rgba(23,24,26,.08)"],1:["Second plan","rgba(23,24,26,.05)"],0:["Absent","transparent"]};
+function inWin(i){return EV[i][0]>=d0-1e-9&&EV[i][0]<=d1+1e-9}
+function cardHTML(i,k,l){
+  const badge=divergent(i)&&l===2&&PERS_KEYS.filter(x=>lvOf(i,x)>0).length>1?'<span class="db">≠</span>':"";
+  return '<div class="card c-'+k+(l===2?"":" compact")+'" style="grid-column:'+(PERS_KEYS.indexOf(k)+1)+'" data-i="'+i+'">'+badge+
+    '<div class="yr">'+fmtY(EV[i][0])+'</div><div class="ti">'+escAttr(titleOf(i,k)).replace(/&quot;/g,'"')+'</div>'+
+    (l===2&&filt==="all"?'<div class="de">'+escAttr(EV[i][3]).replace(/&quot;/g,'"')+'</div>':'')+'</div>';
+}
+function render(){
+  navWin.style.left=xOf(d0)+"px";
+  navWin.style.width=Math.max(10,xOf(d1)-xOf(d0))+"px";
+  $("#perLabel").textContent=Math.round(d0)+" – "+Math.round(d1);
+  let out="",dec=-1,cards=0,rows=0;
+  for(let i=0;i<EV.length;i++){
+    if(!inWin(i))continue;
+    const show=PERS_KEYS.map(k=>filt==="central"&&lvOf(i,k)<2?0:lvOf(i,k));
+    const cols=PERS_KEYS.map((k,j)=>show[j]>0?j:-1).filter(j=>j>=0);
+    if(!cols.length)continue;
+    rows++;
+    const d=Math.floor(EV[i][0]/10)*10;
+    if(d!==dec){dec=d;out+='<div class="decade">années '+d+'</div>';}
+    out+='<div class="row" data-i="'+i+'">';
+    if(cols.length>1)out+='<div class="tie"></div>';
+    for(const j of cols){out+=cardHTML(i,PERS_KEYS[j],show[j]);cards++;}
+    out+='</div>';
+  }
+  braid.innerHTML=out||'<div class="empty">Aucun événement dans cette fenêtre — élargissez la sélection.</div>';
+  $("#cntLabel").textContent=rows+" événement"+(rows>1?"s":"")+" · "+cards+" cartes de récits";
+}
+/* ——— interactions du navigateur (C) ——— */
+let drag=null;
+navWin.addEventListener("pointerdown",e=>{
+  const h=e.target.closest(".h");
+  drag={mode:h?(h.classList.contains("l")?"l":"r"):"move",x:e.clientX,d0,d1};
+  navWin.setPointerCapture(e.pointerId);e.preventDefault();e.stopPropagation();
+});
+navWin.addEventListener("pointermove",e=>{
+  if(!drag)return;
+  const dy=(e.clientX-drag.x)/NW*(T_MAX-T_MIN);
+  if(drag.mode==="move")setDomain(drag.d0+dy,drag.d1+dy);
+  else if(drag.mode==="l")setDomain(Math.min(drag.d0+dy,d1-4),d1);
+  else setDomain(d0,Math.max(drag.d1+dy,d0+4));
+});
+navWin.addEventListener("pointerup",()=>drag=null);
+nav.addEventListener("pointerdown",e=>{
+  if(e.target.closest("#navWin"))return;
+  const r=nav.getBoundingClientRect();const y=yOfX(e.clientX-r.left);
+  setDomain(y-(d1-d0)/2,y+(d1-d0)/2);
+});
+nav.addEventListener("wheel",e=>{
+  e.preventDefault();
+  const r=nav.getBoundingClientRect();const px=e.clientX-r.left;
+  const y=yOfX(px),f=e.deltaY<0?0.8:1.25;
+  setDomain(y-(y-d0)*f,y+(d1-y)*f);
+},{passive:false});
+$("#zIn").addEventListener("click",()=>{const c=(d0+d1)/2,s=(d1-d0)/2*0.7;setDomain(c-s,c+s);});
+$("#zOut").addEventListener("click",()=>{const c=(d0+d1)/2,s=(d1-d0)/2*1.4;setDomain(c-s,c+s);});
+$("#zAll").addEventListener("click",()=>setDomain(T_MIN,T_MAX));
+document.querySelectorAll("#status button[data-a]").forEach(b=>b.addEventListener("click",()=>setDomain(+b.dataset.a,+b.dataset.b)));
+/* ——— filtre charnières (F) ——— */
+document.querySelectorAll("#status button[data-f]").forEach(b=>b.addEventListener("click",()=>{
+  filt=b.dataset.f;
+  document.querySelectorAll("#status button[data-f]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  render();
+}));
+/* ——— clic dot ou carte → trois voix (D) ——— */
+function openCompare(i){
+  const ev=EV[i];
+  $("#pYr").textContent=fmtY(ev[0]);
+  $("#pDesc").textContent=ev[3];
+  $("#pRows").innerHTML=PERS_KEYS.map(k=>{
+    const p=PERS[k],l=lvOf(i,k);
+    return '<div class="vrow'+(l?"":" absent")+'"><div class="vh"><i style="background:'+p.c+'"></i>'+p.name+
+      '<span class="lvl" style="background:'+LVL[l][1]+'">'+LVL[l][0]+'</span></div>'+
+      '<div class="vt">'+escAttr(titleOf(i,k)).replace(/&quot;/g,'"')+'</div></div>';
+  }).join("");
+  const shown=PERS_KEYS.filter(k=>lvOf(i,k)>0);
+  $("#pFoot").textContent=divergent(i)?"Même date, des noms différents — c'est là que le conflit se voit.":
+    (shown.length===1?"Un seul récit porte cette date.":"Les trois récits nomment cette date pareillement.");
+  $("#panel").classList.add("open");
+}
+navLanes.addEventListener("click",e=>{const d=e.target.closest("[data-i]");if(d)openCompare(+d.dataset.i);});
+braid.addEventListener("click",e=>{const c=e.target.closest(".card");if(c)openCompare(+c.dataset.i);});
+$("#pClose").onclick=()=>$("#panel").classList.remove("open");
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")$("#panel").classList.remove("open");
+  if(e.key==="0")setDomain(T_MIN,T_MAX);
+  if(e.key==="+"||e.key==="="){const c=(d0+d1)/2,s=(d1-d0)/2*0.7;setDomain(c-s,c+s);}
+  if(e.key==="-"){const c=(d0+d1)/2,s=(d1-d0)/2*1.4;setDomain(c-s,c+s);}
+});
+new ResizeObserver(()=>{buildNav();scheduleRender();}).observe(document.body);
+buildNav();render();
+</script>
+</body>
+</html>
