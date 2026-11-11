@@ -1,4 +1,4 @@
-// verif_poc_A.mjs — vérification du PoC frise "Fraction A" (interne/poc-timeline)
+// verif_poc_A.mjs — vérification du PoC frise "Fraction A" (frise)
 // Usage: repo root served on :8899 (node scripts/tars_serve.mjs), then from the repo root:
 //   node scripts/verif_poc_A.mjs
 // Self-contained: playwright must live in this repo's node_modules (scripts/tars_setup_runtime.ps1).
@@ -12,7 +12,7 @@ catch { console.error("playwright absent du node_modules du repo — lancer scri
 
 const ART = fileURLToPath(new URL("../artifacts/", import.meta.url));
 mkdirSync(ART, { recursive: true });
-const PAGE_URL = process.env.POC_URL || "http://localhost:8899/interne/poc-timeline/poc-A-niveaux.html";
+const PAGE_URL = process.env.POC_URL || "http://localhost:8899/frise/poc-A-niveaux.html";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
 

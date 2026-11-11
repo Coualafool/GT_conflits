@@ -12,7 +12,7 @@ catch { console.error("playwright absent du node_modules du repo — lancer scri
 
 const ART = fileURLToPath(new URL("../artifacts/", import.meta.url));
 mkdirSync(ART, { recursive: true });
-const BASE = process.env.POC_BASE || "http://localhost:8899/interne/poc-timeline";
+const BASE = process.env.POC_BASE || "http://localhost:8899/frise";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
 

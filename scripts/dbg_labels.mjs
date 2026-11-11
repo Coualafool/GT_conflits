@@ -1,6 +1,6 @@
 // Diagnostic géométrie des étiquettes : état des débordements à slider=50. Usage: .runtime\\node\\node.exe scripts\\dbg_labels.mjs (sur TARS) — output JSON, bad=[] attendu.
 import { chromium } from 'playwright';
-const url = 'file:///D:/GT_conflits/interne/poc-timeline/poc-A-niveaux.html';
+const url = 'file:///D:/GT_conflits/frise/poc-A-niveaux.html';
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
 await p.goto(url); await p.waitForTimeout(900);

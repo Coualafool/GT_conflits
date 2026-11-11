@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
-const html = process.argv[2] || path.join(repoRoot, 'interne/poc-timeline/poc-A-niveaux.html');
+const html = process.argv[2] || path.join(repoRoot, 'frise/poc-A-niveaux.html');
 const out = (n) => path.join(repoRoot, 'artifacts', n);
 
 const browser = await chromium.launch();

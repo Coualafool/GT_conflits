@@ -1,3 +1,7 @@
 # GitHub Pages (deploy from branch main) — exclude internal files from the published site.
+# La frise publique vit dans frise/ (dossier publié) ; interne/ reste privé par politique.
 exclude:
   - interne
+  - scripts
+  - artifacts
+  - .runtime
