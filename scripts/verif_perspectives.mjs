@@ -255,7 +255,55 @@ await page.click('#status button[data-a="1949"]'); await page.waitForTimeout(450
     r.bands === 3 && r.bandColors === 3, JSON.stringify({ bands: r.bands, bandColors: r.bandColors }));
 }
 
-log("(Z) zéro erreur console (4 pages)", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | ") || "none");
+/* ----------------H : liens intelligents site ↔ frise ---------------- */
+const ORIGIN = new URL(BASE).origin;
+await page.goto(BASE + "/perspective-G-fusion.html?ch=2", { waitUntil: "load" });
+await page.waitForTimeout(700);
+{
+  const r = await page.evaluate(() => {
+    const ys = EV.filter(e => e[4] === 2).map(e => e[0]);
+    return { lo: Math.round(d0), hi: Math.round(d1), min: Math.min(...ys), max: Math.max(...ys),
+      covers: d0 <= Math.min(...ys) && d1 >= Math.max(...ys),
+      rows: document.querySelectorAll("#braid .row").length };
+  });
+  log("(H1) ?ch=2 — fenêtre ouverte sur la plage des dates du chapitre 2",
+    r.covers && r.rows >= 5 && (r.hi - r.lo) < 60, JSON.stringify(r));
+  await shot("perspG-ch2");
+}
+await page.goto(BASE + "/perspective-G-fusion.html#s4.2", { waitUntil: "load" });
+await page.waitForTimeout(700);
+{
+  const r = await page.evaluate(() => ({
+    open: document.querySelector("#panel").classList.contains("open"),
+    href: document.querySelector("#pKit").getAttribute("href"),
+    yr: document.querySelector("#pYr").textContent,
+    focused: !!document.querySelector('.row[data-i="' + EV.findIndex(e => e[4] === 4 && String(e[5]) === "2") + '"]'),
+  }));
+  log("(H2) #s4.2 — panneau ouvert sur la séquence + lien retour kit (chapitre 4, séq. 2)",
+    r.open && /chapitre-4-espace\.html#s2$/.test(r.href) && r.focused, JSON.stringify(r));
+}
+await page.goto(ORIGIN + "/rapport/rapport_FR.html", { waitUntil: "load" });
+{
+  const r = await page.evaluate(() => ({
+    banners: document.querySelectorAll('#core .banner a.frise[href*="perspective-G-fusion"]').length,
+    hero: !!document.querySelector('.hero-cta a[href$="perspective-G-fusion.html"]'),
+    chs: [...document.querySelectorAll('#core .banner a.frise')].map(a => (a.href.match(/ch=(\d+)/) || [])[1]).join(","),
+  }));
+  log("(H3) page principale — entrée du hero + 11 boutons « frise de ce chapitre » numérotés 1→11",
+    r.banners === 11 && r.hero && r.chs === "1,2,3,4,5,6,7,8,9,10,11", JSON.stringify({ banners: r.banners, hero: r.hero }));
+}
+await page.goto(ORIGIN + "/chapitres/chapitre-2-espace.html", { waitUntil: "load" });
+{
+  const r = await page.evaluate(() => {
+    const a = document.querySelector('a[href*="perspective-G-fusion"]');
+    return { n: document.querySelectorAll('a[href*="perspective-G-fusion"]').length,
+      ch: a && a.getAttribute("href").includes("?ch=2") };
+  });
+  log("(H4) pages chapitres — lien de rail vers la frise centrée sur le chapitre",
+    r.n === 1 && r.ch === true, JSON.stringify(r));
+}
+
+log("(Z) zéro erreur console (tout le parcours)", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | ") || "none");
 
 await browser.close();
 console.log("\n===== RESULTATS =====");
