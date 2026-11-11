@@ -245,10 +245,14 @@ await page.click('#status button[data-a="1949"]'); await page.waitForTimeout(450
     let overlaps = 0;
     for (const p of pills) for (const d of dots)
       if (p.left < d.right && d.left < p.right && p.top < d.bottom && d.top < p.bottom) overlaps++;
-    return { pills: pills.length, dots: dots.length, overlaps };
+    const bands = [...document.querySelectorAll("#navLanes .lb")];
+    return { pills: pills.length, dots: dots.length, overlaps,
+      bands: bands.length, bandColors: new Set(bands.map(b => getComputedStyle(b).backgroundColor)).size };
   });
   log("(G7) pastilles de légende des lignes — zéro chevauchement avec les dots",
     r.pills === 3 && r.overlaps === 0, JSON.stringify(r));
+  log("(G8) couloirs semi-transparents des trois lignes — présents et distincts",
+    r.bands === 3 && r.bandColors === 3, JSON.stringify({ bands: r.bands, bandColors: r.bandColors }));
 }
 
 log("(Z) zéro erreur console (4 pages)", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | ") || "none");

@@ -25,6 +25,7 @@ header .badgeG{display:inline-block;background:#7a3b52;color:#fff;font-size:11px
 /* ——— le navigateur : fenêtre C, trois lignes D ——— */
 #nav{position:relative;height:118px;border-bottom:1px solid var(--border);background:var(--card);touch-action:none}
 #navLanes{position:absolute;top:22px;left:0;right:0;bottom:24px}
+#navLanes .lb{position:absolute;left:0;right:0;height:20px;border-radius:6px;pointer-events:none}
 #navLanes i{position:absolute;width:7px;height:7px;border-radius:50%;transform:translateX(-50%);cursor:pointer;box-shadow:0 0 0 1px var(--card)}
 #navWin{position:absolute;top:14px;bottom:16px;background:rgba(122,59,82,.07);border-left:3px solid var(--accent);border-right:3px solid var(--accent);cursor:grab;border-radius:2px}
 #navWin:hover{background:rgba(122,59,82,.12)}
@@ -142,7 +143,8 @@ function buildNav(){
     L.textContent=PERS[k].name.toUpperCase();
     L.style.top=(24+j*24)+"px";L.style.color=PERS[k].c;
   });
-  let h="";
+  function hexA(c,a){const n=parseInt(c.slice(1),16);return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")"}
+  let h=PERS_KEYS.map((k,j)=>'<div class="lb" style="top:'+(j*24)+'px;background:'+hexA(PERS[k].c,.12)+'"></div>').join("");
   PERS_KEYS.forEach((k,j)=>{
     for(const o of pEvs(k)){
       h+='<i data-i="'+o.i+'" data-k="'+k+'" style="left:'+xOf(o.ev[0])+'px;top:'+(j*24+(o.l===2?2:10))+'px;background:'+PERS[k].c+';'+(o.l===2?"":"opacity:.45")+'" title="'+escAttr(fmtY(o.ev[0])+" — "+o.t).replace(/&quot;/g,'"')+'"></i>';
