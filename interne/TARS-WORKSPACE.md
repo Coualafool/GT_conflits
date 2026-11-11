@@ -63,7 +63,7 @@ pull them back with scp for vision QC.
 | `scripts/verif_poc_A.mjs` | `interne/poc-timeline/poc-A-niveaux.html` (PoC frise) | 13 |
 | `scripts/verif_navigateur.mjs` | `chapitres/chapitre-2-espace.html` (kit ch2) | 12 |
 | `scripts/verif_variantes.mjs` | les 3 variantes de frise (`variante-A/B/C…html`) | 19 |
-| `scripts/verif_perspectives.mjs` | les 4 vues « trois récits » (`perspective-D/E/F/G…html` + `poc-perspectives.js`) | 20 |
+| `scripts/verif_perspectives.mjs` | les 4 vues « trois récits » (`perspective-D/E/F/G…html` `poc-perspectives.js`) | 21 |
 | `scripts/tars_run_verifs.ps1` | runs server + all harnesses, one shot | — |
 
 Both are self-contained: playwright resolves only from this repo's `node_modules`,
