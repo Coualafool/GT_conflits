@@ -34,18 +34,23 @@ from blocs_quiz import QUIZ_BLOCK
 LICENSE_URL = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 
 # ---------------------------------------------------------------- pages ----
-# (path, has_accordions, has_inline_tools, language)
+# (path, has_accordions, has_inline_tools, language, kind)
+# kind: None = page documentaire ; "frise" = page-applications de la frise
+# (canvas plein-viewport : pied compact + outils de navigation kit,
+#  jamais print/clavier/seance/glossaire/quiz qui casseraient la mise en page).
 def shipped_pages():
     pages = []
     for p in sorted((ROOT / "chapitres").glob("chapitre-*-espace.html")):
-        pages.append((p, True, True, "fr"))
+        pages.append((p, True, True, "fr", None))
     for p in sorted((ROOT / "composants").glob("composant-*-espace.html")):
-        pages.append((p, True, False, "fr"))
-    pages.append((ROOT / "rapport" / "rapport_FR.html", True, False, "fr"))
-    pages.append((ROOT / "rapport" / "rapport_EN.html", False, False, "en"))
-    pages.append((ROOT / "rapport" / "NOUVEAUTES.html", False, False, "fr"))
-    pages.append((ROOT / "discord" / "rejoindre-discord.html", False, False, "fr"))
-    pages.append((ROOT / "LISEZ-MOI.html", False, False, "fr"))
+        pages.append((p, True, False, "fr", None))
+    pages.append((ROOT / "rapport" / "rapport_FR.html", True, False, "fr", None))
+    pages.append((ROOT / "rapport" / "rapport_EN.html", False, False, "en", None))
+    pages.append((ROOT / "rapport" / "NOUVEAUTES.html", False, False, "fr", None))
+    pages.append((ROOT / "discord" / "rejoindre-discord.html", False, False, "fr", None))
+    pages.append((ROOT / "LISEZ-MOI.html", False, False, "fr", None))
+    for p in sorted((ROOT / "frise").glob("*.html")):
+        pages.append((p, False, False, "fr", "frise"))
     return pages
 
 # ---------------------------------------------------------------- blocks ---
@@ -123,6 +128,30 @@ OUTILS_BLOCK = """<!-- BEGIN commun:outils -->
 </style>
 <!-- END commun:outils -->"""
 
+# Outils des pages-frise : navigation vers le kit (pas de tout-déplier,
+# ces pages n'ont pas d'accordéons). Placé en bas à gauche : les panneaux
+# de détail des pages-frise s'ouvrent à droite.
+FRISE_OUTILS_BLOCK = """<!-- BEGIN commun:frise-outils -->
+<nav class="frise-outils no-print" aria-label="Navigation vers le kit">
+  <a href="../rapport/rapport_FR.html">← Kit pédagogique</a>{idx}
+</nav>
+<style>
+  .frise-outils{{position:fixed;left:14px;bottom:14px;z-index:30;display:flex;gap:6px;font-size:12.5px}}
+  .frise-outils a{{color:var(--muted,#555);background:var(--card,#fff);border:1px solid var(--border,#ccc);border-radius:999px;padding:5px 12px;text-decoration:none;box-shadow:var(--sh1,0 1px 3px rgba(0,0,0,.15))}}
+  .frise-outils a:hover{{color:var(--ink,#111);border-color:var(--accent,#9a511c)}}
+</style>
+<!-- END commun:frise-outils -->"""
+
+# Le pied « compact » des pages-frise : elles font 100 % de hauteur,
+# le pied standard (marges 64/48) volerait trop de place au canvas.
+FRISE_PIED_STYLE = """
+<style>
+  /* pied compact (pages-frise -- inject_common.py) */
+  .pied-commun{margin:0;padding:9px 16px 12px;font-size:12px;line-height:1.5;color:var(--muted,#555)}
+  .pied-commun p{display:inline}
+  .pied-commun p+p::before{content:" · "}
+</style>"""
+
 PIED_HEAD_BLOCK = """<!-- BEGIN commun:pied-head -->
 <link rel="license" href="{license_url}">
 <!-- END commun:pied-head -->"""
@@ -199,15 +228,31 @@ def render_pied(path, lang):
         repo_short=REPO_URL.split("//", 1)[1],
         nouv=nouv)
 
+def render_frise_outils(path):
+    # sur l'index lui-même, pas de lien vers soi ; les autres pages renvoient
+    # au comparatif des vues (variante/perspective/poc).
+    idx = "" if path.name == "index-comparatif.html" else \
+        '\n  <a href="index-comparatif.html">Comparer les vues</a>'
+    return FRISE_OUTILS_BLOCK.format(idx=idx)
+
 KINDS = {"print": ["commun:print"],
          "clavier": ["commun:clavier", "commun:outils"],
          "seance": ["commun:seance"],
          "glossaire": ["commun:glossaire"],
          "quiz": ["commun:quiz"],
+         "frise": ["commun:frise-outils", "commun:pied-head", "commun:pied"],
          "pied": ["commun:pied-head", "commun:pied"]}
 
-def wanted_blocks(path, accordions, inline_tools, lang, keep=None):
+def wanted_blocks(path, accordions, inline_tools, lang, keep=None, kind=None):
     """(name, content, where) — where: 'head' or 'body'."""
+    if kind == "frise":
+        # pages-applications de la frise : pied + outils kit uniquement.
+        w = [("commun:frise-outils", render_frise_outils(path), "body"),
+             ("commun:pied-head", PIED_HEAD_BLOCK.format(license_url=LICENSE_URL), "head"),
+             ("commun:pied", render_pied(path, lang) + FRISE_PIED_STYLE, "body")]
+        if keep:
+            w = [b for b in w if b[0] in keep]
+        return w
     w = [("commun:print", PRINT_BLOCK, "head")]
     if accordions:
         w.append(("commun:clavier", CLAVIER_BLOCK, "body"))
@@ -247,8 +292,8 @@ def main():
     keep = KINDS[args.only] if args.only else None
     total = 0
     missing = 0
-    for path, accordions, inline_tools, lang in shipped_pages():
-        changes = process(path, (path, accordions, inline_tools, lang, keep), args.check)
+    for path, accordions, inline_tools, lang, kind in shipped_pages():
+        changes = process(path, (path, accordions, inline_tools, lang, keep, kind), args.check)
         total += 1
         missing += sum("MISSING" in c for c in changes)
         print(f"{path.relative_to(ROOT)}: {', '.join(changes)}")
