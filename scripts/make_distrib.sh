@@ -10,7 +10,7 @@ SUFFIX="${1:-test-$(date +%Y-%m-%d)}"
 OUT="$(cd .. && pwd)/outil-peda-israel-palestine_${SUFFIX}.zip"
 NAME="outil-peda-israel-palestine"
 
-FILES=(index.html LISEZ-MOI.html README.md
+FILES=(index.html LISEZ-MOI.html AIDE-FAQ.html README.md
        rapport/rapport_FR.html rapport/rapport_EN.html rapport/NOUVEAUTES.html
        chapitres/chapitre-1-espace.html chapitres/chapitre-2-espace.html chapitres/chapitre-3-espace.html
        chapitres/chapitre-4-espace.html chapitres/chapitre-5-espace.html chapitres/chapitre-6-espace.html
