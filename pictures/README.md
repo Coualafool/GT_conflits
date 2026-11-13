@@ -68,3 +68,5 @@ Merci de conserver la ligne d'attribution correspondante sous l'image dans la pa
 | `carte-telechargee-liberte-presse-mondiale.webp` | Indice mondial liberté de la presse 2021 (RSF/OWID) | CC BY 4.0 |
 | `photo-palais-paix-la-haye.webp` | Palais de la Paix, La Haye (photo Agence Rol, BnF) | Domaine public |
 | `photo-lemkin-portrait.webp` | Raphael Lemkin, portrait sans date (Center for Jewish History, NYC) | No known restrictions |
+| `carte-telechargee-oslo2-carte-1-1995.jpg` | Carte n°1 de l'accord intérimaire (Oslo II, 1995), zones A/B sur fond topographique | Domaine public (doc. Israël–OLP) |
+| `carte-telechargee-zones-oslo-barriere-2005.png` | Zones A/B/H2 + colonies + projection du tracé 2005, lisibilité forte | Domaine public |

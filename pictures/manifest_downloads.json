@@ -209,5 +209,35 @@
     "bytes": 35575,
     "author": "Center for Jewish History, NYC",
     "note": "portrait sans date, photographe non identifié (collection CJH, versée via USHMM)"
+  },
+  {
+    "file": "carte-telechargee-oslo2-carte-1-1995.jpg",
+    "commons_title": "File:Oslo II Accord map of Area A and B.jpg",
+    "license": "Public domain",
+    "date": "1995",
+    "author": "Government of Israel and PLO",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Oslo_II_Accord_map_of_Area_A_and_B.jpg",
+    "bytes": 400323,
+    "note": "carte n°1 de l'annexe de l'accord intérimaire (Oslo II), topographique 1:250 000, légende en anglais — insérée comme pièce d'archive (légende française au chapitre)"
+  },
+  {
+    "file": "carte-telechargee-zones-oslo-barriere-2005.png",
+    "commons_title": "File:Oslo Areas and barrier projection 2005.png",
+    "license": "Public domain",
+    "date": "2013 (téléversement ; carte datée « projection 20 Feb. 2005 »)",
+    "author": "téléversée par Wickey-nl (Domaine public)",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Oslo_Areas_and_barrier_projection_2005.png",
+    "bytes": 1305144,
+    "note": "titre « Oslo Agreement » trompeur assumé par la légende : montre aussi colonies et tracé de la barrière 2005 — lisible, insérée séq. 3 ch2"
+  },
+  {
+    "file": "(rejet) zones-abc géométrie machine",
+    "commons_title": "—",
+    "license": "toutes droits réservés — Washington Institute (WINEP), non déclarée sur le service ArcGIS",
+    "date": "chasse close le 13/11/2026",
+    "author": "",
+    "source_url": "https://services1.arcgis.com/rE3wZqhqVtdFyPq5/arcgis/rest/services/WINEP_Interactive_GIS_Data/FeatureServer/8",
+    "bytes": 0,
+    "note": "rejet final : « Areas A, B and C » ArcGIS = ré-hébergé sans licence, politique WINEP « All rights reserved » ; couches CC BY-SA (Zones A and B, Control status) incompatibles avec CC BY-NC-SA ; couches HDX retirées ; carte A/B/C française prête-à-l'emploi introuvable → deux cartes PD (1995+2005) retenues à la place"
   }
 ]
