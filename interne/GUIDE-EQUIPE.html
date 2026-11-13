@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide d’équipe — Comprendre et utiliser l’outil péda</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#161d25; --panel2:#1b242e; --border:#28323e;
+    --ink:#e8edf2; --muted:#9aa8b6; --faint:#6b7885;
+    --brand:#e0a458; --accent:#5aa9c9; --good:#5fb380; --warn:#c98a5a;
+    --maxw:860px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16.5px;line-height:1.62}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px 90px}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(90,169,201,.35)}
+  a:hover{border-bottom-color:var(--accent)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  code{background:var(--panel2);border:1px solid var(--border);border-radius:5px;
+    padding:1px 6px;font-size:.88em;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#d8e2ec}
+  kbd{background:var(--panel2);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;
+    padding:1px 7px;font-size:.85em;font-family:ui-monospace,Menlo,Consolas,monospace}
+  /* ── header ── */
+  header{border-bottom:1px solid var(--border);background:linear-gradient(180deg,#131a21,#0f1419)}
+  header .wrap{padding-top:44px;padding-bottom:30px}
+  .kicker{color:var(--brand);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+  h1{font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.2;margin:.45em 0 .35em;letter-spacing:-.01em}
+  .lede{color:var(--muted);font-size:1.06rem;max-width:64ch;margin:0}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .badge{font-size:.78rem;padding:4px 11px;border-radius:99px;border:1px solid var(--border);
+    background:var(--panel);color:var(--muted)}
+  .badge b{color:var(--ink);font-weight:600}
+  /* ── toc ── */
+  nav.toc{border:1px solid var(--border);background:var(--panel);border-radius:10px;
+    padding:18px 22px;margin:34px 0}
+  nav.toc b{display:block;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+  nav.toc ol{margin:0;padding-left:1.3em;columns:2;column-gap:34px}
+  nav.toc li{margin:4px 0;break-inside:avoid}
+  @media(max-width:640px){nav.toc ol{columns:1}}
+  /* ── sections ── */
+  section{margin-top:56px}
+  h2{font-size:1.32rem;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .n{color:var(--brand);font-variant-numeric:tabular-nums;margin-right:.5em}
+  h3{font-size:1.03rem;margin:1.6em 0 .4em;color:var(--brand)}
+  .under{width:44px;height:2px;background:var(--brand);border:none;margin:10px 0 20px}
+  p{max-width:72ch}
+  ul,ol{max-width:72ch;padding-left:1.35em}
+  li{margin:.35em 0}
+  .dim{color:var(--muted)} .faint{color:var(--faint)}
+  strong{color:var(--ink)}
+  /* ── tables ── */
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.92rem}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--muted);font-weight:600;font-size:.84rem;
+    letter-spacing:.04em;text-transform:uppercase}
+  td b{color:var(--ink)}
+  tr:nth-child(even) td{background:rgba(255,255,255,.017)}
+  .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* ── callouts ── */
+  .box{border:1px solid var(--border);border-left:3px solid var(--brand);background:var(--panel);
+    border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;max-width:72ch}
+  .box.good{border-left-color:var(--good)}
+  .box.warn{border-left-color:var(--warn)}
+  .box b:first-child{display:block;margin-bottom:4px}
+  /* ── tree ── */
+  pre.tree{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:16px 20px;overflow-x:auto;font-size:.85rem;line-height:1.7;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#c6d2de}
+  pre.tree .d{color:var(--brand)} pre.tree .c{color:var(--faint)}
+  /* ── steps ── */
+  .steps{counter-reset:s;list-style:none;padding:0;max-width:72ch}
+  .steps li{counter-increment:s;position:relative;padding:0 0 14px 46px}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:30px;height:30px;
+    border-radius:50%;border:1px solid var(--brand);color:var(--brand);display:flex;
+    align-items:center;justify-content:center;font-size:.85rem;font-weight:600}
+  /* ── roles grid: intentional rows, not equal cards ── */
+  .role{border:1px solid var(--border);border-radius:10px;background:var(--panel);
+    padding:16px 20px;margin:14px 0}
+  .role h4{margin:0 0 8px;font-size:1rem;color:var(--brand)}
+  .role h4 .who{color:var(--faint);font-weight:400;font-size:.85rem;margin-left:.6em}
+  footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--border);
+    color:var(--faint);font-size:.85rem}
+  @media print{
+    body{background:#fff;color:#111}
+    :root{--panel:#fff;--panel2:#f2f2f2;--border:#bbb;--ink:#111;--muted:#444;--faint:#666;--brand:#8a5a1e;--accent:#1f5e77;--bg:#fff}
+    nav.toc{page-break-inside:avoid} section{margin-top:28px}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">Document d’équipe · interne</div>
+    <h1>Comprendre et utiliser l’outil péda<br>«&nbsp;Israël–Palestine, lire l’espace&nbsp;»</h1>
+    <p class="lede">Une mallette pédagogique d’éducation à la paix, entièrement hors-ligne, pour
+      animer en classe la lecture géographique et historique du conflit. Ce guide explique ce que
+      le dossier contient, comment on s’en sert, et ce qu’on peut y changer.</p>
+    <div class="badges">
+      <span class="badge"><b>11 chapitres</b> · 56 séquences</span>
+      <span class="badge"><b>9 chantiers</b> transversaux</span>
+      <span class="badge"><b>93 événements</b> × 3 récits (frise)</span>
+      <span class="badge"><b>34 visuels</b> sous licence vérifiée</span>
+      <span class="badge"><b>100&nbsp;% hors-ligne</b> — aucun serveur</span>
+      <span class="badge"><b>CC BY-NC-SA 4.0</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<nav class="toc" aria-label="Sommaire">
+  <b>Sommaire</b>
+  <ol>
+    <li><a href="#quest-ce">Ce que c’est — et ce que ce n’est pas</a></li>
+    <li><a href="#ouvrir">Comment l’ouvrir</a></li>
+    <li><a href="#interieur">What’s inside : la carte du dossier</a></li>
+    <li><a href="#chapitre">Anatomie d’un chapitre</a></li>
+    <li><a href="#frise">La frise des 93 événements</a></li>
+    <li><a href="#chantiers">Les 9 chantiers (composants A–I)</a></li>
+    <li><a href="#editorial">Les règles éditoriales à connaître</a></li>
+    <li><a href="#roles">Quoi faire avec — selon votre rôle</a></li>
+    <li><a href="#contribuer">Contribuer au contenu</a></li>
+    <li><a href="#licence">Licence et diffusion</a></li>
+  </ol>
+</nav>
+
+<section id="quest-ce">
+  <h2><span class="n">1</span>Ce que c’est — et ce que ce n’est pas</h2>
+  <hr class="under">
+  <p><strong>C’est un cours prêt-à-animer devenu site web.</strong> Une maquette web d’une
+  mallette pédagogique : chaque chapitre correspond à une thématique (l’ordre mondial, les
+  lignes de 1967, le droit international, les mots — «&nbsp;conflit&nbsp;», «&nbsp;génocide&nbsp;» —,
+  les médias, les blocages, les processus de paix, agir), et chaque <em>séquence</em> est une
+  activité de classe complète, conçue pour la projection et le débat.</p>
+  <p><strong>C’est aussi un objet méthodologique.</strong> Le fil rouge n’est pas «&nbsp;la bonne
+  réponse&nbsp;» mais <em>comment on construit un discours sur l’espace et sur les faits</em>&nbsp;:
+  dater une carte, identifier qui l’a faite, distinguer un fait établi d’une interprétation,
+  entendre trois récits sans les mettre faussement à égalité.</p>
+  <div class="box warn"><b>Version de travail — assumée.</b>
+  Le contenu est volontairement un état de travail : c’est la structure, la navigation et la
+  clarté qui sont testées. Les chiffres et citations portent leur source et leur date en clair
+  ; tout peut être actualisé. Ne pas présenter ce dossier comme un produit fini.</div>
+  <ul>
+    <li><strong> Ce que ce n’est pas :</strong> ce n’est pas un service en ligne (aucun compte,
+    aucune donnée envoyée — tout tourne dans le navigateur, sur clé USB) ; ce n’est pas un
+    produit fini ; ce n’est pas un manuel — les séquences sont des <em>appuis d’animation</em>.</li>
+  </ul>
+</section>
+
+<section id="ouvrir">
+  <h2><span class="n">2</span>Comment l’ouvrir</h2>
+  <hr class="under">
+  <ol class="steps">
+    <li>Décompressez le dossier zip où vous voulez (disque, clé USB, réseau).</li>
+    <li>Double-cliquez sur <code>index.html</code> — il redirige vers
+      <code>rapport/rapport_FR.html</code>, la page-index du dossier.</li>
+    <li>Ça marche dans n’importe quel navigateur moderne (Chrome, Firefox, Edge, Safari),
+      <strong>sans installation et sans internet</strong>.</li>
+  </ol>
+  <div class="box"><b>Règle d’or : conservez l’arborescence.</b>
+  Toutes les pages se parlent par liens relatifs (<code>../pictures/…</code>, <code>../chapitres/…</code>).
+  Déplacer un fichier ou extraire une page seule casse la navigation. Le zip officiel se
+  fabrique avec <code>scripts/make_distrib.sh</code>.</div>
+</section>
+
+<section id="interieur">
+  <h2><span class="n">3</span>La carte du dossier</h2>
+  <hr class="under">
+<pre class="tree">
+<span class="d">GT_conflits/</span>
+├── index.html                  <span class="c">→ redirige vers le rapport FR (page d’entrée)</span>
+├── LISEZ-MOI.html              <span class="c">guide du testeur (version de test)</span>
+<span class="d">├── rapport/</span>
+│   ├── rapport_FR.html         <span class="c">INDEX du kit : les 11 chapitres, plans, entrées</span>
+│   ├── rapport_EN.html         <span class="c">version anglaise du rapport</span>
+│   └── NOUVEAUTES.html         <span class="c">journal des évolutions du kit</span>
+<span class="d">├── chapitres/</span>                 <span class="c">11 pages · 56 séquences · 30 figures sourcées</span>
+│   └── chapitre-N-espace.html  <span class="c">N = 1 à 11</span>
+<span class="d">├── composants/</span>                <span class="c">9 chantiers transversaux A → I</span>
+<span class="d">├── frise/</span>                     <span class="c">la frise temporelle interactive (93 événements)</span>
+│   ├── poc-A-niveaux.html      <span class="c">lecture par paliers (la vue de référence)</span>
+│   ├── perspective-G-fusion.html <span class="c">« trois récits » en une vue (la plus aboutie)</span>
+│   └── index-comparatif.html   <span class="c">comparer les 4 variantes de frise</span>
+<span class="d">├── pictures/</span>                  <span class="c">34 cartes &amp; photos + README + manifeste licences</span>
+<span class="d">├── discord/</span>                   <span class="c">mode d’emploi pour rejoindre le Discord du projet</span>
+└── scripts/                    <span class="c">outils de fabrication (réservés aux contributeurs)</span>
+</pre>
+  <table>
+    <tr><th>Zone</th><th>Contenu exact</th><th>À quoi ça sert</th></tr>
+    <tr><td><b>rapport/</b></td><td class="num">3 pages</td>
+      <td>La page-index (carte des chapitres avec leur plan), la version EN, le journal des nouveautés.</td></tr>
+    <tr><td><b>chapitres/</b></td><td class="num">11 pages · 56 séq.</td>
+      <td>Le cœur du kit. Un chapitre = une séance ou deux ; une séquence = une activité.</td></tr>
+    <tr><td><b>composants/</b></td><td class="num">9 pages (A–I)</td>
+      <td>Les «&nbsp;chantiers&nbsp;» transversaux : noyau élèves, kit d’animation, actualité, différenciation, labo médias, évaluation, charte, livraison, gouvernance.</td></tr>
+    <tr><td><b>frise/</b></td><td class="num">10 pages · 93 evt</td>
+      <td>La frise chronologique interactive, avec ses 3 récits et 4 variantes de lecture.</td></tr>
+    <tr><td><b>pictures/</b></td><td class="num">13 générées · 19 Commons · 2 photos</td>
+      <td>Réserve d’images sous licence vérifiée, chacune documentée (source, date, licence) dans le README et le manifeste.</td></tr>
+    <tr><td><b>discord/</b></td><td class="num">1 page</td>
+      <td>Où et comment faire remonter un retour, une erreur, une idée.</td></tr>
+  </table>
+</section>
+
+<section id="chapitre">
+  <h2><span class="n">4</span>Anatomie d’un chapitre</h2>
+  <hr class="under">
+  <p>Chaque chapitre est une page autonome : un en-tête de séance, puis des <strong>séquences
+  dépliables</strong> (les chapitres 1 et 2 en comptent 6 et 4, le chapitre 4 — historique — 8).
+  Chaque séquence suit toujours la même structure, et c’est ce qui rend le kit maniable&nbsp;:</p>
+  <ol>
+    <li><strong>L’essentiel</strong> — le résumé en quelques puces, ce que les élèves doivent
+      repartir avec.</li>
+    <li><strong>Encadré «&nbsp;Honnêteté — trois étages&nbsp;»</strong> — la colonne vertébrale
+      du kit&nbsp;: <em>Établi</em> (les faits sourcés) / <em>Interprétation</em> (ce que les
+      analystes en déduisent) / <em>Récits disputés</em> (là où les mémoires s’affrontent).</li>
+    <li><strong>À travailler ici</strong> — l’activité réelle : lire une carte, comparer deux
+      récits, décoder un mot.</li>
+  </ol>
+  <p>Viennent ensuite des blocs <strong>quiz</strong> et un <strong>glossaire</strong>, des liens
+  vers la séquence précédente/suivante, et en pied de chapitre un bloc
+  <strong>«&nbsp;Notes &amp; ressources&nbsp;»</strong>. Chaque affirmation chiffrée porte sa
+  attribution en ligne <code>(source, date)</code> — c’est une règle du kit, pas un ornement.</p>
+  <h3>Raccourcis de navigation (partout dans le kit)</h3>
+  <ul>
+    <li><kbd>E</kbd> / <kbd>R</kbd> — tout <strong>É</strong>tendre / tout <strong>R</strong>eplier
+      (pratique avant de projeter ou d’imprimer).</li>
+    <li><kbd>P</kbd> ou le bouton 📽️ <strong>Projection</strong> — masque les éléments d’interface
+      pour la vidéoprojection.</li>
+    <li><kbd>Ctrl</kbd>+<kbd>P</kbd> — impression A4 soignée : les séquences repliées
+      s’ouvrent automatiquement à l’impression.</li>
+  </ul>
+  <h3>Les liens «&nbsp;intelligents&nbsp;» entre chapitres et frise</h3>
+  <p>Chaque chapitre a un bouton <em>«&nbsp;🕰 Frise des récits&nbsp;»</em> qui ouvre la frise
+  exactement sur la plage de dates du chapitre (<code>?ch=4</code>) ; et dans la frise, chaque
+  événement renvoie vers la séquence du chapitre qui le traite. Le trajet aller-retour
+  cours ↔ frise est donc toujours ouvert.</p>
+</section>
+
+<section id="frise">
+  <h2><span class="n">5</span>La frise : 93 événements, trois récits</h2>
+  <hr class="under">
+  <p>La frise (<code>frise/</code>) est le module le plus interactif du kit : 93 événements
+  datés, du mandat ottoman à aujourd’hui, chacun rattaché à une séquence du kit. Sa règle
+  éditoriale&nbsp;: <strong>aucun récit ne raconte les 93 événements</strong> — chacun exclut
+  des faits, et un fait contesté y entre comme <em>menace vécue</em>, jamais comme page
+  blanche. C’est voulu&nbsp;: on montre la sélection, pas l’exhaustivité.</p>
+  <table>
+    <tr><th>Page</th><th>Lecture proposée</th></tr>
+    <tr><td><code>poc-A-niveaux.html</code></td><td>La vue de référence : paliers de
+      complexité (essentiel → intermédiaire → détaillé), zoom molette, glisser, doubles-clic,
+      boutons «&nbsp;N dernières années&nbsp;», minimap, panneau de détail.</td></tr>
+    <tr><td><code>perspective-G-fusion.html</code></td><td>La vue «&nbsp;trois récits&nbsp;» la
+      plus aboutie : un événement, trois façon de le nommer, de le dater, de le periodiser —
+      <em>Récit palestinien</em>, <em>Récit israélien</em>, <em>Vue occidentale</em>, avec leurs
+      découpages d’époques propres. Le choc pédagogique recherché&nbsp;: les <strong>dates
+      elles-mêmes</strong> diffèrent selon le récit.</td></tr>
+    <tr><td><code>perspective-D-triptyque.html</code> / <code>E-bascule</code> / <code>F-tresse</code></td>
+      <td>Trois autres mises en scène des trois récits : trois frises empilées / bascule l’une
+      après l’autre / trois colonnes comparées.</td></tr>
+    <tr><td><code>index-comparatif.html</code></td><td>Le carrefour pour choisir sa variante
+      (lignes, grappes, liste…) — à ouvrir en réunion d’équipe pour décider collectivement.</td></tr>
+  </table>
+  <p class="dim">Dans la frise&nbsp;: <kbd>?</kbd> ou <kbd>h</kbd> rappelle l’aide, <kbd>Échap</kbd>
+  ferme le panneau, flèches et molette déplacent le temps. Un événement sélectionné propose le
+  lien <em>«&nbsp;voir la séquence&nbsp;»</em> vers le chapitre correspondant.</p>
+</section>
+
+<section id="chantiers">
+  <h2><span class="n">6</span>Les 9 chantiers (composants A → I)</h2>
+  <hr class="under">
+  <p>Les <code>composants/</code> ne sont pas des chapitres de plus : ce sont les <em>scènes
+  de travail</em> du projet, chacune adressée à un métier ou un usage.</p>
+  <table>
+    <tr><th>Composant</th><th>Titre</th><th>Pour qui / quoi</th></tr>
+    <tr><td class="num">A</td><td><b>Noyau interactif pour les élèves</b></td><td>Ce que les élèves manipulent directement.</td></tr>
+    <tr><td class="num">B</td><td><b>Kit d’animation pour les enseignant·es</b></td><td>Le mode d’emploi de classe : déroulés, questions, arbitrages.</td></tr>
+    <tr><td class="num">C</td><td><b>Couche actualité vivante</b></td><td>Comment garder le kit à jour sans le réécrire.</td></tr>
+    <tr><td class="num">D</td><td><b>Pistes de différenciation</b></td><td>Adapter niveaux et temps de séance.</td></tr>
+    <tr><td class="num">E</td><td><b>Labo autonome médias &amp; éducation à l’information</b></td><td>Ateliers autonomes sur l’image et le récit.</td></tr>
+    <tr><td class="num">F</td><td><b>Évaluation &amp; réflexion</b></td><td>Évaluer sans trahir la démarche (les trois étages).</td></tr>
+    <tr><td class="num">G</td><td><b>Charte éditoriale, protection &amp; accessibilité</b></td><td>Les règles que tout contenu doit respecter — à lire avant d’éditer.</td></tr>
+    <tr><td class="num">H</td><td><b>Livraison &amp; distribution</b></td><td>Comment le kit est packagé et diffusé (zip, GitHub Pages).</td></tr>
+    <tr><td class="num">I</td><td><b>Gouvernance &amp; chaîne de production</b></td><td>Qui valide quoi, dans quel ordre.</td></tr>
+  </table>
+</section>
+
+<section id="editorial">
+  <h2><span class="n">7</span>Les règles éditoriales à connaître</h2>
+  <hr class="under">
+  <p>Elles sont là depuis le premier jour et le harness de vérification les surveille. En
+  synthèse (le détail est dans le composant&nbsp;G) :</p>
+  <ul>
+    <li><strong>Attribuer et dater.</strong> Toute donnée porte <code>(source, date)</code> en
+    ligne. Une carte «&nbsp;à jour&nbsp;» est une carte <em>datée</em> : on affiche la date de
+    la carte, jamais une fausse actualité.</li>
+    <li><strong>Les trois étages.</strong> Fait établi / interprétation / récit disputé : un
+    contenu qui mélange les étages est un défaut, pas une nuance.</li>
+    <li><strong>Les cartes.</strong> Étiquettes en français&nbsp;; un État trop petit pour être
+    étiqueté reçoit un point-or à son centroïde + une ligne de légende, jamais une étiquette
+    flottante&nbsp;; toute carte générée porte son pied de provenance (fond, projection, date,
+    script). Une carte d’époque en anglais s’assume comme <em>pièce d’archive</em> — la légende
+    signale la langue, date le document et dénonce ses anachronismes.</li>
+    <li><strong>Les images.</strong> Aucune image ne circule sans licence identifiée&nbsp;:
+    <code>pictures/README.md</code> et <code>manifest_downloads.json</code> disent pour chaque
+    fichier sa source, son auteur et sa licence. Une photo non identifiée n’entre pas dans le
+    kit, même «&nbsp;en attendant&nbsp;».</li>
+    <li><strong>L’honnêteté sur l’état.</strong> Le journal <code>rapport/NOUVEAUTES.html</code>
+    retrace mois par mois ce qui a changé dans le kit — pratique pour savoir ce qui est récent
+    et ce qui a été repris récemment.</li>
+  </ul>
+</section>
+
+<section id="roles">
+  <h2><span class="n">8</span>Quoi faire avec — selon votre rôle</h2>
+  <hr class="under">
+
+  <div class="role"><h4>Enseignant·e / animateur·rice <span class="who">— utiliser le kit en classe</span></h4>
+    <ul>
+      <li>Préparez une séance depuis <code>rapport/rapport_FR.html</code>&nbsp;: choisissez le
+      chapitre, lisez le plan de la carte, ouvrez-le, étendez tout (<kbd>E</kbd>), passez en
+      mode projection (<kbd>P</kbd>).</li>
+      <li>Une séquence = un moment d’activité&nbsp;; «&nbsp;À travailler ici&nbsp;» est le
+      moment élève, «&nbsp;les trois étages&nbsp;» est votre garde-fou en débat.</li>
+      <li>Avant/daprès la séance, la frise sert d’accroche («&nbsp;où étions-nous en 1947&nbsp;?&nbsp;»)
+      et de synthèse&nbsp;; le bouton du chapitre vous y emmène à la bonne plage de dates.</li>
+      <li>Le print (Ctrl+P, A4) donne un support papier propre pour les élèves ou pour soi.</li>
+      <li>Les composants B (animation) et D (différenciation) sont faits pour vous.</li>
+    </ul>
+  </div>
+
+  <div class="role"><h4>Testeur·euse <span class="who">— essayer, casser, dire</span></h4>
+    <ul>
+      <li>Ouvrez <code>LISEZ-MOI.html</code> (le guide de test livré dans le zip) ; testez
+      hors-ligne, sur petit écran, à l’impression.</li>
+      <li>Vos retours utiles&nbsp;: ce qui est confus, ce qui semble faux ou daté, ce qui
+      bloque en classe — pas «&nbsp;c’est bien&nbsp;». Passez par le canal Discord
+      (<code>discord/rejoindre-discord.html</code>).</li>
+    </ul>
+  </div>
+
+  <div class="role"><h4>Contributeur·rice contenu <span class="who">— écrire ou corriger</span></h4>
+    <ul>
+      <li>Lisez d’abord le composant G (charte) — il vous évitera des reprises.</li>
+      <li>Une modification = une séquence d’un chapitre = une page HTML (voir
+      <a href="#contribuer">§9</a>). Signalez toute image que vous ajoutez&nbsp;: droits d’abord.</li>
+      <li>Les arbitrages sensibles (mots, qualification «&nbsp;génocide&nbsp;», mise en récit)
+      se discutent — les chapitres 5, 6 et le composant G documentent l’état de la réflexion.</li>
+    </ul>
+  </div>
+
+  <div class="role"><h4>Maintenance / fabrication <span class="who">— scripts, packaging</span></h4>
+    <ul>
+      <li><code>scripts/make_distrib.sh</code> — fabrique le zip testeur complet
+      (pages + pictures + frise + discord, ~12 Mo).</li>
+      <li><code>scripts/inject_common.py</code> — réinjecte les blocs communs (pied de licence,
+      raccourcis clavier, styles d’impression, barre des pages frise) et <code>--check</code>
+      vérifie que chaque page livrée les porte.</li>
+      <li><code>scripts/make_changelog.py</code> — régénère <code>rapport/NOUVEAUTES.html</code>
+      depuis l’historique git. <code>scripts/audit_fraicheur.py</code> — signale les données
+      de plus de 24 mois. <code>scripts/check_links.py</code> — liens internes et externes.</li>
+      <li>Le harnais de vérification complet (69 contrôles navigateur) se joue sur la machine
+      de test — voir <code>interne/TARS-WORKSPACE.md</code>.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="contribuer">
+  <h2><span class="n">9</span>Contribuer au contenu, concrètement</h2>
+  <hr class="under">
+  <p>Les pages sont des fichiers HTML autonomes, éditables au sens propre — pas de build, pas
+  de dépendances. Les règles du jeu&nbsp;:</p>
+  <ol>
+    <li><strong>Une page à la fois, une séquence à la fois.</strong> Ouvrez le chapitre,
+    repérez la séquence <code>&lt;details id="s…"&gt;</code>, modifiez son contenu avec la
+    structure en trois blocs (§4).</li>
+    <li><strong>Ne jamais toucher à ce qui est entre les marqueurs
+    <code>&lt;!-- BEGIN commun:… --&gt;</code> / <code>&lt;!-- END --&gt;</code></strong> —
+    ces blocs (pied, clavier, impression, barre frise) sont générés&nbsp;; on modifie le script
+    puis on réinjecte, sinon votre modification disparaîtra à la passe suivante.</li>
+    <li><strong>Ajouter une image&nbsp;:</strong> d’abord la licence (domaine public / CC BY /
+    CC BY-SA — attention&nbsp;: le kit est NC, une image CC BY-SA <em>ne peut pas</em> y entrer),
+    ensuite l’enregistrer dans <code>pictures/</code> avec son entrée dans le README et le
+    manifeste, enfin l’insérer en <code>&lt;figure class="ill"&gt;</code> avec légende
+    sourcée. Le pool existant (colonne «&nbsp;usage prévu&nbsp;» du README) fournit déjà des
+    cartes non utilisées.</li>
+    <li><strong>Si vous travaillez sur le dépôt git</strong> (et non sur une copie) :
+    <code>git pull</code>, une modification vérifiée = un commit, on pousse. Le
+    <code>main</code> publié (GitHub Pages) exclut <code>interne/</code> — rien de public ne
+    doit y pointer.</li>
+  </ol>
+  <div class="box good"><b>Le standard «&nbsp;fait&nbsp;».</b>
+  Une contribution est finie quand&nbsp;: la page s’ouvre sans erreur, l’impression A4 est
+  propre, les liens du chapitre fonctionnent, chaque donnée nouvelle porte (source, date), et
+  toute image ajoutée est sous licence compatible avec la légende qui va avec.</div>
+</section>
+
+<section id="licence">
+  <h2><span class="n">10</span>Licence et diffusion</h2>
+  <hr class="under">
+  <p>Le kit est publié sous <strong>Creative Commons BY-NC-SA 4.0</strong>&nbsp;: partage et
+  adaptation autorisés, à condition de créditer, <em>pas</em> pour un usage commercial, et en
+  repartageant à l’identique. Chaque image suit sa <em>propre</em> licence (domaine public,
+  CC BY avec auteur à citer, etc.) — les légendes des figures portent ces mentions&nbsp;:
+  <strong>ne jamais les supprimer</strong>, même en adaptant une page. Les cartes générées
+  proviennent de Natural Earth (domaine public) et sont re-générables par script.</p>
+  <p>Pour diffuser&nbsp;: toujours le zip complet officiel, jamais des pages isolées — les
+  légendes, le pied de licence et les liens font partie du contenu.</p>
+
+  <footer>
+    <p><b>Guide d’équipe</b> — interne, non publié sur le site. Généré le 13 novembre 2026
+    depuis l’état réel du dépôt (11 chapitres, 56 séquences, 93 événements, 34 visuels).
+    En cas de divergence entre ce guide et le dossier, le dossier a raison — signalez l’écart
+    sur le Discord du projet.</p>
+  </footer>
+</section>
+
+</div>
+</body>
+</html>
