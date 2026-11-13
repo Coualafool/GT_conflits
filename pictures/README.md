@@ -67,3 +67,4 @@ Merci de conserver la ligne d'attribution correspondante sous l'image dans la pa
 | `carte-telechargee-emprises-colonies-2012.webp` | Emprises des colonies de Cisjordanie, janv. 2012 (OCHA-like) | Domaine public (Wickey-nl) |
 | `carte-telechargee-liberte-presse-mondiale.webp` | Indice mondial liberté de la presse 2021 (RSF/OWID) | CC BY 4.0 |
 | `photo-palais-paix-la-haye.webp` | Palais de la Paix, La Haye (photo Agence Rol, BnF) | Domaine public |
+| `photo-lemkin-portrait.webp` | Raphael Lemkin, portrait sans date (Center for Jewish History, NYC) | No known restrictions |
