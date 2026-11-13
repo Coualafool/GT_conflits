@@ -49,6 +49,7 @@ def shipped_pages():
     pages.append((ROOT / "rapport" / "NOUVEAUTES.html", False, False, "fr", None))
     pages.append((ROOT / "discord" / "rejoindre-discord.html", False, False, "fr", None))
     pages.append((ROOT / "LISEZ-MOI.html", False, False, "fr", None))
+    pages.append((ROOT / "AIDE-FAQ.html", False, False, "fr", None))
     for p in sorted((ROOT / "frise").glob("*.html")):
         pages.append((p, False, False, "fr", "frise"))
     return pages
@@ -245,13 +246,21 @@ KINDS = {"print": ["commun:print"],
          "frise": ["commun:frise-outils", "commun:pied-head", "commun:pied"],
          "pied": ["commun:pied-head", "commun:pied"]}
 
+def pied_with_style(wrapped, extra):
+    """Fold `extra` (a <style> block) INSIDE the pied markers: upsert() only
+    replaces the marked span, so anything appended AFTER the END marker would
+    accumulate one orphan copy per injection run."""
+    end = "<!-- END commun:pied -->"
+    assert wrapped.count(end) == 1
+    return wrapped.replace(end, extra + "\n" + end)
+
 def wanted_blocks(path, accordions, inline_tools, lang, keep=None, kind=None):
     """(name, content, where) — where: 'head' or 'body'."""
     if kind == "frise":
         # pages-applications de la frise : pied + outils kit uniquement.
         w = [("commun:frise-outils", render_frise_outils(path), "body"),
              ("commun:pied-head", PIED_HEAD_BLOCK.format(license_url=LICENSE_URL), "head"),
-             ("commun:pied", render_pied(path, lang) + FRISE_PIED_STYLE, "body")]
+             ("commun:pied", pied_with_style(render_pied(path, lang), FRISE_PIED_STYLE), "body")]
         if keep:
             w = [b for b in w if b[0] in keep]
         return w
