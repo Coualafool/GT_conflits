@@ -24,6 +24,14 @@ page.on("pageerror", (e) => pageErrors.push(String(e)));
 await page.goto(PAGE_URL, { waitUntil: "load" });
 await page.waitForTimeout(800);
 
+// Géométrie du canvas dérivée de la boîte réelle : les blocs communs
+// (pied compact) réduisent #viz — les coordonnées codées en dur allaient
+// cliquer hors du canvas (2026-11-13).
+const VB = await page.locator("#viz").boundingBox();
+const VCX = VB.x + VB.width * 0.5;
+const VY = (f) => VB.y + VB.height * f;
+const VCY = VY(0.45);
+
 // (a) zero page errors
 {
   const real = pageErrors.filter((e) => !/favicon/i.test(e));
@@ -33,7 +41,7 @@ await page.waitForTimeout(800);
 // (b) help card visible on load, closes on first wheel, reopens with ?
 {
   const vis0 = await page.locator("#help").isVisible();
-  await page.mouse.move(720, 500);
+  await page.mouse.move(VCX, VCY);
   await page.mouse.wheel(0, -400);
   await page.waitForTimeout(300);
   const vis1 = await page.locator("#help").isVisible();
@@ -49,7 +57,7 @@ await page.waitForTimeout(800);
 {
   const r0 = await page.locator("#zoomReadout").innerText();
   const b0 = await page.locator("#levelBadge").innerText();
-  await page.mouse.move(720, 500);
+  await page.mouse.move(VCX, VCY);
   await page.mouse.wheel(0, -1800);
   await page.waitForTimeout(300);
   const r1 = await page.locator("#zoomReadout").innerText();
@@ -60,9 +68,9 @@ await page.waitForTimeout(800);
 // (d) drag pans (viewRect moves), preset button re-zooms + gets .on
 {
   const left0 = await page.locator("#viewRect").evaluate((el) => el.style.left);
-  await page.mouse.move(1000, 500);
+  await page.mouse.move(VCX + VB.width * 0.25, VCY);
   await page.mouse.down();
-  await page.mouse.move(600, 500, { steps: 8 });
+  await page.mouse.move(VCX - VB.width * 0.2, VCY, { steps: 8 });
   await page.mouse.up();
   await page.waitForTimeout(300);
   const left1 = await page.locator("#viewRect").evaluate((el) => el.style.left);
@@ -141,8 +149,8 @@ await page.waitForTimeout(800);
 
 // (i) keyboard: 0 = full view, arrows pan (tested from a zoomed state — full view legitimately can't pan)
 {
-  await page.locator("#viz").click({ position: { x: 700, y: 700 } });
-  await page.mouse.move(700, 500);
+  await page.locator("#viz").click({ position: { x: VB.width * 0.5, y: VB.height * 0.7 } });
+  await page.mouse.move(VCX, VCY);
   await page.mouse.wheel(0, -1200);
   await page.waitForTimeout(300);
   const leftA = await page.locator("#viewRect").evaluate((el) => el.style.left);
@@ -159,7 +167,7 @@ await page.waitForTimeout(800);
 // (j) double-click zooms in, shift+double-click out
 {
   const r0 = await page.locator("#zoomReadout").innerText();
-  await page.mouse.dblclick(700, 400);
+  await page.mouse.dblclick(VCX, VY(0.35));
   await page.waitForTimeout(300);
   const r1 = await page.locator("#zoomReadout").innerText();
   log("(j) double-click zoom", r0 !== r1, `"${r0}" -> "${r1}"`);
