@@ -1139,7 +1139,7 @@
 <!-- BEGIN commun:pied -->
 <footer class="pied-commun">
   <p><b>Outil pédagogique Israël–Palestine</b> · réalisé par le GT (Groupe de travail) · Licence <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr">CC BY-NC-SA 4.0</a></p>
-  <p>Dernière mise à jour de cette page : <time datetime="2026-11-09">9 novembre 2026</time> · <a href="NOUVEAUTES.html">Nouveautés du kit</a> · Dépôt : <a href="https://github.com/Coualafool/GT_conflits">github.com/Coualafool/GT_conflits</a></p>
+  <p>Dernière mise à jour de cette page : <time datetime="2026-11-13">13 novembre 2026</time> · <a href="NOUVEAUTES.html">Nouveautés du kit</a> · Dépôt : <a href="https://github.com/Coualafool/GT_conflits">github.com/Coualafool/GT_conflits</a></p>
 </footer>
 <style>
   .pied-commun{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}
@@ -1411,9 +1411,10 @@
         if(!m)continue;
         var debut=m.index+m[1].length,len=m[2].length;
         var span=document.createElement("span");span.className="gl";span.tabIndex=0;
-        var avant=n.splitText(debut);n.splitText(len);
-        var cible=n.cloneNode(true);n.parentNode.replaceChild(span,n);
-        span.appendChild(cible);
+        var apres=n.splitText(debut);
+        apres.splitText(len);
+        n.parentNode.replaceChild(span,apres);
+        span.appendChild(apres);
         span.dataset.def=TERMES[terme];span.dataset.term=m[2];
         marks[terme]=1;found=true;break}}
   }
