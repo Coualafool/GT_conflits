@@ -20,9 +20,16 @@ FILES=(index.html LISEZ-MOI.html README.md
        composants/composant-D-espace.html composants/composant-E-espace.html composants/composant-F-espace.html
        composants/composant-G-espace.html composants/composant-H-espace.html composants/composant-I-espace.html)
 
+# Répertoires entiers : sans eux le zip de test a des liens cassés
+# (images des figures, cartes du rapport, frise, guide Discord).
+DIRS=(pictures chapitres/img frise discord)
+
 # Contrôle : tous les fichiers attendus doivent exister.
 for f in "${FILES[@]}"; do
   [ -f "$f" ] || { echo "ERREUR : fichier manquant : $f" >&2; exit 1; }
+done
+for d in "${DIRS[@]}"; do
+  [ -d "$d" ] || { echo "ERREUR : répertoire manquant : $d" >&2; exit 1; }
 done
 
 STAGE_ROOT="$(mktemp -d)"
@@ -32,6 +39,10 @@ mkdir -p "$STAGE"
 for f in "${FILES[@]}"; do
   mkdir -p "$STAGE/$(dirname "$f")"
   cp "$f" "$STAGE/$f"
+done
+for d in "${DIRS[@]}"; do
+  mkdir -p "$STAGE/$(dirname "$d")"
+  cp -R "$d" "$STAGE/$(dirname "$d")/"
 done
 
 rm -f "$OUT"
@@ -61,6 +72,8 @@ fi
 rm -rf "$STAGE_ROOT"
 
 COUNT=$( (unzip -Z1 "$OUT" 2>/dev/null || "$PY" -c 'import sys,zipfile;print("\n".join(n for n in zipfile.ZipFile(sys.argv[1]).namelist() if not n.endswith("/")))' "${OUT_ARG:-$OUT}") | grep -v '/$' | wc -l)
+EXPECT=$(( ${#FILES[@]} ))
+for d in "${DIRS[@]}"; do EXPECT=$(( EXPECT + $(find "$d" -type f | wc -l) )); done
 echo "Construit : $OUT"
-echo "Fichiers dans le zip : $COUNT (attendu : ${#FILES[@]})"
-[ "$COUNT" -eq "${#FILES[@]}" ] && echo "OK"
+echo "Fichiers dans le zip : $COUNT (attendu : $EXPECT)"
+[ "$COUNT" -eq "$EXPECT" ] && echo "OK"
