@@ -275,14 +275,14 @@ new ResizeObserver(()=>{buildRows();render();}).observe(viz);
 buildRows();render();
 </script>
 <!-- BEGIN commun:frise-outils -->
-<nav class="frise-outils no-print" aria-label="Navigation vers le kit">
+<nav class="frise-outils" aria-label="Navigation vers le kit">
   <a href="../rapport/rapport_FR.html">← Kit pédagogique</a>
   <a href="index-comparatif.html">Comparer les vues</a>
 </nav>
 <style>
-  .frise-outils{position:fixed;left:14px;bottom:14px;z-index:30;display:flex;gap:6px;font-size:12.5px}
-  .frise-outils a{color:var(--muted,#555);background:var(--card,#fff);border:1px solid var(--border,#ccc);border-radius:999px;padding:5px 12px;text-decoration:none;box-shadow:var(--sh1,0 1px 3px rgba(0,0,0,.15))}
-  .frise-outils a:hover{color:var(--ink,#111);border-color:var(--accent,#9a511c)}
+  .frise-outils{display:flex;flex-wrap:wrap;gap:4px 16px;background:var(--card,#fff);border-top:1px solid var(--border,#ccc);padding:9px 16px 0;font-size:12px}
+  .frise-outils a{color:var(--accent,#9a511c);text-decoration:none}
+  .frise-outils a:hover{text-decoration:underline}
 </style>
 <!-- END commun:frise-outils -->
 <!-- BEGIN commun:pied -->
@@ -297,6 +297,12 @@ buildRows();render();
   .pied-commun a:hover{color:var(--ink)}
 </style>
 <!-- END commun:pied -->
+<style>
+  /* pied compact (pages-frise -- inject_common.py) */
+  .pied-commun{border-top:0;margin:0;padding:3px 16px 9px;font-size:12px;line-height:1.5;color:var(--muted,#555);background:var(--card,#fff)}
+  .pied-commun p{display:inline}
+  .pied-commun p+p::before{content:" · "}
+</style>
 <style>
   /* pied compact (pages-frise -- inject_common.py) */
   .pied-commun{margin:0;padding:9px 16px 12px;font-size:12px;line-height:1.5;color:var(--muted,#555)}

@@ -128,26 +128,28 @@ OUTILS_BLOCK = """<!-- BEGIN commun:outils -->
 </style>
 <!-- END commun:outils -->"""
 
-# Outils des pages-frise : navigation vers le kit (pas de tout-déplier,
-# ces pages n'ont pas d'accordéons). Placé en bas à gauche : les panneaux
-# de détail des pages-frise s'ouvrent à droite.
+# Outils des pages-frise : navigation vers le kit, EN FILUX (jamais fixed :
+# poc-A/poc-B ont leur propre barre de pied en flux — un pill fixe la
+# recouvrirait). Avec le pied compact juste en dessous, les deux lignes
+# forment un seul pied visuel.
 FRISE_OUTILS_BLOCK = """<!-- BEGIN commun:frise-outils -->
-<nav class="frise-outils no-print" aria-label="Navigation vers le kit">
+<nav class="frise-outils" aria-label="Navigation vers le kit">
   <a href="../rapport/rapport_FR.html">← Kit pédagogique</a>{idx}
 </nav>
 <style>
-  .frise-outils{{position:fixed;left:14px;bottom:14px;z-index:30;display:flex;gap:6px;font-size:12.5px}}
-  .frise-outils a{{color:var(--muted,#555);background:var(--card,#fff);border:1px solid var(--border,#ccc);border-radius:999px;padding:5px 12px;text-decoration:none;box-shadow:var(--sh1,0 1px 3px rgba(0,0,0,.15))}}
-  .frise-outils a:hover{{color:var(--ink,#111);border-color:var(--accent,#9a511c)}}
+  .frise-outils{{display:flex;flex-wrap:wrap;gap:4px 16px;background:var(--card,#fff);border-top:1px solid var(--border,#ccc);padding:9px 16px 0;font-size:12px}}
+  .frise-outils a{{color:var(--accent,#9a511c);text-decoration:none}}
+  .frise-outils a:hover{{text-decoration:underline}}
 </style>
 <!-- END commun:frise-outils -->"""
 
 # Le pied « compact » des pages-frise : elles font 100 % de hauteur,
 # le pied standard (marges 64/48) volerait trop de place au canvas.
+# Pas de bordure haute : la barre de outils la porte déjà (un seul pied).
 FRISE_PIED_STYLE = """
 <style>
   /* pied compact (pages-frise -- inject_common.py) */
-  .pied-commun{margin:0;padding:9px 16px 12px;font-size:12px;line-height:1.5;color:var(--muted,#555)}
+  .pied-commun{border-top:0;margin:0;padding:3px 16px 9px;font-size:12px;line-height:1.5;color:var(--muted,#555);background:var(--card,#fff)}
   .pied-commun p{display:inline}
   .pied-commun p+p::before{content:" · "}
 </style>"""
