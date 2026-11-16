@@ -30,7 +30,7 @@ header .badgeH{display:inline-block;background:#4a3560;color:#fff;font-size:11px
 #cams .gho[aria-pressed=true]{background:#4a3560;color:#fff;border-color:#4a3560}
 /* ——— la scène 3D : #scene porte la perspective, #cam EST la caméra ——— */
 #stagewrap{flex:1;min-height:0;position:relative}
-#scene{position:absolute;inset:0;overflow:hidden;background:linear-gradient(#f4f2ee 0%,#fafaf9 42%,#f7f5f1 100%);cursor:grab;touch-action:none}
+#scene{position:absolute;inset:0;overflow:hidden;perspective:1100px;perspective-origin:50% 50%;background:linear-gradient(#f4f2ee 0%,#fafaf9 42%,#f7f5f1 100%);cursor:grab;touch-action:none}
 #scene.drag{cursor:grabbing}
 #cam{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
 #cam>*{transform-style:preserve-3d}
