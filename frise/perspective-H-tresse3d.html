@@ -160,13 +160,13 @@ body:not(.ghosts) .g3{display:none}
   </div>
 </header>
 <div id="stagewrap">
-  <div id="scene" tabindex="0" role="application" aria-label="Tresse des trois récits en trois dimensions. Flèches : parcourir le temps ; molette : zoom ; touches 1 à 7 : les vues.">
+  <div id="scene" tabindex="0" role="application" aria-label="Tresse des trois récits en trois dimensions. Glisser : regarder autour ; flèches : parcourir le temps ; molette : zoom ; touches 1 à 7 : les vues.">
     <div id="cam"></div>
     <div id="axisnote"></div>
     <div id="help">
       <button class="hclose" id="helpClose" aria-label="Fermer l'aide">×</button>
       <h2>Comment lire la tresse</h2>
-      Molette = zoom le long du temps · glisser ou <kbd>←</kbd><kbd>→</kbd> = parcourir les années ·
+      Glisser = regarder autour (la caméra orbite autour de l'ancrage-temps) · Maj+glisser, <kbd>←</kbd><kbd>→</kbd> ou molette horizontale = parcourir les années ·
       <kbd>↑</kbd><kbd>↓</kbd> zoom · <kbd>1</kbd>–<kbd>7</kbd> les vues · <kbd>M</kbd> maintenant · <kbd>Tab</kbd> puis <kbd>Entrée</kbd> pour lire une carte · <kbd>Échap</kbd> fermer.
       <div class="legend">
         <span><i style="background:var(--cpal)"></i>Récit palestinien</span>
@@ -380,18 +380,53 @@ function updateFade(C,b){
   for(const o of cardObjs)if(o.btn)o.btn.classList.toggle("near",o.f>.44&&o.btn.classList.contains("lv2"));
 }
 
-/* ---- interactions caméra : travelée sur le temps seul, jamais d'orbite libre ---- */
+/* ---- interactions caméra : molette = distance, glisser = regard libre, temps = flèches/Maj/molette H ---- */
+/* molette = distance seule ; le glisser horizontal (piste) = travelée dans le temps */
 scene.addEventListener("wheel",e=>{
   e.preventDefault();hideHelp();cancelAnim();
   st.preset=null;syncPresetBtns();
-  st.d=Math.min(maxDist(),Math.max(MIN_D,st.d*Math.exp(e.deltaY*.0016)));
+  if(!e.ctrlKey&&Math.abs(e.deltaX)>Math.abs(e.deltaY)){st.ax=clampAx(st.ax+e.deltaX*st.d/PERSP/xGain());}
+  else st.d=Math.min(maxDist(),Math.max(MIN_D,st.d*Math.exp(e.deltaY*.0016)));
   applyCam();
 },{passive:false});
-let drag=null;
-scene.addEventListener("pointerdown",e=>{hideHelp();cancelAnim();drag={x:e.clientX,ax:st.ax};scene.classList.add("drag");scene.setPointerCapture(e.pointerId);});
-scene.addEventListener("pointermove",e=>{if(!drag)return;st.ax=clampAx(drag.ax+(e.clientX-drag.x)*st.d/PERSP/xGain());applyCam();});
-scene.addEventListener("pointerup",()=>{drag=null;scene.classList.remove("drag");});
-scene.addEventListener("pointercancel",()=>{drag=null;scene.classList.remove("drag");});
+/* glisser gauche = REGARD LIBRE : la caméra orbite autour de son ancrage-temps (l'ancre
+   reste au centre). yaw sans limite, pitch pincé [2°, 89,5°] — jamais sous le sol, jamais
+   de retournement. Le voyage dans le temps reste accessible : Maj+glisser, molette
+   horizontale, glisser à deux doigts (tactile), flèches, touches 1–7. */
+const PMIN=2*Math.PI/180,PMAX=89.5*Math.PI/180,KLOOK=.0018;
+let ptrs=new Map(),drag=null,drag2=null;
+scene.addEventListener("pointerdown",e=>{
+  hideHelp();cancelAnim();scene.classList.add("drag");scene.setPointerCapture(e.pointerId);
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size>=2){drag=null;const p=[...ptrs.values()];drag2={x:(p[0].x+p[1].x)/2,ax:st.ax};}
+  else drag={x:e.clientX,y:e.clientY,ax:st.ax,moved:0};
+});
+scene.addEventListener("pointermove",e=>{
+  const pt=ptrs.get(e.pointerId);if(!pt)return;
+  const dx=e.clientX-pt.x,dy=e.clientY-pt.y;pt.x=e.clientX;pt.y=e.clientY;
+  if(drag2){const p=[...ptrs.values()].slice(0,2);
+    st.ax=clampAx(drag2.ax+((p[0].x+p[1].x)/2-drag2.x)*st.d/PERSP/xGain());applyCam();return;}
+  if(!drag)return;
+  if(e.shiftKey){st.ax=clampAx(drag.ax+(e.clientX-drag.x)*st.d/PERSP/xGain());}
+  else{
+    drag.moved+=Math.abs(dx)+Math.abs(dy);
+    if(drag.moved>4){
+      if(st.preset!==null){st.preset=null;syncPresetBtns();}
+      st.yaw+=dx*KLOOK;
+      st.pitch=Math.min(PMAX,Math.max(PMIN,st.pitch+dy*KLOOK));
+    }
+  }
+  applyCam();
+});
+function endPtr(e){
+  ptrs.delete(e.pointerId);
+  if(drag2&&ptrs.size<2)drag2=null;
+  if(ptrs.size===1){const p=[...ptrs.values()][0];drag={x:p.x,y:p.y,ax:st.ax,moved:1};}
+  if(ptrs.size===0){drag=null;scene.classList.remove("drag");
+    st.yaw=((st.yaw+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;}
+}
+scene.addEventListener("pointerup",endPtr);
+scene.addEventListener("pointercancel",endPtr);
 function clampAx(x){return Math.min(WSPAN,Math.max(0,x));}
 function cancelAnim(){if(target){target=null;cancelAnimationFrame(anim);}}
 // projection écran de l'axe du temps : à yaw petit l'axe fuit en profondeur → plancher de gain
@@ -469,7 +504,7 @@ let deepFocus=null,wantD=null;
     if(ds.length){
       const a=Math.max(T_MIN,Math.min.apply(null,ds)-1),b=Math.min(T_MAX,Math.max.apply(null,ds)+1);
       st.ax=clampAx(yearX((a+b)/2));wantD=frameD(b-a+4,.643);
-      st.pitch=26*Math.PI/180;st.yaw=40*Math.PI/180;ayv=330;azv=-40;st.preset="q3";
+      st.pitch=26*Math.PI/180;st.yaw=40*Math.PI/180;ayv=250;azv=-40;st.preset="q3";
     }
   }
   const m=location.hash.match(/^#s(\d+)\.(\d+)$/);

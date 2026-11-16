@@ -99,6 +99,32 @@ await page.waitForTimeout(800);
   await page.keyboard.press("1"); await settle();
 }
 
+/* ---------- H2b : glisser gauche = regard libre (orbite autour de l'ancrage-temps) ---------- */
+{
+  const a = await h3d();
+  await page.mouse.move(720, 430); await page.mouse.down();
+  await page.mouse.move(1000, 500, { steps: 12 }); await page.mouse.up();
+  await page.waitForTimeout(200);
+  const b = await h3d();
+  // tirage extrême vers le haut : le pitch se pince à 2°, aucun retournement de vue
+  await page.mouse.move(720, 430); await page.mouse.down();
+  await page.mouse.move(720, -2600, { steps: 16 }); await page.mouse.up();
+  await page.waitForTimeout(200);
+  const c = await h3d();
+  const dYaw = ((b.yaw - a.yaw + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
+  log("(H2b) glisser = regard libre : yaw suit le doigt, l'ancre-temps reste fixe, preset lâché",
+    Math.abs(dYaw) > 0.35 && Math.abs(b.ax - a.ax) < 1 && b.preset === null,
+    `yaw ${(dYaw * DEG).toFixed(1)}° tiré · ax invariable (${(b.ax - a.ax).toFixed(2)}px) · preset=null`);
+  log("(H2b2) tirage vers le sol : pitch pincé à 2°, la vue ne se retourne jamais",
+    Math.abs(c.pitch * DEG - 2) < 0.3 && Math.abs(c.ax - a.ax) < 1,
+    `pitch=${(c.pitch * DEG).toFixed(2)}° pincé`);
+  await page.keyboard.press("1"); await settle();
+  const r = await h3d();
+  log("(H2b3) la touche 1 recadre la caméra après l'orbite",
+    Math.abs(r.pitch * DEG - 26) < 0.6 && Math.abs(r.yaw * DEG - 40) < 0.6,
+    `pitch=${(r.pitch * DEG).toFixed(1)} yaw=${(r.yaw * DEG).toFixed(1)}`);
+}
+
 /* ---------- H3 : clavier = travelée sur le temps ---------- */
 {
   // d'abord s'écarter du clamp droit (ancre par défaut = 2013, près de NOW)
