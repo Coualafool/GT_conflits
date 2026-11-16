@@ -77,7 +77,7 @@ body.far .c3.lv1{margin-top:16px}
 body.far .c3.lv2{margin-top:-20px}
 body.far .c3 .db{top:-7px;right:5px;font-size:8.5px;line-height:13px;padding:0 5px}
 /* grand champ : la carte devient une perle — l'élément, son focus et son aria-label restent */
-body.far2 .c3{width:16px;height:16px;padding:0;border-radius:50%;border:2px solid var(--lane);background:var(--card)}
+body.far2 .c3{width:var(--pearl,16px);height:var(--pearl,16px);padding:0;border-radius:50%;border:2px solid var(--lane);background:var(--card)}
 body.far2 .c3>*{display:none}
 body.far2 .c3.lv1,body.far2 .c3.lv2{margin-top:0}
 body.far2 .c3.lv2{background:var(--lane)}
@@ -240,7 +240,7 @@ function desiredD(v){
   // on cadre un couloir d'~20 ans, qui remplit la largeur ET la hauteur du viewport.
   if(v==="haut")return frameD(stageW()<640?12:20,1);
   if(v==="profil")return frameD(52,.342);
-  if(v&&v.indexOf("cou-")===0)return 1000;
+  if(v&&v.indexOf("cou-")===0)return 1500;
   return frameD(stageW()<640?10:40,.643);
 }
 function applyPreset(v){
@@ -293,6 +293,9 @@ function applyCam(){
   const far=st.d>1900, far2=st.d>2300;
   if(far!==document.body.classList.contains("far"))document.body.classList.toggle("far",far);
   if(far2!==document.body.classList.contains("far2"))document.body.classList.toggle("far2",far2);
+  // perle à taille écran constante (~11 px) : le monde compense 1/f, sinon le grand
+  // champ réduit les perles à des poussières de 4 px illisibles.
+  if(far2)scene.style.setProperty("--pearl",Math.round(11*(PERSP+st.d)/PERSP)+"px");
   updateFade(C,b);
 }
 function centerYear(){return xYear(st.ax);}
