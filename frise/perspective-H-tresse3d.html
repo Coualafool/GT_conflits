@@ -66,6 +66,16 @@ header .badgeH{display:inline-block;background:#4a3560;color:#fff;font-size:11px
 .c3.lv2 .t{font-size:14px;font-weight:680}
 .c3 .db{position:absolute;top:-9px;right:8px;font-size:10px;font-weight:800;background:#9a511c;color:#fff;border-radius:999px;padding:0 7px;line-height:16px}
 .c3.l-pal{--lane:var(--cpal)} .c3.l-isr{--lane:var(--cisr)} .c3.l-occ{--lane:var(--cocc)}
+/* zoom déployé : pastilles compactes + évent vertical par niveau — la data reste en place,
+   seuls les textes qui se marchaient dessus se retirent (lisible ≠ empilé) */
+body.far .c3{width:126px;border-radius:9px;padding:5px 8px 6px}
+body.far .c3 .t{font-size:10.5px;font-weight:600;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body.far .c3.lv2 .t{font-size:11.5px;font-weight:680}
+body.far .c3 .d{display:none!important}
+body.far .c3 .y{font-size:9.5px}
+body.far .c3.lv1{margin-top:16px}
+body.far .c3.lv2{margin-top:-20px}
+body.far .c3 .db{top:-7px;right:5px;font-size:8.5px;line-height:13px;padding:0 5px}
 /* fantôme = silhouette du fait qu'un récit ne raconte pas (toggle, off par défaut) */
 .g3{position:absolute;left:0;top:0;width:150px;border:1.5px dashed rgba(120,112,100,.55);border-radius:12px;background:rgba(250,250,249,.35);
   padding:7px 10px;font-size:10.5px;color:rgba(91,96,104,.85);font-style:italic;line-height:1.25}
@@ -202,14 +212,14 @@ const FLOORY=400;
 
 /* ---- caméra sphérique autour d'un point d'ancrage — presets seuls ---- */
 const scene=$("#scene"),cam=$("#cam");
-let ayv=330,azv=-40;
+let ayv=150,azv=-40;
 let st={ax:yearX(2013),pitch:26*Math.PI/180,yaw:40*Math.PI/180,d:3200,preset:"q3",k:null};
 let target=null,anim=0;
 const PRE={
-  q3     :{pitch:26,yaw:40, ay:330, az:-40},
+  q3     :{pitch:26,yaw:40, ay:150, az:-40},
   haut   :{pitch:89.5,yaw:90,ay:0,  az:0},
   profil :{pitch:14,yaw:160,ay:-80, az:0},
-  ens    :{pitch:33,yaw:45, ay:330, az:-40},
+  ens    :{pitch:33,yaw:45, ay:150, az:-40},
   "cou-pal":{pitch:6,yaw:0,lane:"pal"},
   "cou-isr":{pitch:6,yaw:0,lane:"isr"},
   "cou-occ":{pitch:6,yaw:0,lane:"occ"},
@@ -221,7 +231,9 @@ function fitDist(yrs){return frameD(yrs,Math.max(Math.abs(Math.sin(st.yaw)),.3))
 function maxDist(){const g=Math.max(Math.abs(Math.sin(st.yaw)),.3);return Math.max(MIN_D,PERSP*(g*((T_MAX-T_MIN)+26)*SC/Math.max(360,stageW())-1));}
 function desiredD(v){
   if(v==="ens")return frameD(140,.707);
-  if(v==="haut")return frameD(140,1);
+  // « depuis le haut » : la section de la tresse fait ~1200 px pour 13 300 px de temps ;
+  // cadrer tout le corpus donnerait une lamelle de 80 px — on cadre un couloir de ~38 ans.
+  if(v==="haut")return frameD(stageW()<640?18:38,1);
   if(v==="profil")return frameD(52,.342);
   if(v&&v.indexOf("cou-")===0)return 900;
   return frameD(stageW()<640?10:40,.643);
@@ -271,6 +283,10 @@ function applyCam(){
   // écran→monde (billboards) : colonnes r̂,t̂,b̂
   const face="matrix3d("+r[0]+","+r[1]+","+r[2]+",0, "+t[0]+","+t[1]+","+t[2]+",0, "+b[0]+","+b[1]+","+b[2]+",0, 0,0,0,1)";
   if(face!==lastFace){lastFace=face;scene.style.setProperty("--bbt",face);}
+  // zoom déployé : les cartes deviennent des pastilles d'année (la donnée reste, le texte
+  // qui se marche dessus non) et les niveaux s'éventent verticalement.
+  const far=st.d>1900;
+  if(far!==document.body.classList.contains("far"))document.body.classList.toggle("far",far);
   updateFade(C,b);
 }
 function centerYear(){return xYear(st.ax);}
