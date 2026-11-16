@@ -293,10 +293,10 @@ await page.waitForTimeout(800);
 
 /* ---------- H14 : enregistré dans le comparatif ; module partagé intact ---------- */
 {
-  const idxOK = await page.evaluate(async () => {
-    const r = await fetch(BASE + "/index-comparatif.html");
+  const idxOK = await page.evaluate(async (u) => {
+    const r = await fetch(u);
     return (await r.text()).includes("perspective-H-tresse3d.html");
-  });
+  }, BASE + "/index-comparatif.html");
   log("(H14) H est présenté dans index-comparatif", idxOK, "");
   log("(H15) aucune erreur JavaScript sur toute la batterie", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | "));
 }
