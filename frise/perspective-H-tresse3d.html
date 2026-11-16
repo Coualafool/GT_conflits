@@ -81,6 +81,7 @@ body.far2 .c3{width:var(--pearl,16px);height:var(--pearl,16px);padding:0;border-
 body.far2 .c3>*{display:none}
 body.far2 .c3.lv1,body.far2 .c3.lv2{margin-top:0}
 body.far2 .c3.lv2{background:var(--lane)}
+body.far2 .stem{display:none}
 /* fantôme = silhouette du fait qu'un récit ne raconte pas (toggle, off par défaut) */
 .g3{position:absolute;left:0;top:0;width:150px;border:1.5px dashed rgba(120,112,100,.55);border-radius:12px;background:rgba(250,250,249,.35);
   padding:7px 10px;font-size:10.5px;color:rgba(91,96,104,.85);font-style:italic;line-height:1.25}
@@ -295,7 +296,7 @@ function applyCam(){
   if(far2!==document.body.classList.contains("far2"))document.body.classList.toggle("far2",far2);
   // perle à taille écran constante (~11 px) : le monde compense 1/f, sinon le grand
   // champ réduit les perles à des poussières de 4 px illisibles.
-  if(far2)scene.style.setProperty("--pearl",Math.round(11*(PERSP+st.d)/PERSP)+"px");
+  if(far2)scene.style.setProperty("--pearl",Math.round(13*(PERSP+st.d)/PERSP)+"px");
   updateFade(C,b);
 }
 function centerYear(){return xYear(st.ax);}
@@ -372,7 +373,9 @@ function updateFade(C,b){
     const zc=Math.max(60,-(b[0]*(o.x-C[0])+b[1]*(o.y-C[1])+b[2]*(o.z-C[2]))); // profondeur le long de la vue
     const f=PERSP/(PERSP+zc);                                                 // échelle écran réelle
     o.f=f;
-    o.el.style.opacity=Math.min(1,Math.max(FMIN,.33+f*1.7)).toFixed(3);
+    // carte collée à la lentille → silhouette : elle reste (plancher), mais ne bouche plus
+    // le couloir derrière elle ; le clic et le focus passent encore.
+    o.el.style.opacity=f>.8?"0.42":Math.min(1,Math.max(FMIN,.33+f*1.7)).toFixed(3);
   }
   for(const o of cardObjs)if(o.btn)o.btn.classList.toggle("near",o.f>.44&&o.btn.classList.contains("lv2"));
 }
