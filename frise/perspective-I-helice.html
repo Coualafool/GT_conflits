@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frise — Variante I : l'Hélice des récits</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#26261f; --muted:#61604f;
+  --border:#e3ddcd; --border-strong:#cfc7b1; --accent:#7a5a1f;
+  --cpal:#2e7d5b; --cisr:#2f6f9e; --cocc:#8a5a3c; --gold:#7c5410;
+  --sh1:0 1px 3px rgba(60,50,25,.09);
+  --sh2:0 2px 10px rgba(60,50,25,.10),0 20px 46px rgba(60,50,25,.18);
+  --tr:150ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif;font-variant-numeric:tabular-nums;display:flex;flex-direction:column}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+header{padding:10px 18px 9px;border-bottom:1px solid var(--border);background:var(--card);z-index:10}
+header h1{margin:0 0 2px;font-size:17px;font-weight:600;letter-spacing:.005em}
+header .sub{color:var(--muted);font-size:12.5px;margin:0;font-family:system-ui,"Segoe UI",Roboto,sans-serif}
+header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;margin-right:6px;vertical-align:1px;font-family:system-ui,sans-serif}
+#cams{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+#cams .sep{width:1px;height:18px;background:var(--border-strong);margin:0 3px}
+#cams button{border:1px solid var(--border-strong);background:var(--card);border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink);font-family:system-ui,sans-serif}
+#cams button:hover{border-color:var(--ink)}
+#cams button[aria-pressed=true]{background:var(--ink);color:#f6f3ec;border-color:var(--ink)}
+#cams .kk i{font-style:normal;opacity:.55;font-size:10.5px;margin-left:5px}
+#cams .gho[aria-pressed=true]{background:#6b5a86;color:#fff;border-color:#6b5a86}
+/* ——— la scène : #scene porte la perspective, #cam EST la caméra ——— */
+#stagewrap{flex:1;min-height:0;position:relative}
+#scene{position:absolute;inset:0;overflow:hidden;perspective:1100px;perspective-origin:50% 50%;
+  background:radial-gradient(130% 95% at 50% 38%,#faf8f1 0%,#f3eee1 55%,#e9e1cd 100%);cursor:grab;touch-action:none}
+#scene.drag{cursor:grabbing}
+#cam{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
+#cam>*{transform-style:preserve-3d}
+.bpos{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+/* billboards : UNE écriture CSS par image (--bbt sur #scene) */
+.bpos[data-pos]>*{transform:var(--bbt,none) translate(-50%,-50%);transform-origin:0 0}
+/* ——— les brins : quads croisés ancrés dans le monde, l'un visible là où l'autre se voile ——— */
+.tube{position:absolute;left:-2px;top:-3.5px;width:0;height:7px;border-radius:4px;transform-origin:0 0;opacity:.62}
+.tube.k-pal{background:linear-gradient(to bottom,rgba(46,125,91,.15),rgba(46,125,91,.85),rgba(46,125,91,.15))}
+.tube.k-isr{background:linear-gradient(to bottom,rgba(47,111,158,.15),rgba(47,111,158,.85),rgba(47,111,158,.15))}
+.tube.k-occ{background:linear-gradient(to bottom,rgba(138,90,60,.15),rgba(138,90,60,.85),rgba(138,90,60,.15))}
+.tube.x2{opacity:.34}
+/* ——— les marches : le même fait, ses récits reliés (paire de bases) ——— */
+.rung{position:absolute;left:0;top:-1.6px;width:0;height:3.2px;border-radius:2px;background:#b3a98d;opacity:.5;transform-origin:0 0}
+.rung.div{background:var(--gold);opacity:.72}
+.rung.hl{background:#4c3407;height:5px;top:-2.5px;opacity:1}
+/* ——— l'axe du temps : la trame commune des trois récits ——— */
+.axis{position:absolute;left:0;top:-2.5px;width:0;height:5px;border-radius:3px;transform-origin:0 0;opacity:.5}
+/* ——— cellules-récits : vrais boutons focusables, toujours face caméra, silhouettes organiques ——— */
+.c3{position:absolute;left:0;top:0;width:196px;border:1.5px solid var(--border);border-radius:17px 20px 15px 21px/20px 15px 21px 16px;
+  background:var(--card);padding:8px 12px 9px;text-align:left;font:inherit;color:inherit;cursor:pointer;box-shadow:var(--sh1)}
+.c3:hover{border-color:var(--lane)}
+.c3 .y{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--lane);font-family:system-ui,sans-serif}
+.c3 .y i{width:8px;height:8px;border-radius:50%;background:var(--lane);flex:none}
+.c3 .t{font-size:13.5px;font-weight:600;margin-top:2px;line-height:1.3}
+.c3 .d{display:none;font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.38;font-family:system-ui,sans-serif}
+.c3.near .d{display:block}
+.c3.lv2 .t{font-size:14.5px;font-weight:700}
+.c3.lv2{box-shadow:var(--sh2)}
+.c3 .db{position:absolute;top:-9px;right:9px;font-size:10px;font-weight:800;background:var(--gold);color:#fff;border-radius:999px;padding:0 7px;line-height:16px;font-family:system-ui,sans-serif}
+.c3.l-pal{--lane:var(--cpal)} .c3.l-isr{--lane:var(--cisr)} .c3.l-occ{--lane:var(--cocc)}
+/* respiration des cellules proches de l'ancre — le vivant, jamais sous prefers-reduced-motion */
+.c3.near{animation:breathe 4.2s ease-in-out infinite alternate}
+@keyframes breathe{from{scale:1}to{scale:1.035}}
+@media (prefers-reduced-motion: reduce){.c3.near{animation:none}}
+/* zoom déployé : pastilles, puis perles — la molécule se lit comme chaîne, jamais comme mur de texte */
+body.far .c3{width:122px;border-radius:14px 16px 12px 17px/16px 12px 17px 13px;padding:5px 8px 6px}
+body.far .c3 .t{font-size:10.5px;font-weight:600;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body.far .c3.lv2 .t{font-size:11.5px;font-weight:700}
+body.far .c3 .d{display:none!important}
+body.far .c3 .y{font-size:9.5px}
+body.far .c3 .db{top:-7px;right:5px;font-size:8.5px;line-height:13px;padding:0 5px}
+body.far2 .c3{width:var(--pearl,16px);height:var(--pearl,16px);padding:0;border-radius:50%;border:2px solid var(--lane);background:var(--card)}
+body.far2 .c3>*{display:none}
+body.far2 .c3.lv2{background:var(--lane)}
+/* fantôme = silhouette du fait qu'un récit ne raconte pas (toggle, off par défaut) */
+.g3{position:absolute;left:0;top:0;width:150px;border:1.5px dashed rgba(122,110,84,.55);border-radius:16px 19px 14px 20px/19px 14px 20px 15px;
+  background:rgba(250,247,238,.4);padding:7px 10px;font-size:10.5px;color:rgba(97,96,79,.9);font-style:italic;line-height:1.25}
+.g3 b{display:block;font-style:normal;font-weight:700;font-size:9.5px;letter-spacing:.05em;color:rgba(122,110,84,.95);font-family:system-ui,sans-serif}
+body:not(.ghosts) .g3{display:none}
+/* années sur l'axe + caps de brin */
+.ylab{position:absolute;left:0;top:0;font:700 12.5px system-ui,sans-serif;color:#6d6547;background:rgba(250,247,238,.85);
+  border:1px solid var(--border);border-radius:999px;padding:0 8px;white-space:nowrap;pointer-events:none}
+.cap{position:absolute;left:0;top:0;display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border-strong);
+  border-radius:999px;padding:5px 14px;font:700 13px system-ui,sans-serif;box-shadow:var(--sh1);white-space:nowrap;pointer-events:none}
+.cap i{width:11px;height:11px;border-radius:50%}
+.cap small{color:var(--muted);font-weight:500;font-size:11.5px}
+/* ——— panneau : le fait neutre, puis ses versions ——— */
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);background:var(--card);border-left:1px solid var(--border);
+  box-shadow:var(--sh2);transform:translateX(102%);transition:transform var(--tr);z-index:30;display:flex;flex-direction:column}
+#panel.open{transform:none}
+#panel .phead{padding:15px 20px 11px;border-bottom:1px solid var(--border)}
+#panel .phead .yr{font-size:13px;color:var(--muted);font-family:system-ui,sans-serif}
+#panel .phead h3{margin:2px 0 0;font-size:16.5px}
+#panel .pbody{flex:1;overflow:auto;padding:13px 20px}
+#panel .neutral{border:1px solid var(--border-strong);border-radius:14px 17px 12px 18px/17px 12px 18px 13px;padding:10px 13px;margin-bottom:12px;background:#f2eee2}
+#panel .neutral .nh{font-size:11px;font-weight:800;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;font-family:system-ui,sans-serif}
+#panel .neutral .nt{font-size:14px;font-weight:650;margin-top:3px}
+#panel .neutral .nd{font-size:12.5px;color:var(--muted);margin-top:4px;font-family:system-ui,sans-serif}
+.vrow{border:1px solid var(--border);border-left:4px solid var(--lc);border-radius:12px 15px 10px 16px/15px 10px 16px 11px;padding:9px 12px;margin-bottom:8px}
+.vrow .vh{display:flex;align-items:center;gap:7px;font:700 11.5px system-ui,sans-serif;color:var(--lc)}
+.vrow .vh i{width:9px;height:9px;border-radius:50%;background:var(--lc)}
+.vrow .vh .lvl{margin-left:auto;font-size:10px;font-weight:700;border-radius:999px;padding:1px 8px;color:var(--ink);background:rgba(60,50,25,.08)}
+.vrow .vt{font-size:14px;margin-top:3px}
+.vrow.p-pal{--lc:var(--cpal)} .vrow.p-isr{--lc:var(--cisr)} .vrow.p-occ{--lc:var(--cocc)}
+#panel .pfoot{padding:11px 20px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted);font-family:system-ui,sans-serif}
+#panel .pfoot a{color:var(--accent);font-weight:600;text-decoration:none}
+#panel .pfoot a:hover{text-decoration:underline}
+#panel .pclose{position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+/* carte d'aide */
+#help{position:absolute;left:16px;bottom:16px;z-index:20;max-width:440px;background:var(--card);border:1px solid var(--border-strong);
+  border-radius:18px 21px 16px 22px/21px 16px 22px 17px;box-shadow:var(--sh2);padding:13px 16px 12px;font-size:12.5px;line-height:1.55}
+#help h2{margin:0 0 5px;font-size:14px}
+#help .howto{font-family:system-ui,sans-serif;font-size:12px;color:var(--muted)}
+#help kbd{background:#eee9db;border:1px solid var(--border-strong);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:11px;font-family:system-ui,sans-serif}
+#help .hclose{position:absolute;top:7px;right:10px;border:none;background:none;font-size:17px;cursor:pointer;color:var(--muted)}
+#help .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font:11.5px system-ui,sans-serif;color:var(--muted)}
+#help .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+#axisnote{position:absolute;right:16px;bottom:16px;z-index:15;font:11px system-ui,sans-serif;color:var(--muted);background:rgba(250,247,238,.88);
+  border:1px solid var(--border);border-radius:999px;padding:4px 11px;pointer-events:none}
+@media (max-width:640px){
+  header{padding:8px 12px 7px}
+  header .sub{display:none}
+  #cams button{padding:3px 9px;font-size:11.5px}
+  #cams .kk{display:none}
+  #help{left:10px;right:10px;bottom:10px;max-width:none}
+  #axisnote{display:none}
+}
+</style>
+<!-- BEGIN commun:pied-head -->
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<!-- END commun:pied-head -->
+</head>
+<body>
+<header>
+  <h1><span class="badgeI">Variante I</span>L'Hélice des récits — la tresse, en vivant</h1>
+  <p class="sub">Comme une molécule de vie : le temps est l'axe, chaque récit est un brin de la triple hélice — aucun brin n'est au centre. Les marches relient les versions d'un même fait ; dorées, quand les noms divergent. Taille des cellules = poids dans le récit.</p>
+  <div id="cams" role="group" aria-label="Positions de caméra">
+    <button data-v="q3" aria-pressed="true" class="kk">¾ haute<i>1</i></button>
+    <button data-v="haut" class="kk">Depuis le haut<i>2</i></button>
+    <button data-v="face" class="kk">Coupe de l'hélice<i>3</i></button>
+    <button data-v="ens" class="kk">Ensemble<i>4</i></button>
+    <span class="sep"></span>
+    <button data-v="cou-pal" class="kk">Brin Palestinien<i>5</i></button>
+    <button data-v="cou-isr" class="kk">Brin Israélien<i>6</i></button>
+    <button data-v="cou-occ" class="kk">Brin Occidental<i>7</i></button>
+    <span class="sep"></span>
+    <button data-v="now">Maintenant</button>
+    <span class="sep"></span>
+    <button id="ghostBtn" class="gho" aria-pressed="false" title="Silhouette des faits qu'un récit ne raconte pas">Silences</button>
+    <button id="helpBtn">Aide (?)</button>
+  </div>
+</header>
+<div id="stagewrap">
+  <div id="scene" tabindex="0" role="application" aria-label="Triple hélice des trois récits en trois dimensions. Glisser : regarder autour ; flèches : parcourir le temps ; molette : zoom ; touches 1 à 7 : les vues.">
+    <div id="cam"></div>
+    <div id="axisnote"></div>
+    <div id="help">
+      <button class="hclose" id="helpClose" aria-label="Fermer l'aide">×</button>
+      <h2>Comment lire l'hélice</h2>
+      <p style="margin:0 0 6px">Le temps est l'axe central. Chaque récit est un brin enroulé autour de cet axe — comme le collagène, trois brins, aucun au centre. Une cellule n'existe que sur les brins qui racontent ce fait ; les <b>marches</b> relient entre elles les versions d'un même fait, comme les barreaux d'une molécule.</p>
+      <p class="howto" style="margin:0 0 6px">Glisser = regarder autour (la caméra orbite autour de l'ancrage-temps) · Maj+glisser, <kbd>←</kbd><kbd>→</kbd> ou molette horizontale = parcourir les années ·
+      <kbd>↑</kbd><kbd>↓</kbd> zoom · <kbd>1</kbd>–<kbd>7</kbd> les vues · <kbd>M</kbd> maintenant · <kbd>Tab</kbd> puis <kbd>Entrée</kbd> pour lire une cellule · <kbd>Échap</kbd> fermer.</p>
+      <div class="legend">
+        <span><i style="background:var(--cpal)"></i>Récit palestinien</span>
+        <span><i style="background:var(--cisr)"></i>Récit israélien</span>
+        <span><i style="background:var(--cocc)"></i>Vue occidentale</span>
+        <span><b style="color:var(--gold)">━</b> marche dorée : même fait, noms divergents</span>
+      </div>
+      « Depuis le haut » donne la lecture 2D classique (les brins s'y croisent en sinus) ; « Coupe de l'hélice » regarde le long du temps et fait voir les triangles de marches ; « Brin … » suit un récit de l'intérieur.
+    </div>
+  </div>
+</div>
+<div id="panel" role="dialog" aria-label="Le même fait, ses récits">
+  <div class="phead"><div class="yr" id="pYr"></div><h3 id="pT">Un fait, ses récits</h3><button class="pclose" id="pClose" aria-label="Fermer">×</button></div>
+  <div class="pbody"><div class="neutral"><div class="nh">Le fait, tel que le kit le raconte</div><div class="nt" id="pNt"></div><div class="nd" id="pDesc"></div></div><div id="pRows"></div></div>
+  <div class="pfoot" id="pFoot"></div>
+</div>
+<script src="poc-data.js"></script>
+<script src="poc-perspectives.js"></script>
+<script>
+/* ====== I · l'Hélice des récits — CSS 3D pur DOM, zéro dépendance, file:// natif ======
+   Le temps est l'axe X ; chaque récit est un brin hélicoïde d'angle équilatéral (120°).
+   Les marches (base pairs) relient les versions d'un même fait dans le plan x=constante.
+   Caméra sphérique autour d'un ancrage-temps : presets + regard libre au glisser. */
+const $=s=>document.querySelector(s);
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PERSP=1100, MIN_D=480;
+const SC=100, T0=T_MIN;                     // 100 px CSS par an
+const WSPAN=(T_MAX-T_MIN)*SC;
+const R0=330;                               // rayon de l'hélice
+const TURN=2*Math.PI/30;                    // un tour complet = 30 ans
+const PHI={occ:0,isr:2*Math.PI/3,pal:4*Math.PI/3};   // trois brins, à équidistance
+function helixPos(k,xa){const th=PHI[k]+(xYear(xa)-T0)*TURN;return{x:xa,y:R0*Math.sin(th),z:R0*Math.cos(th),th};}
+function cellPos(i,k){const xa=yearX(EV[i][0]);const th=PHI[k]+(EV[i][0]-T0)*TURN;
+  const r=R0+(lvOf(i,k)>=2?30:8);            // le poids du récit gonfle la cellule vers l'extérieur
+  return{x:xa,y:r*Math.sin(th),z:r*Math.cos(th)};}
+function helixDir(k,xa){const A=helixPos(k,xa-1.2),B=helixPos(k,xa+1.2);
+  const dx=B.x-A.x,dy=B.y-A.y,dz=B.z-A.z,L=Math.hypot(dx,dy,dz);return[dx/L,dy/L,dz/L];}
+function yearX(y){return (y-T0)*SC;}
+function xYear(x){return T0+x/SC;}
+function escT(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function fmtY(y){const i=Math.floor(y),m=Math.min(11,Math.floor((y-i)*12));return i+" "+MONTHS[m];}
+
+/* ---- caméra sphérique autour d'un point d'ancrage ---- */
+const scene=$("#scene"),cam=$("#cam");
+let ayv=110,azv=0;
+let st={ax:yearX(2013),pitch:26*Math.PI/180,yaw:40*Math.PI/180,d:3200,preset:"q3",k:null};
+let target=null,anim=0;
+const PRE={
+  q3   :{pitch:26,yaw:40, ay:110, az:0},
+  haut :{pitch:89.5,yaw:90,ay:0,  az:0},
+  face :{pitch:0, yaw:90, ay:0,   az:0},
+  ens  :{pitch:33,yaw:45, ay:110, az:0},
+  "cou-pal":{pitch:0,yaw:0,lane:"pal"},
+  "cou-isr":{pitch:0,yaw:0,lane:"isr"},
+  "cou-occ":{pitch:0,yaw:0,lane:"occ"},
+};
+function stageW(){return scene.clientWidth;}
+function frameD(yrs,gain){return Math.min(maxDist(),Math.max(MIN_D,PERSP*(gain*(yrs+6)*SC/Math.max(360,stageW())-1)));}
+function maxDist(){const g=Math.max(Math.abs(Math.sin(st.yaw)),.3);return Math.max(MIN_D,PERSP*(g*((T_MAX-T_MIN)+26)*SC/Math.max(360,stageW())-1));}
+function desiredD(v){
+  if(v==="ens")return frameD(140,.707);
+  if(v==="haut")return frameD(stageW()<640?12:20,1);
+  if(v==="face")return 1500;
+  if(v&&v.indexOf("cou-")===0)return 1050;
+  return frameD(stageW()<640?10:40,.643);
+}
+function applyPreset(v){
+  const p=PRE[v];if(!p)return;
+  st.preset=v;st.k=p.lane||null;
+  let pt=p.pitch*Math.PI/180,yw=p.yaw*Math.PI/180,ay,az;
+  if(p.lane){
+    // « Brin … » : la caméra se pose sur le brin, dans son sillage — le récit se déroule devant.
+    const P=helixPos(p.lane,st.ax),dir=helixDir(p.lane,st.ax);
+    const b=[-dir[0],-dir[1],-dir[2]];
+    pt=Math.asin(Math.max(-1,Math.min(1,-b[1])));
+    yw=Math.atan2(b[2],b[0]);
+    ay=P.y;az=P.z;
+  }else{ay=p.ay;az=p.az;}
+  const d=Math.min(desiredD(v),maxDist());
+  target={ax:st.ax,pitch:pt,yaw:yw,ay,az,d};
+  if(RM){st.pitch=pt;st.yaw=yw;st.d=d;ayv=ay;azv=az;target=null;applyCam();}
+  else{cancelAnimationFrame(anim);easeLast=0;anim=requestAnimationFrame(ease);}
+  syncPresetBtns();
+}
+let easeLast=0;
+function ease(now){
+  // lissage TEMPOREL (insensible au framerate — Chromebooks lents comme headless bridé)
+  const dt=Math.min(.1,(now-easeLast)/1000||.016);easeLast=now;
+  const k=1-Math.exp(-dt/.15);
+  st.ax+=(target.ax-st.ax)*k;st.pitch+=(target.pitch-st.pitch)*k;st.yaw+=(target.yaw-st.yaw)*k;
+  st.d+=(target.d-st.d)*k;ayv+=(target.ay-ayv)*k;azv+=(target.az-azv)*k;
+  applyCam();
+  if(Math.abs(target.d-st.d)>2||Math.abs(target.pitch-st.pitch)>.002||Math.abs(target.ay-ayv)>.5||Math.abs(target.ax-st.ax)>2){
+    anim=requestAnimationFrame(ease);
+  }else{
+    st.pitch=target.pitch;st.yaw=target.yaw;st.d=target.d;st.ax=target.ax;ayv=target.ay;azv=target.az;
+    target=null;applyCam();
+  }
+}
+/* base caméra : b̂ = « vers le spectateur » ; t̂ = « bas de l'écran » ; r̂ = droite.
+   b̂=(cp·cy,−sp,cp·sy)  t̂=(sp·cy,cp,sp·sy)  r̂=(sy,0,−cy) ; r̂×t̂=b̂ (droitier CSS) */
+function camB(){
+  const cp=Math.cos(st.pitch),sp=Math.sin(st.pitch),cy=Math.cos(st.yaw),sy=Math.sin(st.yaw);
+  return{b:[cp*cy,-sp,cp*sy],t:[sp*cy,cp,sp*sy],r:[sy,0,-cy]};
+}
+let lastFace="";
+function applyCam(){
+  const{b,t,r}=camB();
+  const C=[st.ax+b[0]*st.d,ayv+b[1]*st.d,azv+b[2]*st.d];
+  const dC=[r[0]*C[0]+r[1]*C[1]+r[2]*C[2],t[0]*C[0]+t[1]*C[1]+t[2]*C[2],b[0]*C[0]+b[1]*C[1]+b[2]*C[2]];
+  cam.style.transform="matrix3d("+r[0]+","+t[0]+","+b[0]+",0, "+r[1]+","+t[1]+","+b[1]+",0, "+r[2]+","+t[2]+","+b[2]+",0, "+
+    (-dC[0])+","+(-dC[1])+","+(-dC[2])+",1)";
+  const face="matrix3d("+r[0]+","+r[1]+","+r[2]+",0, "+t[0]+","+t[1]+","+t[2]+",0, "+b[0]+","+b[1]+","+b[2]+",0, 0,0,0,1)";
+  if(face!==lastFace){lastFace=face;scene.style.setProperty("--bbt",face);}
+  const far=st.d>1900, far2=st.d>2300;
+  if(far!==document.body.classList.contains("far"))document.body.classList.toggle("far",far);
+  if(far2!==document.body.classList.contains("far2"))document.body.classList.toggle("far2",far2);
+  if(far2)scene.style.setProperty("--pearl",Math.round(13*(PERSP+st.d)/PERSP)+"px");
+  updateFade(C,b);
+}
+function centerYear(){return xYear(st.ax);}
+
+/* ---- construction ---- */
+const cardObjs=[];
+function segM(P,u,n){
+  // col1=u, col2=n, col3=u×n — quad ancré monde le long de u, épaisseur le long de n
+  const c=[u[1]*n[2]-u[2]*n[1],u[2]*n[0]-u[0]*n[2],u[0]*n[1]-u[1]*n[0]];
+  const f=n=>n.toFixed(6);
+  return "translate3d("+f(P[0])+"px,"+f(P[1])+"px,"+f(P[2])+"px) matrix3d("+
+    f(u[0])+","+f(u[1])+","+f(u[2])+",0, "+f(n[0])+","+f(n[1])+","+f(n[2])+",0, "+f(c[0])+","+f(c[1])+","+f(c[2])+",0, 0,0,0,1)";
+}
+function build(){
+  let h="",inner="";
+  /* l'axe du temps : la trame commune, teintée par les ères partagées (deux quads croisés :
+     l'un vu de profil, l'autre vu du dessus — l'axe ne disparaît jamais, quel que soit l'angle) */
+  for(const e of ERAS){
+    const x0=yearX(e.a),len=(e.b-e.a)*SC;
+    h+='<div class="axis" style="width:'+len+'px;background:'+e.c+'66;transform:translate3d('+x0+'px,0px,0px) matrix3d(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1)"></div>';
+    h+='<div class="axis" style="width:'+len+'px;background:'+e.c+'33;transform:translate3d('+x0+'px,0px,0px) matrix3d(1,0,0,0, 0,0,1,0, 0,-1,0,0, 0,0,0,1)"></div>';
+    const xc=yearX((e.a+e.b)/2);
+    inner+='<div class="bpos" data-pos="1" data-x="'+xc+'" data-y="0" data-z="0" style="transform:translate3d('+xc+'px,0px,0px)"><div class="ylab" style="color:'+e.c+'">'+escT(e.label)+' · '+Math.round(e.a)+'</div></div>';
+  }
+  /* les trois brins : tube en quads croisés (un des deux se voile là où l'autre se découvre) */
+  const dt=(T_MAX-T_MIN)/100;
+  for(const k of PERS_KEYS){
+    for(let t=T0;t<T_MAX-dt/2;t+=dt){
+      const A=helixPos(k,yearX(t)),B=helixPos(k,yearX(Math.min(t+dt,T_MAX-T0)));
+      const dx=B.x-A.x,dy=B.y-A.y,dz=B.z-A.z,L=Math.hypot(dx,dy,dz);
+      const u=[dx/L,dy/L,dz/L];
+      let n1=[0,u[2],-u[1]];const l1=Math.hypot(n1[0],n1[1],n1[2])||1;n1=[n1[0]/l1,n1[1]/l1,n1[2]/l1];
+      const n2=[u[1]*n1[2]-u[2]*n1[1],u[2]*n1[0]-u[0]*n1[2],u[0]*n1[1]-u[1]*n1[0]];
+      const P0=[A.x,A.y,A.z];
+      h+='<div class="tube k-'+k+'" style="width:'+L+'px;transform:'+segM(P0,u,n1)+'"></div>';
+      h+='<div class="tube k-'+k+' x2" style="width:'+L+'px;transform:'+segM(P0,u,n2)+'"></div>';
+    }
+  }
+  /* les marches : le même fait, ses récits, reliés dans le plan x=constante (épaisseur sur l'axe) */
+  for(let i=0;i<EV.length;i++){
+    const ks=PERS_KEYS.filter(k=>lvOf(i,k)>0);
+    if(ks.length<2)continue;
+    const dv=divergent(i),x=yearX(EV[i][0]);
+    for(let a1=0;a1<ks.length;a1++)for(let b1=a1+1;b1<ks.length;b1++){
+      const A=cellPos(i,ks[a1]),B=cellPos(i,ks[b1]);
+      const dy=B.y-A.y,dz=B.z-A.z,len=Math.hypot(dy,dz);
+      const uy=dy/len,uz=dz/len;
+      h+='<div class="rung'+(dv?" div":"")+'" data-i="'+i+'" style="width:'+len+'px;transform:translate3d('+x+'px,'+A.y+'px,'+A.z+'px) matrix3d(1,0,0,0, 0,'+uy.toFixed(6)+','+uz.toFixed(6)+',0, 0,'+(-uz).toFixed(6)+','+uy.toFixed(6)+',0, 0,0,0,1)"></div>';
+    }
+  }
+  /* les cellules : un bouton par récit qui raconte le fait, posé sur son brin, légèrement gonflé vers l'extérieur */
+  for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
+    const l=lvOf(i,k);if(!l)continue;
+    const P=cellPos(i,k);
+    const badge=divergent(i)&&PERS_KEYS.filter(k2=>lvOf(i,k2)>0).length>1?'<span class="db" title="Le même fait, des noms différents">≠</span>':"";
+    inner+='<div class="bpos" data-pos="1" data-x="'+P.x+'" data-y="'+P.y+'" data-z="'+P.z+'" style="transform:translate3d('+P.x+'px,'+P.y+'px,'+P.z+'px)"><button class="c3 l-'+k+" lv"+l+'" data-i="'+i+'" data-k="'+k+'" data-l="'+l+'" aria-label="'+escT(Math.floor(EV[i][0])+", "+PERS[k].short+" : "+titleOf(i,k))+'">'+badge+
+      '<span class="y"><i></i>'+fmtY(EV[i][0])+'</span><div class="t">'+escT(titleOf(i,k))+'</div><div class="d">'+escT(EV[i][3])+"</div></button></div>";
+  }
+  /* les silences : silhouette du fait, posée sur le brin muet */
+  for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
+    if(lvOf(i,k))continue;
+    const th=PHI[k]+(EV[i][0]-T0)*TURN,x=yearX(EV[i][0]),r=R0+14;
+    const y=r*Math.sin(th),z=r*Math.cos(th);
+    inner+='<div class="bpos" data-pos="1" data-x="'+x+'" data-y="'+y+'" data-z="'+z+'" style="transform:translate3d('+x+'px,'+y+'px,'+z+'px)"><div class="g3" aria-hidden="true"><b>'+PERS[k].short+" ne raconte pas</b>"+escT(EV[i][2])+"</div></div>";
+  }
+  /* caps de brins : chaque brin se nomme à ses deux extrémités */
+  for(const k of PERS_KEYS){
+    const p=PERS[k];
+    for(const t of [1901,2023]){
+      const P=helixPos(k,yearX(t));
+      inner+='<div class="bpos" data-pos="1" data-x="'+P.x+'" data-y="'+P.y+'" data-z="'+P.z+'" style="transform:translate3d('+P.x+'px,'+P.y+'px,'+P.z+'px)"><div class="cap"><i style="background:'+p.c+'"></i>'+p.name+" <small>· "+nTold(k)+" dates</small></div></div>";
+    }
+  }
+  const ystep=st.d<1300?5:st.d<2600?10:25;
+  for(let y=Math.ceil(T0/ystep)*ystep;y<=T_MAX;y+=ystep)
+    inner+='<div class="bpos" data-pos="1" data-x="'+yearX(y)+'" data-y="0" data-z="0" style="transform:translate3d('+yearX(y)+'px,0px,0px)"><div class="ylab">'+y+"</div></div>";
+  cam.innerHTML=h+inner;
+  cardObjs.length=0;
+  cam.querySelectorAll(".bpos[data-pos]").forEach(el=>{
+    const c=el.firstElementChild;
+    const o={el,x:+el.dataset.x,y:+el.dataset.y,z:+el.dataset.z,f:0};
+    if(c&&c.classList.contains("c3")){o.btn=c;c._o=o;cardObjs.push(o);}
+    else cardObjs.push(o);
+  });
+}
+
+/* ---- fondu de profondeur : rien n'est jamais retiré ---- */
+const FMIN=.37;
+function updateFade(C,b){
+  for(const o of cardObjs){
+    const zc=Math.max(60,-(b[0]*(o.x-C[0])+b[1]*(o.y-C[1])+b[2]*(o.z-C[2])));
+    const f=PERSP/(PERSP+zc);
+    o.f=f;
+    o.el.style.opacity=f>.8?"0.42":Math.min(1,Math.max(FMIN,.33+f*1.7)).toFixed(3);
+  }
+  for(const o of cardObjs)if(o.btn)o.btn.classList.toggle("near",o.f>.44&&o.btn.classList.contains("lv2"));
+}
+
+/* ---- interactions caméra : molette = distance, glisser = regard libre, temps = flèches/Maj/molette H ---- */
+scene.addEventListener("wheel",e=>{
+  e.preventDefault();hideHelp();cancelAnim();
+  st.preset=null;syncPresetBtns();
+  if(!e.ctrlKey&&Math.abs(e.deltaX)>Math.abs(e.deltaY)){st.ax=clampAx(st.ax+e.deltaX*st.d/PERSP/xGain());}
+  else st.d=Math.min(maxDist(),Math.max(MIN_D,st.d*Math.exp(e.deltaY*.0016)));
+  applyCam();
+},{passive:false});
+/* glisser gauche = REGARD LIBRE : orbite autour de l'ancrage-temps. yaw sans limite,
+   pitch pincé [2°, 89,5°]. Temps : Maj+glisser, molette horizontale, deux doigts, flèches. */
+const PMIN=2*Math.PI/180,PMAX=89.5*Math.PI/180,KLOOK=.0018;
+let ptrs=new Map(),drag=null,drag2=null;
+scene.addEventListener("pointerdown",e=>{
+  hideHelp();cancelAnim();scene.classList.add("drag");scene.setPointerCapture(e.pointerId);
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size>=2){drag=null;const p=[...ptrs.values()];drag2={x:(p[0].x+p[1].x)/2,ax:st.ax};}
+  else drag={x:e.clientX,y:e.clientY,ax:st.ax,moved:0};
+});
+scene.addEventListener("pointermove",e=>{
+  const pt=ptrs.get(e.pointerId);if(!pt)return;
+  const dx=e.clientX-pt.x,dy=e.clientY-pt.y;pt.x=e.clientX;pt.y=e.clientY;
+  if(drag2){const p=[...ptrs.values()].slice(0,2);
+    st.ax=clampAx(drag2.ax+((p[0].x+p[1].x)/2-drag2.x)*st.d/PERSP/xGain());applyCam();return;}
+  if(!drag)return;
+  if(e.shiftKey){st.ax=clampAx(drag.ax+(e.clientX-drag.x)*st.d/PERSP/xGain());}
+  else{
+    drag.moved+=Math.abs(dx)+Math.abs(dy);
+    if(drag.moved>4){
+      if(st.preset!==null){st.preset=null;syncPresetBtns();}
+      st.yaw+=dx*KLOOK;
+      st.pitch=Math.min(PMAX,Math.max(PMIN,st.pitch+dy*KLOOK));
+    }
+  }
+  applyCam();
+});
+function endPtr(e){
+  ptrs.delete(e.pointerId);
+  if(drag2&&ptrs.size<2)drag2=null;
+  if(ptrs.size===1){const p=[...ptrs.values()][0];drag={x:p.x,y:p.y,ax:st.ax,moved:1};}
+  if(ptrs.size===0){drag=null;scene.classList.remove("drag");
+    st.yaw=((st.yaw+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;}
+}
+scene.addEventListener("pointerup",endPtr);
+scene.addEventListener("pointercancel",endPtr);
+function clampAx(x){return Math.min(WSPAN,Math.max(0,x));}
+function cancelAnim(){if(target){target=null;cancelAnimationFrame(anim);}}
+function xGain(){const s=Math.sin(st.yaw);return s>=0?Math.max(s,.3):-Math.max(-s,.3);}
+function stepX(){return st.d/PERSP*stageW()*.22/xGain();}
+document.addEventListener("keydown",e=>{
+  if(e.target.closest("input,textarea"))return;
+  if(e.key==="Escape"){$("#panel").classList.remove("open");return;}
+  if(e.key==="?"||e.key==="h"){showHelp();return;}
+  const P={"1":"q3","2":"haut","3":"face","4":"ens","5":"cou-pal","6":"cou-isr","7":"cou-occ"};
+  if(P[e.key]){applyPreset(P[e.key]);return;}
+  if(e.key==="m"||e.key==="M"){goNow();return;}
+  if(e.key==="ArrowRight"){hideHelp();cancelAnim();st.preset=null;syncPresetBtns();st.ax=clampAx(st.ax+stepX());applyCam();e.preventDefault();}
+  else if(e.key==="ArrowLeft"){hideHelp();cancelAnim();st.preset=null;syncPresetBtns();st.ax=clampAx(st.ax-stepX());applyCam();e.preventDefault();}
+  else if(e.key==="ArrowUp"){hideHelp();cancelAnim();st.d=Math.max(MIN_D,st.d*.82);applyCam();e.preventDefault();}
+  else if(e.key==="ArrowDown"){hideHelp();cancelAnim();st.d=Math.min(maxDist(),st.d*1.22);applyCam();e.preventDefault();}
+});
+function syncPresetBtns(){document.querySelectorAll("#cams button[data-v]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===st.preset)));}
+function goNow(){
+  st.ax=yearX(NOW);
+  const v=PRE[st.preset]?st.preset:"q3";
+  applyPreset(v);
+  target&&(target.ax=st.ax);
+  if(RM||!target)applyCam();
+}
+$("#cams").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.v==="now"){hideHelp();goNow();return;}
+  if(b.dataset.v){hideHelp();applyPreset(b.dataset.v);return;}
+  if(b.id==="ghostBtn"){const on=document.body.classList.toggle("ghosts");b.setAttribute("aria-pressed",String(on));return;}
+  if(b.id==="helpBtn"){showHelp();}
+});
+
+/* ---- aide ---- */
+function hideHelp(){$("#help").style.display="none";}
+function showHelp(){$("#help").style.display="block";}
+$("#helpClose").onclick=hideHelp;
+
+/* ---- survol : allumer les marches du fait ---- */
+cam.addEventListener("pointerover",e=>{const c=e.target.closest(".c3,.g3");if(c)setHL(c.dataset.i,true);});
+cam.addEventListener("pointerout",e=>{const c=e.target.closest(".c3,.g3");if(c)setHL(c.dataset.i,false);});
+function setHL(i,on){cam.querySelectorAll('.rung[data-i="'+i+'"]').forEach(l=>l.classList.toggle("hl",on));}
+
+/* ---- panneau : le fait neutre d'abord, puis TOUTES ses versions côte à côte ---- */
+function openCompare(i){
+  const ev=EV[i];
+  $("#pYr").textContent=fmtY(ev[0])+" · chapitre "+ev[4];
+  $("#pNt").textContent=ev[2];
+  $("#pDesc").textContent=ev[3];
+  const ks=PERS_KEYS.filter(k=>lvOf(i,k)>0);
+  $("#pRows").innerHTML=ks.map(k=>{
+    const l=lvOf(i,k);
+    return '<div class="vrow p-'+k+'"><div class="vh"><i></i>'+PERS[k].name+
+      '<span class="lvl">'+(l===2?"Central":"Second plan")+"</span></div><div class=\"vt\">"+escT(titleOf(i,k))+"</div></div>";
+  }).join("");
+  const msg=divergent(i)&&ks.length>1?"Même date, des noms différents — la marche est dorée.":
+    (ks.length===1?"Un seul récit porte cette date. Les deux autres se taisent.":"Les trois récits nomment cette date pareillement.");
+  $("#pFoot").innerHTML=escT(msg)+' · <a href="../chapitres/chapitre-'+ev[4]+"-espace.html#s"+ev[5]+'">Ouvrir la séquence du kit →</a>';
+  $("#panel").classList.add("open");
+}
+cam.addEventListener("click",e=>{
+  const c=e.target.closest(".c3");
+  if(c)openCompare(+c.dataset.i);
+});
+scene.addEventListener("click",e=>{if(!e.target.closest(".c3"))$("#panel").classList.remove("open");});
+$("#pClose").onclick=()=>$("#panel").classList.remove("open");
+
+/* ---- liens profonds : ?ch=N · ?ev=i · #sN.S (mêmes conventions que H) ---- */
+let deepFocus=null,wantD=null;
+(function(){
+  const q=new URLSearchParams(location.search);
+  if(q.has("ev"))deepFocus=+q.get("ev");
+  if(q.has("ch")&&deepFocus===null){
+    const n=+q.get("ch"),ds=EV.filter(e=>e[4]===n).map(e=>e[0]);
+    if(ds.length){
+      const a=Math.max(T_MIN,Math.min.apply(null,ds)-1),b=Math.min(T_MAX,Math.max.apply(null,ds)+1);
+      st.ax=clampAx(yearX((a+b)/2));wantD=frameD(b-a+4,.643);
+      st.pitch=26*Math.PI/180;st.yaw=40*Math.PI/180;ayv=110;azv=0;st.preset="q3";
+    }
+  }
+  const m=location.hash.match(/^#s(\d+)\.(\d+)$/);
+  if(m&&deepFocus===null){const i=EV.findIndex(e=>e[4]===+m[1]&&String(e[5])===m[2]);if(i>=0)deepFocus=i;}
+  if(deepFocus!==null&&EV[deepFocus]){
+    st.ax=clampAx(yearX(EV[deepFocus][0]));wantD=1300;
+    const k0=PERS_KEYS.find(k=>lvOf(deepFocus,k)>0)||"occ";
+    const P=cellPos(deepFocus,k0);ayv=P.y;azv=P.z;
+  }
+})();
+
+/* ---- API debug pour le harnais ---- */
+window.__i3d=()=>({ax:st.ax,pitch:st.pitch,yaw:st.yaw,d:st.d,preset:st.preset,k:st.k,ayv,azv,
+  cy:centerYear(),cards:document.querySelectorAll(".c3").length,
+  rungs:document.querySelectorAll(".rung").length,ghosts:document.querySelectorAll(".g3").length,
+  tubes:document.querySelectorAll(".tube").length,
+  maxD:maxDist(),MIN_D});
+window.__helix=(k,y)=>helixPos(k,yearX(y));
+window.__goNow=goNow;
+window.__open=openCompare;
+window.__frame=()=>applyCam();
+window.__gliding=()=>target!==null;
+
+/* ---- go ---- */
+$("#axisnote").textContent="← "+Math.round(T_MIN)+" · l'axe du temps · "+Math.round(NOW)+" →   ·   taille des cellules = poids dans le récit";
+if(deepFocus!==null||wantD!==null){if(wantD!==null)st.d=wantD;}
+else{st.d=desiredD("q3");if(stageW()<640)st.ax=yearX(2018);}
+build();applyCam();
+if(deepFocus!==null&&EV[deepFocus])openCompare(deepFocus);
+</script>
+<!-- BEGIN commun:frise-outils -->
+<nav class="frise-outils" aria-label="Navigation vers le kit">
+  <a href="../rapport/rapport_FR.html">← Kit pédagogique</a>
+  <a href="index-comparatif.html">Comparer les vues</a>
+</nav>
+<style>
+  .frise-outils{display:flex;flex-wrap:wrap;gap:4px 16px;background:var(--card,#fff);border-top:1px solid var(--border,#ccc);padding:9px 16px 0;font-size:12px}
+  .frise-outils a{color:var(--accent,#9a511c);text-decoration:none}
+  .frise-outils a:hover{text-decoration:underline}
+</style>
+<!-- END commun:frise-outils -->
+<!-- BEGIN commun:pied -->
+<footer class="pied-commun">
+  <p><b>Outil pédagogique Israël–Palestine</b> · réalisé par le GT (Groupe de travail) · Licence <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr">CC BY-NC-SA 4.0</a></p>
+  <p>Dernière mise à jour de cette page : <time datetime="2026-11-16">16 novembre 2026</time> · <a href="../rapport/NOUVEAUTES.html">Nouveautés du kit</a> · Dépôt : <a href="https://github.com/Coualafool/GT_conflits">github.com/Coualafool/GT_conflits</a></p>
+</footer>
+<style>
+  .pied-commun{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}
+  .pied-commun p{margin:3px 0}
+  .pied-commun a{color:var(--muted)}
+  .pied-commun a:hover{color:var(--ink)}
+</style>
+
+<style>
+  /* pied compact (pages-frise -- inject_common.py) */
+  .pied-commun{border-top:0;margin:0;padding:3px 16px 9px;font-size:12px;line-height:1.5;color:var(--muted,#555);background:var(--card,#fff)}
+  .pied-commun p{display:inline}
+  .pied-commun p+p::before{content:" · "}
+</style>
+<!-- END commun:pied -->
+</body>
+</html>
