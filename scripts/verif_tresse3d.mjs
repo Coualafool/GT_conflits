@@ -125,13 +125,13 @@ await page.waitForTimeout(800);
   await shot("H-couloir-pal");
   await page.keyboard.press("4"); await settle();
   const ens = await h3d();
+  await shot("H-ens");
   await page.keyboard.press("1"); await settle();
   const q3 = await h3d();
-  await shot("H-ens");
   log("(H4) presets : depuis le haut ≈ piquée verticale, profil yaw 160, couloir ancré pal, ensemble plus large que ¾",
     Math.abs(haut.pitch * DEG - 89.5) < 0.9 && pressed === "true" &&
     Math.abs(prof.yaw * DEG - 160) < 0.9 && prof.pitch * DEG > 0 &&
-    cou.k === "pal" && Math.abs(cou.pitch * DEG - 6) < 0.3 &&
+    cou.k === "pal" && Math.abs(cou.pitch * DEG - 12) < 0.3 &&
     ens.d > q3.d && q3.preset === "q3",
     `haut ${(haut.pitch * DEG).toFixed(1)}° · profil yaw ${(prof.yaw * DEG).toFixed(0)}° · couloir k=${cou.k} · d ens=${ens.d.toFixed(0)} > q3=${q3.d.toFixed(0)}`);
   await page.keyboard.press("3"); await settle(); await shot("H-profil");
