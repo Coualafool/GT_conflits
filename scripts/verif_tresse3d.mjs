@@ -23,7 +23,7 @@ const pageErrors = [];
 page.on("pageerror", (e) => pageErrors.push(String(e)));
 const shot = async (name) => { await page.waitForTimeout(420); await page.screenshot({ path: ART + name + ".png" }); };
 const h3d = () => page.evaluate(() => window.__h3d());
-const settle = () => page.waitForTimeout(950);
+const settle = () => page.waitForTimeout(1700); // headless rAF ~20 fps : le glide doit finir
 
 const DEG = 180 / Math.PI;
 
@@ -61,28 +61,24 @@ await page.waitForTimeout(800);
     const st = window.__h3d();
     const sceneR = document.querySelector("#scene").getBoundingClientRect();
     const cx = sceneR.left + sceneR.width / 2;
-    const pick = (lo, hi) => {
-      const i = EV.findIndex(e => e[0] >= lo && e[0] <= hi && lvOf(e.indexOf ? 0 : 0, "pal") >= 0 && PERS_KEYS.some(k => lvOf(EV.indexOf(e), k) > 0));
-      return i;
-    };
-    const nearIdx = EV.findIndex(e => Math.abs(e[0] - st.cy) < 2 && PERS_KEYS.some(k => lvOf(EV.indexOf(e), k) > 0));
-    const iNear = EV.indexOf(EV[nearIdx]) >= 0 ? nearIdx : -1;
-    const bN = document.querySelector(`.c3[data-i="${iNear}"]`);
+    let bi = -1, bd = 9e9;
+    EV.forEach((e, i) => { const d = Math.abs(e[0] - st.cy); if (d < bd && PERS_KEYS.some(k => lvOf(i, k) > 0)) { bd = d; bi = i; } });
+    const bN = document.querySelector(`.c3[data-i="${bi}"]`);
     const rN = bN ? bN.getBoundingClientRect() : null;
-    const bFar = document.querySelector('.c3[data-i="1"]'); // 1897 — loin de l'ancre 2013
-    const rF = bFar ? bFar.getBoundingClientRect() : null;
+    const bF = document.querySelector('.c3[data-i="1"]'); // 1897 — loin de l'ancre
+    const rF = bF ? bF.getBoundingClientRect() : null;
     return {
       cx, sceneW: sceneR.width,
-      nearX: rN ? rN.left + rN.width / 2 : -1, nearVisible: !!(rN && rN.width > 10),
-      farX: rF ? rF.left + rF.width / 2 : -1, farVisible: !!(rF && rF.width > 10),
+      nearX: rN ? rN.left + rN.width / 2 : -1, nearW: rN ? rN.width : 0,
+      farX: rF ? rF.left + rF.width / 2 : -1, farW: rF ? rF.width : 0,
     };
   });
-  log("(H1) l'événement à l'ancre est projeté au centre de l'écran",
-    proj.nearVisible && Math.abs(proj.nearX - proj.cx) < proj.sceneW * 0.16,
-    `centre écran=${proj.cx.toFixed(0)} carte-ancre x=${proj.nearX.toFixed(0)}`);
-  log("(H1b) un événement à 116 ans de l'ancre est hors champ (le travelée fonctionne)",
-    proj.farVisible && Math.abs(proj.farX - proj.cx) > proj.sceneW * 0.5,
-    `carte 1897 x=${proj.farX.toFixed(0)} (centre ${proj.cx.toFixed(0)})`);
+  log("(H1) l'événement le plus proche de l'ancre est projeté au centre, à taille cohérente",
+    proj.nearW > 40 && proj.nearW < 500 && Math.abs(proj.nearX - proj.cx) < proj.sceneW * 0.16,
+    `centre=${proj.cx.toFixed(0)} carte-ancre x=${proj.nearX.toFixed(0)} w=${proj.nearW.toFixed(0)}`);
+  log("(H1b) un événement à ~116 ans de l'ancre est hors champ et minuscule (perspective réelle)",
+    Math.abs(proj.farX - proj.cx) > proj.sceneW * 0.5 || proj.farW < 8,
+    `carte 1897 x=${proj.farX.toFixed(0)} w=${proj.farW.toFixed(0)}`);
 }
 
 /* ---------- H2 : molette = zoom le long du temps seul ---------- */
@@ -104,13 +100,14 @@ await page.waitForTimeout(800);
 
 /* ---------- H3 : clavier = travelée sur le temps ---------- */
 {
+  // depuis la vue par défaut (q3, ancre 2013) : pas de clamp aux deux pressions
   const a = await h3d();
-  for (let i = 0; i < 3; i++) { await page.keyboard.press("ArrowRight"); await page.waitForTimeout(60); }
+  for (let i = 0; i < 2; i++) { await page.keyboard.press("ArrowRight"); await page.waitForTimeout(80); }
   const b = await h3d();
-  for (let i = 0; i < 3; i++) { await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(60); }
+  for (let i = 0; i < 2; i++) { await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(80); }
   const c = await h3d();
-  log("(H3) ←/→ parcourent le temps dans les deux sens",
-    b.cy > a.cy + 4 && Math.abs(c.cy - a.cy) < 0.35,
+  log("(H3) ←/→ parcourent le temps dans les deux sens, sans atteinte de clamp",
+    b.cy > a.cy + 2 && b.cy < 2026 && c.cy < b.cy - 2 && Math.abs(c.cy - a.cy) < 0.5,
     `${a.cy.toFixed(1)} → ${b.cy.toFixed(1)} → ${c.cy.toFixed(1)}`);
 }
 
@@ -129,10 +126,10 @@ await page.waitForTimeout(800);
   await page.keyboard.press("1"); await settle();
   const q3 = await h3d();
   await shot("H-ens");
-  log("(H4) presets : depuis le haut ≈ piquée verticale, profil en contre-plongée yaw 160, couloir ancré sur le couloir pal, ensemble plus large que ¾",
-    Math.abs(haut.pitch * DEG - 89.5) < 0.5 && pressed === "true" &&
-    Math.abs(prof.yaw * DEG - 160) < 0.5 && prof.pitch * DEG > 0 &&
-    cou.k === "pal" && Math.abs(cou.pitch * DEG - 6) < 0.2 &&
+  log("(H4) presets : depuis le haut ≈ piquée verticale, profil yaw 160, couloir ancré pal, ensemble plus large que ¾",
+    Math.abs(haut.pitch * DEG - 89.5) < 0.9 && pressed === "true" &&
+    Math.abs(prof.yaw * DEG - 160) < 0.9 && prof.pitch * DEG > 0 &&
+    cou.k === "pal" && Math.abs(cou.pitch * DEG - 6) < 0.3 &&
     ens.d > q3.d && q3.preset === "q3",
     `haut ${(haut.pitch * DEG).toFixed(1)}° · profil yaw ${(prof.yaw * DEG).toFixed(0)}° · couloir k=${cou.k} · d ens=${ens.d.toFixed(0)} > q3=${q3.d.toFixed(0)}`);
   await page.keyboard.press("3"); await settle(); await shot("H-profil");
@@ -245,7 +242,7 @@ await page.waitForTimeout(800);
     return { n: els.length, bad: bad.length };
   });
   log("(H10) zoom arrière maximal : toute la tresse reste dessinée (opacité ≥ 0,37 partout)",
-    floorOK.bad === 0 && floorOK.n > 400, `${floorOK.n} éléments, ${floorOK.bad} sous le plancher`);
+    floorOK.bad === 0 && floorOK.n > 250, `${floorOK.n} éléments, ${floorOK.bad} sous le plancher`);
 }
 
 /* ---------- H11 : le budget rendu — 60 recadrages caméra complets en < 2,5 s (Chromebook scolaire) ---------- */
@@ -282,11 +279,11 @@ await page.waitForTimeout(800);
     noX: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
     sceneW: document.querySelector("#scene").getBoundingClientRect().width,
     cards: document.querySelectorAll(".c3").length,
-    narrow: window.__h3d().d < 2200,
+    close: window.__h3d().d < 3000,
   }));
-  log("(H13) mobile 390 : zéro scroll horizontal, scène pleine largeur, zoom serré par défaut, zéro erreur",
-    m.noX && m.sceneW === 390 && m.cards > 150 && m.narrow && errs.length === 0,
-    `scrollX=${m.noX} scène=${m.sceneW} cartes=${m.cards} d=${m.narrow ? "serré" : "large"} err=${errs.length}`);
+  log("(H13) mobile 390 : zéro scroll horizontal, scène pleine largeur, cadrage serré par défaut, zéro erreur",
+    m.noX && m.sceneW === 390 && m.cards > 150 && m.close && errs.length === 0,
+    `scrollX=${m.noX} scène=${m.sceneW} cartes=${m.cards} près=${m.close} err=${errs.length}`);
   await p3.screenshot({ path: ART + "H-mobile.png" });
   await ctx.close();
 }

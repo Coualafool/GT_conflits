@@ -215,14 +215,16 @@ const PRE={
   "cou-occ":{pitch:6,yaw:0,lane:"occ"},
 };
 function stageW(){return scene.clientWidth;}
-function fitDist(yrs){return Math.max(MIN_D,(yrs*SC/2+620)*PERSP/Math.max(320,stageW()/2));}
-function maxDist(){return fitDist((T_MAX-T_MIN)+26);}
+/* cadrage : span_écran = span_monde · f · gain, f=PERSP/(PERSP+d), gain=|projection écran de l'axe X| */
+function frameD(yrs,gain){return Math.min(maxDist(),Math.max(MIN_D,PERSP*(gain*(yrs+6)*SC/Math.max(360,stageW())-1)));}
+function fitDist(yrs){return frameD(yrs,Math.max(Math.abs(Math.sin(st.yaw)),.3));}
+function maxDist(){return frameD((T_MAX-T_MIN)+26,Math.max(Math.abs(Math.sin(st.yaw)),.3));}
 function desiredD(v){
-  if(v==="ens")return fitDist(150);
-  if(v==="haut")return fitDist(64);
-  if(v==="profil")return fitDist(58);
+  if(v==="ens")return frameD(140,.707);
+  if(v==="haut")return frameD(140,1);
+  if(v==="profil")return frameD(52,.342);
   if(v&&v.indexOf("cou-")===0)return 900;
-  return fitDist(stageW()<640?13:26);
+  return frameD(stageW()<640?10:40,.643);
 }
 function applyPreset(v){
   const p=PRE[v];if(!p)return;
@@ -309,22 +311,22 @@ function build(){
     const l=lvOf(i,k);if(!l)continue;
     const P=cardPos(i,k);
     const badge=divergent(i)&&PERS_KEYS.filter(k2=>lvOf(i,k2)>0).length>1?'<span class="db" title="Le même fait, des noms différents">≠</span>':"";
-    inner+='<div class="bpos" data-pos="1" data-x="'+P.x+'" data-y="'+P.y+'" data-z="'+P.z+'"><button class="c3 l-'+k+" lv"+l+'" data-i="'+i+'" data-k="'+k+'" data-l="'+l+'" aria-label="'+escT(Math.floor(EV[i][0])+", "+PERS[k].short+" : "+titleOf(i,k))+'">'+badge+
+    inner+='<div class="bpos" data-pos="1" data-x="'+P.x+'" data-y="'+P.y+'" data-z="'+P.z+'" style="transform:translate3d('+P.x+'px,'+P.y+'px,'+P.z+'px)"><button class="c3 l-'+k+" lv"+l+'" data-i="'+i+'" data-k="'+k+'" data-l="'+l+'" aria-label="'+escT(Math.floor(EV[i][0])+", "+PERS[k].short+" : "+titleOf(i,k))+'">'+badge+
       '<span class="y">'+fmtY(EV[i][0])+'</span><div class="t">'+escT(titleOf(i,k))+'</div><div class="d">'+escT(EV[i][3])+"</div></button></div>";
   }
   for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
     if(lvOf(i,k))continue;
     const v=vtx(k),x=yearX(EV[i][0]),j=JX.get(i);
-    inner+='<div class="bpos" data-pos="1" data-x="'+x+'" data-y="'+(v.y+LVY[1])+'" data-z="'+(v.z+j)+'"><div class="g3" aria-hidden="true"><b>'+PERS[k].short+" ne raconte pas</b>"+escT(EV[i][2])+"</div></div>";
+    inner+='<div class="bpos" data-pos="1" data-x="'+x+'" data-y="'+(v.y+LVY[1])+'" data-z="'+(v.z+j)+'" style="transform:translate3d('+x+'px,'+(v.y+LVY[1])+'px,'+(v.z+j)+'px)"><div class="g3" aria-hidden="true"><b>'+PERS[k].short+" ne raconte pas</b>"+escT(EV[i][2])+"</div></div>";
   }
   for(const k of PERS_KEYS){
     const v=vtx(k),p=PERS[k];
-    inner+='<div class="bpos" data-pos="1" data-x="220" data-y="'+(v.y-470)+'" data-z="'+v.z+'"><div class="cap"><i style="background:'+p.c+'"></i>'+p.name+" <small>· "+nTold(k)+" dates</small></div></div>";
-    inner+='<div class="bpos" data-pos="1" data-x="'+(WSPAN-220)+'" data-y="'+(v.y-470)+'" data-z="'+v.z+'"><div class="cap"><i style="background:'+p.c+'"></i>'+p.short+" <small>fin du couloir</small></div></div>";
+    inner+='<div class="bpos" data-pos="1" data-x="220" data-y="'+(v.y-470)+'" data-z="'+v.z+'" style="transform:translate3d(220px,'+(v.y-470)+'px,'+v.z+'px)"><div class="cap"><i style="background:'+p.c+'"></i>'+p.name+" <small>· "+nTold(k)+" dates</small></div></div>";
+    inner+='<div class="bpos" data-pos="1" data-x="'+(WSPAN-220)+'" data-y="'+(v.y-470)+'" data-z="'+v.z+'" style="transform:translate3d('+(WSPAN-220)+'px,'+(v.y-470)+'px,'+v.z+'px)"><div class="cap"><i style="background:'+p.c+'"></i>'+p.short+" <small>fin du couloir</small></div></div>";
   }
   const ystep=st.d<1300?5:st.d<2600?10:25;
   for(let y=Math.ceil(T0/ystep)*ystep;y<=T_MAX;y+=ystep)
-    inner+='<div class="bpos" data-pos="1" data-x="'+yearX(y)+'" data-y="46" data-z="0"><div class="ylab">'+y+"</div></div>";
+    inner+='<div class="bpos" data-pos="1" data-x="'+yearX(y)+'" data-y="46" data-z="0" style="transform:translate3d('+yearX(y)+'px,46px,0px)"><div class="ylab">'+y+"</div></div>";
   cam.innerHTML=h+inner;
   cardObjs.length=0;
   cam.querySelectorAll(".bpos[data-pos]").forEach(el=>{
@@ -363,7 +365,7 @@ function clampAx(x){return Math.min(WSPAN,Math.max(0,x));}
 function cancelAnim(){if(target){target=null;cancelAnimationFrame(anim);}}
 // projection écran de l'axe du temps : à yaw petit l'axe fuit en profondeur → plancher de gain
 function xGain(){const s=Math.sin(st.yaw);return s>=0?Math.max(s,.3):-Math.max(-s,.3);}
-function stepX(){return st.d/PERSP*stageW()*.35/xGain();}
+function stepX(){return st.d/PERSP*stageW()*.22/xGain();}
 document.addEventListener("keydown",e=>{
   if(e.target.closest("input,textarea"))return;
   if(e.key==="Escape"){$("#panel").classList.remove("open");return;}
@@ -435,14 +437,14 @@ let deepFocus=null,wantD=null;
     const n=+q.get("ch"),ds=EV.filter(e=>e[4]===n).map(e=>e[0]);
     if(ds.length){
       const a=Math.max(T_MIN,Math.min.apply(null,ds)-1),b=Math.min(T_MAX,Math.max.apply(null,ds)+1);
-      st.ax=clampAx(yearX((a+b)/2));wantD=Math.min(fitDist(b-a+4),maxDist());
+      st.ax=clampAx(yearX((a+b)/2));wantD=frameD(b-a+4,.643);
       st.pitch=26*Math.PI/180;st.yaw=40*Math.PI/180;ayv=330;azv=-40;st.preset="q3";
     }
   }
   const m=location.hash.match(/^#s(\d+)\.(\d+)$/);
   if(m&&deepFocus===null){const i=EV.findIndex(e=>e[4]===+m[1]&&String(e[5])===m[2]);if(i>=0)deepFocus=i;}
   if(deepFocus!==null&&EV[deepFocus]){
-    st.ax=clampAx(yearX(EV[deepFocus][0]));wantD=1600;
+    st.ax=clampAx(yearX(EV[deepFocus][0]));wantD=1300;
     const k0=PERS_KEYS.find(k=>lvOf(deepFocus,k)>0)||"occ";
     ayv=vtx(k0).y;azv=vtx(k0).z;
   }
@@ -460,7 +462,7 @@ window.__frame=()=>applyCam();
 /* ---- go ---- */
 $("#axisnote").textContent="← "+Math.round(T_MIN)+" · l'axe du temps · "+Math.round(NOW)+" →   ·   hauteur = poids dans le récit";
 if(deepFocus!==null||wantD!==null){if(wantD!==null)st.d=wantD;}
-else{st.d=stageW()<640?fitDist(13):fitDist(26);if(stageW()<640)st.ax=yearX(2025.2);}
+else{st.d=desiredD("q3");if(stageW()<640)st.ax=yearX(2025.8);}
 build();applyCam();
 if(deepFocus!==null&&EV[deepFocus])openCompare(deepFocus);
 </script>
