@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frise — Variante H : la tresse 3D</title>
+<style>
+:root{
+  --bg:#fafaf9; --card:#ffffff; --ink:#1c1f24; --muted:#5b6068;
+  --border:#e6e4de; --border-strong:#cfccc3; --accent:#9a511c;
+  --cpal:#2e7d5b; --cisr:#2f6f9e; --cocc:#8a5a3c;
+  --sh1:0 1px 2px rgba(23,24,26,.06);
+  --sh2:0 2px 8px rgba(23,24,26,.08),0 18px 44px rgba(23,24,26,.16);
+  --tr:150ms cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;display:flex;flex-direction:column}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+header{padding:10px 18px 9px;border-bottom:1px solid var(--border);background:var(--card);z-index:10}
+header h1{margin:0 0 2px;font-size:16.5px;font-weight:650;letter-spacing:-.01em}
+header .sub{color:var(--muted);font-size:12.5px;margin:0}
+header .badgeH{display:inline-block;background:#4a3560;color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;margin-right:6px;vertical-align:1px}
+#cams{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+#cams .sep{width:1px;height:18px;background:var(--border-strong);margin:0 3px}
+#cams button{border:1px solid var(--border-strong);background:var(--card);border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink)}
+#cams button:hover{border-color:var(--ink)}
+#cams button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+#cams .kk i{font-style:normal;opacity:.55;font-size:10.5px;margin-left:5px}
+#cams .gho[aria-pressed=true]{background:#4a3560;color:#fff;border-color:#4a3560}
+/* ——— la scène 3D : #scene porte la perspective, #cam EST la caméra ——— */
+#stagewrap{flex:1;min-height:0;position:relative}
+#scene{position:absolute;inset:0;overflow:hidden;background:linear-gradient(#f4f2ee 0%,#fafaf9 42%,#f7f5f1 100%);cursor:grab;touch-action:none}
+#scene.drag{cursor:grabbing}
+#cam{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+#cam>*{transform-style:preserve-3d}
+.bpos{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+/* tous les billboards (cartes, fantômes, caps, années) : UNE écriture CSS par image */
+.bpos[data-pos]>*{transform:var(--bbt,none) translate(-50%,-50%);transform-origin:0 0}
+/* plans ancrés dans le monde (transformations statiques) */
+.floor,.ribbon{position:absolute;left:0;top:0;transform-origin:0 0}
+.floor{background:rgba(120,110,95,.05);border-left:1px solid rgba(90,85,75,.18);border-right:1px solid rgba(90,85,75,.18)}
+.floor .era{position:absolute;top:0;height:100%;border-right:1px dashed rgba(90,85,75,.16)}
+.floor .era span{position:absolute;left:10px;bottom:12px;font-size:15px;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.floor .tick{position:absolute;top:0;width:3px;height:100%;background:rgba(90,85,75,.22)}
+.ribbon .se{position:absolute;top:170px;height:300px;border-right:1px dashed rgba(255,255,255,.5)}
+.ribbon .se span{position:absolute;left:8px;top:8px;background:inherit;color:#fff;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+/* accords : segments 3D réels entre les versions d'un même fait */
+.chord{position:absolute;left:0;top:-1.5px;width:0;height:3px;border-radius:2px;background:#b9b2a4;opacity:.5;transform-origin:0 0}
+.chord.div{background:#9a511c;opacity:.62}
+.chord.hl{background:#7a3b14;height:5px;top:-2.5px;opacity:1}
+/* tiges + point d'ancrage (plan vertical monde) */
+.stem{position:absolute;left:0;top:0;width:3px;transform-origin:0 0}
+.stem::before{content:"";position:absolute;left:-3.5px;bottom:-4px;width:10px;height:10px;border-radius:50%;background:var(--sc,#888);box-shadow:0 0 0 2px rgba(255,255,255,.75)}
+.s-pal{--sc:var(--cpal);background:linear-gradient(to top,rgba(46,125,91,.55),rgba(46,125,91,.12))}
+.s-isr{--sc:var(--cisr);background:linear-gradient(to top,rgba(47,111,158,.55),rgba(47,111,158,.12))}
+.s-occ{--sc:var(--cocc);background:linear-gradient(to top,rgba(138,90,60,.55),rgba(138,90,60,.12))}
+/* ——— cartes-récits : vrais boutons focusables, toujours face caméra ——— */
+.c3{position:absolute;left:0;top:0;width:200px;border:1px solid var(--border);border-radius:12px;background:var(--card);
+  padding:8px 11px 9px;text-align:left;font:inherit;color:inherit;cursor:pointer;box-shadow:var(--sh1);border-top:3px solid var(--lane)}
+.c3:hover{border-color:var(--ink)}
+.c3 .y{font-size:11px;font-weight:700;color:var(--lane)}
+.c3 .t{font-size:13px;font-weight:620;margin-top:1px;line-height:1.28}
+.c3 .d{display:none;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
+.c3.near .d{display:block}
+.c3.lv2 .t{font-size:14px;font-weight:680}
+.c3 .db{position:absolute;top:-9px;right:8px;font-size:10px;font-weight:800;background:#9a511c;color:#fff;border-radius:999px;padding:0 7px;line-height:16px}
+.c3.l-pal{--lane:var(--cpal)} .c3.l-isr{--lane:var(--cisr)} .c3.l-occ{--lane:var(--cocc)}
+/* fantôme = silhouette du fait qu'un récit ne raconte pas (toggle, off par défaut) */
+.g3{position:absolute;left:0;top:0;width:150px;border:1.5px dashed rgba(120,112,100,.55);border-radius:12px;background:rgba(250,250,249,.35);
+  padding:7px 10px;font-size:10.5px;color:rgba(91,96,104,.85);font-style:italic;line-height:1.25}
+.g3 b{display:block;font-style:normal;font-weight:700;font-size:9.5px;letter-spacing:.05em;color:rgba(120,112,100,.9)}
+body:not(.ghosts) .g3{display:none}
+/* étiquettes d'années + caps de couloir */
+.ylab{position:absolute;left:0;top:0;font-size:13px;font-weight:700;color:#6b6459;background:rgba(250,250,249,.82);
+  border:1px solid var(--border);border-radius:7px;padding:0 7px;white-space:nowrap;pointer-events:none}
+.cap{position:absolute;left:0;top:0;display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border-strong);
+  border-radius:999px;padding:5px 14px;font-size:13.5px;font-weight:700;box-shadow:var(--sh1);white-space:nowrap;pointer-events:none}
+.cap i{width:11px;height:11px;border-radius:50%}
+.cap small{color:var(--muted);font-weight:500;font-size:11.5px}
+/* ——— panneau : le fait neutre, puis ses versions ——— */
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(430px,94vw);background:var(--card);border-left:1px solid var(--border);
+  box-shadow:var(--sh2);transform:translateX(102%);transition:transform var(--tr);z-index:30;display:flex;flex-direction:column}
+#panel.open{transform:none}
+#panel .phead{padding:15px 20px 11px;border-bottom:1px solid var(--border)}
+#panel .phead .yr{font-size:13px;color:var(--muted)}
+#panel .phead h3{margin:2px 0 0;font-size:16.5px}
+#panel .pbody{flex:1;overflow:auto;padding:13px 20px}
+#panel .neutral{border:1px solid var(--border-strong);border-radius:12px;padding:10px 13px;margin-bottom:12px;background:#f5f4f0}
+#panel .neutral .nh{font-size:11px;font-weight:800;letter-spacing:.07em;color:var(--muted);text-transform:uppercase}
+#panel .neutral .nt{font-size:14px;font-weight:650;margin-top:3px}
+#panel .neutral .nd{font-size:12.5px;color:var(--muted);margin-top:4px}
+.vrow{border:1px solid var(--border);border-left:4px solid var(--lc);border-radius:10px;padding:9px 12px;margin-bottom:8px}
+.vrow .vh{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--lc)}
+.vrow .vh i{width:9px;height:9px;border-radius:50%;background:var(--lc)}
+.vrow .vh .lvl{margin-left:auto;font-size:10px;font-weight:700;border-radius:999px;padding:1px 8px;color:var(--ink);background:rgba(23,24,26,.07)}
+.vrow .vt{font-size:14px;margin-top:3px}
+.vrow.p-pal{--lc:var(--cpal)} .vrow.p-isr{--lc:var(--cisr)} .vrow.p-occ{--lc:var(--cocc)}
+#panel .pfoot{padding:11px 20px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted)}
+#panel .pfoot a{color:var(--accent);font-weight:600;text-decoration:none}
+#panel .pfoot a:hover{text-decoration:underline}
+#panel .pclose{position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+/* carte d'aide */
+#help{position:absolute;left:16px;bottom:16px;z-index:20;max-width:430px;background:var(--card);border:1px solid var(--border-strong);
+  border-radius:14px;box-shadow:var(--sh2);padding:13px 16px 12px;font-size:12.5px;line-height:1.55}
+#help h2{margin:0 0 5px;font-size:13.5px}
+#help kbd{background:#efede7;border:1px solid var(--border-strong);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:11px;font-family:inherit}
+#help .hclose{position:absolute;top:7px;right:10px;border:none;background:none;font-size:17px;cursor:pointer;color:var(--muted)}
+#help .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:11.5px;color:var(--muted)}
+#help .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+#axisnote{position:absolute;right:16px;bottom:16px;z-index:15;font-size:11px;color:var(--muted);background:rgba(250,250,249,.85);
+  border:1px solid var(--border);border-radius:8px;padding:4px 10px;pointer-events:none}
+@media (max-width:640px){
+  header{padding:8px 12px 7px}
+  header .sub{display:none}
+  #cams button{padding:3px 9px;font-size:11.5px}
+  #cams .kk{display:none}
+  #help{left:10px;right:10px;bottom:10px;max-width:none}
+  #axisnote{display:none}
+}
+</style>
+<!-- BEGIN commun:pied-head -->
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<!-- END commun:pied-head -->
+</head>
+<body>
+<header>
+  <h1><span class="badgeH">Variante H</span>La tresse 3D — le temps, les trois récits, en volume</h1>
+  <p class="sub">Sur l'axe du temps, trois couloirs à égale distance — aucun récit n'est au centre. Une carte n'existe que dans les récits qui racontent ce fait ; les accords relient les versions d'un même fait. Hauteur = poids dans le récit.</p>
+  <div id="cams" role="group" aria-label="Positions de caméra">
+    <button data-v="q3" aria-pressed="true" class="kk">¾ haute<i>1</i></button>
+    <button data-v="haut" class="kk">Depuis le haut<i>2</i></button>
+    <button data-v="profil" class="kk">Profil<i>3</i></button>
+    <button data-v="ens" class="kk">Ensemble<i>4</i></button>
+    <span class="sep"></span>
+    <button data-v="cou-pal" class="kk">Couloir Palestinien<i>5</i></button>
+    <button data-v="cou-isr" class="kk">Couloir Israélien<i>6</i></button>
+    <button data-v="cou-occ" class="kk">Couloir Occidental<i>7</i></button>
+    <span class="sep"></span>
+    <button data-v="now">Maintenant</button>
+    <span class="sep"></span>
+    <button id="ghostBtn" class="gho" aria-pressed="false" title="Silhouette des faits qu'un récit ne raconte pas">Silences</button>
+    <button id="helpBtn">Aide (?)</button>
+  </div>
+</header>
+<div id="stagewrap">
+  <div id="scene" tabindex="0" role="application" aria-label="Tresse des trois récits en trois dimensions. Flèches : parcourir le temps ; molette : zoom ; touches 1 à 7 : les vues.">
+    <div id="cam"></div>
+    <div id="axisnote"></div>
+    <div id="help">
+      <button class="hclose" id="helpClose" aria-label="Fermer l'aide">×</button>
+      <h2>Comment lire la tresse</h2>
+      Molette = zoom le long du temps · glisser ou <kbd>←</kbd><kbd>→</kbd> = parcourir les années ·
+      <kbd>↑</kbd><kbd>↓</kbd> zoom · <kbd>1</kbd>–<kbd>7</kbd> les vues · <kbd>M</kbd> maintenant · <kbd>Tab</kbd> puis <kbd>Entrée</kbd> pour lire une carte · <kbd>Échap</kbd> fermer.
+      <div class="legend">
+        <span><i style="background:var(--cpal)"></i>Récit palestinien</span>
+        <span><i style="background:var(--cisr)"></i>Récit israélien</span>
+        <span><i style="background:var(--cocc)"></i>Vue occidentale</span>
+        <span><b>≠</b> même fait, noms divergents</span>
+      </div>
+      Les trois couloirs sont à égale distance : aucun récit n'est « au centre ». « Depuis le haut » donne la lecture 2D ; « Profil » fait voir les accords entre les versions d'un même fait.
+    </div>
+  </div>
+</div>
+<div id="panel" role="dialog" aria-label="Le même fait, ses récits">
+  <div class="phead"><div class="yr" id="pYr"></div><h3 id="pT">Un fait, ses récits</h3><button class="pclose" id="pClose" aria-label="Fermer">×</button></div>
+  <div class="pbody"><div class="neutral"><div class="nh">Le fait, tel que le kit le raconte</div><div class="nt" id="pNt"></div><div class="nd" id="pDesc"></div></div><div id="pRows"></div></div>
+  <div class="pfoot" id="pFoot"></div>
+</div>
+<script src="poc-data.js"></script>
+<script src="poc-perspectives.js"></script>
+<script>
+/* ====== H · la tresse 3D — CSS 3D pur DOM, zéro dépendance, file:// natif ======
+   Caméra = matrice sur #cam. Jamais d'orbite libre : presets + travelée sur le temps seul.
+   Les plans (sol, couloirs-lames, accords, tiges) sont ancrés dans le monde (transforms
+   statiques) ; cartes/fantômes/caps/années sont des billboards partageant UNE écriture
+   CSS par image (--bbt sur #scene). */
+const $=s=>document.querySelector(s);
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PERSP=1100, MIN_D=480;
+const SC=100, T0=T_MIN;                     // 100 px CSS par an
+const WSPAN=(T_MAX-T_MIN)*SC;
+const VR=360;                               // rayon du triangle des couloirs
+const LVY={2:-375,1:-150};                  // hauteur du centre de carte, par niveau
+function aOf(k){return k==="occ"?0:k==="isr"?2*Math.PI/3:Math.PI;}
+function vtx(k){const a=aOf(k);return{y:VR*Math.sin(a),z:VR*Math.cos(a),a};}
+const JX=new Map();                          // dispersion hors-couloir (profondeur), par fait
+let _s=20261116;function rnd(){_s=(_s*1103515245+12345)&0x7fffffff;return _s/0x7fffffff;}
+for(let i=0;i<EV.length;i++)JX.set(i,Math.round((rnd()*2-1)*135));
+function cardPos(i,k){const v=vtx(k);return{x:yearX(EV[i][0]),y:v.y+LVY[lvOf(i,k)],z:v.z+JX.get(i)};}
+function yearX(y){return (y-T0)*SC;}
+function xYear(x){return T0+x/SC;}
+function escT(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function fmtY(y){const i=Math.floor(y),m=Math.min(11,Math.floor((y-i)*12));return i+" "+MONTHS[m];}
+
+/* bases monde statiques : matrix3d(col1, col2, col3, translation) */
+const FLAT="matrix3d(1,0,0,0, 0,0,1,0, 0,-1,0,0, 0,0,0,1)";   // plan horizontal (local y → +z, dessus visible)
+const VERT="matrix3d(0,0,1,0, 0,-1,0,0, 1,0,0,0, 0,0,0,1)";   // lame verticale mince (local y → vers le haut)
+function ribbonM(k){const{y,z,a}=vtx(k),s=Math.sin(a),c=Math.cos(a);
+  return "matrix3d(1,0,0,0, 0,"+c+","+(-s)+",0, 0,"+s+","+c+",0, 0,"+y+","+z+",1)";}
+const FLOORY=400;
+
+/* ---- caméra sphérique autour d'un point d'ancrage — presets seuls ---- */
+const scene=$("#scene"),cam=$("#cam");
+let ayv=330,azv=-40;
+let st={ax:yearX(2013),pitch:26*Math.PI/180,yaw:40*Math.PI/180,d:3200,preset:"q3",k:null};
+let target=null,anim=0;
+const PRE={
+  q3     :{pitch:26,yaw:40, ay:330, az:-40},
+  haut   :{pitch:89.5,yaw:90,ay:0,  az:0},
+  profil :{pitch:14,yaw:160,ay:-80, az:0},
+  ens    :{pitch:33,yaw:45, ay:330, az:-40},
+  "cou-pal":{pitch:6,yaw:0,lane:"pal"},
+  "cou-isr":{pitch:6,yaw:0,lane:"isr"},
+  "cou-occ":{pitch:6,yaw:0,lane:"occ"},
+};
+function stageW(){return scene.clientWidth;}
+function fitDist(yrs){return Math.max(MIN_D,(yrs*SC/2+620)*PERSP/Math.max(320,stageW()/2));}
+function maxDist(){return fitDist((T_MAX-T_MIN)+26);}
+function desiredD(v){
+  if(v==="ens")return fitDist(150);
+  if(v==="haut")return fitDist(64);
+  if(v==="profil")return fitDist(58);
+  if(v&&v.indexOf("cou-")===0)return 900;
+  return fitDist(stageW()<640?13:26);
+}
+function applyPreset(v){
+  const p=PRE[v];if(!p)return;
+  st.preset=v;st.k=p.lane||null;
+  const pt=p.pitch*Math.PI/180,yw=p.yaw*Math.PI/180;
+  const ay=p.lane?vtx(p.lane).y:p.ay,az=p.lane?vtx(p.lane).z:p.az;
+  const d=Math.min(desiredD(v),maxDist());
+  target={ax:st.ax,pitch:pt,yaw:yw,ay,az,d};
+  if(RM){st.pitch=pt;st.yaw=yw;st.d=d;ayv=ay;azv=az;target=null;applyCam();}
+  else{cancelAnimationFrame(anim);anim=requestAnimationFrame(ease);}
+  syncPresetBtns();
+}
+function ease(){
+  const k=.18;
+  st.ax+=(target.ax-st.ax)*k;st.pitch+=(target.pitch-st.pitch)*k;st.yaw+=(target.yaw-st.yaw)*k;
+  st.d+=(target.d-st.d)*k;ayv+=(target.ay-ayv)*k;azv+=(target.az-azv)*k;
+  applyCam();
+  if(Math.abs(target.d-st.d)>2||Math.abs(target.pitch-st.pitch)>.002||Math.abs(target.ay-ayv)>.5||Math.abs(target.ax-st.ax)>2){
+    anim=requestAnimationFrame(ease);
+  }else{
+    st.pitch=target.pitch;st.yaw=target.yaw;st.d=target.d;st.ax=target.ax;ayv=target.ay;azv=target.az;
+    target=null;applyCam();
+  }
+}
+/* base caméra (aucun degré de liberté d'orbite : seuls pitch/yaw des presets) :
+   b̂ = axe « vers le spectateur » ; t̂ = sens « bas de l'écran » ; r̂ = droite.
+   r̂×t̂ = b̂ (droitier CSS). Formules fermées :
+   b̂=(cp·cy,−sp,cp·sy)  t̂=(sp·cy,cp,sp·sy)  r̂=(sy,0,−cy) */
+function camB(){
+  const cp=Math.cos(st.pitch),sp=Math.sin(st.pitch),cy=Math.cos(st.yaw),sy=Math.sin(st.yaw);
+  return{b:[cp*cy,-sp,cp*sy],t:[sp*cy,cp,sp*sy],r:[sy,0,-cy]};
+}
+let lastFace="";
+function applyCam(){
+  const{b,t,r}=camB();
+  const C=[st.ax+b[0]*st.d,ayv+b[1]*st.d,azv+b[2]*st.d];
+  const dC=[r[0]*C[0]+r[1]*C[1]+r[2]*C[2],t[0]*C[0]+t[1]*C[1]+t[2]*C[2],b[0]*C[0]+b[1]*C[1]+b[2]*C[2]];
+  // monde→écran : lignes r̂,t̂,b̂ (donc groupes d'arguments transposés), translation −R·C
+  cam.style.transform="matrix3d("+r[0]+","+t[0]+","+b[0]+",0, "+r[1]+","+t[1]+","+b[1]+",0, "+r[2]+","+t[2]+","+b[2]+",0, "+
+    (-dC[0])+","+(-dC[1])+","+(-dC[2])+",1)";
+  // écran→monde (billboards) : colonnes r̂,t̂,b̂
+  const face="matrix3d("+r[0]+","+r[1]+","+r[2]+",0, "+t[0]+","+t[1]+","+t[2]+",0, "+b[0]+","+b[1]+","+b[2]+",0, 0,0,0,1)";
+  if(face!==lastFace){lastFace=face;scene.style.setProperty("--bbt",face);}
+  updateFade(C,b);
+}
+function centerYear(){return xYear(st.ax);}
+
+/* ---- construction ---- */
+const cardObjs=[];
+function build(){
+  let h="";
+  h+='<div class="floor" style="width:'+WSPAN+'px;height:760px;transform:translate3d(0px,'+FLOORY+'px,-380px) '+FLAT+'">';
+  for(const e of ERAS)
+    h+='<div class="era" style="left:'+yearX(e.a)+'px;width:'+((e.b-e.a)*SC)+'px;background:'+e.c+'22"><span style="color:'+e.c+'">'+escT(e.label)+' · '+Math.round(e.a)+'</span></div>';
+  h+="</div>";
+  for(const k of PERS_KEYS){
+    const p=PERS[k];
+    h+='<div class="ribbon" data-k="'+k+'" style="width:'+WSPAN+'px;height:640px;transform:'+ribbonM(k)+'">';
+    for(const e of p.eras)
+      h+='<div class="se" style="left:'+yearX(e.a)+'px;width:'+((e.b-e.a)*SC)+'px;background:'+e.c+'2e"><span style="background:'+e.c+'">'+escT(e.label)+'</span></div>';
+    h+="</div>";
+  }
+  let inner="";
+  /* accords : segments 3D entre les versions d'un même fait (plans quelconques, statiques) */
+  for(let i=0;i<EV.length;i++){
+    const ks=PERS_KEYS.filter(k=>lvOf(i,k)>0);
+    if(ks.length<2)continue;
+    const dv=divergent(i);
+    for(let a1=0;a1<ks.length;a1++)for(let b1=a1+1;b1<ks.length;b1++){
+      const A=cardPos(i,ks[a1]),B=cardPos(i,ks[b1]);
+      const dy=B.y-A.y,dz=B.z-A.z,len=Math.hypot(dy,dz);
+      const uy=dy/len,uz=dz/len;                       // col2 = direction du segment
+      const nz=-uy,ny=uz;                              // col3 = uy·0−uz·(−1)? normal = (0,uz,−uy)? (col1,col2,col3) orthonormé direct : col1=col2×col3
+      // col1=(1,0,0), col2=(0,uy,uz), col3=(1? ) → col3 = col1×col2 = (1,0,0)×(0,uy,uz) = (0·uz−0·uy, 0·0−1·uz, 1·uy−0·0) = (0,−uz,uy)
+      h+='<div class="chord'+(dv?" div":"")+'" data-i="'+i+'" style="width:'+len+'px;transform:translate3d('+A.x+'px,'+A.y+'px,'+A.z+'px) matrix3d(1,0,0,0, 0,'+uy.toFixed(6)+','+uz.toFixed(6)+',0, 0,'+(-uz).toFixed(6)+','+uy.toFixed(6)+',0, 0,0,0,1)"></div>';
+    }
+  }
+  for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
+    const l=lvOf(i,k);if(!l)continue;
+    const v=vtx(k),x=yearX(EV[i][0]),j=JX.get(i);
+    inner+='<div class="bpos" style="transform:translate3d('+x+'px,0px,0px) '+VERT+' translate3d('+(v.z+j)+'px,'+(-v.y)+'px,0px)"><div class="stem s-'+k+'" style="height:'+(-LVY[l])+'px"></div></div>';
+  }
+  for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
+    const l=lvOf(i,k);if(!l)continue;
+    const P=cardPos(i,k);
+    const badge=divergent(i)&&PERS_KEYS.filter(k2=>lvOf(i,k2)>0).length>1?'<span class="db" title="Le même fait, des noms différents">≠</span>':"";
+    inner+='<div class="bpos" data-pos="1" data-x="'+P.x+'" data-y="'+P.y+'" data-z="'+P.z+'"><button class="c3 l-'+k+" lv"+l+'" data-i="'+i+'" data-k="'+k+'" data-l="'+l+'" aria-label="'+escT(Math.floor(EV[i][0])+", "+PERS[k].short+" : "+titleOf(i,k))+'">'+badge+
+      '<span class="y">'+fmtY(EV[i][0])+'</span><div class="t">'+escT(titleOf(i,k))+'</div><div class="d">'+escT(EV[i][3])+"</div></button></div>";
+  }
+  for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
+    if(lvOf(i,k))continue;
+    const v=vtx(k),x=yearX(EV[i][0]),j=JX.get(i);
+    inner+='<div class="bpos" data-pos="1" data-x="'+x+'" data-y="'+(v.y+LVY[1])+'" data-z="'+(v.z+j)+'"><div class="g3" aria-hidden="true"><b>'+PERS[k].short+" ne raconte pas</b>"+escT(EV[i][2])+"</div></div>";
+  }
+  for(const k of PERS_KEYS){
+    const v=vtx(k),p=PERS[k];
+    inner+='<div class="bpos" data-pos="1" data-x="220" data-y="'+(v.y-470)+'" data-z="'+v.z+'"><div class="cap"><i style="background:'+p.c+'"></i>'+p.name+" <small>· "+nTold(k)+" dates</small></div></div>";
+    inner+='<div class="bpos" data-pos="1" data-x="'+(WSPAN-220)+'" data-y="'+(v.y-470)+'" data-z="'+v.z+'"><div class="cap"><i style="background:'+p.c+'"></i>'+p.short+" <small>fin du couloir</small></div></div>";
+  }
+  const ystep=st.d<1300?5:st.d<2600?10:25;
+  for(let y=Math.ceil(T0/ystep)*ystep;y<=T_MAX;y+=ystep)
+    inner+='<div class="bpos" data-pos="1" data-x="'+yearX(y)+'" data-y="46" data-z="0"><div class="ylab">'+y+"</div></div>";
+  cam.innerHTML=h+inner;
+  cardObjs.length=0;
+  cam.querySelectorAll(".bpos[data-pos]").forEach(el=>{
+    const c=el.firstElementChild;
+    const o={el,x:+el.dataset.x,y:+el.dataset.y,z:+el.dataset.z,f:0};
+    if(c&&c.classList.contains("c3")){o.btn=c;c._o=o;cardObjs.push(o);}
+    else cardObjs.push(o);
+  });
+}
+
+/* ---- fondu de profondeur : rien n'est jamais retiré, jamais on ne « droppe » une carte ---- */
+const FMIN=.37;
+function updateFade(C,b){
+  for(const o of cardObjs){
+    const zc=Math.max(60,-(b[0]*(o.x-C[0])+b[1]*(o.y-C[1])+b[2]*(o.z-C[2]))); // profondeur le long de la vue
+    const f=PERSP/(PERSP+zc);                                                 // échelle écran réelle
+    o.f=f;
+    o.el.style.opacity=Math.min(1,Math.max(FMIN,.33+f*1.7)).toFixed(3);
+  }
+  for(const o of cardObjs)if(o.btn)o.btn.classList.toggle("near",o.f>.44&&o.btn.classList.contains("lv2"));
+}
+
+/* ---- interactions caméra : travelée sur le temps seul, jamais d'orbite libre ---- */
+scene.addEventListener("wheel",e=>{
+  e.preventDefault();hideHelp();cancelAnim();
+  st.preset=null;syncPresetBtns();
+  st.d=Math.min(maxDist(),Math.max(MIN_D,st.d*Math.exp(e.deltaY*.0016)));
+  applyCam();
+},{passive:false});
+let drag=null;
+scene.addEventListener("pointerdown",e=>{hideHelp();cancelAnim();drag={x:e.clientX,ax:st.ax};scene.classList.add("drag");scene.setPointerCapture(e.pointerId);});
+scene.addEventListener("pointermove",e=>{if(!drag)return;st.ax=clampAx(drag.ax+(e.clientX-drag.x)*st.d/PERSP/xGain());applyCam();});
+scene.addEventListener("pointerup",()=>{drag=null;scene.classList.remove("drag");});
+scene.addEventListener("pointercancel",()=>{drag=null;scene.classList.remove("drag");});
+function clampAx(x){return Math.min(WSPAN,Math.max(0,x));}
+function cancelAnim(){if(target){target=null;cancelAnimationFrame(anim);}}
+// projection écran de l'axe du temps : à yaw petit l'axe fuit en profondeur → plancher de gain
+function xGain(){const s=Math.sin(st.yaw);return s>=0?Math.max(s,.3):-Math.max(-s,.3);}
+function stepX(){return st.d/PERSP*stageW()*.35/xGain();}
+document.addEventListener("keydown",e=>{
+  if(e.target.closest("input,textarea"))return;
+  if(e.key==="Escape"){$("#panel").classList.remove("open");return;}
+  if(e.key==="?"||e.key==="h"){showHelp();return;}
+  const P={"1":"q3","2":"haut","3":"profil","4":"ens","5":"cou-pal","6":"cou-isr","7":"cou-occ"};
+  if(P[e.key]){applyPreset(P[e.key]);return;}
+  if(e.key==="m"||e.key==="M"){goNow();return;}
+  if(e.key==="ArrowRight"){hideHelp();cancelAnim();st.preset=null;syncPresetBtns();st.ax=clampAx(st.ax+stepX());applyCam();e.preventDefault();}
+  else if(e.key==="ArrowLeft"){hideHelp();cancelAnim();st.preset=null;syncPresetBtns();st.ax=clampAx(st.ax-stepX());applyCam();e.preventDefault();}
+  else if(e.key==="ArrowUp"){hideHelp();cancelAnim();st.d=Math.max(MIN_D,st.d*.82);applyCam();e.preventDefault();}
+  else if(e.key==="ArrowDown"){hideHelp();cancelAnim();st.d=Math.min(maxDist(),st.d*1.22);applyCam();e.preventDefault();}
+});
+function syncPresetBtns(){document.querySelectorAll("#cams button[data-v]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===st.preset)));}
+function goNow(){
+  st.ax=yearX(NOW);
+  const v=PRE[st.preset]?st.preset:"q3";
+  applyPreset(v);
+  target&&(target.ax=st.ax);
+  if(RM||!target)applyCam();
+}
+$("#cams").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.v==="now"){hideHelp();goNow();return;}
+  if(b.dataset.v){hideHelp();applyPreset(b.dataset.v);return;}
+  if(b.id==="ghostBtn"){const on=document.body.classList.toggle("ghosts");b.setAttribute("aria-pressed",String(on));return;}
+  if(b.id==="helpBtn"){showHelp();}
+});
+
+/* ---- aide : visible au début, disparaît à la première interaction, rappelable ---- */
+function hideHelp(){$("#help").style.display="none";}
+function showHelp(){$("#help").style.display="block";}
+$("#helpClose").onclick=hideHelp;
+
+/* ---- survol : allumer l'accord du fait ---- */
+cam.addEventListener("pointerover",e=>{const c=e.target.closest(".c3,.g3");if(c)setHL(c.dataset.i,true);});
+cam.addEventListener("pointerout",e=>{const c=e.target.closest(".c3,.g3");if(c)setHL(c.dataset.i,false);});
+function setHL(i,on){cam.querySelectorAll('.chord[data-i="'+i+'"]').forEach(l=>l.classList.toggle("hl",on));}
+
+/* ---- panneau : le fait neutre d'abord, puis TOUTES ses versions côte à côte ---- */
+function openCompare(i){
+  const ev=EV[i];
+  $("#pYr").textContent=fmtY(ev[0])+" · chapitre "+ev[4];
+  $("#pNt").textContent=ev[2];
+  $("#pDesc").textContent=ev[3];
+  const ks=PERS_KEYS.filter(k=>lvOf(i,k)>0);
+  $("#pRows").innerHTML=ks.map(k=>{
+    const l=lvOf(i,k);
+    return '<div class="vrow p-'+k+'"><div class="vh"><i></i>'+PERS[k].name+
+      '<span class="lvl">'+(l===2?"Central":"Second plan")+'</span></div><div class="vt">'+escT(titleOf(i,k))+"</div></div>";
+  }).join("");
+  const msg=divergent(i)&&ks.length>1?"Même date, des noms différents — c'est là que le conflit se voit.":
+    (ks.length===1?"Un seul récit porte cette date. Les deux autres se taisent.":"Les trois récits nomment cette date pareillement.");
+  $("#pFoot").innerHTML=escT(msg)+' · <a href="../chapitres/chapitre-'+ev[4]+"-espace.html#s"+ev[5]+'">Ouvrir la séquence du kit →</a>';
+  $("#panel").classList.add("open");
+}
+cam.addEventListener("click",e=>{
+  const c=e.target.closest(".c3");
+  if(c)openCompare(+c.dataset.i);
+});
+scene.addEventListener("click",e=>{if(!e.target.closest(".c3"))$("#panel").classList.remove("open");});
+$("#pClose").onclick=()=>$("#panel").classList.remove("open");
+
+/* ---- liens profonds : ?ch=N · ?ev=i · #sN.S (mêmes conventions que G) ---- */
+let deepFocus=null,wantD=null;
+(function(){
+  const q=new URLSearchParams(location.search);
+  if(q.has("ev"))deepFocus=+q.get("ev");
+  if(q.has("ch")&&deepFocus===null){
+    const n=+q.get("ch"),ds=EV.filter(e=>e[4]===n).map(e=>e[0]);
+    if(ds.length){
+      const a=Math.max(T_MIN,Math.min.apply(null,ds)-1),b=Math.min(T_MAX,Math.max.apply(null,ds)+1);
+      st.ax=clampAx(yearX((a+b)/2));wantD=Math.min(fitDist(b-a+4),maxDist());
+      st.pitch=26*Math.PI/180;st.yaw=40*Math.PI/180;ayv=330;azv=-40;st.preset="q3";
+    }
+  }
+  const m=location.hash.match(/^#s(\d+)\.(\d+)$/);
+  if(m&&deepFocus===null){const i=EV.findIndex(e=>e[4]===+m[1]&&String(e[5])===m[2]);if(i>=0)deepFocus=i;}
+  if(deepFocus!==null&&EV[deepFocus]){
+    st.ax=clampAx(yearX(EV[deepFocus][0]));wantD=1600;
+    const k0=PERS_KEYS.find(k=>lvOf(deepFocus,k)>0)||"occ";
+    ayv=vtx(k0).y;azv=vtx(k0).z;
+  }
+})();
+
+/* ---- API debug pour le harnais ---- */
+window.__h3d=()=>({ax:st.ax,pitch:st.pitch,yaw:st.yaw,d:st.d,preset:st.preset,k:st.k,ayv,azv,
+  cy:centerYear(),cards:document.querySelectorAll(".c3").length,
+  chords:document.querySelectorAll(".chord").length,ghosts:document.querySelectorAll(".g3").length,
+  maxD:maxDist(),MIN_D});
+window.__goNow=goNow;
+window.__open=openCompare;
+window.__frame=()=>applyCam();
+
+/* ---- go ---- */
+$("#axisnote").textContent="← "+Math.round(T_MIN)+" · l'axe du temps · "+Math.round(NOW)+" →   ·   hauteur = poids dans le récit";
+if(deepFocus!==null||wantD!==null){if(wantD!==null)st.d=wantD;}
+else{st.d=stageW()<640?fitDist(13):fitDist(26);if(stageW()<640)st.ax=yearX(2025.2);}
+build();applyCam();
+if(deepFocus!==null&&EV[deepFocus])openCompare(deepFocus);
+</script>
+<!-- BEGIN commun:frise-outils -->
+<nav class="frise-outils" aria-label="Navigation vers le kit">
+  <a href="../rapport/rapport_FR.html">← Kit pédagogique</a>
+  <a href="index-comparatif.html">Comparer les vues</a>
+</nav>
+<style>
+  .frise-outils{display:flex;flex-wrap:wrap;gap:4px 16px;background:var(--card,#fff);border-top:1px solid var(--border,#ccc);padding:9px 16px 0;font-size:12px}
+  .frise-outils a{color:var(--accent,#9a511c);text-decoration:none}
+  .frise-outils a:hover{text-decoration:underline}
+</style>
+<!-- END commun:frise-outils -->
+<!-- BEGIN commun:pied -->
+<footer class="pied-commun">
+  <p><b>Outil pédagogique Israël–Palestine</b> · réalisé par le GT (Groupe de travail) · Licence <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr">CC BY-NC-SA 4.0</a></p>
+  <p>Dernière mise à jour de cette page : <time datetime="2026-11-16">16 novembre 2026</time> · <a href="../rapport/NOUVEAUTES.html">Nouveautés du kit</a> · Dépôt : <a href="https://github.com/Coualafool/GT_conflits">github.com/Coualafool/GT_conflits</a></p>
+</footer>
+<style>
+  .pied-commun{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}
+  .pied-commun p{margin:3px 0}
+  .pied-commun a{color:var(--muted)}
+  .pied-commun a:hover{color:var(--ink)}
+</style>
+
+<style>
+  /* pied compact (pages-frise -- inject_common.py) */
+  .pied-commun{border-top:0;margin:0;padding:3px 16px 9px;font-size:12px;line-height:1.5;color:var(--muted,#555);background:var(--card,#fff)}
+  .pied-commun p{display:inline}
+  .pied-commun p+p::before{content:" · "}
+</style>
+<!-- END commun:pied -->
+
+</body>
+</html>
