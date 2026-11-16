@@ -234,11 +234,14 @@ function applyPreset(v){
   const d=Math.min(desiredD(v),maxDist());
   target={ax:st.ax,pitch:pt,yaw:yw,ay,az,d};
   if(RM){st.pitch=pt;st.yaw=yw;st.d=d;ayv=ay;azv=az;target=null;applyCam();}
-  else{cancelAnimationFrame(anim);anim=requestAnimationFrame(ease);}
+  else{cancelAnimationFrame(anim);easeLast=0;anim=requestAnimationFrame(ease);}
   syncPresetBtns();
 }
-function ease(){
-  const k=.18;
+let easeLast=0;
+function ease(now){
+  // lissage TEMPOREL (insensible au framerate — Chromebooks lents comme headless bridé)
+  const dt=Math.min(.1,(now-easeLast)/1000||.016);easeLast=now;
+  const k=1-Math.exp(-dt/.15);
   st.ax+=(target.ax-st.ax)*k;st.pitch+=(target.pitch-st.pitch)*k;st.yaw+=(target.yaw-st.yaw)*k;
   st.d+=(target.d-st.d)*k;ayv+=(target.ay-ayv)*k;azv+=(target.az-azv)*k;
   applyCam();
@@ -458,6 +461,7 @@ window.__h3d=()=>({ax:st.ax,pitch:st.pitch,yaw:st.yaw,d:st.d,preset:st.preset,k:
 window.__goNow=goNow;
 window.__open=openCompare;
 window.__frame=()=>applyCam();
+window.__gliding=()=>target!==null;
 
 /* ---- go ---- */
 $("#axisnote").textContent="← "+Math.round(T_MIN)+" · l'axe du temps · "+Math.round(NOW)+" →   ·   hauteur = poids dans le récit";

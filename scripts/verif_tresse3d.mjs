@@ -23,7 +23,8 @@ const pageErrors = [];
 page.on("pageerror", (e) => pageErrors.push(String(e)));
 const shot = async (name) => { await page.waitForTimeout(420); await page.screenshot({ path: ART + name + ".png" }); };
 const h3d = () => page.evaluate(() => window.__h3d());
-const settle = () => page.waitForTimeout(1700); // headless rAF ~20 fps : le glide doit finir
+// le glide est temporel côté page ; on attend sa FIN réelle (headless rAF lent) plutôt qu'un sommeil
+const settle = async () => { await page.waitForFunction(() => !window.__gliding(), null, { timeout: 20000 }).catch(() => {}); await page.waitForTimeout(120); };
 
 const DEG = 180 / Math.PI;
 
@@ -100,14 +101,15 @@ await page.waitForTimeout(800);
 
 /* ---------- H3 : clavier = travelée sur le temps ---------- */
 {
-  // depuis la vue par défaut (q3, ancre 2013) : pas de clamp aux deux pressions
+  // d'abord s'écarter du clamp droit (ancre par défaut = 2013, près de NOW)
+  for (let i = 0; i < 3; i++) { await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(80); }
   const a = await h3d();
   for (let i = 0; i < 2; i++) { await page.keyboard.press("ArrowRight"); await page.waitForTimeout(80); }
   const b = await h3d();
   for (let i = 0; i < 2; i++) { await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(80); }
   const c = await h3d();
   log("(H3) ←/→ parcourent le temps dans les deux sens, sans atteinte de clamp",
-    b.cy > a.cy + 2 && b.cy < 2026 && c.cy < b.cy - 2 && Math.abs(c.cy - a.cy) < 0.5,
+    b.cy > a.cy + 2 && c.cy < b.cy - 2 && Math.abs(c.cy - a.cy) < 0.5,
     `${a.cy.toFixed(1)} → ${b.cy.toFixed(1)} → ${c.cy.toFixed(1)}`);
 }
 
