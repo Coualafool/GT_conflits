@@ -218,7 +218,7 @@ function stageW(){return scene.clientWidth;}
 /* cadrage : span_écran = span_monde · f · gain, f=PERSP/(PERSP+d), gain=|projection écran de l'axe X| */
 function frameD(yrs,gain){return Math.min(maxDist(),Math.max(MIN_D,PERSP*(gain*(yrs+6)*SC/Math.max(360,stageW())-1)));}
 function fitDist(yrs){return frameD(yrs,Math.max(Math.abs(Math.sin(st.yaw)),.3));}
-function maxDist(){return frameD((T_MAX-T_MIN)+26,Math.max(Math.abs(Math.sin(st.yaw)),.3));}
+function maxDist(){const g=Math.max(Math.abs(Math.sin(st.yaw)),.3);return Math.max(MIN_D,PERSP*(g*((T_MAX-T_MIN)+26)*SC/Math.max(360,stageW())-1));}
 function desiredD(v){
   if(v==="ens")return frameD(140,.707);
   if(v==="haut")return frameD(140,1);
@@ -462,7 +462,7 @@ window.__frame=()=>applyCam();
 /* ---- go ---- */
 $("#axisnote").textContent="← "+Math.round(T_MIN)+" · l'axe du temps · "+Math.round(NOW)+" →   ·   hauteur = poids dans le récit";
 if(deepFocus!==null||wantD!==null){if(wantD!==null)st.d=wantD;}
-else{st.d=desiredD("q3");if(stageW()<640)st.ax=yearX(2025.8);}
+else{st.d=desiredD("q3");if(stageW()<640)st.ax=yearX(2018);}
 build();applyCam();
 if(deepFocus!==null&&EV[deepFocus])openCompare(deepFocus);
 </script>
