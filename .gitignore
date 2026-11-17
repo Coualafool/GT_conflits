@@ -11,3 +11,4 @@ package-lock.json
 artifacts/*
 !artifacts/*.log
 !artifacts/*.png
+_runs/
