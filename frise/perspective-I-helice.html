@@ -200,7 +200,10 @@ const PERSP=1100, MIN_D=480;
 const SC=100, T0=T_MIN;                     // 100 px CSS par an
 const WSPAN=(T_MAX-T_MIN)*SC;
 const R0=230;                               // rayon de l'hélice — serré contre l'axe : c'est un enroulement, pas une vague
-const TURN=2*Math.PI/30;                    // un tour complet = 30 ans
+const TURN=2*Math.PI/15;                    // un tour complet = 15 ans — la fenêtre au repos (≈26 ans) montre ~1,7 tour.
+                                            // À 30 ans, on ne voyait QU'une courbe : lecture « rails parallèles » (la
+                                            // forensic des captures l'a prouvé : les rares croisements tombaient
+                                            // derrière la carte focale). Un schéma d'ADN lisible montre 2+ tours.
 const PHI={occ:0,isr:2*Math.PI/3,pal:4*Math.PI/3};   // trois brins, à équidistance
 function helixPos(k,xa){const th=PHI[k]+(xYear(xa)-T0)*TURN;return{x:xa,y:R0*Math.sin(th),z:R0*Math.cos(th),th};}
 function cellPos(i,k){const xa=yearX(EV[i][0]);const th=PHI[k]+(EV[i][0]-T0)*TURN;
