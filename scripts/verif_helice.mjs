@@ -173,7 +173,11 @@ await page.waitForTimeout(800);
     const P = window.__helix("pal", s.cy);
     return Math.hypot(s.ayv - P.y, s.azv - P.z);
   });
-  const couOK = cou.k === "pal" && onBrin < 60 && Math.abs(cou.pitch * DEG) < 40;
+  // Le couloir suit la TANGENTE du brin : pitch = angle de vrille atan(R0·TURN/SC).
+  // À 15 ans/tour (R0=230, 100px/an) cela fait 43,9° — la limite était codée à 40 pour l'ancien
+  // pas de 30 ans. On borne par la géométrie courante + 6° de marge, plus par un nombre magique.
+  const girationMax = Math.atan(230 * (2 * Math.PI / 15) / 100) * 180 / Math.PI + 6;
+  const couOK = cou.k === "pal" && onBrin < 60 && Math.abs(cou.pitch * DEG) < girationMax;
   await shot("I-couloir-pal");
   await page.keyboard.press("4"); await settle();
   const ens = await i3d();
