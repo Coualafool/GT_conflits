@@ -21,7 +21,10 @@ const browser = await chromium.launch({ channel: "msedge", headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const pageErrors = [];
 page.on("pageerror", (e) => pageErrors.push(String(e)));
-const shot = async (name) => { await page.waitForTimeout(420); await page.screenshot({ path: ART + name + ".png" }); };
+const shot = async (name) => {
+  await page.evaluate(() => { const h = document.querySelector("#help"); if (h) h.style.display = "none"; });
+  await page.waitForTimeout(420); await page.screenshot({ path: ART + name + ".png" });
+};
 const i3d = () => page.evaluate(() => window.__i3d());
 const settle = async () => { await page.waitForFunction(() => !window.__gliding(), null, { timeout: 20000 }).catch(() => {}); await page.waitForTimeout(120); };
 
