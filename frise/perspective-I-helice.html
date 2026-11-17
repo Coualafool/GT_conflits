@@ -73,6 +73,7 @@ header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:1
    sinon les cartes du bout du champ s'empilent en pleine taille côté lointain. */
 body.far .tube{height:30px;top:-15px;border-radius:14px}
 body.far .rung{height:9px;top:-4.5px}
+body.far .axis{height:18px;top:-9px;border-radius:9px}
 body.far .c3,.c3.m{width:122px;border-radius:14px 16px 12px 17px/16px 12px 17px 13px;padding:5px 8px 6px}
 body.far .c3 .t,.c3.m .t{font-size:10.5px;font-weight:600;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 body.far .c3.lv2 .t,.c3.m.lv2 .t{font-size:11.5px;font-weight:700}
@@ -376,9 +377,10 @@ function build(){
 
 /* ---- fondu de profondeur : rien n'est jamais retiré ---- */
 const FMIN=.37;
+function zcOf(o,C,b){return -(b[0]*(o.x-C[0])+b[1]*(o.y-C[1])+b[2]*(o.z-C[2]));}
 function updateFade(C,b){
   for(const o of cardObjs){
-    const zc=Math.max(60,-(b[0]*(o.x-C[0])+b[1]*(o.y-C[1])+b[2]*(o.z-C[2])));
+    const zc=Math.max(60,zcOf(o,C,b));
     const f=PERSP/(PERSP+zc);
     o.f=f;
     o.el.style.opacity=f>.8?"0.42":Math.min(1,Math.max(FMIN,.33+f*1.7)).toFixed(3);
@@ -386,7 +388,10 @@ function updateFade(C,b){
   for(const o of cardObjs)if(o.btn){
     const b=o.btn;
     b.classList.toggle("near",o.f>.44&&b.classList.contains("lv2"));
-    b.classList.toggle("m",o.f<.5);b.classList.toggle("p",o.f<.34);
+    // LOD relatif à la DISTANCE D'ANCRAGE (l'ancre est à zc=d, f≈.49 — un seuil absolu sur f
+    // réduirait en pastille la carte focale elle-même) : passé 1,45× l'ancre → pastille, 2,2× → perle.
+    const r=zcOf(o,C,b)/st.d;
+    b.classList.toggle("m",r>1.45);b.classList.toggle("p",r>2.2);
   }
 }
 
