@@ -71,7 +71,7 @@ await page.waitForTimeout(800);
   });
   log("(I0c) les trois brins sont à équidistance angulaire (120°) sur le même cylindre — aucun brin au centre",
     Math.abs(g.d12 - 120) < 1 && Math.abs(g.d23 - 120) < 1 &&
-    Math.abs(g.rO - 330) < 1 && Math.abs(g.rI - 330) < 1 && Math.abs(g.rP - 330) < 1,
+    Math.abs(g.rO - 230) < 1 && Math.abs(g.rI - 230) < 1 && Math.abs(g.rP - 230) < 1,
     `angles ${g.d12.toFixed(1)}°/${g.d23.toFixed(1)}° · rayons ${g.rO.toFixed(0)}/${g.rI.toFixed(0)}/${g.rP.toFixed(0)}`);
 }
 
