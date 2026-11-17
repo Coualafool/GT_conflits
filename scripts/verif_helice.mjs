@@ -183,7 +183,7 @@ await page.waitForTimeout(800);
   log("(I4) presets : haut ≈ piquée verticale, face = le long de l'axe sur l'axe, brin ancré SUR le brin, ensemble plus large que ¾",
     Math.abs(haut.pitch * DEG - 89.5) < 0.9 && pressed === "true" && faceOK && couOK &&
     ens.d > q3.d && q3.preset === "q3",
-    `haut ${(haut.pitch * DEG).toFixed(1)}° · face pitch ${(face.pitch * DEG).toFixed(1)} yaw ${(face.yaw * DEG).toFixed(1)} · brin k=${cou.k} à ${onBrin.toFixed(0)}px du brin · d ens=${ens.d.toFixed(0)} > q3=${q3.d.toFixed(0)}`);
+    `haut ${(haut.pitch * DEG).toFixed(1)}° · pressed=${pressed} · face pitch ${(face.pitch * DEG).toFixed(1)} yaw ${(face.yaw * DEG).toFixed(1)} ayv=${face.ayv.toFixed(1)} azv=${face.azv.toFixed(1)} · brin k=${cou.k} à ${onBrin.toFixed(0)}px pit=${(cou.pitch * DEG).toFixed(1)} · d ens=${ens.d.toFixed(0)} > q3=${q3.d.toFixed(0)} preset=${q3.preset}`);
   await page.keyboard.press("2"); await settle(); await shot("I-haut");
   await page.keyboard.press("1"); await settle();
 }
