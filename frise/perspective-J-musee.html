@@ -374,6 +374,8 @@ try {
   } catch (e3) { fallbackOn(); return; }
 }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
+var MAX_ANISO = 1;   // plafond d'anisotropie du contexte de rendu ; les textures construites ensuite s'y collent
+try { MAX_ANISO = renderer.capabilities.getMaxAnisotropy(); } catch(e){}
 renderer.setSize(innerWidth, innerHeight);
 document.getElementById("stage").appendChild(renderer.domElement);
 
@@ -427,7 +429,11 @@ for (var fk=0; fk<NROOM; fk++){
 function tex(w,h,draw){
   var c = document.createElement("canvas"); c.width=w; c.height=h;
   draw(c.getContext("2d"), w, h);
-  var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  // anti-crénelage des textes cuits : les murs vus de biais sont des surfaces rasantes —
+  // sans filtrage anisotrope, le mip unique les hache (moiré) au lieu de les adoucir.
+  t.anisotropy = MAX_ANISO; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter;
+  return t;
 }
 function wrap2(ctx,text,maxW,maxL){
   var words=String(text).split(/\s+/), lines=[], cur="";
@@ -837,6 +843,7 @@ welEl.addEventListener("click", function(e){ if (e.target===welEl) welEl.classLi
 window.__musee = {
   state: function(){ return { room:roomAt(pzCur), x:pxCur, z:pzCur, yaw:yaw, pitch:pitch,
       locked:!!document.pointerLockElement, gliding:!!glide, reduced:reduced(), panel:panelEl.__key||null,
+      aa:{ msaa:!!(renderer.getContext().getContextAttributes()||{}).antialias, aniso:MAX_ANISO },
       menu:menuOpen(), opts:{ sens:OPT.sens, spd:OPT.spd, inv:OPT.inv } }; },
   rooms: function(){ return ERAS.map(function(e,k){ var r = roomRange(k);
       return { k:k, label:e.label, a:e.a, b:e.b, z0:r.z0, z1:r.z1, xL:-(GEO.HALF-.09), xR:(GEO.HALF-.09) }; }); },

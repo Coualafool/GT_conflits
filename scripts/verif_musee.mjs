@@ -297,6 +297,9 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   const persisted = await page.evaluate(() => window.__musee.state().opts);
   log("(J12f) les options camera survivent au rechargement (localStorage)",
     persisted.sens === "rapide" && persisted.inv === "inverse", `sens=${persisted.sens} inv=${persisted.inv}`);
+  const aa = await page.evaluate(() => window.__musee.state().aa);
+  log("(J12g) anti-crénelage : MSAA demandé au contexte WebGL et filtrage anisotrope posé sur les textes cuits",
+    aa.msaa && aa.aniso >= 4, `msaa=${aa.msaa} aniso=${aa.aniso}`);
   await page.keyboard.press("Escape");
   await page.waitForTimeout(150);
   await page.click('#mSens button[data-k="normale"]');
