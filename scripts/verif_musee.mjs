@@ -198,7 +198,7 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
     });
     const three = v.three;
     log("(J4e) vitrine ouverte = les TROIS voix côte à côte dans le panneau (jamais une seule version)",
-      v.panel.open && kindOfKey(v.panel.key) === "case" && three, `voix=${v.voix.length}`);
+      v.panel.open && kindOfKey(v.panel.key) === "case" && three, `trois voix = ${three}`);
     log("(J4f) la vitrine est bien sous le viseur à son poste", v.hit && v.hit.kind === "case",
       v.hit ? `touché=${v.hit.kind}` : "rien");
   }
