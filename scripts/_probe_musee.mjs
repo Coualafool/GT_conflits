@@ -1,6 +1,7 @@
 // _probe_musee.mjs — SONDE TEMPORAIRE : console/pageerror de perspective-J sur TARS. À supprimer.
 import { createRequire } from "module";
 import { spawn } from "child_process";
+import { fileURLToPath } from "url";
 const req = createRequire(import.meta.url);
 const { chromium } = req("playwright");
 const root = new URL("..", import.meta.url);
