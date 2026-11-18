@@ -514,7 +514,8 @@ function wallRank(s){ return s.lane==="pal" ? 0 : s.lane==="occ" ? 1 : s.kind===
 allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
 /* point de vue d'un poste : à 2 m du support, face à lui. yaw 0 = plein couloir (-Z) ; forward = (-sin yaw, -cos yaw). */
 function stationView(s){
-  if (s.kind==="case") return { x:0, z:s.z+1.6, yaw:0, pitch:-.16 };
+  if (s.kind==="case"){ var vdx = s.x*0.75, vgd = Math.hypot(vdx, 1.35);   // de face sur la vitre : le viseur central touche ce qu'il désigne
+    return { x:s.x*0.25, z:s.z+1.35, yaw: Math.atan2(-vdx, 1.35), pitch: -Math.atan2(1.62-1.05, vgd) }; }
   if (s.lane==="pal") return { x:-(GEO.HALF-2.0), z:s.z, yaw: Math.PI/2, pitch: s.y>2 ? .18 : 0 };   // face au mur gauche
   if (s.lane==="isr") return { x:(GEO.HALF-2.0), z:s.z, yaw:-Math.PI/2, pitch: s.y>2 ? .18 : 0 };
   return { x:s.x, z:s.z+2.0, yaw:0, pitch: s.y>2 ? .18 : (s.kind==="curtain" ? .04 : 0) };          // face au mur du fond

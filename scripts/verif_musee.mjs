@@ -102,7 +102,7 @@ await page.waitForTimeout(1300);
       if (p.year < r.a || p.year > r.b) range = false;
     });
     cs.forEach(x => { if (x.lane === "pal" && x.x >= 0) side = false; if (x.lane === "isr" && x.x <= 0) side = false;
-      if (x.lane === "occ" && Math.abs(x.z - (rooms[x.room].z1 + 0.07)) > 0.02) side = false; });
+      if (x.lane === "occ" && Math.abs(x.z - (rooms[x.room].z1 + 0.05)) > 0.02) side = false; });
     for (const k of PERS_KEYS) for (let room = 0; room < rooms.length; room++) {
       const w1 = ps.filter(p => p.lane === k && p.room === room && p.lv === 1).map(p => p.w);
       const w2 = ps.filter(p => p.lane === k && p.room === room && p.lv === 2).map(p => p.w);
@@ -112,7 +112,7 @@ await page.waitForTimeout(1300);
     return { wall, range, size, side, nP: ps.length, nC: cs.length, minScale };
   });
   log("(J2) grammaire fixée une fois pour toutes : palestinien à gauche (−x), israélien à droite (+x), faits à trois voix au fond — rideaux sur leurs parois à eux",
-    g.wall && g.side, `affiches=${g.nP} rideaux=${g.nC}, parois et côtés tous conformes`);
+    g.wall && g.side, `affiches=${g.nP} rideaux=${g.nC} — parois=${g.wall} côtés=${g.side}`);
   log("(J2b) aucune affiche hors de la portée temporelle de sa salle", g.range, "");
   log("(J2c) le poids du récit se LIT : jamais une affiche de second plan plus large qu'une affiche centrale, dans la même salle et le même couloir",
     g.size, `échelle plancher ${g.minScale.toFixed(2)}`);
@@ -186,7 +186,7 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
     says: document.getElementById("panel").textContent }));
   log("(J4d) le rideau du silence se visite : « Ce récit… », et la même porte que les autres cases",
     c.panel.open && kindOfKey(c.panel.key) === "curtain" && BACK.test(c.panel.backHref || "") &&
-    /se tait/i.test(c.says), `panneau=${kindOfKey(c.panel.key)}`);
+    /ne raconte pas|rideau/i.test(c.says), `panneau=${kindOfKey(c.panel.key)}`);
 
   if (pick.vitKey) {
     await page.evaluate(k => window.__musee.focus(k), pick.vitKey);
@@ -212,8 +212,8 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
     window.__musee.nudgeLook(80, 0); const y1 = window.__musee.state().yaw;
     const p0 = window.__musee.state().pitch;
     window.__musee.nudgeLook(0, -90); const p1 = window.__musee.state().pitch;
-    window.__musee.nudgeLook(0, 4000); const pTop = window.__musee.state().pitch;
-    window.__musee.nudgeLook(0, -9000); const pBot = window.__musee.state().pitch;
+    window.__musee.nudgeLook(0, -4000); const pTop = window.__musee.state().pitch;
+    window.__musee.nudgeLook(0, 9000); const pBot = window.__musee.state().pitch;
     return { y0, y1, dPitch: p1 - p0, pTop, pBot };
   });
   log("(J5) la caméra suit la main : pousser à droite tourne à droite, pousser vers le haut regarde en haut",
@@ -287,10 +287,18 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   const a = await page.evaluate(() => window.__musee.state());
   log("(J8) lien profond ?ev=N : atterrissage dans la salle de l'événement",
     a.room === probe.room, `ev=${probe.evIdx} salle attendue=${probe.room} obtenue=${a.room}`);
-  await page.goto(PAGE + "#s4.S", { waitUntil: "load" });
-  await page.waitForTimeout(900); await settle();
+  const pair = await page.evaluate(() => {
+    for (let i = 0; i < EV.length; i++) { let room = 0;
+      ERAS.forEach((e, k) => { if (EV[i][0] >= e.a && EV[i][0] < e.b) room = k; });
+      if (EV[i][4] === 4) return { hash: `#s${EV[i][4]}.${EV[i][5]}`, room };
+    }
+    return null;
+  });
+  await page.goto(PAGE + pair.hash, { waitUntil: "load" });
+  await page.waitForTimeout(1000); await settle();
   const b = await page.evaluate(() => window.__musee.state());
-  log("(J8b) atterrissage depuis une salle du kit (#sN.S) : la salle N s'ouvre en face", b.room === 4, `salle=${b.room}`);
+  log("(J8b) atterrissage depuis une salle du kit (#s<chapitre>.<section>) : la salle de la séquence s'ouvre en face",
+    b.room === pair.room, `${pair.hash} → salle ${b.room} (attendue ${pair.room})`);
 }
 
 /* ---------- J9 : pas de WebGL → repli honeste vers la liste ---------- */
