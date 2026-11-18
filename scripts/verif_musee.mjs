@@ -338,7 +338,9 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   log("(J13c) le panneau joint le document avec sa légende alternative et son crédit, et l'image se charge",
     !!fig && fig.src.startsWith("../pictures/") && fig.alt && fig.ok && fig.cred,
     fig ? `src=${fig.src.slice(0, 42)} chargée=${fig.ok}` : "figure absente du panneau");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape");   // premier Échap : ferme le panneau ouvert par J13c
+  await page.waitForTimeout(150);
+  await page.keyboard.press("Escape");   // deuxième : rouvre le menu pour la remise à zéro
   await page.waitForTimeout(150);
   await page.click('#mSens button[data-k="normale"]');
   await page.click('#mInv button[data-k="normal"]');
