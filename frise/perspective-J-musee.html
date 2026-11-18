@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Musée des récits — marcher dans les trois récits</title>
+<style>
+:root{
+  --bg:#0b0d10; --card:#14171c; --ink:#ece6da; --muted:#9aa1ab; --faint:#6b727c;
+  --border:#2a2f38; --gold:#d2a63f;
+  --pal:#2e7d5b; --isr:#2f6f9e; --occ:#8a5a3c;
+  --palT:#7ed3ab; --isrT:#8ec6ee; --occT:#e2a979;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%}
+.skip{position:absolute;left:-9999px;z-index:60;background:#0b0d10;color:var(--ink);padding:10px 16px;border:1px solid var(--gold)}
+.skip:focus{left:8px;top:8px}
+/* ---- HUD ---- */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:20}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 58%,rgba(4,5,7,.55) 100%)}
+#cross{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;
+  background:rgba(236,230,218,.75);box-shadow:0 0 0 2px rgba(4,5,7,.5);display:none}
+body.locked #cross{display:block}
+#afford{position:absolute;left:50%;top:calc(50% + 26px);transform:translateX(-50%);max-width:min(560px,86vw);
+  background:rgba(10,12,15,.86);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:13.5px;color:var(--ink);display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#afford kbd{background:#20242c;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace;color:var(--gold)}
+/* ---- navigateur de salles (lignée variante C) + minimap ---- */
+#nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;max-width:min(1100px,94vw);
+  overflow-x:auto;padding:4px;background:rgba(10,12,15,.78);border:1px solid var(--border);border-radius:12px;pointer-events:auto;scrollbar-width:none}
+#nav button{flex:0 0 auto;background:#171b21;color:var(--muted);border:1px solid transparent;border-radius:8px;
+  padding:5px 11px;font:600 12.5px system-ui;cursor:pointer;text-align:left}
+#nav button b{display:block;color:var(--ink);font-size:12px;font-weight:700}
+#nav button[aria-current="true"]{border-color:var(--gold)}
+#nav button[aria-current="true"] b{color:var(--gold)}
+#nav button:hover,#nav button:focus-visible{border-color:var(--muted);outline:none}
+#nav button:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+#say{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);
+  background:rgba(10,12,15,.7);border-radius:8px;padding:2px 10px;opacity:0;transition:opacity .3s}
+#say.show{opacity:1}
+#badge{position:absolute;top:10px;left:10px;max-width:min(360px,60vw);background:rgba(10,12,15,.86);border:1px solid var(--gold);
+  border-radius:10px;padding:7px 12px;font-size:13px;display:none}
+#badge.show{display:block}
+#mini{position:absolute;left:12px;bottom:12px;width:64px;background:rgba(10,12,15,.72);border:1px solid var(--border);
+  border-radius:10px;padding:6px;pointer-events:auto}
+#mini svg{display:block;width:100%;height:auto}
+#mini .rm{fill:#171b21;stroke:#2a2f38;stroke-width:1.4;cursor:pointer}
+#mini .rm:hover{stroke:var(--muted)}
+#mini .cam{fill:var(--gold)}
+/* ---- panneau (doctrine héritée de H) ---- */
+#panel{position:absolute;top:0;right:0;width:min(400px,92vw);height:100%;background:rgba(13,15,19,.97);
+  border-left:1px solid var(--border);padding:22px 22px 40px;overflow-y:auto;pointer-events:auto;
+  transform:translateX(103%);transition:transform .22s ease}
+#panel.open{transform:none}
+#panel h2{font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
+#panel .yr{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.04em;margin:0}
+#panel .desc{color:#cfd3da;font-size:14.5px;margin:10px 0 4px}
+#panel .divb{display:inline-block;margin:8px 0 0;font-size:11.5px;font-weight:700;color:#141108;background:var(--gold);border-radius:999px;padding:1px 9px}
+#panel .voix{margin:14px 0 0;border-top:1px solid var(--border);padding-top:12px}
+#panel .voix h3{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+#panel .vx{margin:0 0 10px;padding-left:12px;border-left:3px solid var(--border)}
+#panel .vx b{display:block;font-size:14.5px}
+#panel .vx span{font-size:12px;color:var(--faint)}
+#panel .vx.sil b{color:var(--muted);font-weight:500;font-style:italic}
+#panel .pied{margin-top:16px;border-top:1px solid var(--border);padding-top:12px;font-size:13px;color:var(--muted)}
+#panel .pied a{color:var(--gold);text-decoration:none}
+#panel .pied a:hover,#panel .pied a:focus-visible{text-decoration:underline}
+#panel .x{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer;padding:6px}
+#panel .x:hover{color:var(--ink)}
+.vx.pal{border-color:var(--pal)} .vx.pal b{color:var(--palT)}
+.vx.isr{border-color:var(--isr)} .vx.isr b{color:var(--isrT)}
+.vx.occ{border-color:var(--occ)} .vx.occ b{color:var(--occT)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.dot.pal{background:var(--pal)} .dot.isr{background:var(--isr)} .dot.occ{background:var(--occ)}
+/* ---- stations (navigation clavier) ---- */
+#stations{position:fixed;left:0;top:74px;z-index:40;width:1px}
+#stations button{position:fixed;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* l'anneau de focus visible est double : badge doré en haut à gauche + ouverture du panneau
+   (le canevas 3D ne peut pas porter l'outline DOM ; le harnais vérifie badge+panneau à chaque focus) */
+#stations button:focus{outline:none}
+/* ---- accueil / aide ---- */
+#welcome{position:fixed;inset:0;z-index:50;background:rgba(8,9,12,.92);display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#welcome.gone{display:none}
+#welcome .box{max-width:660px;margin:24px;background:#14171c;border:1px solid var(--border);border-radius:18px;padding:26px 30px;overflow-y:auto;max-height:92vh}
+#welcome h1{margin:0 0 4px;font-size:24px;letter-spacing:-.01em}
+#welcome .lead{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+#welcome .gram{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+#welcome .gram span{font-size:12.5px;border:1px solid var(--border);border-radius:999px;padding:3px 11px;color:#cfd3da}
+#welcome .gram .d{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
+#welcome .btns{display:flex;gap:10px;flex-wrap:wrap}
+#welcome .btns a,#welcome .btns button{font:600 14px system-ui;border-radius:10px;padding:9px 16px;cursor:pointer;text-decoration:none}
+#welcome .go{background:var(--gold);color:#141108;border:0}
+#welcome .alt{background:#1c2029;color:var(--ink);border:1px solid var(--border)}
+#welcome .rm{margin:14px 0 0;font-size:12.5px;color:var(--faint)}
+#welcome kbd{background:#20242c;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace}
+/* ---- défaut : la 3D n'est jamais la seule porte ---- */
+#fallback{position:fixed;inset:0;z-index:70;background:#0b0d10;display:none;align-items:center;justify-content:center;text-align:center}
+#fallback .box{max-width:520px;padding:30px}
+#fallback h2{margin-top:0}
+#fallback a{color:var(--gold);font-size:17px}
+@media (prefers-reduced-motion: reduce){ #panel{transition:none} #say{transition:none} }
+</style>
+</head>
+<body>
+<a class="skip" id="skip" href="#stations">Aller aux postes d’observation (navigation clavier)</a>
+<div id="stage" aria-hidden="true"></div>
+
+<div id="hud">
+  <div id="vig"></div>
+  <div id="cross" aria-hidden="true"></div>
+  <div id="afford" aria-hidden="true"></div>
+  <div id="nav" role="navigation" aria-label="Salles du musée"></div>
+  <div id="say" role="status"></div>
+  <div id="badge" aria-hidden="true"></div>
+  <div id="mini" aria-hidden="true"></div>
+  <aside id="panel" aria-label="Fiche de l’observation"></aside>
+</div>
+
+<div id="stations" aria-label="Postes d’observation du musée, dans l’ordre de visite"></div>
+
+<div id="welcome">
+  <div class="box">
+    <h1>Le Musée des récits</h1>
+    <p class="lead">Sept salles d’époque, un corpus de 93 faits, trois façons de les raconter.
+      Sur les murs : les affiches de chaque récit. Les faits qu’un récit <em>se tait</em> sont couverts d’un rideau.
+      Les faits disputés, aux vitrines du centre.</p>
+    <div class="gram">
+      <span><i class="d" style="background:var(--pal)"></i>mur de gauche — récit palestinien</span>
+      <span><i class="d" style="background:var(--isr)"></i>mur de droite — récit israélien</span>
+      <span><i class="d" style="background:var(--occ)"></i>mur du fond — vue occidentale</span>
+      <span><i class="d" style="background:var(--gold)"></i>vitrines — faits à trois voix</span>
+    </div>
+    <div class="btns">
+      <button id="bWalk" class="go">Marcher dans le musée (souris verrouillée)</button>
+      <button id="bStations" class="alt">Naviguer au clavier (postes)</button>
+      <a class="alt" href="variante-C-liste.html">Préférer la frise en liste</a>
+    </div>
+    <p class="rm"><kbd>ZQSD</kbd>/<kbd>WASD</kbd> marcher · souris regarder · <kbd>E</kbd> ouvrir une affiche ·
+      <kbd>Échap</kbd> relâcher — ou <kbd>Tab</kbd> pour visiter tous les postes sans souris.
+      Le clavier suffit à tout voir : chaque poste déplace la caméra et ouvre sa fiche
+      (mode « sans animation » du système : sauts instantanés, souris jamais verrouillée d’office).</p>
+  </div>
+</div>
+
+<div id="fallback">
+  <div class="box">
+    <h2>Les salles 3D ne s’ouvrent pas ici</h2>
+    <p>Ce navigateur n’a pas pu initialiser WebGL (ou le fichier s’est mal chargé).
+      Le musée n’est qu’une façon de voir — le contenu complet reste accessible.</p>
+    <p><a href="variante-C-liste.html">→ Ouvrir la frise en liste (variante C)</a></p>
+  </div>
+</div>
+
+<script src="vendor/three.bundle.js"></script>
+<script src="poc-data.js"></script>
+<script src="poc-perspectives.js"></script>
+<script>
+/* Le Musée des récits — salles 3D marchables (three.js vendorisé ; feuille de décision interne/FRISE-MUSEE-DECISIONS).
+   ZÉRO donnée nouvelle : EV/LV/REN/ERAS viennent des modules partagés ; la page ne possède que la caméra.
+   Grammaire des murs, fixée musée-wide : gauche = pal, droite = isr, fond + vitrines = disputés / trois voix.
+   Conventions harnais : API window.__musee (postes, inventaires, caméra, raycast). */
+"use strict";
+function fallbackOn(){ document.getElementById("fallback").style.display="flex"; document.getElementById("welcome").classList.add("gone"); }
+if (!window.THREE || !window.EV) { fallbackOn(); }
+else (function(){
+try {
+
+/* ---------- géométrie du bâtiment (neutre par construction — les récits ne déplacent jamais les murs) ---------- */
+var GEO = { W:14, HALF:7, DEPTH:12.5, PART:0.3, WALLH:3.1, DOOR:2.6,
+            U:5.5, OCCU:6.2,   // demi-portée utile : garde aux cloisons (murs latéraux) / murs pleins (fond)
+            EYE:1.62, PITCH:1.45 };
+var STEP = GEO.DEPTH + GEO.PART;
+function roomRange(k){ var z0 = -k*STEP; return { z0:z0, z1:z0 - GEO.DEPTH }; }   // avant (z0) → fond (z1)
+var NROOM = ERAS.length;
+var FARZ = -(NROOM-1)*STEP - GEO.DEPTH - GEO.PART;    // paroi du fond du musée
+
+/* ---------- couleurs des couloirs (teintes claires pour le sombre du musée) ---------- */
+var LANE = { pal:{t:"#7ed3ab"}, isr:{t:"#8ec6ee"}, occ:{t:"#e2a979"} };
+var GOLD = "#d2a63f";
+var WALLC = 0x232730, PARTC = 0x262a33, FLOORC = 0x14161a, CEILC = 0x0d0f12, BG = 0x0b0d10;
+
+/* ---------- helpers locaux (aucun nom partagé avec les modules de données) ---------- */
+function mClamp(v,a,b){ return v<a?a:(v>b?b:v); }
+function mEsc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function yrOf(y){ return Math.floor(y); }
+function mthOf(y){ var m = Math.floor((y-Math.floor(y))*12); return m>=12?11:(m<0?0:m); }
+function yrLbl(y){ return String(yrOf(y)) + " · " + MONTHS[mthOf(y)]; }
+
+/* ---------- inventaire complet : affiches, rideaux, vitrines — TOUT dérivé de LV/REN/EV, rien de codé ----------
+   Mise en raye prouvée par simulation (scripts/sim_musee_layout.mjs extrait ce bloc entre les marqueurs) :
+   les affiches s'ALTERNENT sur deux rangées (quinconce d'accrochage = capacité) ;
+   l'encodage LV est la TAILLE (LV2 grande et lisible, LV1 petite en second plan), jamais la teinte ni l'effacement.
+   Les rideaux courent du sol au-dessus des deux rangées : leur largeur bloque le créneau des deux côtés. */
+/*__LAYOUT_START__*/
+var PW = { pal:{w2:.9,h2:.63,w1:.68,h1:.47}, isr:{w2:.9,h2:.63,w1:.68,h1:.47}, occ:{w2:.86,h2:.6,w1:.66,h1:.45} };
+var CW = 0.95, CH = 2.3;                      // rideau : couverture physique de l'emplacement vide
+var YA = 1.58, YB = 2.3;                      // A à hauteur d'yeux, B au-dessus ; bas du plus grand = 1,20 m
+function pushTrack(items, U, gap){           // pousse 1D année→position, ordre préservé, dans [-U, U]
+  items.sort(function(a,b){ return a.year-b.year || (a.i<b.i?-1:1); });
+  var prevR = -U-9;
+  for (var i=0;i<items.length;i++){
+    var t = items[i];
+    var target = -U + (t.year-t.a)/((t.b-t.a)||1) * 2*U;
+    t.target = mClamp(target, -U + t.w/2, U - t.w/2);
+    t.x = Math.max(t.target, prevR + gap + t.w/2);
+    prevR = t.x + t.w/2;
+  }
+  var nextL = U + 9;                          // dépassement : repousse-gauche, ordre conservé
+  for (var j=items.length-1;j>=0;j--){
+    var u = items[j];
+    if (u.x + u.w/2 > U) u.x = U - u.w/2;
+    u.x = Math.min(u.x, nextL - gap - u.w/2);
+    nextL = u.x - u.w/2;
+  }
+  return items;
+}
+function layoutLane(items, U){                // une paroi de récit : rideaux d'abord, puis affiches en quinconce
+  var GAP = 0.1, scale = 1;
+  for (var attempt = 0; attempt < 7; attempt++){
+    var over = false;
+    items.forEach(function(t){ t.w = t.w0 * scale; });
+    items.sort(function(a,b){ return a.year-b.year || (a.i<b.i?-1:1); });
+    var cts = items.filter(function(t){ return t.kind==="curtain"; });
+    pushTrack(cts, U, 0.15);
+    cts.forEach(function(c){ if (c.x - c.w/2 < -U-1e-9 || c.x + c.w/2 > U+1e-9) over = true; });
+    var blocks = cts.map(function(c){ return { l:c.x - c.w/2 - 0.06, r:c.x + c.w/2 + 0.06 }; })
+                    .sort(function(a,b){ return a.l-b.l; });
+    function nudgePast(x, w){
+      for (var q=0;q<blocks.length;q++){ var b=blocks[q];
+        if (x + w/2 > b.l && x - w/2 < b.r) x = b.r + GAP + w/2; }
+      return x;
+    }
+    var free = [-U-9, -U-9], row = 0, posters2 = items.filter(function(t){ return t.kind==="poster"; });
+    posters2.forEach(function(pp){
+      row = 1 - row;
+      var x = mClamp(-U + (pp.year-pp.a)/((pp.b-pp.a)||1)*2*U, -U+pp.w/2, U-pp.w/2);
+      x = nudgePast(Math.max(x, free[row]+GAP+pp.w/2), pp.w);
+      if (x + pp.w/2 > U){                     // l'autre rangée d'abord, avant de sonner le dépassement
+        var x2 = nudgePast(Math.max(x, free[1-row]+GAP+pp.w/2), pp.w);
+        if (x2 + pp.w/2 <= U) { row = 1 - row; x = x2; }
+        else over = true;
+      }
+      pp.x = x; pp.row = row + 1; free[row] = Math.max(free[row], x + pp.w/2);
+      pp.target = mClamp(-U + (pp.year-pp.a)/((pp.b-pp.a)||1)*2*U, -U+pp.w/2, U-pp.w/2);
+    });
+    if (over){                                 // compactage par rangée, droite→gauche (mêmes règles que pushTrack)
+      [1,2].forEach(function(rw){
+        var R = posters2.filter(function(pp){ return pp.row===rw; }).sort(function(a,b){ return b.x-a.x; });
+        var nextL = U + 9;
+        R.forEach(function(pp){
+          if (pp.x + pp.w/2 > U) pp.x = U - pp.w/2;
+          pp.x = Math.min(pp.x, nextL - GAP - pp.w/2);
+          for (var q=blocks.length-1;q>=0;q--){ var b=blocks[q];
+            if (pp.x + pp.w/2 > b.l && pp.x - pp.w/2 < b.r) pp.x = b.l - 0.06 - pp.w/2; }
+          pp.x = Math.max(pp.x, -U + pp.w/2);
+          nextL = Math.min(nextL, pp.x - pp.w/2);
+        });
+      });
+      over = false;
+      posters2.forEach(function(pp){
+        if (pp.x + pp.w/2 > U+1e-9 || pp.x - pp.w/2 < -U-1e-9) over = true;
+        for (var q=0;q<blocks.length;q++){ var b=blocks[q];
+          if (pp.x + pp.w/2 > b.l+1e-3 && pp.x - pp.w/2 < b.r-1e-3) over = true; }
+      });
+      [1,2].forEach(function(rw){
+        var R = posters2.filter(function(pp){ return pp.row===rw; }).sort(function(a,b){ return a.x-b.x; });
+        for (var q=1;q<R.length;q++) if (R[q].x - R[q].w/2 < R[q-1].x + R[q-1].w/2 + 0.02) over = true;
+      });
+    }
+    cts.forEach(function(c){ c.row = 0; });
+    if (!over) break;
+    scale *= 0.9;
+  }
+  items.forEach(function(t){ t.scale = scale; });
+  return items;
+}
+var posters = [], curtains = [], cases = [];
+for (var rk=0; rk<NROOM; rk++){
+  var era = ERAS[rk], rr = roomRange(rk);
+  var inRoom = []; for (var ei=0; ei<EV.length; ei++){ var yy = EV[ei][0]; if (yy>=era.a && yy<era.b) inRoom.push(ei); }
+  var byLane = { pal:[], isr:[], occ:[] };
+  for (var q=0;q<inRoom.length;q++){
+    var i2 = inRoom[q];
+    for (var ki=0; ki<PERS_KEYS.length; ki++){ (function(k){
+      var lv = lvOf(i2,k);
+      byLane[k].push({ i:i2, kind: lv>0 ? "poster" : "curtain", lv:lv,
+        year:EV[i2][0], a:era.a, b:era.b, w:0, w0: lv>0 ? (lv===2?PW[k].w2:PW[k].w1) : CW, room:rk });
+    })(PERS_KEYS[ki]); }
+    if (divergent(i2)) cases.push({ i:i2, kind:"case", year:EV[i2][0], a:era.a, b:era.b, w:.62, w0:.62, room:rk });
+  }
+  layoutLane(byLane.pal, GEO.U); layoutLane(byLane.isr, GEO.U); layoutLane(byLane.occ, GEO.OCCU);
+  var mapZ = function(it){ return rr.z0 - (it.x + GEO.U)/(2*GEO.U) * GEO.DEPTH; };   // avant→fond, années qui avancent
+  var yOf = function(p){ return p.row===1 ? YA : YB; };
+  byLane.pal.forEach(function(it){
+    if (it.kind==="poster") posters.push({ kind:"poster", i:it.i, lane:"pal", room:rk, x:-(GEO.HALF-.12), z:mapZ(it), y:yOf(it), lv:it.lv,
+      w:it.w, h: (it.lv===2?PW.pal.h2:PW.pal.h1)*it.scale, rotY: Math.PI/2, target:it.target, row:it.row, scale:it.scale });
+    else curtains.push({ kind:"curtain", i:it.i, lane:"pal", room:rk, x:-(GEO.HALF-.15), z:mapZ(it), y:CH/2+.14, rotY: Math.PI/2, w:it.w }); });
+  byLane.isr.forEach(function(it){
+    if (it.kind==="poster") posters.push({ kind:"poster", i:it.i, lane:"isr", room:rk, x:(GEO.HALF-.12), z:mapZ(it), y:yOf(it), lv:it.lv,
+      w:it.w, h: (it.lv===2?PW.isr.h2:PW.isr.h1)*it.scale, rotY: -Math.PI/2, target:it.target, row:it.row, scale:it.scale });
+    else curtains.push({ kind:"curtain", i:it.i, lane:"isr", room:rk, x:(GEO.HALF-.15), z:mapZ(it), y:CH/2+.14, rotY: -Math.PI/2, w:it.w }); });
+  byLane.occ.forEach(function(it){
+    if (it.kind==="poster") posters.push({ kind:"poster", i:it.i, lane:"occ", room:rk, x:it.x, z: rr.z1+.09, y:yOf(it), lv:it.lv,
+      w:it.w, h: (it.lv===2?PW.occ.h2:PW.occ.h1)*it.scale, rotY: 0, target:it.target, row:it.row, scale:it.scale });
+    else curtains.push({ kind:"curtain", i:it.i, lane:"occ", room:rk, x: mClamp(it.x,-GEO.OCCU,GEO.OCCU), z: rr.z1+.05, y:CH/2+.14, rotY: 0, w:it.w }); });
+}
+/* vitrines : DEUX colonnes alternées (x = ±0,95) de part et d'autre de l'allée centrale, par salle,
+   position-année sur l'axe z, garde de 1,8 m aux deux parois — 10 vitrines max/salle tiennent ainsi largement */
+for (var ck=0; ck<NROOM; ck++){ (function(k){
+  var list = cases.filter(function(c){ return c.room===k; });
+  var A = GEO.DEPTH/2 - 1.8;
+  var cols = [[], []];
+  list.forEach(function(c, ci){ cols[ci % 2].push(c); });      // années alternées entre les deux colonnes
+  cols.forEach(function(col, ci){
+    pushTrack(col, A, 0.3);
+    col.forEach(function(c){ c.z = -k*STEP - 1.8 - (c.x + A)/(2*A) * (GEO.DEPTH - 3.6); c.x = ci ? 0.95 : -0.95; });
+  });
+})(ck); }
+/*__LAYOUT_END__*/
+
+/* ---------- scène ---------- */
+var renderer;
+try {
+  var probe = document.createElement("canvas");
+  if (!(probe.getContext("webgl2") || probe.getContext("webgl"))) throw new Error("no-webgl");
+  renderer = new THREE.WebGLRenderer({ antialias:true });
+} catch (e) { fallbackOn(); return; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
+renderer.setSize(innerWidth, innerHeight);
+document.getElementById("stage").appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(BG);
+scene.fog = new THREE.Fog(BG, 5, 30);                 // brouillard vers le noir : les salles non atteintes s'effacent devant
+var cam = new THREE.PerspectiveCamera(68, innerWidth/innerHeight, .05, 60);
+cam.rotation.order = "YXZ";
+var yaw = 0, pitch = 0, pxCur = 0, pzCur = -1.6;      // arrivée : entrée de salle 1, plein couloir, neutre
+
+scene.add(new THREE.HemisphereLight(0x2b303a, 0x090a0c, 0.7));
+var lamp = new THREE.PointLight(0xffd9a6, 14, 9, 1.6); // la lampe du visiteur remplace les projecteurs mobiles
+scene.add(lamp);
+
+function mat(c){ return new THREE.MeshLambertMaterial({ color:c }); }
+var mWall = mat(WALLC), mPart = mat(PARTC), mFloor = mat(FLOORC), mCeil = mat(CEILC);
+function box(w,h,d,x,y,z,m,rotY){ var o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.position.set(x,y,z); if (rotY) o.rotation.y = rotY; scene.add(o); return o; }
+
+/* sol / plafond / parois continues */
+var total = (NROOM-1)*STEP + GEO.DEPTH;
+box(2*GEO.HALF, .1, total+2, 0, -.05, -total/2+.6, mFloor);
+box(2*GEO.HALF, .1, total+2, 0, GEO.WALLH+.05, -total/2+.6, mCeil);
+box(.2, GEO.WALLH, total, -GEO.HALF, GEO.WALLH/2, -total/2+.6, mWall);
+box(.2, GEO.WALLH, total,  GEO.HALF, GEO.WALLH/2, -total/2+.6, mWall);
+box(2*GEO.HALF, GEO.WALLH, .2, 0, GEO.WALLH/2, FARZ, mWall);
+box(2*GEO.HALF, GEO.WALLH, .2, 0, GEO.WALLH/2, .2, mWall);      // entrée, derrière le visiteur
+/* cloisons à porte centrale + linteau (couloirs droits, pas de labyrinthe) */
+for (var pk=0; pk<NROOM-1; pk++){
+  var zp = -pk*STEP - GEO.DEPTH - GEO.PART/2, sw = GEO.HALF - GEO.DOOR/2;
+  box(sw, GEO.WALLH, GEO.PART, -(GEO.DOOR/2+sw/2), GEO.WALLH/2, zp, mPart);
+  box(sw, GEO.WALLH, GEO.PART,  (GEO.DOOR/2+sw/2), GEO.WALLH/2, zp, mPart);
+  box(GEO.DOOR, .5, GEO.PART, 0, GEO.WALLH-.25, zp, mPart);
+}
+/* rails de sol = la grammaire apprise une fois : gauche pal, droite isr, fond occ */
+function rail(w,d,x,z,col){ box(w,.02,d,x,.011,z,new THREE.MeshBasicMaterial({ color:col })); }
+for (var fk=0; fk<NROOM; fk++){
+  var fr = roomRange(fk);
+  rail(.07, GEO.DEPTH-.8, -GEO.HALF+.22, (fr.z0+fr.z1)/2, 0x1f5741);
+  rail(.07, GEO.DEPTH-.8,  GEO.HALF-.22, (fr.z0+fr.z1)/2, 0x1d4768);
+  rail(2*GEO.HALF-1.4, .07, 0, fr.z1+.22, 0x6b442a);
+  box(7, .03, .34, 0, GEO.WALLH-.02, (fr.z0+fr.z1)/2, new THREE.MeshBasicMaterial({ color:0x3a3529 }));  // bandeau « cuit »
+  var sp = new THREE.SpotLight(0xffd8a8, 46, 15, .8, .55, 1.6);
+  sp.position.set(0, GEO.WALLH-.1, (fr.z0+fr.z1)/2 + 2.2);
+  sp.target.position.set(0, .8, (fr.z0+fr.z1)/2 + 1.6);
+  scene.add(sp); scene.add(sp.target);
+}
+
+/* ---------- textes cuits en textures canvas (l'écran lisant : l'affiche ; le lisant d'assistance : le panneau DOM) ---------- */
+function tex(w,h,draw){
+  var c = document.createElement("canvas"); c.width=w; c.height=h;
+  draw(c.getContext("2d"), w, h);
+  var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+function wrap2(ctx,text,maxW,maxL){
+  var words=String(text).split(/\s+/), lines=[], cur="";
+  for (var i=0;i<words.length;i++){ var tt = cur?cur+" "+words[i]:words[i];
+    if (ctx.measureText(tt).width>maxW && cur){ lines.push(cur); cur=words[i];
+      if (lines.length>=maxL){ lines[maxL-1]+="…"; return lines; } }
+    else cur=tt; }
+  if (cur) lines.push(cur); return lines;
+}
+function posterTex(p){
+  var wpx = Math.round(p.w*400), hpx = Math.round(p.h*400), tint = LANE[p.lane].t;
+  return tex(wpx,hpx,function(x,w,h){
+    x.fillStyle="#1a1e24"; x.fillRect(0,0,w,h);
+    x.fillStyle=PERS[p.lane].c; x.fillRect(0,0,w,Math.max(6,h*.028));
+    x.fillStyle=tint; x.font="700 "+Math.round(h*.13)+"px system-ui";
+    x.fillText(yrLbl(EV[p.i][0]), w*.06, h*.22);
+    x.fillStyle="#ece6da"; x.font="600 "+Math.round(h*.115)+"px system-ui";
+    var lines = wrap2(x, titleOf(p.i,p.lane), w*.88, 4);
+    for (var q=0;q<lines.length;q++) x.fillText(lines[q], w*.06, h*.42+q*h*.15);
+  });
+}
+function curtainTex(c){
+  var tint = LANE[c.lane].t;
+  return tex(192,448,function(x,w,h){
+    x.fillStyle="#15171b"; x.fillRect(0,0,w,h);
+    for (var f=0; f<6; f++){ var g=x.createLinearGradient(f*w/6,0,(f+1)*w/6,0);
+      g.addColorStop(0,"#0e1013"); g.addColorStop(.5,"#1f232a"); g.addColorStop(1,"#0e1013");
+      x.fillStyle=g; x.fillRect(f*w/6,0,w/6,h); }
+    x.fillStyle=PERS[c.lane].c; x.fillRect(0,h*.935,w,h*.03);
+    x.fillStyle=tint; x.font="700 30px system-ui"; x.textAlign="center";
+    x.fillText(String(yrOf(EV[c.i][0])), w/2, h*.11);
+    x.fillStyle="rgba(236,230,218,.55)"; x.font="500 17px system-ui";
+    x.fillText("rideau du silence", w/2, h*.17);
+  });
+}
+function labelPlane(wpx,hpx,mw,texObj,x,y,z,rotY){
+  var m = new THREE.Mesh(new THREE.PlaneGeometry(mw, mw*hpx/wpx),
+        new THREE.MeshBasicMaterial({ map:texObj, side:THREE.DoubleSide }));
+  m.position.set(x,y,z); m.rotation.y = rotY||0; scene.add(m); return m;
+}
+
+/* ---------- murs : affiches et rideaux maillés ---------- */
+var hitables = [];
+posters.forEach(function(p){
+  var mesh = new THREE.Mesh(new THREE.PlaneGeometry(p.w, p.h),
+        new THREE.MeshBasicMaterial({ map:posterTex(p) }));
+  mesh.position.set(p.x, p.y, p.z); mesh.rotation.y = p.rotY;
+  scene.add(mesh);
+  var frame = new THREE.Mesh(new THREE.PlaneGeometry(p.w+.1, p.h+.1), mat(0x101216));
+  frame.position.set(p.x, p.y, p.z); frame.rotation.y = p.rotY;
+  frame.translateZ(-.02);                       // derrière l'affiche, côté mur
+  scene.add(frame);
+  p.mesh = mesh; hitables.push(mesh);
+  mesh.userData = { kind:"poster", i:p.i, lane:p.lane, room:p.room };
+});
+curtains.forEach(function(c){
+  var mesh = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH),
+        new THREE.MeshBasicMaterial({ map:curtainTex(c), side:THREE.DoubleSide }));
+  mesh.position.set(c.x, c.y, c.z); mesh.rotation.y = c.rotY;
+  scene.add(mesh);
+  c.mesh = mesh; hitables.push(mesh);
+  mesh.userData = { kind:"curtain", i:c.i, lane:c.lane, room:c.room };
+});
+/* vitrines : socle + verre + RAIL DORÉ (or = divergence, code de toutes les vues) + trois plaques */
+var mGold = new THREE.MeshBasicMaterial({ color:GOLD });
+var mGlass = new THREE.MeshBasicMaterial({ color:0xa8bccd, transparent:true, opacity:.1, side:THREE.DoubleSide, depthWrite:false });
+cases.forEach(function(v){
+  var g = new THREE.Group(); g.position.set(v.x, 0, v.z); scene.add(g);
+  var ped = new THREE.Mesh(new THREE.BoxGeometry(.66,.95,.5), mat(0x191c21)); ped.position.y=.475; g.add(ped);
+  var railG = new THREE.Mesh(new THREE.BoxGeometry(.7,.028,.54), mGold); railG.position.y=1.5; g.add(railG);
+  var gl = new THREE.Mesh(new THREE.BoxGeometry(.6,.52,.44), mGlass); gl.position.y=1.24; gl.renderOrder=6; g.add(gl);
+  var angs = [-.6, .1, .8];
+  PERS_KEYS.forEach(function(k, qi){
+    var tt = tex(128,96,function(x,w,h){
+      x.fillStyle="#101318"; x.fillRect(0,0,w,h);
+      var told = lvOf(v.i,k)>0;
+      x.fillStyle = told ? LANE[k].t : "#787f89"; x.font="700 12px system-ui";
+      var lines = wrap2(x, titleOf(v.i,k), w-12, 4);
+      for (var q=0;q<lines.length;q++) x.fillText(lines[q], 6, 20+q*15);
+      x.fillStyle="#565d67"; x.font="600 10px system-ui"; x.fillText(PERS[k].short+(told?"":" · non raconté"), 6, h-8);
+    });
+    var pl = new THREE.Mesh(new THREE.PlaneGeometry(.34,.255), new THREE.MeshBasicMaterial({ map:tt, side:THREE.DoubleSide }));
+    pl.position.set(Math.sin(angs[qi])*.13, 1.26, Math.cos(angs[qi])*.12-.12);
+    pl.rotation.y = angs[qi]; g.add(pl);
+  });
+  v.mesh = gl; hitables.push(ped); hitables.push(gl);
+  ped.userData = { kind:"case", i:v.i, room:v.room }; gl.userData = ped.userData;
+});
+/* plaque de salle NEUTRE au-dessus de la porte entrée ; sous-étiquettes d'époque par paroi (comme H laissait
+   chaque couloir étiqueter son sol) — jamais un récit ne rebaptise la salle */
+for (var tk=0; tk<NROOM; tk++){
+  var tera = ERAS[tk], tr = roomRange(tk);
+  labelPlane(1024,112, 4.6, tex(1024,112,function(x,w,h){
+    x.fillStyle="#d9d2c4"; x.font="700 50px system-ui"; x.textAlign="center";
+    x.fillText(tera.label+" · "+tera.a+"–"+Math.floor(tera.b), w/2, h*.66);
+  }), 0, 2.78, tk===0 ? .07 : tr.z0-.03, Math.PI);
+  PERS_KEYS.forEach(function(k){
+    var subs = PERS[k].eras.filter(function(e){ return e.a<tera.b && e.b>tera.a; }).map(function(e){ return e.label; });
+    if (!subs.length) return;
+    var t = tex(1024,72,function(x,w,h){
+      x.fillStyle = LANE[k].t; x.font="700 34px system-ui"; x.textAlign="center";
+      x.fillText(PERS[k].short+" — "+subs.join(" · "), w/2, h*.7);
+    });
+    if (k==="pal") labelPlane(1024,72, 6.4, t, -GEO.HALF+.13, 2.86, (tr.z0+tr.z1)/2, Math.PI/2);
+    else if (k==="isr") labelPlane(1024,72, 6.4, t, GEO.HALF-.13, 2.86, (tr.z0+tr.z1)/2, -Math.PI/2);
+    else labelPlane(1024,72, 5.6, t, 0, 2.93, tr.z1+.06, 0);   // au-dessus de la rangée haute du mur du fond
+  });
+}
+
+/* ---------- stations : posters, rideaux et vitrines, dans l'ordre de marche (gauche → fond → vitrines → droite) ---------- */
+function keyOf(kind,i,lane){ return kind==="poster" ? ("p"+i+"-"+lane) : kind==="curtain" ? ("c"+i+"-"+lane) : ("v"+i); }
+posters.forEach(function(p){ p.key = keyOf("poster",p.i,p.lane); });
+curtains.forEach(function(c){ c.key = keyOf("curtain",c.i,c.lane); });
+cases.forEach(function(v){ v.key = keyOf("case",v.i); });
+var allStations = [];
+for (var vk=0; vk<NROOM; vk++){
+  var grp = posters.concat(curtains, cases).filter(function(s){ return s.room===vk; })
+    .sort(function(a,b){ return wallRank(a)-wallRank(b) || b.z-a.z; });   // z décroissant = avancer dans le couloir
+  grp.forEach(function(s){ allStations.push(s); });
+}
+function wallRank(s){ return s.lane==="pal" ? 0 : s.lane==="occ" ? 1 : s.kind==="case" ? 2 : 3; }
+allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
+/* point de vue d'un poste : à 2 m du support, face à lui. yaw 0 = plein couloir (-Z) ; forward = (-sin yaw, -cos yaw). */
+function stationView(s){
+  if (s.kind==="case") return { x:0, z:s.z+1.6, yaw:0, pitch:-.16 };
+  if (s.lane==="pal") return { x:-(GEO.HALF-2.0), z:s.z, yaw: Math.PI/2, pitch: s.y>2 ? .18 : 0 };   // face au mur gauche
+  if (s.lane==="isr") return { x:(GEO.HALF-2.0), z:s.z, yaw:-Math.PI/2, pitch: s.y>2 ? .18 : 0 };
+  return { x:s.x, z:s.z+2.0, yaw:0, pitch: s.y>2 ? .18 : (s.kind==="curtain" ? .04 : 0) };          // face au mur du fond
+}
+
+/* ---------- caméra : sauts de poste (instantanés si l'utilisateur demande « sans animation ») ---------- */
+var glide = null;
+function reduced(){ return matchMedia("(prefers-reduced-motion: reduce)").matches; }
+function normYaw(y){ while (y>Math.PI) y-=2*Math.PI; while (y<-Math.PI) y+=2*Math.PI; return y; }
+function snapTo(v, instant){
+  if (instant===undefined) instant = reduced();
+  var ty = normYaw(v.yaw);
+  if (instant){ pxCur=v.x; pzCur=v.z; yaw=ty; pitch=v.pitch; glide=null; return; }
+  glide = { fx:pxCur, fz:pzCur, fy:yaw, fp:pitch, tx:v.x, tz:v.z, ty:ty, tp:v.pitch, t0:performance.now(), ms:380 };
+}
+function focusStation(s, instant){ snapTo(s.view, instant); openPanel(s); }
+function roomAt(z){ for (var k=0;k<NROOM;k++){ var r = roomRange(k);
+  if (z <= r.z0+1e-3 && z >= r.z1-GEO.PART-1e-3) return k; } return z>0?0:NROOM-1; }
+
+/* ---------- panneau : fait neutre d'abord, puis les trois voix aux couleurs des couloirs (doctrine H) ---------- */
+var panelEl = document.getElementById("panel");
+function voixBlock(i){
+  var out = "";
+  PERS_KEYS.forEach(function(k){
+    var lv = lvOf(i,k);
+    if (lv>0) out += '<p class="vx '+k+'"><b><span class="dot '+k+'"></span>'+mEsc(titleOf(i,k))+'</b><span>'+PERS[k].name+' · '+(lv===2?"récit central":"second plan")+'</span></p>';
+    else out += '<p class="vx '+k+' sil"><b>Ce récit se tait ici — un rideau pend sur son mur.</b><span>'+PERS[k].name+'</span></p>';
+  });
+  return out;
+}
+function backLink(i){ var ev = EV[i]; return '<a href="../chapitres/chapitre-'+ev[4]+'-espace.html#s'+ev[5]+'">Ouvrir la séquence du kit →</a>'; }
+function openPanel(s){
+  var i = s.i, ev = EV[i], html = '<button class="x" aria-label="Fermer">×</button>';
+  if (s.kind==="curtain"){
+    html += '<p class="yr">Rideau du silence · '+yrLbl(ev[0])+'</p><h2>Le '+mEsc(PERS[s.lane].name.toLowerCase())+' ne raconte pas</h2>'+
+      '<p class="desc">Ce que le corpus garde, et que ce récit laisse sous le rideau :</p>'+
+      '<p class="desc"><b>'+mEsc(ev[2])+'</b><br>'+mEsc(ev[3])+'</p>'+
+      '<div class="voix"><h3>Pourquoi ce vide&nbsp;?</h3><p class="desc">Le rideau ne dit pas «&nbsp;faux&nbsp;» — il dit «&nbsp;ce récit n’a pas de place pour ce fait&nbsp;». Question à travailler&nbsp;: que perd un récit en se taisant&nbsp;?</p></div>';
+  } else if (s.kind==="case"){
+    html += '<p class="yr">Vitrine · fait à trois voix · '+yrLbl(ev[0])+'</p><h2>'+mEsc(ev[2])+'</h2>'+
+      '<p class="desc">'+mEsc(ev[3])+'</p><span class="divb">≠ des noms divergents</span>'+
+      '<div class="voix"><h3>Le même fait, trois noms</h3>'+voixBlock(i)+'</div>';
+  } else {
+    html += '<p class="yr">'+yrLbl(ev[0])+'</p><h2>'+mEsc(ev[2])+'</h2>'+
+      '<p class="desc">'+mEsc(ev[3])+'</p>'+
+      (divergent(i)?'<span class="divb">≠ les récits ne le nomment pas pareil</span>':'')+
+      '<div class="voix"><h3>Ce que chaque récit en fait</h3>'+voixBlock(i)+'</div>';
+  }
+  html += '<div class="pied">'+backLink(i)+'<br>mur&nbsp;: '+(s.kind==="case" ? "vitrine centrale (faits à trois voix)" : mEsc(PERS[s.lane].name))+'</div>';
+  panelEl.innerHTML = html;
+  panelEl.classList.add("open");
+  panelEl.scrollTop = 0;
+  panelEl.querySelector(".x").addEventListener("click", closePanel);
+  panelEl.__key = s.key;
+  var bd = document.getElementById("badge");
+  bd.textContent = (s.kind==="curtain"?"Rideau · ":"") + yrLbl(ev[0]) + " — " +
+    (s.kind==="case" ? ev[2] : s.kind==="curtain" ? PERS[s.lane].name+" se tait" : titleOf(i,s.lane));
+  bd.classList.add("show");
+}
+function closePanel(){ panelEl.classList.remove("open"); panelEl.__key=null; document.getElementById("badge").classList.remove("show"); }
+
+/* ---------- stations DOM : Tab dans l'ordre de marche ; l'anneau visible = badge doré + fiche ouverte ---------- */
+var stWrap = document.getElementById("stations");
+allStations.forEach(function(s){
+  var b = document.createElement("button");
+  var ev = EV[s.i];
+  b.textContent = s.kind==="curtain" ? ("Rideau "+yrOf(ev[0])+" — le "+PERS[s.lane].name.toLowerCase()+" se tait sur : "+ev[2])
+    : s.kind==="case" ? ("Vitrine "+yrOf(ev[0])+" — un fait, trois voix : "+ev[2])
+    : (yrLbl(ev[0])+" — "+titleOf(s.i,s.lane)+" ("+PERS[s.lane].short+")");
+  b.setAttribute("data-key", s.key);
+  b.addEventListener("focus", function(){ focusStation(s); });
+  stWrap.appendChild(b);
+});
+document.getElementById("skip").addEventListener("click", function(){ var b = stWrap.firstChild; if (b) b.focus(); });
+
+/* ---------- navigateur (lignée C) + minimap : la réentrée par téléportation, et le repli tactile ---------- */
+var navEl = document.getElementById("nav");
+for (var nk=0; nk<NROOM; nk++){
+  (function(k){
+    var b = document.createElement("button");
+    b.innerHTML = "<b>"+ERAS[k].a+"–"+Math.floor(ERAS[k].b)+"</b>"+mEsc(ERAS[k].label);
+    b.addEventListener("click", function(){ teleportRoom(k); });
+    navEl.appendChild(b);
+  })(nk);
+}
+function teleportRoom(k){
+  var r0 = roomRange(k);
+  snapTo({ x:0, z:r0.z0-1.5, yaw:0, pitch:0 });
+  say("Salle "+ERAS[k].label+" · "+ERAS[k].a+"–"+Math.floor(ERAS[k].b));
+}
+var miniSvg = "";
+for (var mk=0; mk<NROOM; mk++){ var mr = roomRange(mk);
+  miniSvg += '<rect class="rm" data-room="'+mk+'" x="8" y="'+(-mr.z0*4+4)+'" width="48" height="'+(GEO.DEPTH*4)+'"/>'; }
+document.getElementById("mini").innerHTML =
+  '<svg viewBox="0 0 64 '+(total*4+16)+'" role="img" aria-label="Plan des salles">'+
+  miniSvg+'<circle class="cam" id="camdot" cx="32" cy="8" r="3.4"/></svg>';
+Array.prototype.forEach.call(document.querySelectorAll("#mini .rm"), function(rc){
+  rc.addEventListener("click", function(){ teleportRoom(+rc.getAttribute("data-room")); });
+});
+var sayT = 0;
+function say(msg){ var s = document.getElementById("say"); s.textContent = msg; s.classList.add("show");
+  clearTimeout(sayT); sayT = setTimeout(function(){ s.classList.remove("show"); }, 2600); }
+
+/* ---------- entrées profondes : ?ch=N / ?ev=i / #sN.S DÉPLACENT LA CAMÉRA (fenêtres calculées sur le corpus, jamais codées) ---------- */
+function stationForEvent(i){
+  for (var q=0;q<posters.length;q++) if (posters[q].i===i) return posters[q];
+  for (var q2=0;q2<curtains.length;q2++) if (curtains[q2].i===i) return curtains[q2];
+  return null;
+}
+function deepLink(){
+  var pr = new URLSearchParams(location.search), h = location.hash.match(/^#s(\d+)\.(\d+)$/);
+  var target = null;
+  if (pr.has("ev")){ var i3 = +pr.get("ev"); if (EV[i3]) target = stationForEvent(i3); }
+  if (!target && h){
+    for (var q3=0;q3<EV.length;q3++) if (EV[q3][4]===+h[1] && EV[q3][5]===+h[2]){ target = stationForEvent(q3); break; }
+  }
+  if (target){ focusStation(target, true); return; }
+  if (pr.has("ch")){
+    var ch = +pr.get("ch"), ds = [];
+    for (var q4=0;q4<EV.length;q4++) if (EV[q4][4]===ch) ds.push(EV[q4][0]);
+    if (ds.length){ var mn = Math.min.apply(null, ds);
+      var rk2 = -1;
+      for (var q5=0;q5<ERAS.length;q5++) if (mn>=ERAS[q5].a && mn<ERAS[q5].b) rk2 = q5;
+      teleportRoom(rk2<0 ? NROOM-1 : rk2); return; }
+  }
+  snapTo({ x:0, z:-1.6, yaw:0, pitch:0 }, true);
+}
+
+/* ---------- marche première personne : WASD + regard (souris verrouillée), collisions = bornes des salles ---------- */
+var locked = false, keys = {};
+function panelOpen(){ return panelEl.classList.contains("open"); }
+document.addEventListener("keydown", function(e){
+  if (e.key==="Escape"){ if (locked) document.exitPointerLock(); closePanel();
+    document.getElementById("welcome").classList.add("gone"); return; }
+  if (e.key==="?"||e.key==="h"||e.key==="H"){ document.getElementById("welcome").classList.remove("gone"); return; }
+  keys[e.key.toLowerCase()] = true;
+  if (locked && e.key.toLowerCase()==="e" && nearStation && !panelOpen()){ focusStation(nearStation); e.preventDefault(); }
+});
+document.addEventListener("keyup", function(e){ keys[e.key.toLowerCase()] = false; });
+document.addEventListener("mousemove", function(e){
+  if (!locked) return;
+  nudgeLook(e.movementX, e.movementY);
+});
+function nudgeLook(dx,dy){   // regard : la scène suit la souris ; porté par l'API harnais pour vérifier les signes
+  yaw = normYaw(yaw - dx*.0023);
+  pitch = mClamp(pitch - dy*.0023, -GEO.PITCH, GEO.PITCH);
+}
+renderer.domElement.addEventListener("click", function(){
+  if (!locked) renderer.domElement.requestPointerLock();   // jamais automatique : toujours un geste explicite
+});
+document.addEventListener("pointerlockchange", function(){
+  locked = document.pointerLockElement === renderer.domElement;
+  document.body.classList.toggle("locked", locked);
+});
+/* zone praticable : intérieurs de salles + sas de porte (largeur 2,6 → corps 1,8) ; corps de 0,55 m de rayon */
+function inZone(x,z){
+  if (Math.abs(x) > GEO.HALF-.55) return false;
+  if (z > 0.02 || z < FARZ+.75) return false;
+  for (var k=0;k<NROOM;k++){ var r = roomRange(k);
+    if (z <= r.z0 && z >= r.z1) return true;
+    if (k<NROOM-1 && z < r.z1 && z >= r.z1-GEO.PART && Math.abs(x) <= GEO.DOOR/2-.4) return true; }
+  return false;
+}
+var SPD = 2.7;
+function step(dt){
+  if (locked && !panelOpen() && !glide){
+    var f = (keys["z"]||keys["w"]||keys["arrowup"]?1:0) - (keys["s"]||keys["arrowdown"]?1:0);
+    var r2 = (keys["q"]||keys["a"]?1:0) - (keys["d"]?1:0);
+    if (keys["arrowleft"]) yaw = normYaw(yaw + 1.7*dt);
+    if (keys["arrowright"]) yaw = normYaw(yaw - 1.7*dt);
+    if (f || r2){
+      var fx = -Math.sin(yaw), fz = -Math.cos(yaw);         // avant
+      var lx = -Math.cos(yaw), lz = Math.sin(yaw);          // gauche (up × avant)
+      var vx = fx*f + lx*r2, vz = fz*f + lz*r2, n = Math.hypot(vx,vz)||1, d = SPD*dt/n;
+      var nx = pxCur + vx*d, nz = pzCur + vz*d;
+      if (inZone(nx, pzCur)) pxCur = nx;                     // glissement le long des murs
+      if (inZone(pxCur, nz)) pzCur = nz;
+    }
+  }
+  if (glide){
+    var t = Math.min(1, (performance.now()-glide.t0)/glide.ms), e2 = t*t*(3-2*t);
+    pxCur = glide.fx + (glide.tx-glide.fx)*e2; pzCur = glide.fz + (glide.tz-glide.fz)*e2;
+    yaw = normYaw(glide.fy + (glide.ty-glide.fy)*e2); pitch = glide.fp + (glide.tp-glide.fp)*e2;
+    if (t>=1) glide = null;
+  }
+}
+
+/* ---------- affordance E : la station la plus proche à portée de main ---------- */
+var nearStation = null;
+var affordEl = document.getElementById("afford");
+function refreshNear(){
+  var best = null, bd = 2.4;
+  for (var q=0;q<allStations.length;q++){ var s = allStations[q];
+    var d = Math.hypot(s.x-pxCur, s.z-pzCur);
+    if (d < bd){ bd = d; best = s; } }
+  nearStation = best;
+  if (best && !panelOpen() && !glide){
+    affordEl.innerHTML = "<kbd>E</kbd> " + mEsc(best.kind==="case" ? ("vitrine · "+EV[best.i][2])
+      : best.kind==="curtain" ? ("rideau du "+PERS[best.lane].short.toLowerCase())
+      : titleOf(best.i,best.lane));
+    affordEl.style.display = "block";
+  } else affordEl.style.display = "none";
+}
+
+/* ---------- boucle ---------- */
+var last = performance.now(), curRoom = -1;
+function frame(now){
+  requestAnimationFrame(frame);
+  var dt = Math.min(.05, (now-last)/1000); last = now;
+  step(dt);
+  cam.position.set(pxCur, GEO.EYE, pzCur);
+  cam.rotation.y = yaw; cam.rotation.x = pitch;
+  lamp.position.set(pxCur, GEO.EYE+.2, pzCur);
+  renderer.render(scene, cam);
+  refreshNear();
+  var rm = roomAt(pzCur);
+  if (rm !== curRoom){ curRoom = rm;
+    Array.prototype.forEach.call(navEl.children, function(b, bi){ b.setAttribute("aria-current", bi===rm ? "true":"false"); });
+    if (curRoom>0 || initialized) say("Salle "+ERAS[rm].label+" · "+ERAS[rm].a+"–"+Math.floor(ERAS[rm].b)); }
+  var cd = document.getElementById("camdot");
+  if (cd){ cd.setAttribute("cy", mClamp(-pzCur*4+8, 6, total*4+10)); cd.setAttribute("cx", 32 + pxCur*1.6); }
+}
+var initialized = false;
+addEventListener("resize", function(){ cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+/* ---------- accueil : la marche est un choix, jamais un réflexe ---------- */
+var welEl = document.getElementById("welcome");
+document.getElementById("bWalk").addEventListener("click", function(){
+  welEl.classList.add("gone"); renderer.domElement.requestPointerLock();
+});
+document.getElementById("bStations").addEventListener("click", function(){
+  welEl.classList.add("gone"); var b = stWrap.firstChild; if (b) b.focus();
+});
+welEl.addEventListener("click", function(e){ if (e.target===welEl) welEl.classList.add("gone"); });
+
+/* ---------- API de harnais (motif __h3d/__i3d) : inventaires, caméra, raycast ---------- */
+window.__musee = {
+  state: function(){ return { room:roomAt(pzCur), x:pxCur, z:pzCur, yaw:yaw, pitch:pitch,
+      locked:!!document.pointerLockElement, gliding:!!glide, reduced:reduced(), panel:panelEl.__key||null }; },
+  rooms: function(){ return ERAS.map(function(e,k){ var r = roomRange(k);
+      return { k:k, label:e.label, a:e.a, b:e.b, z0:r.z0, z1:r.z1, xL:-(GEO.HALF-.09), xR:(GEO.HALF-.09) }; }); },
+  posters: function(){ return posters.map(function(p){ return { i:p.i, lane:p.lane, room:p.room, x:p.x, z:p.z, y:p.y,
+      lv:p.lv, key:p.key, row:p.row, year:EV[p.i][0], target:p.target, w:p.w, h:p.h, scale:p.scale }; }); },
+  curtains: function(){ return curtains.map(function(c){ return { i:c.i, lane:c.lane, room:c.room, x:c.x, z:c.z, key:c.key, year:EV[c.i][0], w:c.w }; }); },
+  cases: function(){ return cases.map(function(c){ return { i:c.i, room:c.room, x:c.x, z:c.z, key:c.key, year:EV[c.i][0] }; }); },
+  counts: function(){
+    var rooms = [];
+    for (var k=0;k<NROOM;k++){ var era = ERAS[k];
+      var n = EV.filter(function(e){ return e[0]>=era.a && e[0]<era.b; }).length;
+      var o = { room:k, n:n, per:{} };
+      PERS_KEYS.forEach(function(kk){ o.per[kk] = {
+        told: posters.filter(function(p){ return p.room===k && p.lane===kk; }).length,
+        silent: curtains.filter(function(c){ return c.room===k && c.lane===kk; }).length }; });
+      o.cases = cases.filter(function(c){ return c.room===k; }).length;
+      rooms.push(o); }
+    return { corpus:EV.length,
+      told: PERS_KEYS.map(function(kk){ return { k:kk, n:nTold(kk),
+        posters: posters.filter(function(p){ return p.lane===kk; }).length }; }),
+      curtainSum: curtains.length, toldSum: PERS_KEYS.reduce(function(s,kk){ return s+nTold(kk); },0),
+      ndiv: EV.reduce(function(s,_,i){ return s+(divergent(i)?1:0); },0), rooms: rooms };
+  },
+  stations: function(){ return allStations.map(function(s){ return { key:s.key, kind:s.kind, i:s.i, lane:s.lane||null, room:s.room, order:s.order, view:s.view }; }); },
+  focus: function(key, instant){ var s = null;
+    for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
+    if (s) focusStation(s, instant); return !!s; },
+  teleportRoom: teleportRoom,
+  nudgeLook: nudgeLook,
+  rayHit: function(nx,ny){ var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
+    var hit = rc.intersectObjects(hitables, false)[0];
+    return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i, lane:hit.object.userData.lane||null,
+      room:hit.object.userData.room, dist:hit.distance } : null; },
+  panel: function(){ var a = panelEl.querySelector(".pied a");
+    return { open:panelEl.classList.contains("open"), key:panelEl.__key||null,
+      backHref: a ? a.getAttribute("href") : null }; },
+  geo: GEO
+};
+
+/* ---------- premier rendu, puis entrées profondes ---------- */
+deepLink();
+initialized = true;
+requestAnimationFrame(frame);
+
+} catch (err) {
+  console.error(err);
+  fallbackOn();
+}
+})();
+</script>
+</body>
+</html>
