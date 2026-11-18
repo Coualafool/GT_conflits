@@ -102,7 +102,14 @@ an off-by-default toggle, never ambience-on); room-to-room plan shape (straight 
 vs short L); whether curtains animate on approach.
 
 ## Status & next step
-Spike S-A/S-B on TARS → report which build ships → build go for
-`frise/perspective-J-musee.html` (name provisional), registered in
-`index-comparatif.html` beside the other views. Promotion to a site entry
-(hero/rails/distrib) stays a separate later decision, same as H/I.
+**BUILT 2026-11-18 — `frise/perspective-J-musee.html` shipped.** Spike verdict: S-A ships
+(esbuild-bundled three@0.187 IIFE, `frise/vendor/three.bundle.js`, reproducible, README'd; S-B r160 UMD
+deleted — both passed the file:// probe, S-A won on revision, weight and reproducibility). Shelf layout
+proven offline by `scripts/sim_musee_layout.mjs` (260 affiches, 19 rideaux, 49 vitrines — saturation,
+portée, gardes, rangées, ordre-année, taille↔LV tous verts). Harness `scripts/verif_musee.mjs`
+(API `__musee`, 30 checks: grammaire des murs, rideaux, vitrines, panneau a11y, clavier, pointer-lock
+clamp, reduced-motion, liens profonds ?ev=N et #s<chapitre>.<section>, repli sans WebGL, mobile 390)
+green on TARS; full battery 149 PASS / 0 FAIL. Registered in `index-comparatif.html` only.
+Next: none for this sheet — promotion to a site entry (hero/rails/distrib) stays a separate later
+decision, same as H/I; docent mode, exact LV encoding, sound, plan shape and curtain animation remain
+build-phase choices recorded above.

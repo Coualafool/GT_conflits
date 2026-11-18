@@ -345,12 +345,12 @@ document.getElementById("stage").appendChild(renderer.domElement);
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(BG);
-scene.fog = new THREE.Fog(BG, 5, 30);                 // brouillard vers le noir : les salles non atteintes s'effacent devant
+scene.fog = new THREE.Fog(BG, 6, 36);                 // brouillard vers le noir : les salles non atteintes s'effacent devant
 var cam = new THREE.PerspectiveCamera(68, innerWidth/innerHeight, .05, 60);
 cam.rotation.order = "YXZ";
 var yaw = 0, pitch = 0, pxCur = 0, pzCur = -1.6;      // arrivée : entrée de salle 1, plein couloir, neutre
 
-scene.add(new THREE.HemisphereLight(0x2b303a, 0x090a0c, 0.7));
+scene.add(new THREE.HemisphereLight(0x343b48, 0x0b0c0e, 0.95));
 var lamp = new THREE.PointLight(0xffd9a6, 14, 9, 1.6); // la lampe du visiteur remplace les projecteurs mobiles
 scene.add(lamp);
 
@@ -463,20 +463,25 @@ cases.forEach(function(v){
   var ped = new THREE.Mesh(new THREE.BoxGeometry(.66,.95,.5), mat(0x191c21)); ped.position.y=.475; g.add(ped);
   var railG = new THREE.Mesh(new THREE.BoxGeometry(.7,.028,.54), mGold); railG.position.y=1.5; g.add(railG);
   var gl = new THREE.Mesh(new THREE.BoxGeometry(.6,.52,.44), mGlass); gl.position.y=1.24; gl.renderOrder=6; g.add(gl);
-  var angs = [-.6, .1, .8];
-  PERS_KEYS.forEach(function(k, qi){
-    var tt = tex(128,96,function(x,w,h){
-      x.fillStyle="#101318"; x.fillRect(0,0,w,h);
+  /* plaque unique en façade du socle — les trois voix LISTÉES (trois plans obliques se
+     chevauchaient vus de face : idiom musée = un cartel lisible depuis le poste) */
+  var tt = tex(512,384,function(x,w,h){
+    x.fillStyle="#101318"; x.fillRect(0,0,w,h);
+    x.fillStyle="#8a93a0"; x.font="700 18px system-ui";
+    x.fillText("DÉSACCORD — TROIS RÉCITS", 16, 34);
+    var yy = 78;
+    PERS_KEYS.forEach(function(k){
       var told = lvOf(v.i,k)>0;
-      x.fillStyle = told ? LANE[k].t : "#787f89"; x.font="700 12px system-ui";
-      var lines = wrap2(x, titleOf(v.i,k), w-12, 4);
-      for (var q=0;q<lines.length;q++) x.fillText(lines[q], 6, 20+q*15);
-      x.fillStyle="#565d67"; x.font="600 10px system-ui"; x.fillText(PERS[k].short+(told?"":" · non raconté"), 6, h-8);
+      x.fillStyle = told ? LANE[k].t : "#787f89"; x.font="700 21px system-ui";
+      x.fillText(PERS[k].short + (told ? "" : " · non raconté"), 16, yy); yy += 28;
+      x.fillStyle="#ece6da"; x.font="600 20px system-ui";
+      var lines = wrap2(x, titleOf(v.i,k), w-32, 2);
+      for (var q=0;q<lines.length;q++){ x.fillText(lines[q], 26, yy); yy += 25; }
+      yy += 8;
     });
-    var pl = new THREE.Mesh(new THREE.PlaneGeometry(.34,.255), new THREE.MeshBasicMaterial({ map:tt, side:THREE.DoubleSide }));
-    pl.position.set(Math.sin(angs[qi])*.13, 1.26, Math.cos(angs[qi])*.12-.12);
-    pl.rotation.y = angs[qi]; g.add(pl);
   });
+  var pl = new THREE.Mesh(new THREE.PlaneGeometry(.56,.42), new THREE.MeshBasicMaterial({ map:tt }));
+  pl.position.set(0, .62, .2515); g.add(pl);
   v.mesh = gl; hitables.push(ped); hitables.push(gl);
   ped.userData = { kind:"case", i:v.i, room:v.room }; gl.userData = ped.userData;
 });
