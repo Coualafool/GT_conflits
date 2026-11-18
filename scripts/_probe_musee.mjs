@@ -16,6 +16,11 @@ p.on("response", r => { if (r.status() >= 400) console.log("HTTP", r.status(), r
 p.on("requestfailed", r => console.log("REQFAIL", r.url(), r.failure() && r.failure().errorText));
 await p.goto("http://localhost:8899/frise/perspective-J-musee.html", { waitUntil: "load" });
 await p.waitForTimeout(2000);
+console.log("webgl-probe:", await p.evaluate(() => {
+  const c = document.createElement("canvas");
+  const g2 = c.getContext("webgl2"), g1 = c.getContext("webgl");
+  return JSON.stringify({ g2: !!g2, g1: !!g1, rev: window.THREE && window.THREE.REVISION });
+}));
 console.log("musee=", await p.evaluate(() => !!window.__musee),
   "fallback=", await p.evaluate(() => getComputedStyle(document.getElementById("fallback")).display));
 await b.close();
