@@ -330,11 +330,12 @@ try {
   renderer = new THREE.WebGLRenderer({ antialias:true });   // pas d'antialias si le GPU logiciel plafonne les contextes
   if (!renderer.getContext()) throw new Error("no-context");
 } catch (e) {
+  window.__initErr = 'aa: ' + (e && e.message || e);
   try { if (renderer) renderer.dispose(); } catch (e2) {}
   try {
     renderer = new THREE.WebGLRenderer({ antialias:false });   // deuxième chance sans antialias
     if (!renderer.getContext()) throw new Error("no-context-aa-off");
-  } catch (e3) { fallbackOn(); return; }
+  } catch (e3) { window.__initErr = (window.__initErr||'') + ' | noaa: ' + (e3 && e3.message || e3); fallbackOn(); return; }
 }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
 renderer.setSize(innerWidth, innerHeight);
