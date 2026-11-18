@@ -63,6 +63,9 @@ body.locked #hBack{opacity:.35}   /* en marche, la souris est captif du canvas :
 #panel h2{font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
 #panel .yr{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.04em;margin:0}
 #panel .desc{color:#cfd3da;font-size:14.5px;margin:10px 0 4px}
+#panel figure.doc{margin:14px 0 12px}
+#panel figure.doc img{width:100%;height:auto;display:block;border-radius:8px;border:1px solid var(--border);background:#efe9dd}
+#panel figcaption{font-size:11.5px;color:var(--faint);margin-top:6px}
 #panel .divb{display:inline-block;margin:8px 0 0;font-size:11.5px;font-weight:700;color:#141108;background:var(--gold);border-radius:999px;padding:1px 9px}
 #panel .voix{margin:14px 0 0;border-top:1px solid var(--border);padding-top:12px}
 #panel .voix h3{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
@@ -200,6 +203,7 @@ body.locked #hBack{opacity:.35}   /* en marche, la souris est captif du canvas :
 <script src="vendor/three.bundle.js"></script>
 <script src="poc-data.js"></script>
 <script src="poc-perspectives.js"></script>
+<script src="poc-media.js"></script>
 <script>
 /* Le Musée des récits — salles 3D marchables (three.js vendorisé ; feuille de décision interne/FRISE-MUSEE-DECISIONS).
    ZÉRO donnée nouvelle : EV/LV/REN/ERAS viennent des modules partagés ; la page ne possède que la caméra.
@@ -387,6 +391,18 @@ try { MAX_ANISO = renderer.capabilities.getMaxAnisotropy(); } catch(e){}
 // max texture size 8192 ; les GPUs plafonnés à 2048 (GPU logiciel) gardent la cuisson 400.
 var PX_UNIT = (renderer.capabilities.maxTextureSize || 2048) >= 8192 ? 800 : 400;
 var K_TEX = PX_UNIT / 400;   // facteur de cuisson commun à tous les textes cuits
+
+/* documents (cartes/photos) — générés par scripts/gen_poc_media.py.
+   b64 = data-URI propres pour WebGL sous file:// (Chrome refuse les images file://) ;
+   file sert au panneau DOM en <img> relatif, à poids nul. Absence tolérée (pas de mur nu cassé). */
+var MEDIA = (typeof MUSEE_MEDIA !== "undefined" && MUSEE_MEDIA) || {};
+var MEDIA_IMG = {}, MEDIA_BAKE = {}, MEDIA_LOADED = 0, MEDIA_FAIL = 0, MEDIA_N = 0;
+Object.keys(MEDIA).forEach(function(k){ var t = MEDIA[k]; if (!t.b64) return;
+  MEDIA_N++; MEDIA_BAKE[k] = [];
+  var im = new Image();
+  im.onload = function(){ MEDIA_LOADED++; (MEDIA_BAKE[k]||[]).forEach(function(r){ r.draw(); r.t.needsUpdate = true; }); };
+  im.onerror = function(){ MEDIA_FAIL++; };
+  im.src = t.b64; MEDIA_IMG[k] = im; });
 renderer.setSize(innerWidth, innerHeight);
 document.getElementById("stage").appendChild(renderer.domElement);
 
@@ -454,8 +470,39 @@ function wrap2(ctx,text,maxW,maxL){
     else cur=tt; }
   if (cur) lines.push(cur); return lines;
 }
+function bakeDoc(x,w,h,p,med,im){   // affiche-document : en-tête du récit + pièce jointe encadrée + crédit
+  var tint = LANE[p.lane].t;
+  x.fillStyle="#221c14"; x.fillRect(0,0,w,h);
+  x.fillStyle=PERS[p.lane].c; x.fillRect(0,0,w,Math.max(6,h*.024));
+  x.fillStyle=tint; x.font="700 "+Math.round(h*.085)+"px system-ui";
+  x.fillText(yrLbl(EV[p.i][0]), w*.05, h*.135);
+  x.fillStyle="#ece6da"; x.font="600 "+Math.round(h*.072)+"px system-ui";
+  var lines = wrap2(x, titleOf(p.i,p.lane), w*.9, 2);
+  for (var q=0;q<lines.length;q++) x.fillText(lines[q], w*.05, h*.225+q*h*.09);
+  var ix=w*.05, iy=h*.30, iw=w*.9, ih=h*.585;
+  if (im && im.complete && im.naturalWidth){
+    var s=Math.min(iw/im.naturalWidth, ih/im.naturalHeight), dw=im.naturalWidth*s, dh=im.naturalHeight*s;
+    var dx=ix+(iw-dw)/2, dy=iy+(ih-dh)/2;
+    x.fillStyle="#efe9dd"; x.fillRect(dx-3,dy-3,dw+6,dh+6);   // passe-partout clair
+    x.drawImage(im,dx,dy,dw,dh);
+  } else {
+    x.strokeStyle="#5a5041"; x.setLineDash([10,8]); x.strokeRect(ix,iy,iw,ih); x.setLineDash([]);
+    x.fillStyle="#a89c8c"; x.font="600 "+Math.round(h*.05)+"px system-ui";
+    x.fillText("document en cours de chargement", ix+14, iy+ih/2);
+  }
+  var cred = med.credit; while (x.measureText(cred).width > w*.9 && cred.length > 12) cred = cred.slice(0,-2);
+  x.fillStyle="#9a8f7f"; x.font="500 "+Math.round(h*.033)+"px system-ui";
+  x.fillText(cred + (cred!==med.credit ? "…" : ""), w*.05, h*.965);
+}
 function posterTex(p){
   var wpx = Math.round(p.w*PX_UNIT), hpx = Math.round(p.h*PX_UNIT), tint = LANE[p.lane].t;
+  var med = MEDIA[p.i], im = (med && med.b64) ? MEDIA_IMG[p.i] : null;
+  if (med && med.b64){
+    var t = tex(wpx,hpx,function(x,w,h){ bakeDoc(x,w,h,p,med,im); });
+    if (im && !im.complete) MEDIA_BAKE[p.i].push({ t:t, draw:function(){
+      bakeDoc(t.image.getContext("2d"), t.image.width, t.image.height, p, med, MEDIA_IMG[p.i]); } });
+    return t;
+  }
   return tex(wpx,hpx,function(x,w,h){
     x.fillStyle="#221c14"; x.fillRect(0,0,w,h);
     x.fillStyle=PERS[p.lane].c; x.fillRect(0,0,w,Math.max(6,h*.028));
@@ -607,21 +654,24 @@ function voixBlock(i){
   return out;
 }
 function backLink(i){ var ev = EV[i]; return '<a href="../chapitres/chapitre-'+ev[4]+'-espace.html#s'+ev[5]+'">Ouvrir la séquence du kit →</a>'; }
+function figFor(i){ var m = MEDIA[i]; if (!m) return "";
+  return '<figure class="doc"><img src="../pictures/'+m.file+'" alt="'+mEsc(m.alt)+'" loading="lazy">'
+    + '<figcaption>document — '+mEsc(m.credit)+'</figcaption></figure>'; }
 function openPanel(s){
   var i = s.i, ev = EV[i], html = '<button class="x" aria-label="Fermer">×</button>';
   if (s.kind==="curtain"){
     html += '<p class="yr">Rideau du silence · '+yrLbl(ev[0])+'</p><h2>Le '+mEsc(PERS[s.lane].name.toLowerCase())+' ne raconte pas</h2>'+
       '<p class="desc">Ce que le corpus garde, et que ce récit laisse sous le rideau :</p>'+
-      '<p class="desc"><b>'+mEsc(ev[2])+'</b><br>'+mEsc(ev[3])+'</p>'+
+      '<p class="desc"><b>'+mEsc(ev[2])+'</b><br>'+mEsc(ev[3])+'</p>'+ figFor(i) +
       '<div class="voix"><h3>Pourquoi ce vide&nbsp;?</h3><p class="desc">Le rideau ne dit pas «&nbsp;faux&nbsp;» — il dit «&nbsp;ce récit n’a pas de place pour ce fait&nbsp;». Question à travailler&nbsp;: que perd un récit en se taisant&nbsp;?</p></div>';
   } else if (s.kind==="case"){
     html += '<p class="yr">Vitrine · fait à trois voix · '+yrLbl(ev[0])+'</p><h2>'+mEsc(ev[2])+'</h2>'+
-      '<p class="desc">'+mEsc(ev[3])+'</p><span class="divb">≠ des noms divergents</span>'+
+      '<p class="desc">'+mEsc(ev[3])+'</p><span class="divb">≠ des noms divergents</span>'+ figFor(i) +
       '<div class="voix"><h3>Le même fait, trois noms</h3>'+voixBlock(i)+'</div>';
   } else {
     html += '<p class="yr">'+yrLbl(ev[0])+'</p><h2>'+mEsc(ev[2])+'</h2>'+
       '<p class="desc">'+mEsc(ev[3])+'</p>'+
-      (divergent(i)?'<span class="divb">≠ les récits ne le nomment pas pareil</span>':'')+
+      (divergent(i)?'<span class="divb">≠ les récits ne le nomment pas pareil</span>':'')+ figFor(i) +
       '<div class="voix"><h3>Ce que chaque récit en fait</h3>'+voixBlock(i)+'</div>';
   }
   html += '<div class="pied">'+backLink(i)+'<br>mur&nbsp;: '+(s.kind==="case" ? "vitrine centrale (faits à trois voix)" : mEsc(PERS[s.lane].name))+'</div>';
@@ -855,7 +905,9 @@ window.__musee = {
   state: function(){ return { room:roomAt(pzCur), x:pxCur, z:pzCur, yaw:yaw, pitch:pitch,
       locked:!!document.pointerLockElement, gliding:!!glide, reduced:reduced(), panel:panelEl.__key||null,
       aa:{ msaa:!!(renderer.getContext().getContextAttributes()||{}).antialias, aniso:MAX_ANISO, pxu:PX_UNIT, maxTex:renderer.capabilities.maxTextureSize },
-      menu:menuOpen(), opts:{ sens:OPT.sens, spd:OPT.spd, inv:OPT.inv } }; },
+      menu:menuOpen(), opts:{ sens:OPT.sens, spd:OPT.spd, inv:OPT.inv },
+      media:{ docs:Object.keys(MEDIA).length, baked:MEDIA_N, loaded:MEDIA_LOADED, fail:MEDIA_FAIL } }; },
+  mediaTable: MEDIA,   // lecture harnais : inventaire des documents (clefs = index d'event)
   rooms: function(){ return ERAS.map(function(e,k){ var r = roomRange(k);
       return { k:k, label:e.label, a:e.a, b:e.b, z0:r.z0, z1:r.z1, xL:-(GEO.HALF-.09), xR:(GEO.HALF-.09) }; }); },
   posters: function(){ return posters.map(function(p){ return { i:p.i, lane:p.lane, room:p.room, x:p.x, z:p.z, y:p.y,

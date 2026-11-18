@@ -313,6 +313,31 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   log("(J12h) le HUD porte un bouton de retour vers l'index des frises : hors zone décorative, accessible au clavier, cible réelle sur le disque",
     !!hb && hb.inHud && hb.clickable && hb.tabbable && hb.href === "index-comparatif.html" && hbTarget,
     hb ? `href=${hb.href} cible=${hbTarget ? "présente" : "MANQUANTE"}` : "bouton absent");
+
+  /* J13 : documents (cartes/photos) — murs 3D en data-URI, panneau en <img> relatif */
+  let med = null;
+  for (let a = 0; a < 10; a++) { med = await page.evaluate(() => window.__musee.state().media);
+    if (med.loaded === med.baked || med.fail > 0) break; await page.waitForTimeout(400); }
+  log("(J13a) les documents cuits des murs se chargent tous (data-URI WebGL, offline-safe)",
+    med.docs >= 18 && med.baked >= 12 && med.loaded === med.baked && med.fail === 0,
+    `docs=${med.docs} baked=${med.baked} loaded=${med.loaded} fail=${med.fail}`);
+  const wallN = await page.evaluate(() => { const M = __musee.mediaTable; return __musee.posters().filter(p => M[p.i] && M[p.i].b64).length; });
+  log("(J13b) les affiches-documents sont réellement accrochées au mur (pas seulement au panneau)",
+    wallN >= 10, `posters avec document=${wallN}`);
+  const docKey = await page.evaluate(() => {
+    const M = __musee.mediaTable;
+    const s = __musee.stations().find(x => x.kind === "poster" && M[x.i] && M[x.i].b64);
+    if (s) __musee.focus(s.key); return s ? s.key : null;
+  });
+  await page.waitForTimeout(700);
+  const fig = await page.evaluate(() => {
+    const im = document.querySelector("#panel figure.doc img");
+    return im && { src: im.getAttribute("src"), alt: im.alt.length > 12,
+      ok: im.complete && im.naturalWidth > 0, cred: /document —/.test(document.querySelector("#panel figcaption").textContent) };
+  });
+  log("(J13c) le panneau joint le document avec sa légende alternative et son crédit, et l'image se charge",
+    !!fig && fig.src.startsWith("../pictures/") && fig.alt && fig.ok && fig.cred,
+    fig ? `src=${fig.src.slice(0, 42)} chargée=${fig.ok}` : "figure absente du panneau");
   await page.keyboard.press("Escape");
   await page.waitForTimeout(150);
   await page.click('#mSens button[data-k="normale"]');
