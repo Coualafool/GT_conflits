@@ -13,7 +13,8 @@ $server = Start-Process -PassThru -WindowStyle Hidden -FilePath $NODE `
 Start-Sleep 2
 
 $fail = 0
-foreach ($h in "verif_poc_A.mjs", "verif_navigateur.mjs", "verif_variantes.mjs", "verif_perspectives.mjs", "verif_tresse3d.mjs", "verif_helice.mjs") {
+$harnais = "verif_poc_A.mjs", "verif_navigateur.mjs", "verif_variantes.mjs", "verif_perspectives.mjs", "verif_tresse3d.mjs", "verif_helice.mjs", "verif_musee.mjs"
+foreach ($h in $(if ($env:VERIF_ONLY) { $env:VERIF_ONLY -split "," } else { $harnais })) {
   Write-Host "`n===== $h ====="
   & $NODE (Join-Path $ROOT "scripts\$h")
   if ($LASTEXITCODE -ne 0) { $fail = 1; Write-Host "!!! $h a echoue" }
