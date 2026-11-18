@@ -43,6 +43,12 @@ body.locked #cross{display:block}
 #badge{position:absolute;top:10px;left:10px;max-width:min(360px,60vw);background:rgba(10,12,15,.86);border:1px solid var(--gold);
   border-radius:10px;padding:7px 12px;font-size:13px;display:none}
 #badge.show{display:block}
+#hBack{position:absolute;left:86px;bottom:12px;display:flex;align-items:center;gap:7px;min-height:40px;
+  background:rgba(10,12,15,.78);border:1px solid var(--border);border-radius:10px;padding:9px 13px;
+  font:600 13px system-ui;color:var(--ink);text-decoration:none;pointer-events:auto}
+#hBack:hover,#hBack:focus-visible{border-color:var(--gold);outline:none}
+#hBack:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+body.locked #hBack{opacity:.35}   /* en marche, la souris est captif du canvas : la sortie passe par le menu Échap */
 #mini{position:absolute;left:12px;bottom:12px;width:64px;background:rgba(10,12,15,.72);border:1px solid var(--border);
   border-radius:10px;padding:6px;pointer-events:auto}
 #mini svg{display:block;width:100%;height:auto}
@@ -133,6 +139,7 @@ body.locked #cross{display:block}
   <div id="say" role="status"></div>
   <div id="badge" aria-hidden="true"></div>
   <div id="mini" aria-hidden="true"></div>
+  <a id="hBack" href="index-comparatif.html" aria-label="Retour à l’index des frises">← Les frises</a>
   <aside id="panel" aria-label="Fiche de l’observation"></aside>
 </div>
 

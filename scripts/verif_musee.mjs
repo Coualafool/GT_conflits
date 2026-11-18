@@ -301,6 +301,18 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   const gateOk = (aa.pxu === 800 && aa.maxTex >= 8192) || (aa.pxu === 400 && aa.maxTex < 8192);
   log("(J12g) anti-crénelage : MSAA demandé, anisotropie posée, et cuisson des textes calée sur la capacité du GPU (800 px/m si le texture max le permet, sinon 400)",
     aa.msaa && aa.aniso >= 4 && gateOk, `msaa=${aa.msaa} aniso=${aa.aniso} pxu=${aa.pxu} maxTex=${aa.maxTex}`);
+  const hb = await page.evaluate(() => {
+    const a = document.getElementById("hBack");
+    return a && {
+      href: a.getAttribute("href"), txt: a.textContent.trim(),
+      inHud: !!a.closest("#hud"), clickable: getComputedStyle(a).pointerEvents === "auto",
+      tabbable: (() => { a.focus(); return document.activeElement === a; })(),
+    };
+  });
+  const hbTarget = existsSync(fileURLToPath(new URL("../frise/index-comparatif.html", import.meta.url)));
+  log("(J12h) le HUD porte un bouton de retour vers l'index des frises : hors zone décorative, accessible au clavier, cible réelle sur le disque",
+    !!hb && hb.inHud && hb.clickable && hb.tabbable && hb.href === "index-comparatif.html" && hbTarget,
+    hb ? `href=${hb.href} cible=${hbTarget ? "présente" : "MANQUANTE"}` : "bouton absent");
   await page.keyboard.press("Escape");
   await page.waitForTimeout(150);
   await page.click('#mSens button[data-k="normale"]');
