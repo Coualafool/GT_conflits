@@ -324,9 +324,18 @@ for (var ck=0; ck<NROOM; ck++){ (function(k){
 var renderer;
 try {
   var probe = document.createElement("canvas");
-  if (!(probe.getContext("webgl2") || probe.getContext("webgl"))) throw new Error("no-webgl");
-  renderer = new THREE.WebGLRenderer({ antialias:true });
-} catch (e) { fallbackOn(); return; }
+  var pctx = probe.getContext("webgl2") || probe.getContext("webgl");
+  if (!pctx) throw new Error("no-webgl");
+  if (pctx.getExtension && pctx.getExtension("WEBGL_lose_context")) pctx.getExtension("WEBGL_lose_context").loseContext();
+  renderer = new THREE.WebGLRenderer({ antialias:true });   // pas d'antialias si le GPU logiciel plafonne les contextes
+  if (!renderer.getContext()) throw new Error("no-context");
+} catch (e) {
+  try { if (renderer) renderer.dispose(); } catch (e2) {}
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias:false });   // deuxième chance sans antialias
+    if (!renderer.getContext()) throw new Error("no-context-aa-off");
+  } catch (e3) { fallbackOn(); return; }
+}
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
 renderer.setSize(innerWidth, innerHeight);
 document.getElementById("stage").appendChild(renderer.domElement);
