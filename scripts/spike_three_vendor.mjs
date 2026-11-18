@@ -31,7 +31,7 @@ for (const [name, opts] of [["edge", { channel: "msedge" }], ["chromium", {}]]) 
       const ok = !!p.ok && errs.length === 0;
       if (!ok) fail = 1;
       console.log((ok ? "PASS" : "FAIL") + "  spike-" + name + "-" + b + " — " +
-        (p.err ? "err=" + p.err : `rev=${p.rev} gl=${String(p.gl).slice(0, 40)} litPx=${p.litPx} raycast=${p.raycast}`) +
+        (p.err ? "err=" + p.err : `rev=${p.rev} gl=${String(p.gl).slice(0, 40)} lit=${p.litPx} fond=${p.bgPx} raycast=${p.raycast}`) +
         (errs.length ? " pageerror=" + errs[0].slice(0, 120) : ""));
     } catch (e) {
       fail = 1;

@@ -39,6 +39,7 @@
     var glv = gl.getParameter(gl.VERSION);
 
     var scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x101216); // fond connu : un buffer zéro = rien de rendu, un fond 56 = rendu
     scene.fog = new THREE.Fog(0x101216, 4, 18);
     var cam = new THREE.PerspectiveCamera(60, 320 / 240, 0.1, 60);
     cam.position.set(0, 1.2, 4.2);
@@ -67,21 +68,24 @@
     renderer.setSize(320, 240, false);
     renderer.render(scene, cam);
 
-    // vérifie que la scène a vraiment rendu des pixels (pas un canvas noir)
-    var px = new Uint8Array(4 * 64);
-    var lit = 0;
-    [[96, 40], [40, 150]].forEach(function (p) {
-      gl.readPixels(p[0], p[1], 8, 8, gl.RGBA, gl.UNSIGNED_BYTE, px);
-      for (var i = 0; i < px.length; i += 4) if (px[i] + px[i + 1] + px[i + 2] > 90) lit++;
-    });
+    // vérifie le rendu par balayage plein cadre (insensible à la géométrie d'écran) :
+    // somme des canaux >120 = objet éclairé (cube ~190+, texte ~630) ; fond = 56 ; buffer vide = 0.
+    var W = canvas.width, H = canvas.height;
+    var buf = new Uint8Array(W * H * 4);
+    gl.readPixels(0, 0, W, H, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    var lit = 0, bg = 0;
+    for (var i = 0; i < buf.length; i += 16) { // échantillon 1 px sur 4
+      var s = buf[i] + buf[i + 1] + buf[i + 2];
+      if (s > 120) lit++; else if (s >= 40 && s <= 80) bg++;
+    }
     // + raycast (chemin station du musée)
     var rc = new THREE.Raycaster();
     rc.setFromCamera(new THREE.Vector2(0, 0), cam);
     var hit = rc.intersectObject(cube, false).length > 0;
 
-    window.__probe = { ok: lit > 12 && hit, build: b, rev: rev, gl: glv, litPx: lit, raycast: hit };
-    document.title = (lit > 12 && hit) ? "PROBE-OK" : "PROBE-BLANK";
-    document.getElementById("out").textContent = (lit > 12 && hit ? "OK " : "BLANK ") + b + " : rev " + rev + " · " + glv + " · litPx " + lit + " · raycast " + hit;
+    window.__probe = { ok: lit > 20 && bg > 800 && hit, build: b, rev: rev, gl: glv, litPx: lit, bgPx: bg, raycast: hit };
+    document.title = window.__probe.ok ? "PROBE-OK" : "PROBE-BLANK";
+    document.getElementById("out").textContent = (window.__probe.ok ? "OK " : "BLANK ") + b + " : rev " + rev + " · " + glv + " · lit " + lit + " · fond " + bg + " · raycast " + hit;
   }
 })();
 </script>
