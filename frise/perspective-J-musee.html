@@ -493,7 +493,7 @@ posters.forEach(function(p){
         new THREE.MeshBasicMaterial({ map:posterTex(p) }));
   mesh.position.set(p.x, p.y, p.z); mesh.rotation.y = p.rotY;
   scene.add(mesh);
-  var frame = new THREE.Mesh(new THREE.PlaneGeometry(p.w+.1, p.h+.1), mat(0x101216));
+  var frame = new THREE.Mesh(new THREE.PlaneGeometry(p.w+.1, p.h+.1), mat(0x19140f));
   frame.position.set(p.x, p.y, p.z); frame.rotation.y = p.rotY;
   frame.translateZ(-.02);                       // derrière l'affiche, côté mur
   scene.add(frame);
@@ -510,10 +510,10 @@ curtains.forEach(function(c){
 });
 /* vitrines : socle + verre + RAIL DORÉ (or = divergence, code de toutes les vues) + trois plaques */
 var mGold = new THREE.MeshBasicMaterial({ color:GOLD });
-var mGlass = new THREE.MeshBasicMaterial({ color:0xa8bccd, transparent:true, opacity:.1, side:THREE.DoubleSide, depthWrite:false });
+var mGlass = new THREE.MeshBasicMaterial({ color:0xe0cda6, transparent:true, opacity:.1, side:THREE.DoubleSide, depthWrite:false });
 cases.forEach(function(v){
   var g = new THREE.Group(); g.position.set(v.x, 0, v.z); scene.add(g);
-  var ped = new THREE.Mesh(new THREE.BoxGeometry(.66,.95,.5), mat(0x191c21)); ped.position.y=.475; g.add(ped);
+  var ped = new THREE.Mesh(new THREE.BoxGeometry(.66,.95,.5), mat(0x2a231a)); ped.position.y=.475; g.add(ped);
   var railG = new THREE.Mesh(new THREE.BoxGeometry(.7,.028,.54), mGold); railG.position.y=1.5; g.add(railG);
   var gl = new THREE.Mesh(new THREE.BoxGeometry(.6,.52,.44), mGlass); gl.position.y=1.24; gl.renderOrder=6; g.add(gl);
   /* plaque unique en façade du socle — les trois voix LISTÉES (trois plans obliques se
