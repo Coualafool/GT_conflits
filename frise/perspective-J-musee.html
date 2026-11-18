@@ -788,6 +788,7 @@ initialized = true;
 requestAnimationFrame(frame);
 
 } catch (err) {
+  window.__initErr = err;
   console.error(err);
   fallbackOn();
 }

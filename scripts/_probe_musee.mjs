@@ -21,6 +21,9 @@ console.log("webgl-probe:", await p.evaluate(() => {
   const g2 = c.getContext("webgl2"), g1 = c.getContext("webgl");
   return JSON.stringify({ g2: !!g2, g1: !!g1, rev: window.THREE && window.THREE.REVISION });
 }));
+console.log("initErr:", await p.evaluate(() => {
+  const e = window.__initErr; return e ? String(e.stack || e).slice(0, 600) : null;
+}));
 console.log("musee=", await p.evaluate(() => !!window.__musee),
   "fallback=", await p.evaluate(() => getComputedStyle(document.getElementById("fallback")).display));
 await b.close();
