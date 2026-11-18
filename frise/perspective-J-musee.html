@@ -376,6 +376,10 @@ try {
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
 var MAX_ANISO = 1;   // plafond d'anisotropie du contexte de rendu ; les textures construites ensuite s'y collent
 try { MAX_ANISO = renderer.capabilities.getMaxAnisotropy(); } catch(e){}
+// cuisson des textes à 800 px/unité (le double) — au-delà, les affiches heurteraient le
+// max texture size 8192 ; les GPUs plafonnés à 2048 (GPU logiciel) gardent la cuisson 400.
+var PX_UNIT = (renderer.capabilities.maxTextureSize || 2048) >= 8192 ? 800 : 400;
+var K_TEX = PX_UNIT / 400;   // facteur de cuisson commun à tous les textes cuits
 renderer.setSize(innerWidth, innerHeight);
 document.getElementById("stage").appendChild(renderer.domElement);
 
@@ -444,7 +448,7 @@ function wrap2(ctx,text,maxW,maxL){
   if (cur) lines.push(cur); return lines;
 }
 function posterTex(p){
-  var wpx = Math.round(p.w*400), hpx = Math.round(p.h*400), tint = LANE[p.lane].t;
+  var wpx = Math.round(p.w*PX_UNIT), hpx = Math.round(p.h*PX_UNIT), tint = LANE[p.lane].t;
   return tex(wpx,hpx,function(x,w,h){
     x.fillStyle="#1a1e24"; x.fillRect(0,0,w,h);
     x.fillStyle=PERS[p.lane].c; x.fillRect(0,0,w,Math.max(6,h*.028));
@@ -507,7 +511,7 @@ cases.forEach(function(v){
   var gl = new THREE.Mesh(new THREE.BoxGeometry(.6,.52,.44), mGlass); gl.position.y=1.24; gl.renderOrder=6; g.add(gl);
   /* plaque unique en façade du socle — les trois voix LISTÉES (trois plans obliques se
      chevauchaient vus de face : idiom musée = un cartel lisible depuis le poste) */
-  var tt = tex(512,384,function(x,w,h){
+  var tt = tex(512*K_TEX,384*K_TEX,function(x,w,h){
     x.fillStyle="#101318"; x.fillRect(0,0,w,h);
     x.fillStyle="#8a93a0"; x.font="700 18px system-ui";
     x.fillText("DÉSACCORD — TROIS RÉCITS", 16, 34);
@@ -531,14 +535,14 @@ cases.forEach(function(v){
    chaque couloir étiqueter son sol) — jamais un récit ne rebaptise la salle */
 for (var tk=0; tk<NROOM; tk++){
   var tera = ERAS[tk], tr = roomRange(tk);
-  labelPlane(1024,112, 4.6, tex(1024,112,function(x,w,h){
+  labelPlane(1024*K_TEX,112*K_TEX, 4.6, tex(1024*K_TEX,112*K_TEX,function(x,w,h){
     x.fillStyle="#d9d2c4"; x.font="700 50px system-ui"; x.textAlign="center";
     x.fillText(tera.label+" · "+tera.a+"–"+Math.floor(tera.b), w/2, h*.66);
   }), 0, 2.78, tk===0 ? .07 : tr.z0-.03, Math.PI);
   PERS_KEYS.forEach(function(k){
     var subs = PERS[k].eras.filter(function(e){ return e.a<tera.b && e.b>tera.a; }).map(function(e){ return e.label; });
     if (!subs.length) return;
-    var t = tex(1024,72,function(x,w,h){
+    var t = tex(1024*K_TEX,72*K_TEX,function(x,w,h){
       x.fillStyle = LANE[k].t; x.font="700 34px system-ui"; x.textAlign="center";
       x.fillText(PERS[k].short+" — "+subs.join(" · "), w/2, h*.7);
     });
@@ -843,7 +847,7 @@ welEl.addEventListener("click", function(e){ if (e.target===welEl) welEl.classLi
 window.__musee = {
   state: function(){ return { room:roomAt(pzCur), x:pxCur, z:pzCur, yaw:yaw, pitch:pitch,
       locked:!!document.pointerLockElement, gliding:!!glide, reduced:reduced(), panel:panelEl.__key||null,
-      aa:{ msaa:!!(renderer.getContext().getContextAttributes()||{}).antialias, aniso:MAX_ANISO },
+      aa:{ msaa:!!(renderer.getContext().getContextAttributes()||{}).antialias, aniso:MAX_ANISO, pxu:PX_UNIT, maxTex:renderer.capabilities.maxTextureSize },
       menu:menuOpen(), opts:{ sens:OPT.sens, spd:OPT.spd, inv:OPT.inv } }; },
   rooms: function(){ return ERAS.map(function(e,k){ var r = roomRange(k);
       return { k:k, label:e.label, a:e.a, b:e.b, z0:r.z0, z1:r.z1, xL:-(GEO.HALF-.09), xR:(GEO.HALF-.09) }; }); },

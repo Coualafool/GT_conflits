@@ -298,8 +298,9 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   log("(J12f) les options camera survivent au rechargement (localStorage)",
     persisted.sens === "rapide" && persisted.inv === "inverse", `sens=${persisted.sens} inv=${persisted.inv}`);
   const aa = await page.evaluate(() => window.__musee.state().aa);
-  log("(J12g) anti-crénelage : MSAA demandé au contexte WebGL et filtrage anisotrope posé sur les textes cuits",
-    aa.msaa && aa.aniso >= 4, `msaa=${aa.msaa} aniso=${aa.aniso}`);
+  const gateOk = (aa.pxu === 800 && aa.maxTex >= 8192) || (aa.pxu === 400 && aa.maxTex < 8192);
+  log("(J12g) anti-crénelage : MSAA demandé, anisotropie posée, et cuisson des textes calée sur la capacité du GPU (800 px/m si le texture max le permet, sinon 400)",
+    aa.msaa && aa.aniso >= 4 && gateOk, `msaa=${aa.msaa} aniso=${aa.aniso} pxu=${aa.pxu} maxTex=${aa.maxTex}`);
   await page.keyboard.press("Escape");
   await page.waitForTimeout(150);
   await page.click('#mSens button[data-k="normale"]');
