@@ -72,8 +72,8 @@ await page.waitForTimeout(1300);
     return { c, told, occ, divByRoom, laneRoomsOK, satOK, vitOK };
   });
   const { c, told, occ, laneRoomsOK, satOK, vitOK } = g;
-  const totOcc = PERS_KEYS.reduce((s, k) => s + occ[k], 0);
-  const totTold = PERS_KEYS.reduce((s, k) => s + told[k], 0);
+  const totOcc = Object.values(occ).reduce((s, v) => s + v, 0);
+  const totTold = Object.values(told).reduce((s, v) => s + v, 0);
   log("(J1) une seule source : 3 × 93 = 279 cases recomptées dans le corpus — sans exception",
     c.corpus === 93 && totTold === 279 - totOcc && c.toldSum === totTold &&
     c.told.every(t => t.n === told[t.k] && t.posters === t.n),
