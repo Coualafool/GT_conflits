@@ -191,9 +191,12 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   if (pick.vitKey) {
     await page.evaluate(k => window.__musee.focus(k), pick.vitKey);
     await settle();
-    const v = await page.evaluate(() => ({ panel: window.__musee.panel(), hit: window.__musee.rayHit(0, 0),
-      voix: [...document.querySelectorAll("#panel .voix .vx")].map(e => e.textContent) }));
-    const three = v.voix.length === 3 && PERS_KEYS.every(k => v.voix.join(" ").includes(PERS[k].name));
+    const v = await page.evaluate(() => {
+      const voix = [...document.querySelectorAll("#panel .voix .vx")].map(e => e.textContent);
+      return { panel: window.__musee.panel(), hit: window.__musee.rayHit(0, 0),
+               three: voix.length === 3 && PERS_KEYS.every(k => voix.join(" ").includes(PERS[k].name)) };
+    });
+    const three = v.three;
     log("(J4e) vitrine ouverte = les TROIS voix côte à côte dans le panneau (jamais une seule version)",
       v.panel.open && kindOfKey(v.panel.key) === "case" && three, `voix=${v.voix.length}`);
     log("(J4f) la vitrine est bien sous le viseur à son poste", v.hit && v.hit.kind === "case",
