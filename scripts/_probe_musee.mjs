@@ -24,6 +24,10 @@ console.log("webgl-probe:", await p.evaluate(() => {
 console.log("initErr:", await p.evaluate(() => {
   const e = window.__initErr; return e ? String(e.stack || e).slice(0, 600) : null;
 }));
+console.log("globals:", await p.evaluate(() => JSON.stringify({
+  three: typeof window.THREE, EV: typeof window.EV, ERAS: typeof window.ERAS,
+  lvOf: typeof window.lvOf, nTold: typeof window.nTold, PERS: typeof window.PERS,
+  scripts: document.scripts.length, musee: !!window.__musee })));
 console.log("musee=", await p.evaluate(() => !!window.__musee),
   "fallback=", await p.evaluate(() => getComputedStyle(document.getElementById("fallback")).display));
 await b.close();
