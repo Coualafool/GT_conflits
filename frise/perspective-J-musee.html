@@ -6,8 +6,8 @@
 <title>Le Musée des récits — marcher dans les trois récits</title>
 <style>
 :root{
-  --bg:#0b0d10; --card:#14171c; --ink:#ece6da; --muted:#9aa1ab; --faint:#9097a1;
-  --border:#2a2f38; --gold:#d2a63f;
+  --bg:#0f0b07; --card:#191410; --ink:#ece6da; --muted:#a59a8c; --faint:#9a9082;
+  --border:#3a3122; --gold:#d2a63f;
   --pal:#2e7d5b; --isr:#2f6f9e; --occ:#8a5a3c;
   --palT:#7ed3ab; --isrT:#8ec6ee; --occT:#e2a979;
 }
@@ -16,21 +16,21 @@ html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif;overflow:hidden}
 #stage{position:fixed;inset:0}
 #stage canvas{display:block;width:100%;height:100%}
-.skip{position:absolute;left:-9999px;z-index:60;background:#0b0d10;color:var(--ink);padding:10px 16px;border:1px solid var(--gold)}
+.skip{position:absolute;left:-9999px;z-index:60;background:var(--bg);color:var(--ink);padding:10px 16px;border:1px solid var(--gold)}
 .skip:focus{left:8px;top:8px}
 /* ---- HUD ---- */
 #hud{position:fixed;inset:0;pointer-events:none;z-index:20}
-#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 58%,rgba(4,5,7,.55) 100%)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 58%,rgba(10,7,4,.55) 100%)}
 #cross{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;
-  background:rgba(236,230,218,.75);box-shadow:0 0 0 2px rgba(4,5,7,.5);display:none}
+  background:rgba(236,230,218,.75);box-shadow:0 0 0 2px rgba(10,7,4,.5);display:none}
 body.locked #cross{display:block}
 #afford{position:absolute;left:50%;top:calc(50% + 26px);transform:translateX(-50%);max-width:min(560px,86vw);
-  background:rgba(10,12,15,.86);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:13.5px;color:var(--ink);display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#afford kbd{background:#20242c;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace;color:var(--gold)}
+  background:rgba(16,12,8,.86);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:13.5px;color:var(--ink);display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#afford kbd{background:#2a221a;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace;color:var(--gold)}
 /* ---- navigateur de salles (lignée variante C) + minimap ---- */
 #nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;max-width:min(1100px,94vw);
-  overflow-x:auto;padding:4px;background:rgba(10,12,15,.78);border:1px solid var(--border);border-radius:12px;pointer-events:auto;scrollbar-width:none}
-#nav button{flex:0 0 auto;background:#171b21;color:var(--muted);border:1px solid transparent;border-radius:8px;
+  overflow-x:auto;padding:4px;background:rgba(16,12,8,.78);border:1px solid var(--border);border-radius:12px;pointer-events:auto;scrollbar-width:none}
+#nav button{flex:0 0 auto;background:#1e1812;color:var(--muted);border:1px solid transparent;border-radius:8px;
   padding:5px 11px;font:600 12.5px system-ui;cursor:pointer;text-align:left}
 #nav button b{display:block;color:var(--ink);font-size:12px;font-weight:700}
 #nav button[aria-current="true"]{border-color:var(--gold)}
@@ -38,25 +38,25 @@ body.locked #cross{display:block}
 #nav button:hover,#nav button:focus-visible{border-color:var(--muted);outline:none}
 #nav button:focus-visible{box-shadow:0 0 0 2px var(--gold)}
 #say{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);
-  background:rgba(10,12,15,.7);border-radius:8px;padding:2px 10px;opacity:0;transition:opacity .3s}
+  background:rgba(16,12,8,.7);border-radius:8px;padding:2px 10px;opacity:0;transition:opacity .3s}
 #say.show{opacity:1}
-#badge{position:absolute;top:10px;left:10px;max-width:min(360px,60vw);background:rgba(10,12,15,.86);border:1px solid var(--gold);
+#badge{position:absolute;top:10px;left:10px;max-width:min(360px,60vw);background:rgba(16,12,8,.86);border:1px solid var(--gold);
   border-radius:10px;padding:7px 12px;font-size:13px;display:none}
 #badge.show{display:block}
 #hBack{position:absolute;left:86px;bottom:12px;display:flex;align-items:center;gap:7px;min-height:40px;
-  background:rgba(10,12,15,.78);border:1px solid var(--border);border-radius:10px;padding:9px 13px;
+  background:rgba(16,12,8,.78);border:1px solid var(--border);border-radius:10px;padding:9px 13px;
   font:600 13px system-ui;color:var(--ink);text-decoration:none;pointer-events:auto}
 #hBack:hover,#hBack:focus-visible{border-color:var(--gold);outline:none}
 #hBack:focus-visible{box-shadow:0 0 0 2px var(--gold)}
 body.locked #hBack{opacity:.35}   /* en marche, la souris est captif du canvas : la sortie passe par le menu Échap */
-#mini{position:absolute;left:12px;bottom:12px;width:64px;background:rgba(10,12,15,.72);border:1px solid var(--border);
+#mini{position:absolute;left:12px;bottom:12px;width:64px;background:rgba(16,12,8,.72);border:1px solid var(--border);
   border-radius:10px;padding:6px;pointer-events:auto}
 #mini svg{display:block;width:100%;height:auto}
-#mini .rm{fill:#171b21;stroke:#2a2f38;stroke-width:1.4;cursor:pointer}
+#mini .rm{fill:#1e1812;stroke:#3a3122;stroke-width:1.4;cursor:pointer}
 #mini .rm:hover{stroke:var(--muted)}
 #mini .cam{fill:var(--gold)}
 /* ---- panneau (doctrine héritée de H) ---- */
-#panel{position:absolute;top:0;right:0;width:min(400px,92vw);height:100%;background:rgba(13,15,19,.97);
+#panel{position:absolute;top:0;right:0;width:min(400px,92vw);height:100%;background:rgba(20,15,10,.97);
   border-left:1px solid var(--border);padding:22px 22px 40px;overflow-y:auto;pointer-events:auto;
   transform:translateX(103%);transition:transform .22s ease}
 #panel.open{transform:none}
@@ -87,24 +87,24 @@ body.locked #hBack{opacity:.35}   /* en marche, la souris est captif du canvas :
    (le canevas 3D ne peut pas porter l'outline DOM ; le harnais vérifie badge+panneau à chaque focus) */
 #stations button:focus{outline:none}
 /* ---- accueil / aide ---- */
-#menu{position:fixed;inset:0;z-index:60;background:rgba(8,9,12,.86);display:none;align-items:center;justify-content:center;pointer-events:auto}
+#menu{position:fixed;inset:0;z-index:60;background:rgba(12,8,5,.86);display:none;align-items:center;justify-content:center;pointer-events:auto}
 #menu.open{display:flex}
-#menu .box{max-width:460px;margin:24px;background:#14171c;border:1px solid var(--border);border-radius:18px;padding:24px 28px;overflow-y:auto;max-height:92vh}
+#menu .box{max-width:460px;margin:24px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 28px;overflow-y:auto;max-height:92vh}
 #menu h2{margin:0 0 16px;font-size:20px;letter-spacing:-.01em}
 #menu .grp{margin:0 0 16px}
 #menu .grp>b{display:block;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
 #menu .seg{display:flex;gap:6px;flex-wrap:wrap}
-#menu .seg button{background:#171b21;border:1px solid var(--border);border-radius:9px;color:var(--muted);font:inherit;font-size:13px;padding:7px 14px;cursor:pointer}
+#menu .seg button{background:#1e1812;border:1px solid var(--border);border-radius:9px;color:var(--muted);font:inherit;font-size:13px;padding:7px 14px;cursor:pointer}
 #menu .seg button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
 #menu .seg button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--gold)}
 #menu .act{display:flex;flex-direction:column;gap:9px;margin-top:20px}
 #menu .act a,#menu .act button{display:block;text-align:center;text-decoration:none;font:inherit;font-size:14px;font-weight:600;border-radius:11px;padding:11px 16px;cursor:pointer}
-#menu .act .go{background:var(--gold);color:#0b0d10;border:1px solid var(--gold)}
+#menu .act .go{background:var(--gold);color:#14110a;border:1px solid var(--gold)}
 #menu .act .out{background:transparent;color:var(--muted);border:1px solid var(--border)}
 #menu .act a:hover,#menu .act button:hover,#menu .act a:focus-visible,#menu .act button:focus-visible{border-color:var(--gold);outline:none}
-#welcome{position:fixed;inset:0;z-index:50;background:rgba(8,9,12,.92);display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#welcome{position:fixed;inset:0;z-index:50;background:rgba(12,8,5,.92);display:flex;align-items:center;justify-content:center;pointer-events:auto}
 #welcome.gone{display:none}
-#welcome .box{max-width:660px;margin:24px;background:#14171c;border:1px solid var(--border);border-radius:18px;padding:26px 30px;overflow-y:auto;max-height:92vh}
+#welcome .box{max-width:660px;margin:24px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px 30px;overflow-y:auto;max-height:92vh}
 #welcome h1{margin:0 0 4px;font-size:24px;letter-spacing:-.01em}
 #welcome .lead{color:var(--muted);font-size:14.5px;margin:0 0 14px}
 #welcome .gram{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
@@ -115,9 +115,9 @@ body.locked #hBack{opacity:.35}   /* en marche, la souris est captif du canvas :
 #welcome .go{background:var(--gold);color:#141108;border:0}
 #welcome .alt{background:#1c2029;color:var(--ink);border:1px solid var(--border)}
 #welcome .rm{margin:14px 0 0;font-size:12.5px;color:var(--faint)}
-#welcome kbd{background:#20242c;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace}
+#welcome kbd{background:#2a221a;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace}
 /* ---- défaut : la 3D n'est jamais la seule porte ---- */
-#fallback{position:fixed;inset:0;z-index:70;background:#0b0d10;display:none;align-items:center;justify-content:center;text-align:center}
+#fallback{position:fixed;inset:0;z-index:70;background:var(--bg);display:none;align-items:center;justify-content:center;text-align:center}
 #fallback .box{max-width:520px;padding:30px}
 #fallback h2{margin-top:0}
 #fallback a{color:var(--gold);font-size:17px}
@@ -223,7 +223,7 @@ var FARZ = -(NROOM-1)*STEP - GEO.DEPTH - GEO.PART;    // paroi du fond du musée
 /* ---------- couleurs des couloirs (teintes claires pour le sombre du musée) ---------- */
 var LANE = { pal:{t:"#7ed3ab"}, isr:{t:"#8ec6ee"}, occ:{t:"#e2a979"} };
 var GOLD = "#d2a63f";
-var WALLC = 0x232730, PARTC = 0x262a33, FLOORC = 0x14161a, CEILC = 0x0d0f12, BG = 0x0b0d10;
+var WALLC = 0x2d2820, PARTC = 0x322c24, FLOORC = 0x1a1611, CEILC = 0x120e0a, BG = 0x0f0b07;
 
 /* ---------- helpers locaux (aucun nom partagé avec les modules de données) ---------- */
 function mClamp(v,a,b){ return v<a?a:(v>b?b:v); }
@@ -397,8 +397,8 @@ var cam = new THREE.PerspectiveCamera(68, innerWidth/innerHeight, .05, 60);
 cam.rotation.order = "YXZ";
 var yaw = 0, pitch = 0, pxCur = 0, pzCur = -1.6;      // arrivée : entrée de salle 1, plein couloir, neutre
 
-scene.add(new THREE.HemisphereLight(0x475063, 0x1a1d22, 1.5));
-var lamp = new THREE.PointLight(0xffd9a6, 20, 12, 1.6); // la lampe du visiteur remplace les projecteurs mobiles
+scene.add(new THREE.HemisphereLight(0x5c4c38, 0x231b12, 1.5));
+var lamp = new THREE.PointLight(0xffcf94, 20, 12, 1.6); // la lampe du visiteur remplace les projecteurs mobiles
 scene.add(lamp);
 
 function mat(c){ return new THREE.MeshLambertMaterial({ color:c }); }
@@ -428,11 +428,11 @@ for (var fk=0; fk<NROOM; fk++){
   rail(.07, GEO.DEPTH-.8,  GEO.HALF-.22, (fr.z0+fr.z1)/2, 0x1d4768);
   rail(2*GEO.HALF-1.4, .07, 0, fr.z1+.22, 0x6b442a);
   box(7, .03, .34, 0, GEO.WALLH-.02, (fr.z0+fr.z1)/2, new THREE.MeshBasicMaterial({ color:0x3a3529 }));  // bandeau « cuit »
-  var sp = new THREE.SpotLight(0xffd8a8, 46, 15, .8, .55, 1.6);
+  var sp = new THREE.SpotLight(0xffd296, 46, 15, .8, .55, 1.6);
   sp.position.set(0, GEO.WALLH-.1, (fr.z0+fr.z1)/2 + 2.2);
   sp.target.position.set(0, .8, (fr.z0+fr.z1)/2 + 1.6);
   scene.add(sp); scene.add(sp.target);
-  var pm = new THREE.PointLight(0xf3e2c2, 10, 11, 1.5);   // plafond chaud : les murs latéraux se lisent à mi-salle
+  var pm = new THREE.PointLight(0xf6d9a4, 10, 11, 1.5);   // plafond chaud : les murs latéraux se lisent à mi-salle
   pm.position.set(0, GEO.WALLH-.25, (fr.z0+fr.z1)/2); scene.add(pm);
 }
 
@@ -457,7 +457,7 @@ function wrap2(ctx,text,maxW,maxL){
 function posterTex(p){
   var wpx = Math.round(p.w*PX_UNIT), hpx = Math.round(p.h*PX_UNIT), tint = LANE[p.lane].t;
   return tex(wpx,hpx,function(x,w,h){
-    x.fillStyle="#1a1e24"; x.fillRect(0,0,w,h);
+    x.fillStyle="#221c14"; x.fillRect(0,0,w,h);
     x.fillStyle=PERS[p.lane].c; x.fillRect(0,0,w,Math.max(6,h*.028));
     x.fillStyle=tint; x.font="700 "+Math.round(h*.13)+"px system-ui";
     x.fillText(yrLbl(EV[p.i][0]), w*.06, h*.22);
@@ -469,7 +469,7 @@ function posterTex(p){
 function curtainTex(c){
   var tint = LANE[c.lane].t;
   return tex(192,448,function(x,w,h){
-    x.fillStyle="#15171b"; x.fillRect(0,0,w,h);
+    x.fillStyle="#1c1712"; x.fillRect(0,0,w,h);
     for (var f=0; f<6; f++){ var g=x.createLinearGradient(f*w/6,0,(f+1)*w/6,0);
       g.addColorStop(0,"#0e1013"); g.addColorStop(.5,"#1f232a"); g.addColorStop(1,"#0e1013");
       x.fillStyle=g; x.fillRect(f*w/6,0,w/6,h); }
@@ -519,8 +519,8 @@ cases.forEach(function(v){
   /* plaque unique en façade du socle — les trois voix LISTÉES (trois plans obliques se
      chevauchaient vus de face : idiom musée = un cartel lisible depuis le poste) */
   var tt = tex(512*K_TEX,384*K_TEX,function(x,w,h){
-    x.fillStyle="#101318"; x.fillRect(0,0,w,h);
-    x.fillStyle="#8a93a0"; x.font="700 18px system-ui";
+    x.fillStyle="#17130e"; x.fillRect(0,0,w,h);
+    x.fillStyle="#a89c8c"; x.font="700 18px system-ui";
     x.fillText("DÉSACCORD — TROIS RÉCITS", 16, 34);
     var yy = 78;
     PERS_KEYS.forEach(function(k){
