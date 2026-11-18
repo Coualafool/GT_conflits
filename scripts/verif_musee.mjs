@@ -5,7 +5,7 @@
 // S'appuie sur window.__musee (API de harnais de la page) et sur les globaux poc-data/poc-perspectives.
 // Exits 0 if every check passes; prints a PASS/FAIL RESULTS block to paste back.
 import { createRequire } from "module";
-import { mkdirSync } from "fs";
+import { mkdirSync, existsSync } from "fs";
 import { fileURLToPath } from "url";
 let chromium;
 try { chromium = createRequire(import.meta.url)("playwright").chromium; }
@@ -247,8 +247,62 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
     kb.panel.open && kb.panel.key === midKey && kb.inStations, `panneau=${kindOfKey(kb.panel.key)}`);
   await page.keyboard.press("Escape");
   await page.waitForTimeout(250);
-  const esc = await page.evaluate(() => !window.__musee.panel().open);
-  log("(J6c) Échap referme le panneau", esc, "");
+  const esc = await page.evaluate(() => ({ closed: !window.__musee.panel().open, menuClosed: !window.__musee.state().menu }));
+  log("(J6c) Échap referme le panneau (et n'ouvre PAS le menu quand un panneau était ouvert)", esc.closed && esc.menuClosed, "");
+
+  /* J12 : menu Échap — options caméra + sortie vers l'accueil du kit */
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(250);
+  const m1 = await page.evaluate(() => ({
+    menu: window.__musee.state().menu,
+    focus: document.activeElement && document.activeElement.id,
+    dialog: !!document.querySelector('#menu[role="dialog"][aria-modal="true"]'),
+    pressed: [...document.querySelectorAll("#mSens button")].filter(b => b.getAttribute("aria-pressed") === "true").length,
+  }));
+  log("(J12a) Échap hors panneau ouvre le menu : boîte de dialogue modale, focus posé, option active marquée",
+    m1.menu && m1.focus === "mResume" && m1.dialog && m1.pressed === 1, `focus=${m1.focus} aria-pressed=${m1.pressed}`);
+  const yawDelta = (s) => page.evaluate((sens) => {
+    const y0 = window.__musee.state().yaw;
+    window.__musee.nudgeLook(200, 0);
+    return Math.abs(window.__musee.state().yaw - y0);
+  }, s);
+  await page.click('#mSens button[data-k="douce"]'); await page.waitForTimeout(80);
+  const dDouce = await yawDelta();
+  const optsMid = await page.evaluate(() => window.__musee.state().opts);
+  await page.click('#mSens button[data-k="rapide"]'); await page.waitForTimeout(80);
+  const dRapide = await yawDelta();
+  log("(J12b) l'option de sensibilité règle réellement le regard (douce < normale < rapide)",
+    optsMid.sens === "douce" && dDouce > 0 && dRapide > dDouce * 1.8, `douce=${dDouce.toFixed(3)} rapide=${dRapide.toFixed(3)}`);
+  await page.click('#mInv button[data-k="inverse"]'); await page.waitForTimeout(80);
+  const inv = await page.evaluate(() => {
+    const p0 = window.__musee.state().pitch;
+    window.__musee.nudgeLook(0, -100);
+    return { inv: window.__musee.state().opts.inv, d: window.__musee.state().pitch - p0 };
+  });
+  log("(J12c) regard inversé : la souris vers le haut baisse désormais la vue", inv.inv === "inverse" && inv.d < 0, `Δpitch=${inv.d.toFixed(3)}`);
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(250);
+  const m2 = await page.evaluate(() => window.__musee.state().menu);
+  log("(J12d) Échap (ou Reprendre) referme le menu sur la visite", m2 === false, "");
+  const home = await page.evaluate(() => {
+    const a = document.getElementById("mHome");
+    return { href: a.getAttribute("href"), txt: a.textContent.toLowerCase() };
+  });
+  const fsOk = existsSync(fileURLToPath(new URL("../index.html", import.meta.url)));
+  log("(J12e) le menu mène hors du musée : lien « accueil du kit » dont la cible existe sur le disque",
+    home.href === "../index.html" && /accueil/.test(home.txt) && fsOk, `href=${home.href} cible=${fsOk ? "présente" : "MANQUANTE"}`);
+  await page.reload({ waitUntil: "load" });
+  await page.waitForTimeout(900);
+  await page.evaluate(() => { document.getElementById("welcome").classList.add("gone"); });
+  const persisted = await page.evaluate(() => window.__musee.state().opts);
+  log("(J12f) les options camera survivent au rechargement (localStorage)",
+    persisted.sens === "rapide" && persisted.inv === "inverse", `sens=${persisted.sens} inv=${persisted.inv}`);
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(150);
+  await page.click('#mSens button[data-k="normale"]');
+  await page.click('#mInv button[data-k="normal"]');
+  await page.click("#mResume");
+  await page.waitForTimeout(150);
 }
 
 /* ---------- J7 : « prefers-reduced-motion » — instantané, jamais verrouillé ---------- */
