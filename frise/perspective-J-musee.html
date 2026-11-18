@@ -163,7 +163,7 @@ body.locked #cross{display:block}
    Conventions harnais : API window.__musee (postes, inventaires, caméra, raycast). */
 "use strict";
 function fallbackOn(){ document.getElementById("fallback").style.display="flex"; document.getElementById("welcome").classList.add("gone"); }
-if (!window.THREE || !window.EV) { fallbackOn(); }
+if (!window.THREE || typeof EV === "undefined" || typeof PERS_KEYS === "undefined") { fallbackOn(); }
 else (function(){
 try {
 

@@ -26,6 +26,9 @@ const shot = async (name) => {
   await page.evaluate(() => document.getElementById("welcome").classList.add("gone"));
   await page.waitForTimeout(650); await page.screenshot({ path: ART + name + ".png", timeout: 90000 });
 };
+await page.addInitScript(() => {   // les corpus sont en const (portée lexicale) : les exposer sur window pour page.evaluate
+  Object.defineProperty(window, "__corpusOnWindow", { value: true });
+});
 const settle = async () => { await page.waitForFunction(() => !window.__musee.state().gliding, null, { timeout: 20000 }).catch(() => {}); await page.waitForTimeout(150); };
 const kindOfKey = k => k ? ({ p: "poster", c: "curtain", v: "case" })[k[0]] : null;
 
