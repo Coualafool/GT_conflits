@@ -84,8 +84,10 @@
   dans la semaine. Les modifications de fond (contenu des chapitres, cartes, affichage) sont en tête&nbsp;;
   l&rsquo;ordinaire purement technique est replié. <b>Les libellés d&rsquo;origine sont conservés</b> (journal de travail).</p>
   <details class="mo" open>
-    <summary>novembre 2026<span class="cnt">158 modifications</span></summary>
+    <summary>novembre 2026<span class="cnt">162 modifications</span></summary>
     <ul class="log">
+      <li><span class="tag">🗺️ Cartes & images</span>harmonisation chiffres (sources les plus récentes) — bilan après cessez-le-feu unifié à ~1 600 (MoH via OCHA, 13/11/2026 ; 1 076 vérifiés ONU jusqu'à fin juillet, remplace 1 400+/1 450/~1 500) ; vetos US ~50 (51 à fin 2026, Security Council Report) aligné ch1-ch7, carte 40+→50+ ; Gaza ~55 % détruit sur 82 % endommagés ou détruits (UNOSAT juin 2026) ; réfugiés ~5,9 M enregistrés UNRWA (2026) en ch2<code class="sha">dfef92e</code></li>
+      <li><span class="tag">🗺️ Cartes & images</span>docs(nouveautés) : régénération via make_changelog.py — 8 entrées cartes chiffres (ch4-11) du 20 novembre + date de pied<code class="sha">474f5bb</code></li>
       <li><span class="tag">🗺️ Cartes & images</span>feat(chapitre 11) : cartes chiffres d'Agir — ~29 % UE, 0 suspension, 12 sanctions belges, 180+ ALLMEP + CSS .stats<code class="sha">b692da3</code></li>
       <li><span class="tag">🗺️ Cartes & images</span>feat(chapitre 10) : cartes chiffres des processus de paix — ~10 tentatives, 20 points, 13–0, ~30 pays + CSS .stats<code class="sha">675a233</code></li>
       <li><span class="tag">🗺️ Cartes & images</span>feat(chapitre 9) : cartes chiffres des points durs — ~5,9 M réfugiés, 700 000+ colons, 22 %, 200 000+, ~10 % mur + CSS .stats<code class="sha">d2dc418</code></li>
@@ -186,8 +188,10 @@
       <li><span class="tag">🖨️ Affichage & impression</span>Print stylesheet + auto-open accordions on print, injected in all 24 pages<code class="sha">8aba4f0</code></li>
       <li><span class="tag">🗺️ Cartes & images</span>ch1: carte muette exercise links to visual answer keys (OTAN s2, BRICS+ s4)<code class="sha">436cba9</code></li>
     </ul>
-    <details><summary style="cursor:pointer;padding:4px 18px 10px;color:var(--faint);font-size:13px">Coulisses techniques (59)</summary>
+    <details><summary style="cursor:pointer;padding:4px 18px 10px;color:var(--faint);font-size:13px">Coulisses techniques (61)</summary>
     <ul class="log">
+      <li class="coul">chore(glossaire) : UNRWA — « près de 6 millions » (5,9 M enregistrés, source 2026) dans blocs_glossaire.py + re-run inject_common (20 pages)<code class="sha">997b9c2</code></li>
+      <li class="coul">chore(inject) : dates de pied recalées au 20/11 sur les 38 autres pages (re-run inject_common après régénération du journal)<code class="sha">3e0e8e9</code></li>
       <li class="coul">docs(frise·musée J) : feuille de décision alignée sur la batterie fraîche de TARS — 42 checks (J12a–h, J13a–h docs inclus), 163 PASS / 0 FAIL le 2026-11-18, vérification d'intégration des documents formellement close<code class="sha">3b2f5ba</code></li>
       <li class="coul">design(frise·musée J) : fin des îles froides — vitrine ambre (vernis chaud, socle brun), cadre d'affiche brun profond<code class="sha">3966eef</code></li>
       <li class="coul">design(frise·musée J) : ambiance « archive chaude » — le bleu noir devient brun profond<code class="sha">b8e7b29</code></li>
