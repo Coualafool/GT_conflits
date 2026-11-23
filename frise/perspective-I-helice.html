@@ -34,6 +34,7 @@ header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:1
 #keyrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 #keyrow .keyk{display:inline-flex;align-items:center;gap:7px;font:600 12px system-ui,sans-serif;color:var(--ink);
   background:var(--card);border:1px solid var(--border);border-left:5px solid var(--kc);border-radius:8px;padding:3px 10px}
+#keyrow .keyk i{width:9px;height:9px;border-radius:3px;background:var(--kc);flex:none}
 #keyrow .keyk em{font-style:normal;color:var(--muted);font-weight:500}
 /* ——— la scène : un document qui coule ; la tresse est au centre ——— */
 #stagewrap{flex:1;min-height:0;position:relative}
@@ -125,9 +126,9 @@ header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:1
   <h1><span class="badgeI">Variante I</span>L'Hélice des récits — la tresse déroulée</h1>
   <p class="sub">Le temps coule de haut en bas ; chaque récit est un brin tressé autour de lui — aucun brin au centre. Le lien qui traverse la tresse relie les versions d'un même fait, doré quand les récits ne le nomment pas pareil. Un cercle pointillé sur un brin : un fait que ce récit se tait.</p>
   <div id="keyrow" aria-label="Couleurs des trois récits">
-    <span class="keyk" style="--kc:var(--pal)">Récit palestinien <em id="key-pal"></em></span>
-    <span class="keyk" style="--kc:var(--isr)">Récit israélien <em id="key-isr"></em></span>
-    <span class="keyk" style="--kc:var(--occ)">Vue occidentale <em id="key-occ"></em></span>
+    <span class="keyk" style="--kc:var(--pal)"><i></i>Récit palestinien <em id="key-pal"></em></span>
+    <span class="keyk" style="--kc:var(--isr)"><i></i>Récit israélien <em id="key-isr"></em></span>
+    <span class="keyk" style="--kc:var(--occ)"><i></i>Vue occidentale <em id="key-occ"></em></span>
   </div>
   <div id="ctl" role="group" aria-label="Commandes">
     <button id="nowBtn">Maintenant</button>
@@ -226,7 +227,7 @@ function build(){
       d+=(d?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);
     }
     const w=L.mobile?7:10;
-    inner+='<g class="grp strand"><path d="'+d+'" fill="none" stroke="var(--bg)" stroke-width="'+(w+5)+'" stroke-linecap="round" opacity=".95"/>'+
+    inner+='<g class="grp strand"><path d="'+d+'" fill="none" stroke="var(--bg)" stroke-width="'+(w+5)+'" stroke-linecap="round" opacity="1"/>'+
       '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+w+'" stroke-linecap="round" opacity=".55"/>'+
       '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+(w-4)+'" stroke-linecap="round" opacity=".95"/></g>';
   }
@@ -282,8 +283,10 @@ function build(){
     if(items.length>1){
       const xs=items.map(it=>it.nx), x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
       const dv=divergent(i);
+      /* halo crème sous le lien : il se détache nettement des brins qu'il traverse */
+      g+='<line x1="'+x0.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+x1.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="var(--bg)" stroke-width="11" stroke-linecap="round" opacity=".9"/>';
       g+='<line class="rung'+(dv?" div":"")+'" data-i="'+i+'" x1="'+x0.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+x1.toFixed(1)+'" y2="'+y.toFixed(1)+
-        '" stroke="'+(dv?"#7c5410":"#6f6547")+'" stroke-width="'+(dv?3.6:3)+'" stroke-linecap="round" opacity="'+(dv?.95:.55)+'"/>';
+        '" stroke="'+(dv?"#8f6412":"#6f6547")+'" stroke-width="'+(dv?4.2:3.2)+'" stroke-linecap="round" opacity="'+(dv?1:.6)+'"/>';
     }
     for(const it of items){
       g+='<circle class="node" data-i="'+i+'" data-k="'+it.k+'" cx="'+it.nx.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(it.l>=2?6:4.5)+
@@ -379,7 +382,7 @@ function setLit(i,on){
   $("#canvas").classList.toggle("dim",on);
   document.querySelectorAll('[data-i="'+i+'"]').forEach(el=>{
     el.classList.toggle("lit",on);
-    if(el.classList.contains("rung"))el.setAttribute("stroke-width",on?6:(el.classList.contains("div")?3.6:3));
+    if(el.classList.contains("rung"))el.setAttribute("stroke-width",on?6:(el.classList.contains("div")?4.2:3.2));
     const g=el.closest?el.closest(".grp"):null;
     if(g)g.classList.toggle("lit",on);
   });
