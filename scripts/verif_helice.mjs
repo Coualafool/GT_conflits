@@ -35,7 +35,7 @@ const stab = async () => { await page.waitForTimeout(400); };
 /* recouvrements de cartes dans le viewport — la cause de mort de l'ancienne vue, numérisée */
 const OVERLAP_FN = `(() => {
   const vh = document.querySelector("#scene").getBoundingClientRect();
-  const rs = [...document.querySelectorAll(".c3")].map(c => c.getBoundingClientRect()).filter(r => r.bottom > 0 && r.top < vh.height);
+  const rs = [...document.querySelectorAll(".c3")].map(c => c.getBoundingClientRect()).filter(r => r.bottom > vh.top && r.top < vh.bottom);
   let bad = 0;
   for (let a = 0; a < rs.length; a++) for (let b = a + 1; b < rs.length; b++) {
     const x = Math.min(rs[a].right, rs[b].right) - Math.max(rs[a].left, rs[b].left);
@@ -53,7 +53,7 @@ await stab();
     let cells = 0, sils = 0, rungs = 0;
     for (let i = 0; i < EV.length; i++) {
       const n = PERS_KEYS.filter(k => lvOf(i, k) > 0).length;
-      cells += n; sils += 3 - n; rungs += n * (n - 1) / 2;
+      cells += n; sils += 3 - n; rungs += n >= 2 ? 1 : 0;   // un seul lien horizontal par fait
     }
     return {
       cells, sils, rungs,
@@ -64,7 +64,7 @@ await stab();
       lanes: PERS_KEYS.map(k => nTold(k)),
     };
   });
-  log("(T0) tresse complète : une carte par récit narrateur, un pointillé par silence, un lien par paire",
+  log("(T0) tresse complète : une carte par récit narrateur, un pointillé par silence, un lien par fait",
     exp.cells === exp.gotCells && exp.sils === exp.gotSils && exp.rungs === exp.gotRungs && exp.ribbons === 3,
     `attendus cartes=${exp.cells} silences=${exp.sils} liens=${exp.rungs} rubans=3 / obtenus ${exp.gotCells}/${exp.gotSils}/${exp.gotRungs}/${exp.ribbons} · ${exp.lanes}`);
   await shot("I-default");
@@ -103,7 +103,7 @@ await stab();
     let full = 0, tiny = 0, minW = 1e9, seen = 0;
     for (const c of cards) {
       const r = c.getBoundingClientRect();
-      if (r.right > 0 && r.left < vh.width && r.bottom > 0 && r.top < vh.height) {
+      if (r.bottom > vh.top && r.top < vh.bottom && r.right > 0 && r.left < vh.width) {
         seen++; minW = Math.min(minW, r.width);
         if (r.width < 180) tiny++;
       }
@@ -166,7 +166,7 @@ await stab();
     return { total: rungs.length, lit, thick, dimmed, off };
   });
   log("(T3) survol : le groupe du fait s'allume (lit + lien épaissi + voile), puis s'éteint",
-    hl.total === 3 && hl.lit >= 7 && hl.thick === 3 && hl.dimmed && hl.off === 0, JSON.stringify(hl));
+    hl.total === 1 && hl.lit >= 9 && hl.thick === 1 && hl.dimmed && hl.off === 0, JSON.stringify(hl));
 }
 
 /* ---------- T4 : panneau — fait neutre d'abord, toutes les versions, back-link kit exact ---------- */
@@ -191,7 +191,7 @@ await stab();
     t.open && t.nt === t.ev[2] && t.desc > 40 && t.rows === 3 && t.href === expHref &&
     new Set(t.titles).size > 1 && t.litWhileOpen,
     `idx=${t.idx} « ${t.nt.slice(0, 34)}… » lignes=${t.rows} href=${t.href} lit=${t.litWhileOpen}`);
-  log("(T4b) fait divergent raconté par les trois récits : ses 3 liens sont dorés", t.gold === 3, `dorées=${t.gold}/3`);
+  log("(T4b) fait divergent raconté par les trois récits : son lien traverse la tresse en doré", t.gold === 1, `doré=${t.gold}/1`);
   await shot("I-panel");
   await page.keyboard.press("Escape"); await page.waitForTimeout(300);
   const closed = await page.$eval("#panel", p => !p.classList.contains("open"));
@@ -243,28 +243,28 @@ await stab();
     }
     return bv;
   });
-  log("(T6) « Maintenant » (bouton puis touche n) centre la vue sur le dernier événement",
-    Math.abs(near - 2026.3) < 2 && Math.abs(near2 - 2026.3) < 2, `carte-centre ≈ ${near.toFixed(1)} puis ${near2.toFixed(1)} (attendu ≈ 2026.3)`);
+  log("(T6) « Maintenant » (bouton puis touche n) centre la vue sur le dernier événement (±2,5 ans : les cartes empilées décalent le centre de rangée)",
+    Math.abs(near - 2026.3) < 2.5 && Math.abs(near2 - 2026.3) < 2.5, `carte-centre ≈ ${near.toFixed(1)} puis ${near2.toFixed(1)} (attendu ≈ 2026.3)`);
 }
 
 /* ---------- T7 : badge-année vivant + minimap synchronisée (le point aveugle de l'I 3D) ---------- */
 {
   const moved = await page.evaluate(() => {
     const sc = document.querySelector("#scene");
-    sc.scrollTop = window.__row(50).y - sc.clientHeight / 2;
+    sc.scrollTop = document.querySelector("#canvas").offsetTop + window.__row(50).y - sc.clientHeight / 2;
     return sc.scrollTop;
   });
   await page.waitForTimeout(350);
   const after = await page.evaluate(() => {
     const sc = document.querySelector("#scene");
-    const y = sc.scrollTop + sc.clientHeight * 0.35;
-    const year = T_MIN + (y - 56) / 30;
-    return { txt: document.querySelector("#axisnote").textContent, year, vpY: +document.querySelector("#mini-vp").getAttribute("y") };
+    const off = document.querySelector("#canvas").offsetTop;
+    const bi = window.__nearestRow(sc.scrollTop + sc.clientHeight * 0.35 - off);
+    return { txt: document.querySelector("#axisnote").textContent, year: EV[bi][0], vpY: +document.querySelector("#mini-vp").getAttribute("y") };
   });
   const shown = parseInt(after.txt, 10);
-  log("(T7) badge-année mis à jour au scroll : l'année affichée = l'année réellement visible (±2)",
-    !isNaN(shown) && Math.abs(shown - after.year) <= 2,
-    `badge « ${after.txt} » pour l'année visible ${after.year.toFixed(1)}`);
+  log("(T7) badge-année mis à jour au scroll : l'année affichée = la rangée réellement visible (±1)",
+    !isNaN(shown) && Math.abs(shown - Math.round(after.year)) <= 1,
+    `badge « ${after.txt} » pour la rangée visible ${after.year.toFixed(1)}`);
   log("(T7b) le rectangle de la minimap suit le viewport", after.vpY > 10, `mini-vp.y=${Math.round(after.vpY)} après scroll à ${Math.round(moved)}px`);
 }
 
@@ -340,7 +340,7 @@ await stab();
   await page.evaluate(() => {
     const i = EV.findIndex(e => e[0] >= 2023);
     const sc = document.querySelector("#scene");
-    sc.scrollTop = window.__row(i).y - sc.clientHeight / 2;
+    sc.scrollTop = document.querySelector("#canvas").offsetTop + window.__row(i).y - sc.clientHeight / 2;
   });
   await stab();
   await shot("I-dense");
@@ -369,7 +369,7 @@ await stab();
     const sc = document.querySelector("#scene");
     let bi = 0, bd = 1e9;
     for (let j = 0; j < EV.length; j++) { const d = Math.abs(EV[j][0] - NOW); if (d < bd) { bd = d; bi = j; } }
-    const want = Math.max(0, Math.min(sc.scrollHeight - sc.clientHeight, window.__row(bi).y - sc.clientHeight / 2));
+    const want = Math.max(0, Math.min(sc.scrollHeight - sc.clientHeight, document.querySelector("#canvas").offsetTop + window.__row(bi).y - sc.clientHeight / 2));
     return { got: sc.scrollTop, want };
   });
   log("(T12) prefers-reduced-motion : « n » saute SANS glide (<150 ms, position exacte)",
@@ -390,7 +390,7 @@ await stab();
     let vis = 0, full = 0;
     for (const c of cards) {
       const r = c.getBoundingClientRect();
-      if (r.bottom > 0 && r.top < vh.height) { vis++; if (r.width >= 240) full++; }
+      if (r.bottom > vh.top && r.top < vh.bottom) { vis++; if (r.width >= 240) full++; }
     }
     return {
       noX: document.documentElement.scrollWidth <= document.documentElement.clientWidth,

@@ -76,8 +76,8 @@ header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:1
 #panel .pclose{position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
 /* ——— les thèses : la légende est le bandeau, pas une aide à ouvrir ——— */
 #thses{margin:14px auto 6px;max-width:900px;padding:0 18px}
-#thses .th{display:flex;gap:10px;align-items:flex-start;padding:7px 12px;border:1px solid var(--border);border-left:4px solid var(--lc);
-  border-radius:10px;background:var(--card);margin-bottom:6px;font-size:13.5px}
+#thses .th{display:flex;gap:10px;align-items:flex-start;padding:5px 12px;border:1px solid var(--border);border-left:4px solid var(--lc);
+  border-radius:10px;background:var(--card);margin-bottom:5px;font-size:13px}
 #thses .th b{color:var(--lc);font-weight:700}
 #thses .th .cnt{margin-left:auto;flex:none;font:600 11px system-ui,sans-serif;color:var(--muted);background:rgba(60,50,25,.06);border-radius:999px;padding:1px 9px;white-space:nowrap;align-self:center}
 .th.th-pal{--lc:var(--pal-ink)} .th.th-isr{--lc:var(--isr-ink)} .th.th-occ{--lc:var(--occ-ink)}
@@ -189,11 +189,9 @@ const rows=[];                      // rows[i] = {y, items:[…], sil:[…]}
 function build(){
   L=measure();
   const canvas=$("#canvas");
+  const H0=yOf(T_MAX)+PAD_BOT;
   canvas.innerHTML="";
   rows.length=0;
-  const H=yOf(T_MAX)+PAD_BOT;
-  L.H=H;
-  canvas.style.height=H+"px";
   let out="";
   /* ères partagées : teintes d'arrière-plan + nom en petites capitales */
   for(const e of ERAS){
@@ -277,6 +275,10 @@ function build(){
         '<span class="y"><i></i>'+fmtY(EV[i][0])+'</span><div class="t">'+escT(titleOf(it.i,it.k))+"</div></button>";
     }
   }
+  /* le packing peut dépasser l'échelle linéaire : le canvas prend la hauteur RÉELLE */
+  const H=Math.max(H0,curL,curR)+PAD_BOT;
+  L.H=H;
+  canvas.style.height=H+"px";
   canvas.insertAdjacentHTML("beforeend",
     out+'<svg id="weave" width="'+L.W+'" height="'+H+'" viewBox="0 0 '+L.W+" "+H+'" aria-hidden="true">'+inner+groups.join("")+"</svg>"+cardsHtml);
   buildMini();
@@ -310,14 +312,23 @@ function buildMini(){
 function miniSync(){
   const vp=document.getElementById("mini-vp"); if(!vp)return;
   const sc=$("#scene");
-  vp.setAttribute("y",(sc.scrollTop*miniMap).toFixed(1));
+  const y=Math.max(0,(sc.scrollTop-$("#canvas").offsetTop)*miniMap);
+  vp.setAttribute("y",y.toFixed(1));
   vp.setAttribute("height",Math.max(8,sc.clientHeight*miniMap).toFixed(1));
 }
 
-/* ---- HUD : badge-année = où l'on est, mis à jour au scroll (le point aveugle de l'ancienne vue) ---- */
+/* ---- HUD : badge-année = où l'on est, mis à jour au scroll (le point aveugle de l'ancienne vue).
+   L'année affichée = celle de la rangée la plus proche du regard : le packing décale les années
+   de l'échelle linéaire, afficher l'échelle serait un mensonge. ---- */
+function nearestRowAt(y){
+  let bi=0,bd=1e9;
+  for(let i=0;i<EV.length;i++){const d=Math.abs(rows[i].y-y);if(d<bd){bd=d;bi=i;}}
+  return bi;
+}
 function frameNow(){
   const sc=$("#scene");
-  const yr=Math.max(T_MIN,Math.min(T_MAX,yearAtY(sc.scrollTop+sc.clientHeight*0.35)));
+  const y=sc.scrollTop+sc.clientHeight*0.35-$("#canvas").offsetTop;
+  const yr=EV[nearestRowAt(y)][0];
   const er=eraOf(yr);
   $("#axisnote").textContent=Math.round(yr)+" · "+er.label;
   miniSync();
@@ -372,9 +383,10 @@ $("#pClose").onclick=closePanel;
 
 /* ---- navigation temporelle : la rangée du fait au centre (flèches, Maintenant, liens profonds) ---- */
 function rowY(i){return rows[i]?rows[i].y:0;}
+function scrollSpaceY(i){return $("#canvas").offsetTop+rowY(i);}
 function centerOn(i){
   const sc=$("#scene");
-  const target=Math.max(0,Math.min(sc.scrollHeight-sc.clientHeight,rowY(i)-sc.clientHeight/2));
+  const target=Math.max(0,Math.min(sc.scrollHeight-sc.clientHeight,scrollSpaceY(i)-sc.clientHeight/2));
   sc.scrollTo({top:target,behavior:RM?"auto":"smooth"});
 }
 function focusFact(i){
@@ -390,7 +402,7 @@ function focusedFact(){
   const sc=$("#scene");
   const cY=sc.scrollTop+sc.clientHeight/2;
   let bi=0,bd=1e9;
-  for(let i=0;i<EV.length;i++){const d=Math.abs(rowY(i)-cY);if(d<bd){bd=d;bi=i;}}
+  for(let i=0;i<EV.length;i++){const d=Math.abs(scrollSpaceY(i)-cY);if(d<bd){bd=d;bi=i;}}
   return bi;
 }
 function goNow(){
@@ -422,7 +434,7 @@ $("#helpBtn").onclick=showHelp;$("#helpClose").onclick=hideHelp;
     const r=el.getBoundingClientRect();
     const y=(ev.clientY-r.top)/miniMap;
     const sc=$("#scene");
-    sc.scrollTop=Math.max(0,Math.min(sc.scrollHeight-sc.clientHeight,y-sc.clientHeight/2));
+    sc.scrollTop=Math.max(0,Math.min(sc.scrollHeight-sc.clientHeight,y+$("#canvas").offsetTop-sc.clientHeight/2));
   };
   el.addEventListener("pointerdown",e=>{down=true;el.setPointerCapture(e.pointerId);seek(e);});
   el.addEventListener("pointermove",e=>{if(down)seek(e);});
@@ -455,28 +467,38 @@ window.__i3d=()=>{
     silences:document.querySelectorAll("#weave .g3").length,
     divergents:document.querySelectorAll("#weave .rung.div").length,
     ribbons:document.querySelectorAll("#weave path").length,
-    cy:yearAtY(sc.scrollTop+sc.clientHeight/2),
+    cy:EV[nearestRowAt($("#scene").scrollTop+$("#scene").clientHeight/2-$("#canvas").offsetTop)][0],
     top:sc.scrollTop,H:L?L.H:0,ypx:YPX,
     docW:document.documentElement.scrollWidth,viewW:document.documentElement.clientWidth};
 };
 window.__row=i=>({y:rowY(i),items:rows[i]?rows[i].items.map(it=>({k:it.k,side:it.side,nx:it.nx,top:it.top,cx:it.cx,cy:it.cy})):[]});
+window.__nearestRow=y=>nearestRowAt(y);
 window.__goNow=goNow;
 window.__open=openCompare;
 window.__frame=frameNow;
 window.__gliding=()=>false;
 
 /* ---- go ---- */
+/* mobile : les thèses démarrent repliées pour laisser la tresse occupée d'emblée */
+if(innerWidth<700){$("#thses").style.display="none";$("#thBtn").setAttribute("aria-pressed","false");}
 build();
 let resizeT=0;
 window.addEventListener("resize",()=>{clearTimeout(resizeT);resizeT=setTimeout(()=>{build();if(panelOpen&&openIdx!==null)setLit(openIdx,true);},220);});
 if(chTarget!==null){
   const sc=$("#scene");
-  sc.scrollTop=Math.max(0,Math.min(sc.scrollHeight-sc.clientHeight,yOf(chTarget)-sc.clientHeight/2));
+  const target=scrollSpaceY(nearestRowAt(yOf(chTarget)));
+  sc.scrollTop=Math.max(0,Math.min(sc.scrollHeight-sc.clientHeight,target-sc.clientHeight/2));
   frameNow();
 }
 if(deepFocus!==null&&EV[deepFocus]){
   centerOn(deepFocus);
   openCompare(deepFocus);
+} else if(chTarget===null){
+  /* atterrissage initial : pas de vide 1895-1917 au premier coup d'œil — premier amas, 1917 */
+  const sc=$("#scene");
+  let j=0;while(j<EV.length&&EV[j][0]<1917)j++;
+  sc.scrollTop=Math.max(0,Math.min(sc.scrollHeight-sc.clientHeight,scrollSpaceY(j)-sc.clientHeight*0.45));
+  frameNow();
 }
 </script>
 <!-- BEGIN commun:frise-outils -->
