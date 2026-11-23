@@ -240,10 +240,11 @@ function build(){
     for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
       const l=lvOf(i,k); if(!l)continue;
       const fs=l===2?15:14.5, lh=fs*1.3;
+      m.style.width=((l===2?L.cardW:L.cardW1)-24)+"px";   // largeur RÉELLE de la carte : lv1 est plus étroite
       m.style.font=(l===2?"600 ":"400 ")+fs+"px/1.3 Georgia,\"Times New Roman\",serif";
       m.textContent=titleOf(i,k);
       const lines=Math.max(1,Math.min(3,Math.ceil(m.offsetHeight/lh-0.05)));
-      TH[i+"|"+k]={h:32+Math.ceil(lines*lh),clamp:lines};
+      TH[i+"|"+k]={h:34+Math.ceil(lines*lh),clamp:lines};
     }
     m.remove();
   })();
