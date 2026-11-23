@@ -30,9 +30,16 @@ header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:1
 #ctl .legend{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto;font:11.5px system-ui,sans-serif;color:var(--muted);align-items:center}
 #ctl .legend .goldseg{display:inline-block;width:20px;height:3px;background:var(--gold);border-radius:2px;vertical-align:2px;margin-right:5px}
 #ctl .legend .sildot{display:inline-block;width:9px;height:9px;border-radius:50%;border:2px dashed var(--sil);vertical-align:-1px;margin-right:5px}
+/* la légende des trois récits est TOUJOURS visible — sans elle, les couleurs sont de la décoration */
+#keyrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+#keyrow .keyk{display:inline-flex;align-items:center;gap:7px;font:600 12px system-ui,sans-serif;color:var(--ink);
+  background:var(--card);border:1px solid var(--border);border-left:5px solid var(--kc);border-radius:8px;padding:3px 10px}
+#keyrow .keyk em{font-style:normal;color:var(--muted);font-weight:500}
 /* ——— la scène : un document qui coule ; la tresse est au centre ——— */
 #stagewrap{flex:1;min-height:0;position:relative}
-#scene{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}
+#scene{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  -webkit-mask-image:linear-gradient(transparent 0,#000 64px,#000 calc(100% - 64px),transparent 100%);
+  mask-image:linear-gradient(transparent 0,#000 64px,#000 calc(100% - 64px),transparent 100%)}
 #canvas{position:relative;max-width:1160px;margin:0 auto}
 .era-band{position:absolute;left:0;right:0;pointer-events:none}
 .era-band .lbl{position:absolute;left:10px;top:6px;font:700 10.5px system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;opacity:.85}
@@ -117,6 +124,11 @@ header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:1
 <header>
   <h1><span class="badgeI">Variante I</span>L'Hélice des récits — la tresse déroulée</h1>
   <p class="sub">Le temps coule de haut en bas ; chaque récit est un brin tressé autour de lui — aucun brin au centre. Le lien qui traverse la tresse relie les versions d'un même fait, doré quand les récits ne le nomment pas pareil. Un cercle pointillé sur un brin : un fait que ce récit se tait.</p>
+  <div id="keyrow" aria-label="Couleurs des trois récits">
+    <span class="keyk" style="--kc:var(--pal)">Récit palestinien <em id="key-pal"></em></span>
+    <span class="keyk" style="--kc:var(--isr)">Récit israélien <em id="key-isr"></em></span>
+    <span class="keyk" style="--kc:var(--occ)">Vue occidentale <em id="key-occ"></em></span>
+  </div>
   <div id="ctl" role="group" aria-label="Commandes">
     <button id="nowBtn">Maintenant</button>
     <button id="thBtn" aria-pressed="true">Les trois récits</button>
@@ -205,15 +217,36 @@ function build(){
     inner+='<line x1="'+(L.bandCx-half)+'" y1="'+yy+'" x2="'+(L.bandCx+half)+'" y2="'+yy+'" stroke="#cfc7b1" stroke-width="1" opacity="'+(major?.75:.35)+'"/>';
     if(major&&!L.mobile)inner+='<text x="'+(L.bandCx-half-8).toFixed(1)+'" y="'+(yOf(y)+4).toFixed(1)+'" text-anchor="end" font-family="Georgia,serif" font-size="13" fill="#61604f" opacity=".8">'+y+'</text>';
   }
-  /* les trois brins : rubans translucides — le tressage se lit par transparence */
+  /* les trois brins : gaine crème + ruban — au croisement, le brin du dessus découpe le dessous :
+     le tressage se LIT (sur/dessous), au lieu de se noyer dans la transparence */
   for(const k of PERS_KEYS){
     let d="";
     for(let t=T_MIN;t<=T_MAX+0.25;t+=0.25){
       const x=nodeX(k,t),y=yOf(Math.min(t,T_MAX));
       d+=(d?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);
     }
-    inner+='<g class="grp"><path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+(L.mobile?6:9)+'" stroke-linecap="round" opacity=".42"/></g>';
+    const w=L.mobile?7:10;
+    inner+='<g class="grp strand"><path d="'+d+'" fill="none" stroke="var(--bg)" stroke-width="'+(w+5)+'" stroke-linecap="round" opacity=".95"/>'+
+      '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+w+'" stroke-linecap="round" opacity=".55"/>'+
+      '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+(w-4)+'" stroke-linecap="round" opacity=".95"/></g>';
   }
+  /* hauteur des titres AVANT l'empilement : la carte prend la vraie hauteur du texte.
+     (Couper des titres à la hache tuait le sujet même de la page : les mots diffèrent.) */
+  const TH={};
+  (function(){
+    const m=document.createElement("div");
+    m.style.cssText="position:absolute;left:-9999px;top:0;visibility:hidden;width:"+(L.cardW-24)+"px";
+    document.body.appendChild(m);
+    for(let i=0;i<EV.length;i++)for(const k of PERS_KEYS){
+      const l=lvOf(i,k); if(!l)continue;
+      const fs=l===2?15:14.5, lh=fs*1.3;
+      m.style.font=(l===2?"600 ":"400 ")+fs+"px/1.3 Georgia,\"Times New Roman\",serif";
+      m.textContent=titleOf(i,k);
+      const lines=Math.max(1,Math.min(3,Math.ceil(m.offsetHeight/lh-0.05)));
+      TH[i+"|"+k]={h:32+Math.ceil(lines*lh),clamp:lines};
+    }
+    m.remove();
+  })();
   /* les faits : empilement par colonne ; côté de la carte = côté du brin sur la tresse */
   let curL=PAD_TOP, curR=PAD_TOP, cardsHtml="", groups=[];
   for(let i=0;i<EV.length;i++){
@@ -223,14 +256,17 @@ function build(){
     for(const k of ks){
       const side=L.mobile?"R":sideOf(k,EV[i][0]);
       const w=lvOf(i,k)>=2?L.cardW:L.cardW1;
-      items.push({i,k,side,w,h:L.cardH,x:side==="L"?L.colL:L.colR,l:lvOf(i,k)});
+      items.push({i,k,side,w,h:TH[i+"|"+k].h,clamp:TH[i+"|"+k].clamp,x:side==="L"?L.colL:L.colR,l:lvOf(i,k)});
     }
     const sil=PERS_KEYS.filter(k=>lvOf(i,k)===0);
     const nL=items.filter(it=>it.side==="L").length, nR=items.filter(it=>it.side==="R").length;
+    let sL=0,sR=0;
+    for(const it of items){if(it.side==="L")sL+=it.h+8;else sR+=it.h+8;}
+    const sumL=nL?sL-8:0, sumR=nR?sR-8:0;
     let y=nat;
-    if(nL)y=Math.max(y,curL+GAP+(nL*L.cardH+(nL-1)*8)/2);
-    if(nR)y=Math.max(y,curR+GAP+(nR*L.cardH+(nR-1)*8)/2);
-    let topL=y-(nL*L.cardH+(nL-1)*8)/2, topR=y-(nR*L.cardH+(nR-1)*8)/2;
+    if(nL)y=Math.max(y,curL+GAP+sumL/2);
+    if(nR)y=Math.max(y,curR+GAP+sumR/2);
+    let topL=y-sumL/2, topR=y-sumR/2;
     for(const it of items){
       it.rowY=y;
       if(it.side==="L"){it.top=topL;topL+=it.h+8;curL=it.top+it.h;}
@@ -246,7 +282,7 @@ function build(){
       const xs=items.map(it=>it.nx), x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
       const dv=divergent(i);
       g+='<line class="rung'+(dv?" div":"")+'" data-i="'+i+'" x1="'+x0.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+x1.toFixed(1)+'" y2="'+y.toFixed(1)+
-        '" stroke="'+(dv?"#7c5410":"#6f6547")+'" stroke-width="'+(dv?2.6:2)+'" stroke-linecap="round" opacity="'+(dv?.95:.5)+'"/>';
+        '" stroke="'+(dv?"#7c5410":"#6f6547")+'" stroke-width="'+(dv?3.6:3)+'" stroke-linecap="round" opacity="'+(dv?.95:.55)+'"/>';
     }
     for(const it of items){
       g+='<circle class="node" data-i="'+i+'" data-k="'+it.k+'" cx="'+it.nx.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(it.l>=2?6:4.5)+
@@ -257,12 +293,12 @@ function build(){
       const pts=Math.abs(it.cy-it.ny)<3?
         (it.cx.toFixed(1))+","+it.cy.toFixed(1)+" "+(it.nx+(it.side==="L"?7:-7)).toFixed(1)+","+ny:
         (it.cx.toFixed(1))+","+it.cy.toFixed(1)+" "+bend.toFixed(1)+","+it.cy.toFixed(1)+" "+bend.toFixed(1)+","+ny+" "+(it.nx+(it.side==="L"?7:-7)).toFixed(1)+","+ny;
-      g+='<polyline class="leader k-'+it.k+'" data-i="'+i+'" points="'+pts+'" fill="none" stroke="'+PERS[it.k].c+'" stroke-width="2" opacity=".65"/>';
+      g+='<polyline class="leader k-'+it.k+'" data-i="'+i+'" points="'+pts+'" fill="none" stroke="'+PERS[it.k].c+'" stroke-width="1.6" opacity=".55"/>';
     }
     /* les silences : cercle pointillé SUR le brin muet, toujours visible (19 au total) */
     for(const k of sil){
       const nx=nodeX(k,EV[i][0]), dir=sideOf(k,EV[i][0])==="L"?-1:1;
-      g+='<g class="sil"><circle class="g3" data-i="'+i+'" data-k="'+k+'" cx="'+nx.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="5.5" fill="var(--bg)" stroke="'+PERS[k].c+'" stroke-width="2" stroke-dasharray="3 2.4"/>'+
+      g+='<g class="sil"><circle class="g3" data-i="'+i+'" data-k="'+k+'" cx="'+nx.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="6.5" fill="var(--bg)" stroke="'+PERS[k].c+'" stroke-width="2" stroke-dasharray="3 2.4"/>'+
         '<line x1="'+(nx+7*dir).toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+(nx+26*dir).toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+PERS[k].c+'" stroke-width="2" stroke-dasharray="3 2.4" opacity=".7"/>'+
         '<title>'+escT(PERS[k].short+" ne raconte pas — "+EV[i][2])+'</title></g>';
     }
@@ -271,7 +307,7 @@ function build(){
     for(const it of items){
       const aria=escT(Math.floor(EV[i][0])+", "+PERS[it.k].short+" : "+titleOf(it.i,it.k));
       cardsHtml+='<button class="c3 l-'+it.k+" lv"+it.l+'" data-i="'+it.i+'" data-k="'+it.k+'" data-l="'+it.l+'" aria-label="'+aria+'" '+
-        'style="left:'+it.x+"px;top:"+it.top+"px;width:"+it.w+"px;height:"+it.h+"px;--clamp:"+L.clamp+'">'+
+        'style="left:'+it.x+"px;top:"+it.top+"px;width:"+it.w+"px;height:"+it.h+"px;--clamp:"+it.clamp+'">'+
         '<span class="y"><i></i>'+fmtY(EV[i][0])+'</span><div class="t">'+escT(titleOf(it.i,it.k))+"</div></button>";
     }
   }
@@ -342,7 +378,7 @@ function setLit(i,on){
   $("#canvas").classList.toggle("dim",on);
   document.querySelectorAll('[data-i="'+i+'"]').forEach(el=>{
     el.classList.toggle("lit",on);
-    if(el.classList.contains("rung"))el.setAttribute("stroke-width",on?4:(el.classList.contains("div")?2.6:2));
+    if(el.classList.contains("rung"))el.setAttribute("stroke-width",on?6:(el.classList.contains("div")?3.6:3));
     const g=el.closest?el.closest(".grp"):null;
     if(g)g.classList.toggle("lit",on);
   });
@@ -421,7 +457,7 @@ document.addEventListener("keydown",e=>{
 $("#nowBtn").onclick=()=>{hideHelp();goNow();};
 
 /* ---- thèses + aide ---- */
-for(const k of PERS_KEYS){$("#th-"+k).textContent=PERS[k].thesie;$("#cnt-"+k).textContent=nTold(k)+" dates";}
+for(const k of PERS_KEYS){$("#th-"+k).textContent=PERS[k].thesie;$("#cnt-"+k).textContent=nTold(k)+" dates";$("#key-"+k).textContent=nTold(k)+" dates";}
 $("#thBtn").onclick=()=>{const on=$("#thses").style.display==="none";$("#thses").style.display=on?"":"none";$("#thBtn").setAttribute("aria-pressed",String(on));};
 function hideHelp(){$("#help").style.display="none";}
 function showHelp(){$("#help").style.display="block";}

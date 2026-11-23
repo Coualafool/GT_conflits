@@ -60,7 +60,7 @@ await stab();
       gotCells: document.querySelectorAll(".c3").length,
       gotSils: document.querySelectorAll("#weave .g3").length,
       gotRungs: document.querySelectorAll("#weave .rung").length,
-      ribbons: document.querySelectorAll("#weave path").length,
+      ribbons: document.querySelectorAll("#weave g.strand").length,
       lanes: PERS_KEYS.map(k => nTold(k)),
     };
   });
@@ -404,6 +404,20 @@ await stab();
     `scrollX=${m.sw}/${m.cw} cartes=${m.cards} vues=${m.vis} ≥240px=${m.full} mini=${m.mini} err=${errs.length}`);
   await p3.screenshot({ path: ART + "I-mobile.png" });
   await ctx.close();
+}
+
+/* ---------- T16 : AUCUN titre coupé — le sujet de la page est dans les mots ---------- */
+{
+  const cut = await page.evaluate(() => {
+    const bad = [];
+    for (const c of document.querySelectorAll(".c3")) {
+      const t = c.querySelector(".t");
+      if (t.scrollHeight - t.clientHeight > 4) bad.push(c.dataset.i + "|" + c.dataset.k);
+    }
+    return { n: document.querySelectorAll(".c3").length, bad: bad.slice(0, 6), count: bad.length };
+  });
+  log("(T16) zéro titre rogné : chaque titre tient dans sa carte (hauteur mesurée avant packing)",
+    cut.count === 0, `${cut.count}/${cut.n} cartes à texte rogné ${cut.bad.length ? JSON.stringify(cut.bad) : ""}`);
 }
 
 /* ---------- T14 : enregistré dans le comparatif ---------- */
