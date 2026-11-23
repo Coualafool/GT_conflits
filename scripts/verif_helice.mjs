@@ -420,6 +420,21 @@ await stab();
     cut.count === 0, `${cut.count}/${cut.n} cartes à texte rogné ${cut.bad.length ? JSON.stringify(cut.bad) : ""}`);
 }
 
+/* ---------- T17 : chaque nœud/silence EST SUR son brin (dérive de l'empilement, le bug signalé) ---------- */
+{
+  const on = await page.evaluate(() => {
+    let worst = 0, n = 0;
+    for (const el of document.querySelectorAll("#weave .node, #weave .g3")) {
+      const cx = +el.getAttribute("cx"), cy = +el.getAttribute("cy");
+      const want = ribbonX(el.dataset.k, cy);
+      worst = Math.max(worst, Math.abs(cx - want)); n++;
+    }
+    return { n, worst: +worst.toFixed(2) };
+  });
+  log("(T17) les 279 marqueurs posés exactement sur leur brin à LA hauteur de leur rangée",
+    on.worst <= 1, `${on.n} marqueurs · écart max au brin ${on.worst}px`);
+}
+
 /* ---------- T14 : enregistré dans le comparatif ---------- */
 {
   const idxOK = await page.evaluate(async (u) => {

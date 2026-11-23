@@ -195,6 +195,9 @@ function measure(){
   return {W,mobile,bandW,amp,bandCx,cardW,cardW1,cardH,clamp,colL,colR,H:0};
 }
 function nodeX(k,year){return L.bandCx+L.amp*Math.sin(PHI[k]+(year-T_MIN)*2*Math.PI/TURN);}
+/* x du brin à une ORDONNÉE donnée (pas à l'année) : l'empilement décale les rangées vers le bas,
+   les nœuds doivent suivre le brin à la hauteur RÉELLE de la rangée, sinon ils flottent à côté. */
+function ribbonX(k,y){return L.bandCx+L.amp*Math.sin(PHI[k]+(y-PAD_TOP)*2*Math.PI/(TURN*YPX));}
 function sideOf(k,year){return Math.sin(PHI[k]+(year-T_MIN)*2*Math.PI/TURN)>=0?"R":"L";}
 
 /* ---- construction : une rangée par fait, empilement par colonne ---- */
@@ -275,7 +278,7 @@ function build(){
       else{it.top=topR;topR+=it.h+8;curR=it.top+it.h;}
       it.cx=it.side==="L"?it.x+it.w:it.x;   // bord de la carte côté tresse
       it.cy=it.top+it.h/2;
-      it.nx=nodeX(it.k,EV[i][0]); it.ny=y;
+      it.nx=ribbonX(it.k,y); it.ny=y;
     }
     rows[i]={y:y,items:items,sil:sil};
     let g="";
@@ -301,7 +304,7 @@ function build(){
     }
     /* les silences : cercle pointillé SUR le brin muet, toujours visible (19 au total) */
     for(const k of sil){
-      const nx=nodeX(k,EV[i][0]), dir=sideOf(k,EV[i][0])==="L"?-1:1;
+      const nx=ribbonX(k,y), dir=nx<L.bandCx?-1:1;
       g+='<g class="sil"><circle class="g3" data-i="'+i+'" data-k="'+k+'" cx="'+nx.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="6.5" fill="var(--bg)" stroke="'+PERS[k].c+'" stroke-width="2" stroke-dasharray="3 2.4"/>'+
         '<line x1="'+(nx+7*dir).toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+(nx+26*dir).toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+PERS[k].c+'" stroke-width="2" stroke-dasharray="3 2.4" opacity=".7"/>'+
         '<title>'+escT(PERS[k].short+" ne raconte pas — "+EV[i][2])+'</title></g>';
