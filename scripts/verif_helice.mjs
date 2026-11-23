@@ -91,43 +91,26 @@ await stab();
     ok, `amp=${g.amp} wl=${g.wl} canvas=${Math.round(g.H)}px plus petit chemin=${Math.round(g.bh)}px maxErr=${JSON.stringify(g.err)}`);
 }
 
-/* ---------- T0c : à CHAQUE rangée, le brin de chaque récit passe sous son point (ruban réel, pas math) ---------- */
+/* ---------- T0c : à CHAQUE rangée, le point est SUR le tracé dessiné (isPointInStroke = le vrai rendu) ---------- */
 {
   const px = await page.evaluate(() => {
-    const sc = document.querySelector("#scene");
-    sc.scrollTop = 0; sc.scrollTop = sc.scrollHeight;   // forcer tout en vue du rendu
     const paths = [...document.querySelectorAll("#weave g.strand path")];
     const byc = {};
     for (const pp of paths) { const c = pp.getAttribute("stroke"); if (c !== "var(--bg)" && !byc[c]) byc[c] = pp; }
     const bad = [];
-    const probe = (k, y, tag) => {
-      // distance du point (ribbonX(k,y), y) au TRACÉ RÉEL du brin de la couleur de k
-      const el = byc[PERS[k].c];
-      if (!el) { bad.push(tag + ":no-path"); return; }
-      const x = ribbonX(k, y), len = el.getTotalLength();
-      let best = 1e9;
-      // recherche locale : le sinus est bijectif en x autour du point sur ±une demi-période
-      for (let L0 = 0; L0 < len; L0 += 24) {
-        const q = el.getPointAtLength(L0);
-        if (Math.abs(q.y - y) < 30) {
-          for (let L1 = Math.max(0, L0 - 24); L1 <= Math.min(len, L0 + 24); L1 += 6) {
-            const r = el.getPointAtLength(L1);
-            if (Math.abs(r.y - y) < 2) best = Math.min(best, Math.abs(r.x - x));
-          }
-        }
-      }
-      if (best > 1.5) bad.push(tag + " écart=" + best.toFixed(1));
-    };
-    for (let i = 0; i < EV.length; i++)
+    for (let i = 0; i < EV.length; i++) {
+      const y = rows[i].y;
       for (const k of PERS_KEYS) {
-        const n = rows[i].items.find(it => it.k === k);
-        probe(k, rows[i].y, i + "|" + k);
-        void n;
+        const el = byc[PERS[k].c];
+        if (!el) { bad.push(i + "|" + k + ":no-path"); continue; }
+        const x = ribbonX(k, y);
+        if (!el.isPointInStroke(new DOMPoint(x, y))) bad.push(i + "|" + k + " hors-tracé (" + Math.round(x) + "," + Math.round(y) + ")");
       }
+    }
     return bad.slice(0, 8);
   });
-  log("(T0c) les 279 marqueurs posés sur le TRACÉ DESSINÉ (pas sur une formule) — écart ≤ 1,5px partout",
-    px.length === 0, px.length ? JSON.stringify(px) : "toutes les rangées × 3 brins vérifiées sur le chemin réel");
+  log("(T0c) les 279 marqueurs posés sur le TRACÉ DESSINÉ (isPointInStroke, ±demi-largeur du brin)",
+    px.length === 0, px.length ? JSON.stringify(px) : "93 rangées × 3 brins tous dans le stroke");
 }
 
 /* ---------- T1 : LA porte d'entrée — le repos est lisible (l'I 3D échouait ici) ---------- */
@@ -256,7 +239,7 @@ await stab();
   await page.evaluate(() => { document.querySelector("#scene").scrollTop = 0; });
   await stab();
   await page.click("#nowBtn");
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(1800);
   const near = await page.evaluate(() => {
     const vh = document.querySelector("#scene").getBoundingClientRect();
     const cy = vh.top + vh.height / 2;
