@@ -135,6 +135,12 @@ def main():
 
 
 def esc(s: str) -> str:
+    # Dictée figée des mojibake connus dans des sujets de commits historiques (artefacts IME :
+    # 裸 = « nus », メ = « mé » initial). Le journal cite les sujets verbatim — on ne réécrit pas
+    # l'histoire, mais on ne canonise pas non plus deux caractères CJK dans du texte français.
+    # Ajouter une ligne ici à chaque nouvelle contamination avérée, jamais de filtrage générique.
+    for moj, fixe in (("les裸 nombres", "les nus nombres"), ("メtriques", "métriques")):
+        s = s.replace(moj, fixe)
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
