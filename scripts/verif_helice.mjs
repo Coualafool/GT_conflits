@@ -1,4 +1,9 @@
-// verif_helice.mjs — vérification de la variante I « l'Hélice des récits » (triple hélice CSS 3D).
+// verif_helice.mjs — vérification de la variante I « l'Hélice des récits », VERSION TRESSE DÉROULÉE.
+// La page est un document vertical : temps de haut en bas, trois brins tressés au centre
+// (géométrie = l'hélice déroulée : x = amp·sin(2π·an/15 + φ), phases 0/120/240°, amp 92).
+// Les compteurs (260 cartes / 19 silences / liens par paire), le panneau, les liens profonds,
+// mobile 390 et reduced-motion sont des contrats PORTÉS de l'ancienne vue ; les portes de
+// géométrie caméra sont REMPLACÉES par des portes de LISIBILITÉ (le défaut mesuré de l'I 3D).
 // Usage: repo root served on :8899 (node scripts/tars_serve.mjs), then from the repo root:
 //   node scripts/verif_helice.mjs
 // Self-contained: playwright must live in this repo's node_modules (scripts/tars_setup_runtime.ps1).
@@ -25,205 +30,146 @@ const shot = async (name) => {
   await page.evaluate(() => { const h = document.querySelector("#help"); if (h) h.style.display = "none"; });
   await page.waitForTimeout(420); await page.screenshot({ path: ART + name + ".png", timeout: 90000 });
 };
-const i3d = () => page.evaluate(() => window.__i3d());
-const settle = async () => { await page.waitForFunction(() => !window.__gliding(), null, { timeout: 20000 }).catch(() => {}); await page.waitForTimeout(120); };
+const stab = async () => { await page.waitForTimeout(400); };
 
-const DEG = 180 / Math.PI;
+/* recouvrements de cartes dans le viewport — la cause de mort de l'ancienne vue, numérisée */
+const OVERLAP_FN = `(() => {
+  const vh = document.querySelector("#scene").getBoundingClientRect();
+  const rs = [...document.querySelectorAll(".c3")].map(c => c.getBoundingClientRect()).filter(r => r.bottom > 0 && r.top < vh.height);
+  let bad = 0;
+  for (let a = 0; a < rs.length; a++) for (let b = a + 1; b < rs.length; b++) {
+    const x = Math.min(rs[a].right, rs[b].right) - Math.max(rs[a].left, rs[b].left);
+    const y = Math.min(rs[a].bottom, rs[b].bottom) - Math.max(rs[a].top, rs[b].top);
+    if (x > 3 && y > 3) bad++;
+  }
+  return { n: rs.length, bad };
+})()`;
 
-/* ---------- I0 : intégrité de la molécule ---------- */
+/* ---------- T0 : intégrité de la tresse (invariant de compte, contrat I0 porté) ---------- */
 await page.goto(PAGE, { waitUntil: "load" });
-await page.waitForTimeout(800);
+await stab();
 {
   const exp = await page.evaluate(() => {
-    let cells = 0, ghosts = 0, rungs = 0;
+    let cells = 0, sils = 0, rungs = 0;
     for (let i = 0; i < EV.length; i++) {
       const n = PERS_KEYS.filter(k => lvOf(i, k) > 0).length;
-      cells += n; ghosts += 3 - n; rungs += n * (n - 1) / 2;
+      cells += n; sils += 3 - n; rungs += n * (n - 1) / 2;
     }
     return {
-      cells, ghosts, rungs,
+      cells, sils, rungs,
       gotCells: document.querySelectorAll(".c3").length,
-      gotGhosts: document.querySelectorAll(".g3").length,
-      gotRungs: document.querySelectorAll(".rung").length,
-      tubes: document.querySelectorAll(".tube").length,
+      gotSils: document.querySelectorAll("#weave .g3").length,
+      gotRungs: document.querySelectorAll("#weave .rung").length,
+      ribbons: document.querySelectorAll("#weave path").length,
       lanes: PERS_KEYS.map(k => nTold(k)),
     };
   });
-  log("(I0) molécule complète : une cellule par récit narrateur, un fantôme par silence, une marche par paire",
-    exp.cells === exp.gotCells && exp.ghosts === exp.gotGhosts && exp.rungs === exp.gotRungs && exp.tubes >= 250,
-    `attendus cellules=${exp.cells} fantômes=${exp.ghosts} marches=${exp.rungs} / obtenus ${exp.gotCells}/${exp.gotGhosts}/${exp.gotRungs} · tubes=${exp.tubes} · ${exp.lanes}`);
-  const s0 = await i3d();
-  log("(I0b) arrivée = ¾ neutre (pitch 26°, yaw 40°)",
-    Math.abs(s0.pitch * DEG - 26) < 0.6 && Math.abs(s0.yaw * DEG - 40) < 0.6 && s0.preset === "q3",
-    `pitch=${(s0.pitch * DEG).toFixed(1)} yaw=${(s0.yaw * DEG).toFixed(1)} preset=${s0.preset}`);
+  log("(T0) tresse complète : une carte par récit narrateur, un pointillé par silence, un lien par paire",
+    exp.cells === exp.gotCells && exp.sils === exp.gotSils && exp.rungs === exp.gotRungs && exp.ribbons === 3,
+    `attendus cartes=${exp.cells} silences=${exp.sils} liens=${exp.rungs} rubans=3 / obtenus ${exp.gotCells}/${exp.gotSils}/${exp.gotRungs}/${exp.ribbons} · ${exp.lanes}`);
   await shot("I-default");
 }
 
-/* ---------- I0c : géométrie hélicoïdale — trois brins à équidistance (120°), rayon constant ---------- */
+/* ---------- T0b : géométrie = l'hélice DERROULÉE (sinus période 15 ans, phases 0/120/240°, amp 92) ---------- */
 {
   const g = await page.evaluate(() => {
-    const P = k => window.__helix(k, 1969);
-    const th = k => Math.atan2(P(k).y, P(k).z);
-    const d12 = ((th("isr") - th("occ")) * 180 / Math.PI + 720) % 360;
-    const d23 = ((th("pal") - th("isr")) * 180 / Math.PI + 720) % 360;
-    const rad = k => Math.hypot(P(k).y, P(k).z);
-    return { d12, d23, rO: rad("occ"), rI: rad("isr"), rP: rad("pal") };
+    try {
+      const cx = L.bandCx, amp = L.amp;
+      const at = (k, y) => (nodeX(k, y) - cx) / amp;   // doit valoir sin(φk + 2π·(y−T_MIN)/15)
+      const phi = { occ: 0, isr: 2 * Math.PI / 3, pal: 4 * Math.PI / 3 };
+      const err = [];
+      for (const k of ["occ", "isr", "pal"]) {
+        let maxerr = 0;
+        for (let y = 1950; y < 2020; y += 1) {
+          const want = Math.sin(phi[k] + (y - T_MIN) * 2 * Math.PI / 15);
+          maxerr = Math.max(maxerr, Math.abs(at(k, y) - want));
+        }
+        err.push([k, +maxerr.toFixed(4)]);
+      }
+      return { amp, cx: Math.round(cx), err };
+    } catch (e) { return { err: String(e) }; }
   });
-  log("(I0c) les trois brins sont à équidistance angulaire (120°) sur le même cylindre — aucun brin au centre",
-    Math.abs(g.d12 - 120) < 1 && Math.abs(g.d23 - 120) < 1 &&
-    Math.abs(g.rO - 230) < 1 && Math.abs(g.rI - 230) < 1 && Math.abs(g.rP - 230) < 1,
-    `angles ${g.d12.toFixed(1)}°/${g.d23.toFixed(1)}° · rayons ${g.rO.toFixed(0)}/${g.rI.toFixed(0)}/${g.rP.toFixed(0)}`);
+  const ok = Array.isArray(g.err) && g.err.every(([, e]) => e < 0.02) && Math.abs(g.amp - 92) < 0.5;
+  log("(T0b) rubans = hélice déroulée exacte : sinus de période 15 ans, phases 0/120/240°, amplitude 92px",
+    ok, `amp=${g.amp} bandCx=${g.cx} maxErr(sin)=${JSON.stringify(g.err)}`);
 }
 
-/* ---------- I1 : la projection est cohérente (le proche est près du centre, le loin hors champ) ---------- */
+/* ---------- T1 : LA porte d'entrée — le repos est lisible (l'I 3D échouait ici) ---------- */
 {
-  const proj = await page.evaluate(() => {
-    const st = window.__i3d();
-    const sceneR = document.querySelector("#scene").getBoundingClientRect();
-    const cx = sceneR.left + sceneR.width / 2;
-    let bi = -1, bd = 9e9;
-    EV.forEach((e, i) => { const d = Math.abs(e[0] - st.cy); if (d < bd && PERS_KEYS.some(k => lvOf(i, k) > 0)) { bd = d; bi = i; } });
-    const bN = document.querySelector(`.c3[data-i="${bi}"]`);
-    const rN = bN ? bN.getBoundingClientRect() : null;
-    const bF = document.querySelector('.c3[data-i="1"]'); // 1897 — loin de l'ancre
-    const rF = bF ? bF.getBoundingClientRect() : null;
-    return {
-      cx, sceneW: sceneR.width,
-      nearX: rN ? rN.left + rN.width / 2 : -1, nearW: rN ? rN.width : 0,
-      farX: rF ? rF.left + rF.width / 2 : -1, farW: rF ? rF.width : 0,
-    };
+  const leg = await page.evaluate(() => {
+    const sc = document.querySelector("#scene");
+    const vh = sc.getBoundingClientRect();
+    const cards = [...document.querySelectorAll(".c3")];
+    let full = 0, tiny = 0, minW = 1e9, seen = 0;
+    for (const c of cards) {
+      const r = c.getBoundingClientRect();
+      if (r.right > 0 && r.left < vh.width && r.bottom > 0 && r.top < vh.height) {
+        seen++; minW = Math.min(minW, r.width);
+        if (r.width < 180) tiny++;
+      }
+      if (r.top < vh.top || r.bottom > vh.bottom || r.left < 0 || r.right > vh.width) continue;
+      const fs = parseFloat(getComputedStyle(c.querySelector(".t")).fontSize);
+      if (fs >= 14 && r.width >= 200) full++;
+    }
+    return { full, tiny, seen, minW: Math.round(minW) };
   });
-  log("(I1) la cellule la plus proche de l'ancre est projetée au centre, à taille cohérente",
-    proj.nearW > 40 && proj.nearW < 500 && Math.abs(proj.nearX - proj.cx) < proj.sceneW * 0.18,
-    `centre=${proj.cx.toFixed(0)} cellule-ancre x=${proj.nearX.toFixed(0)} w=${proj.nearW.toFixed(0)}`);
-  log("(I1b) un fait à ~116 ans de l'ancre est hors champ et minuscule (perspective réelle)",
-    Math.abs(proj.farX - proj.cx) > proj.sceneW * 0.5 || proj.farW < 8,
-    `cellule 1897 x=${proj.farX.toFixed(0)} w=${proj.farW.toFixed(0)}`);
+  log("(T1) au repos 1440×900 : ≥8 cartes ENTIÈREMENT visibles avec titre ≥14px et largeur ≥200px",
+    leg.full >= 8, `${leg.full} cartes lisibles à fond · ${leg.seen} cartes vues · plus étroite ${leg.minW}px`);
+  log("(T1b) AUCUNE carte visible n'est sous 180px de large (fini les fragments de 30px)",
+    leg.tiny === 0, `sous-180px=${leg.tiny}`);
+  const ov = await page.evaluate(OVERLAP_FN);
+  log("(T1c) zéro recouvrement de cartes au repos (l'occlusion murale de l'I 3D, rendue impossible)",
+    ov.bad === 0, `${ov.n} cartes vues, ${ov.bad} recouvrements`);
 }
 
-/* ---------- I2 : molette = distance seule ---------- */
+/* ---------- T1d : l'ordre DOM suit le temps → Tab parcourt la chronologie ---------- */
 {
-  const before = await i3d();
-  for (let i = 0; i < 5; i++) { await page.mouse.move(720, 500); await page.mouse.wheel(0, -240); await page.waitForTimeout(70); }
-  const zoomIn = await i3d();
-  const p1 = zoomIn.pitch * DEG, y1 = zoomIn.yaw * DEG;
-  for (let i = 0; i < 45; i++) await page.mouse.wheel(0, -240);
-  const clamped = await i3d();
-  for (let i = 0; i < 90; i++) await page.mouse.wheel(0, 240);
-  const clampedOut = await i3d();
-  log("(I2) molette = distance seule ; clampée aux deux bouts ; le cap ne bouge jamais",
-    zoomIn.d < before.d && clamped.d === clamped.MIN_D && Math.abs(clampedOut.d - clampedOut.maxD) < 1.5 &&
-    Math.abs(zoomIn.pitch - before.pitch) < 1e-9 && Math.abs(zoomIn.yaw - before.yaw) < 1e-9,
-    `d ${before.d.toFixed(0)}→${zoomIn.d.toFixed(0)}, min=${clamped.d.toFixed(0)}==${clamped.MIN_D}, max=${clampedOut.d.toFixed(0)}≈${clampedOut.maxD.toFixed(0)}, cap figé=${p1.toFixed(1)}/${y1.toFixed(1)}`);
-  await page.keyboard.press("1"); await settle();
-}
-
-/* ---------- I2b : glisser gauche = regard libre (orbite autour de l'ancrage-temps) ---------- */
-{
-  const a = await i3d();
-  await page.mouse.move(720, 430); await page.mouse.down();
-  await page.mouse.move(1000, 500, { steps: 12 }); await page.mouse.up();
-  await page.waitForTimeout(200);
-  const b = await i3d();
-  await page.mouse.move(720, 430); await page.mouse.down();
-  await page.mouse.move(720, -2600, { steps: 16 }); await page.mouse.up();
-  await page.waitForTimeout(200);
-  const c = await i3d();
-  const dYaw = ((b.yaw - a.yaw + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
-  log("(I2b) glisser = regard libre : yaw suit le doigt, l'ancre-temps reste fixe, preset lâché",
-    Math.abs(dYaw) > 0.35 && Math.abs(b.ax - a.ax) < 1 && b.preset === null,
-    `yaw ${(dYaw * DEG).toFixed(1)}° tiré · ax invariable (${(b.ax - a.ax).toFixed(2)}px) · preset=null`);
-  log("(I2b2) tirage extrême : pitch pincé à 2°, la vue ne se retourne jamais",
-    Math.abs(c.pitch * DEG - 2) < 0.3 && Math.abs(c.ax - a.ax) < 1,
-    `pitch=${(c.pitch * DEG).toFixed(2)}° pincé`);
-  await page.keyboard.press("1"); await settle();
-  const r = await i3d();
-  log("(I2b3) la touche 1 recadre la caméra après l'orbite",
-    Math.abs(r.pitch * DEG - 26) < 0.6 && Math.abs(r.yaw * DEG - 40) < 0.6,
-    `pitch=${(r.pitch * DEG).toFixed(1)} yaw=${(r.yaw * DEG).toFixed(1)}`);
-}
-
-/* ---------- I3 : clavier = travelée sur le temps ---------- */
-{
-  for (let i = 0; i < 3; i++) { await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(80); }
-  const a = await i3d();
-  for (let i = 0; i < 2; i++) { await page.keyboard.press("ArrowRight"); await page.waitForTimeout(80); }
-  const b = await i3d();
-  for (let i = 0; i < 2; i++) { await page.keyboard.press("ArrowLeft"); await page.waitForTimeout(80); }
-  const c = await i3d();
-  log("(I3) ←/→ parcourent le temps dans les deux sens, sans atteinte de clamp",
-    b.cy > a.cy + 2 && c.cy < b.cy - 2 && Math.abs(c.cy - a.cy) < 0.5,
-    `${a.cy.toFixed(1)} → ${b.cy.toFixed(1)} → ${c.cy.toFixed(1)}`);
-}
-
-/* ---------- I4 : presets — haut = sinus 2D, face = le long de l'axe, brin = dans le sillage du brin ---------- */
-{
-  await page.keyboard.press("2"); await settle();
-  const haut = await i3d();
-  const pressed = await page.$eval('#cams button[data-v="haut"]', b => b.getAttribute("aria-pressed"));
-  await page.click('#cams button[data-v="face"]'); await settle();
-  const face = await i3d();
-  const faceOK = Math.abs(face.pitch * DEG) < 0.9 && Math.abs(face.yaw * DEG - 90) < 0.9 &&
-    Math.abs(face.ayv) < 6 && Math.abs(face.azv) < 6;
-  await shot("I-face");
-  await page.keyboard.press("5"); await settle();
-  const cou = await i3d();
-  const onBrin = await page.evaluate(() => {
-    const s = window.__i3d();
-    const P = window.__helix("pal", s.cy);
-    return Math.hypot(s.ayv - P.y, s.azv - P.z);
+  const ord = await page.evaluate(() => {
+    const idx = [...document.querySelectorAll(".c3")].map(c => +c.dataset.i);
+    let bad = 0;
+    for (let j = 1; j < idx.length; j++) if (idx[j] < idx[j - 1]) bad++;
+    return { bad, n: idx.length };
   });
-  // Le couloir suit la TANGENTE du brin : pitch = angle de vrille atan(R0·TURN/SC).
-  // À 15 ans/tour (R0=230, 100px/an) cela fait 43,9° — la limite était codée à 40 pour l'ancien
-  // pas de 30 ans. On borne par la géométrie courante + 6° de marge, plus par un nombre magique.
-  const girationMax = Math.atan(230 * (2 * Math.PI / 15) / 100) * 180 / Math.PI + 6;
-  const couOK = cou.k === "pal" && onBrin < 60 && Math.abs(cou.pitch * DEG) < girationMax;
-  await shot("I-couloir-pal");
-  await page.keyboard.press("4"); await settle();
-  const ens = await i3d();
-  await shot("I-ens");
-  await page.keyboard.press("1"); await settle();
-  const q3 = await i3d();
-  log("(I4) presets : haut ≈ piquée verticale, face = le long de l'axe sur l'axe, brin ancré SUR le brin, ensemble plus large que ¾",
-    Math.abs(haut.pitch * DEG - 89.5) < 0.9 && pressed === "true" && faceOK && couOK &&
-    ens.d > q3.d && q3.preset === "q3",
-    `haut ${(haut.pitch * DEG).toFixed(1)}° · pressed=${pressed} · face pitch ${(face.pitch * DEG).toFixed(1)} yaw ${(face.yaw * DEG).toFixed(1)} ayv=${face.ayv.toFixed(1)} azv=${face.azv.toFixed(1)} · brin k=${cou.k} à ${onBrin.toFixed(0)}px pit=${(cou.pitch * DEG).toFixed(1)} · d ens=${ens.d.toFixed(0)} > q3=${q3.d.toFixed(0)} preset=${q3.preset}`);
-  await page.keyboard.press("2"); await settle(); await shot("I-haut");
-  await page.keyboard.press("1"); await settle();
+  log("(T1d) ordre DOM des cartes = ordre chronologique (Tab suit le temps)", ord.bad === 0, `inversions=${ord.bad}/${ord.n}`);
 }
 
-/* ---------- I5 : « Maintenant » ---------- */
+/* ---------- T2 : le côté de la carte suit le côté du brin sur la tresse ---------- */
 {
-  const a = await i3d();
-  await page.evaluate(() => window.__goNow());
-  await settle();
-  const b = await i3d();
-  log("(I5) « Maintenant » ramène à la date du dernier événement",
-    Math.abs(b.cy - 2026.3) < 0.4 && Math.abs(b.cy - a.cy) > 1,
-    `${a.cy.toFixed(1)} → ${b.cy.toFixed(1)} (attendu 2026.3)`);
-  await page.keyboard.press("4"); await settle();
+  const t2 = await page.evaluate(() => {
+    const bad = [];
+    const phi = { occ: 0, isr: 2 * Math.PI / 3, pal: 4 * Math.PI / 3 };
+    for (let i = 0; i < EV.length; i += 5) {
+      const r = window.__row(i);
+      for (const it of r.items) {
+        const side = Math.sin(phi[it.k] + (EV[i][0] - T_MIN) * 2 * Math.PI / 15) >= 0 ? "R" : "L";
+        if (it.side !== side) bad.push([i, it.k, it.side, side]);
+      }
+    }
+    return bad;
+  });
+  log("(T2) côté carte = côté du brin (sin≥0 → droite) : « aucun brin au centre » se VOIT",
+    t2.length === 0, JSON.stringify(t2.slice(0, 3)));
 }
 
-/* ---------- I6 : toggle Silences (fantômes, off par défaut) ---------- */
+/* ---------- T3 : survol → tout le fait s'allume (cartes, nœuds, attache, lien épaissi) ---------- */
 {
-  const tot = await page.evaluate(() => document.querySelectorAll(".g3").length);
-  const offVisible = await page.evaluate(() =>
-    [...document.querySelectorAll(".g3")].filter(g => getComputedStyle(g).display !== "none").length);
-  await page.click("#ghostBtn");
-  await page.waitForTimeout(150);
-  const on = await page.evaluate(() => ({
-    cls: document.body.classList.contains("ghosts"),
-    pressed: document.querySelector("#ghostBtn").getAttribute("aria-pressed"),
-    visible: [...document.querySelectorAll(".g3")].filter(g => getComputedStyle(g).display !== "none").length,
-    cells: document.querySelectorAll(".c3").length,
-  }));
-  await page.click("#ghostBtn"); await page.waitForTimeout(120);
-  log("(I6) Silences : off par défaut, on affiche tous les fantômes sans toucher aux cellules",
-    offVisible === 0 && on.cls && on.pressed === "true" && on.visible === tot,
-    `off visible=${offVisible} · on visible=${on.visible}/${tot} cellules=${on.cells}`);
+  const hl = await page.evaluate(() => {
+    const idx = EV.findIndex((e, i) => divergent(i) && PERS_KEYS.every(k => lvOf(i, k) > 0));
+    const c = document.querySelector(`.c3[data-i="${idx}"]`);
+    c.dispatchEvent(new PointerEvent("pointerover", { bubbles: true }));
+    const rungs = [...document.querySelectorAll(`#weave .rung[data-i="${idx}"]`)];
+    const lit = document.querySelectorAll('[data-i="' + idx + '"].lit').length;
+    const thick = rungs.filter(r => +r.getAttribute("stroke-width") >= 4).length;
+    const dimmed = document.querySelector("#canvas").classList.contains("dim");
+    c.dispatchEvent(new PointerEvent("pointerout", { bubbles: true }));
+    const off = document.querySelectorAll('[data-i="' + idx + '"].lit').length;
+    return { total: rungs.length, lit, thick, dimmed, off };
+  });
+  log("(T3) survol : le groupe du fait s'allume (lit + lien épaissi + voile), puis s'éteint",
+    hl.total === 3 && hl.lit >= 7 && hl.thick === 3 && hl.dimmed && hl.off === 0, JSON.stringify(hl));
 }
 
-/* ---------- I7 : panneau — fait neutre d'abord, toutes les versions, back-link kit ---------- */
+/* ---------- T4 : panneau — fait neutre d'abord, toutes les versions, back-link kit exact ---------- */
 {
   const t = await page.evaluate(() => {
     const idx = EV.findIndex((e, i) => divergent(i) && PERS_KEYS.every(k => lvOf(i, k) > 0));
@@ -235,128 +181,243 @@ await page.waitForTimeout(800);
       desc: (document.querySelector("#pDesc").textContent || "").length,
       rows: document.querySelectorAll("#pRows .vrow").length,
       titles: [...document.querySelectorAll("#pRows .vt")].map(v => v.textContent),
-      gold: document.querySelectorAll(`.rung[data-i="${idx}"].div`).length,
+      gold: document.querySelectorAll(`#weave .rung[data-i="${idx}"].div`).length,
       href: document.querySelector("#pFoot a") ? document.querySelector("#pFoot a").getAttribute("href") : "",
+      litWhileOpen: document.querySelectorAll('[data-i="' + idx + '"].lit').length > 0,
     };
   });
   const expHref = `../chapitres/chapitre-${t.ev[4]}-espace.html#s${t.ev[5]}`;
-  log("(I7) clic cellule → panneau : fait neutre (titre+description du kit) puis les 3 versions ; back-link kit exact",
+  log("(T4) clic carte → panneau : fait neutre (titre+description du kit) puis les 3 versions ; back-link kit exact",
     t.open && t.nt === t.ev[2] && t.desc > 40 && t.rows === 3 && t.href === expHref &&
-    new Set(t.titles).size > 1,
-    `idx=${t.idx} « ${t.nt.slice(0, 34)}… » lignes=${t.rows} href=${t.href}`);
-  log("(I7b) fait divergent raconté par les trois récits : ses 3 marches sont dorées", t.gold === 3, `dorées=${t.gold}/3`);
+    new Set(t.titles).size > 1 && t.litWhileOpen,
+    `idx=${t.idx} « ${t.nt.slice(0, 34)}… » lignes=${t.rows} href=${t.href} lit=${t.litWhileOpen}`);
+  log("(T4b) fait divergent raconté par les trois récits : ses 3 liens sont dorés", t.gold === 3, `dorées=${t.gold}/3`);
   await shot("I-panel");
-  await page.keyboard.press("Escape"); await page.waitForTimeout(200);
+  await page.keyboard.press("Escape"); await page.waitForTimeout(300);
   const closed = await page.$eval("#panel", p => !p.classList.contains("open"));
-  log("(I7c) Échap ferme le panneau", closed, "");
+  const unlit = await page.evaluate(() => !document.querySelector("#canvas").classList.contains("dim"));
+  log("(T4c) Échap ferme le panneau et éteint l'éclairage du groupe", closed && unlit, `closed=${closed} unlit=${unlit}`);
 }
 
-/* ---------- I8 : survol d'une cellule allume ses marches ---------- */
+/* ---------- T5 : silences — 19 cercles pointillés TOUJOURS visibles (contrat renforcé) ---------- */
 {
-  const hl = await page.evaluate(() => {
-    const idx = EV.findIndex((e, i) => divergent(i) && PERS_KEYS.every(k => lvOf(i, k) > 0));
-    const c = document.querySelector(`.c3[data-i="${idx}"]`);
-    c.dispatchEvent(new PointerEvent("pointerover", { bubbles: true }));
-    const total = document.querySelectorAll(`.rung[data-i="${idx}"]`).length;
-    const lit = document.querySelectorAll(`.rung[data-i="${idx}"].hl`).length;
-    c.dispatchEvent(new PointerEvent("pointerout", { bubbles: true }));
-    const off = document.querySelectorAll(`.rung[data-i="${idx}"].hl`).length;
-    return { total, lit, off };
+  const s5 = await page.evaluate(() => {
+    const els = [...document.querySelectorAll("#weave .g3")];
+    const vis = els.filter(g => {
+      const st = getComputedStyle(g);
+      return st.display !== "none" && st.visibility !== "hidden" && parseFloat(st.opacity) > 0.05;
+    }).length;
+    const first = els[0] && els[0].closest("g") ? els[0].closest("g").querySelector("title") : null;
+    return { n: els.length, vis, tip: first ? first.textContent : "" };
   });
-  log("(I8) survol : les 3 marches du fait s'allument puis s'éteignent",
-    hl.total === 3 && hl.lit === 3 && hl.off === 0, JSON.stringify(hl));
+  log("(T5) les 19 silences sont rendus et visibles SANS toggle (plus jamais cachés derrière un bouton)",
+    s5.n === 19 && s5.vis === 19 && /ne raconte pas/.test(s5.tip), `${s5.vis}/${s5.n} visibles · infobulle « ${s5.tip.slice(0, 30)}… »`);
 }
 
-/* ---------- I9 : liens profonds ?ev= · ?ch= · #sN.S ---------- */
+/* ---------- T6 : « Maintenant » (bouton + touche n) centre sur le dernier événement ---------- */
+{
+  await page.evaluate(() => { document.querySelector("#scene").scrollTop = 0; });
+  await stab();
+  await page.click("#nowBtn");
+  await page.waitForTimeout(900);
+  const near = await page.evaluate(() => {
+    const vh = document.querySelector("#scene").getBoundingClientRect();
+    const cy = vh.top + vh.height / 2;
+    let best = 1e9, bv = 0;
+    for (const c of document.querySelectorAll(".c3")) {
+      const r = c.getBoundingClientRect();
+      const d = Math.abs(r.top + r.height / 2 - cy);
+      if (d < best) { best = d; bv = EV[+c.dataset.i][0]; }
+    }
+    return bv;
+  });
+  await page.keyboard.press("n"); await page.waitForTimeout(600);
+  const near2 = await page.evaluate(() => {
+    const vh = document.querySelector("#scene").getBoundingClientRect();
+    const cy = vh.top + vh.height / 2;
+    let best = 1e9, bv = 0;
+    for (const c of document.querySelectorAll(".c3")) {
+      const r = c.getBoundingClientRect();
+      const d = Math.abs(r.top + r.height / 2 - cy);
+      if (d < best) { best = d; bv = EV[+c.dataset.i][0]; }
+    }
+    return bv;
+  });
+  log("(T6) « Maintenant » (bouton puis touche n) centre la vue sur le dernier événement",
+    Math.abs(near - 2026.3) < 2 && Math.abs(near2 - 2026.3) < 2, `carte-centre ≈ ${near.toFixed(1)} puis ${near2.toFixed(1)} (attendu ≈ 2026.3)`);
+}
+
+/* ---------- T7 : badge-année vivant + minimap synchronisée (le point aveugle de l'I 3D) ---------- */
+{
+  const moved = await page.evaluate(() => {
+    const sc = document.querySelector("#scene");
+    sc.scrollTop = window.__row(50).y - sc.clientHeight / 2;
+    return sc.scrollTop;
+  });
+  await page.waitForTimeout(350);
+  const after = await page.evaluate(() => {
+    const sc = document.querySelector("#scene");
+    const y = sc.scrollTop + sc.clientHeight * 0.35;
+    const year = T_MIN + (y - 56) / 30;
+    return { txt: document.querySelector("#axisnote").textContent, year, vpY: +document.querySelector("#mini-vp").getAttribute("y") };
+  });
+  const shown = parseInt(after.txt, 10);
+  log("(T7) badge-année mis à jour au scroll : l'année affichée = l'année réellement visible (±2)",
+    !isNaN(shown) && Math.abs(shown - after.year) <= 2,
+    `badge « ${after.txt} » pour l'année visible ${after.year.toFixed(1)}`);
+  log("(T7b) le rectangle de la minimap suit le viewport", after.vpY > 10, `mini-vp.y=${Math.round(after.vpY)} après scroll à ${Math.round(moved)}px`);
+}
+
+/* ---------- T8 : clavier ↑↓ saute de fait en fait et pose le focus ---------- */
+{
+  const a = await page.evaluate(() => window.__i3d().top);
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(600);
+  const b = await page.evaluate(() => ({
+    top: window.__i3d().top,
+    focused: !!(document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("c3")),
+    i: document.activeElement && document.activeElement.dataset ? +document.activeElement.dataset.i : -1,
+  }));
+  log("(T8) flèche ↓ : passe au fait suivant, met la carte en focus, fait défiler",
+    Math.abs(b.top - a) > 20 && b.focused && b.i >= 0, `Δtop=${Math.round(b.top - a)}px focus=${b.focused} i=${b.i}`);
+}
+
+/* ---------- T9 : liens profonds ?ev= · ?ch= · #sN.S ---------- */
 {
   const idx = await page.evaluate(() => EV.findIndex((e, i) => divergent(i) && PERS_KEYS.every(k => lvOf(i, k) > 0)));
-  await page.goto(`${PAGE}?ev=${idx}`, { waitUntil: "load" }); await page.waitForTimeout(800);
-  const ev9 = await page.evaluate(() => ({ open: document.querySelector("#panel").classList.contains("open"), cy: window.__i3d().cy }));
-  const yearOK = await page.evaluate((i) => Math.abs(window.__i3d().cy - EV[i][0]) < 1, idx);
-  log("(I9) ?ev=i — panneau ouvert, caméra sur le fait", ev9.open && yearOK, `cy=${ev9.cy.toFixed(1)} ouvert=${ev9.open}`);
+  await page.goto(`${PAGE}?ev=${idx}`, { waitUntil: "load" }); await stab(); await stab();
+  const ev9 = await page.evaluate((i) => {
+    const sc = document.querySelector("#scene");
+    const vh = sc.getBoundingClientRect();
+    const cards = [...document.querySelectorAll(`.c3[data-i="${i}"]`)];
+    const inView = cards.length > 0 && cards.some(c => {
+      const r = c.getBoundingClientRect();
+      return r.top >= vh.top - 5 && r.bottom <= vh.bottom + 5;
+    });
+    return { open: document.querySelector("#panel").classList.contains("open"), inView };
+  }, idx);
+  log("(T9) ?ev=i — panneau ouvert ET la carte du fait est dans le viewport", ev9.open && ev9.inView, `ouvert=${ev9.open} visible=${ev9.inView}`);
   const ch = await page.evaluate(() => EV[1][4]);
-  await page.goto(`${PAGE}?ch=${ch}`, { waitUntil: "load" }); await page.waitForTimeout(600);
+  await page.goto(`${PAGE}?ch=${ch}`, { waitUntil: "load" }); await stab();
   const ok9b = await page.evaluate((n) => {
     const cy = window.__i3d().cy, ds = EV.filter(e => e[4] === n).map(e => e[0]);
-    return cy >= Math.min(...ds) - 4 && cy <= Math.max(...ds) + 4;
+    return cy >= Math.min(...ds) - 8 && cy <= Math.max(...ds) + 8;
   }, ch);
-  log(`(I9b) ?ch=${ch} — caméra dans l'emprise du chapitre`, ok9b, "");
-  const seq = await page.evaluate(() => {
-    const e = EV[6]; return { i: 6, h: `#s${e[4]}.${e[5]}` };
-  });
-  await page.goto(PAGE + seq.h, { waitUntil: "load" }); await page.waitForTimeout(800);
+  log(`(T9b) ?ch=${ch} — la fenêtre visible est dans l'emprise du chapitre`, ok9b, "");
+  const seq = await page.evaluate(() => { const e = EV[6]; return { h: `#s${e[4]}.${e[5]}` }; });
+  await page.goto(PAGE + seq.h, { waitUntil: "load" }); await stab();
   const ok9c = await page.evaluate(() => document.querySelector("#panel").classList.contains("open"));
-  log(`(I9c) ${seq.h} (back-link kit) — ouvre le bon fait`, ok9c, "");
+  log(`(T9c) ${seq.h} (back-link kit) — ouvre le bon fait`, ok9c, "");
 }
 
-/* ---------- I10 : le plancher d'opacité — aucune cellule n'est jamais « droppée » ---------- */
+/* ---------- T10 : rien n'est jamais retiré — compte et plancher d'opacité après navigation ---------- */
 {
-  await page.goto(PAGE, { waitUntil: "load" }); await page.waitForTimeout(700);
-  for (let i = 0; i < 3; i++) { await page.mouse.move(720, 500); await page.mouse.wheel(0, 240); await page.waitForTimeout(60); }
-  const floorOK = await page.evaluate(() => {
-    const els = [...document.querySelectorAll(".bpos[data-pos]")];
-    const bad = els.filter(e => parseFloat(getComputedStyle(e).opacity) < 0.369);
-    return { n: els.length, bad: bad.length };
+  await page.goto(PAGE, { waitUntil: "load" }); await stab();
+  await page.evaluate(() => { const sc = document.querySelector("#scene"); sc.scrollTop = sc.scrollHeight; });
+  await page.waitForTimeout(300);
+  const keep = await page.evaluate(() => {
+    const cards = [...document.querySelectorAll(".c3")];
+    const gone = cards.filter(c => getComputedStyle(c).display === "none").length;
+    const faded = cards.filter(c => parseFloat(getComputedStyle(c).opacity) < 0.5).length;
+    return { n: cards.length, gone, faded };
   });
-  log("(I10) zoom arrière maximal : toute l'hélice reste dessinée (opacité ≥ 0,37 partout)",
-    floorOK.bad === 0 && floorOK.n > 250, `${floorOK.n} éléments, ${floorOK.bad} sous le plancher`);
+  log("(T10) après voyage au bas de la tresse : les cartes sont toutes là, aucune retirée, aucune sous 0,5 d'opacité",
+    keep.n === 260 && keep.gone === 0 && keep.faded === 0, `${keep.n} cartes · display-none=${keep.gone} · <0.5=${keep.faded}`);
 }
 
-/* ---------- I11 : le budget rendu — 60 recadrages caméra complets en < 2,5 s (Chromebook scolaire) ---------- */
+/* ---------- T11 : budget rendu — 60 rafraîchissements HUD en < 2,5 s (Chromebook scolaire) ---------- */
 {
   const ms = await page.evaluate(() => {
     const t0 = performance.now();
     for (let i = 0; i < 60; i++) window.__frame();
     return performance.now() - t0;
   });
-  log("(I11) 60 recadrages caméra (matrice + fondu des billboards) < 2 500 ms", ms < 2500, `${ms.toFixed(0)} ms`);
+  log("(T11) 60 rafraîchissements HUD (badge + minimap) < 2 500 ms", ms < 2500, `${ms.toFixed(0)} ms`);
 }
 
-/* ---------- I12 : prefers-reduced-motion = coupe franche ---------- */
+/* ---------- T11b : la zone la plus dense (2023+) reste lisible + capture QC ---------- */
+{
+  await page.evaluate(() => {
+    const i = EV.findIndex(e => e[0] >= 2023);
+    const sc = document.querySelector("#scene");
+    sc.scrollTop = window.__row(i).y - sc.clientHeight / 2;
+  });
+  await stab();
+  await shot("I-dense");
+  const dense = await page.evaluate(() => {
+    const vh = document.querySelector("#scene").getBoundingClientRect();
+    let full = 0;
+    for (const c of document.querySelectorAll(".c3")) {
+      const r = c.getBoundingClientRect();
+      if (r.top >= vh.top && r.bottom <= vh.bottom && parseFloat(getComputedStyle(c.querySelector(".t")).fontSize) >= 14 && r.width >= 200) full++;
+    }
+    return full;
+  });
+  const ov2 = await page.evaluate(OVERLAP_FN);
+  log("(T11b) zone la plus dense (2023+) : ≥6 cartes entièrement lisibles et zéro recouvrement à 1440×900",
+    dense >= 6 && ov2.bad === 0, `lisibles=${dense} · ${ov2.n} vues · recouvrements=${ov2.bad}`);
+}
+
+/* ---------- T12 : prefers-reduced-motion = saut instantané (pas de glide) ---------- */
 {
   const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 1280, height: 800 } });
   const p2 = await ctx.newPage();
-  await p2.goto(PAGE, { waitUntil: "load" }); await p2.waitForTimeout(700);
-  await p2.click('#cams button[data-v="haut"]');
-  await p2.waitForTimeout(120);
-  const r = await p2.evaluate(() => window.__i3d());
-  log("(I12) prefers-reduced-motion : le preset s'applique sans glide",
-    Math.abs(r.pitch * 180 / Math.PI - 89.5) < 0.05, `pitch=${(r.pitch * 180 / Math.PI).toFixed(2)}° après 120 ms`);
+  await p2.goto(PAGE, { waitUntil: "load" }); await p2.waitForTimeout(600);
+  await p2.keyboard.press("n");
+  await p2.waitForTimeout(150);
+  const r = await p2.evaluate(() => {
+    const sc = document.querySelector("#scene");
+    let bi = 0, bd = 1e9;
+    for (let j = 0; j < EV.length; j++) { const d = Math.abs(EV[j][0] - NOW); if (d < bd) { bd = d; bi = j; } }
+    const want = Math.max(0, Math.min(sc.scrollHeight - sc.clientHeight, window.__row(bi).y - sc.clientHeight / 2));
+    return { got: sc.scrollTop, want };
+  });
+  log("(T12) prefers-reduced-motion : « n » saute SANS glide (<150 ms, position exacte)",
+    Math.abs(r.got - r.want) < 40, `top=${Math.round(r.got)} attendu=${Math.round(r.want)}`);
   await ctx.close();
 }
 
-/* ---------- I13 : mobile 390 — pas de scroll horizontal, scène pleine ---------- */
+/* ---------- T13 : mobile 390 — pas de scroll horizontal, cartes pleine largeur ---------- */
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 760 }, isMobile: true, hasTouch: true });
   const p3 = await ctx.newPage();
   const errs = [];
   p3.on("pageerror", e => errs.push(String(e)));
   await p3.goto(PAGE, { waitUntil: "load" }); await p3.waitForTimeout(800);
-  const m = await p3.evaluate(() => ({
-    noX: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
-    sceneW: document.querySelector("#scene").getBoundingClientRect().width,
-    cells: document.querySelectorAll(".c3").length,
-    close: window.__i3d().d < 3000,
-  }));
-  log("(I13) mobile 390 : zéro scroll horizontal, scène pleine largeur, cadrage serré par défaut, zéro erreur",
-    m.noX && m.sceneW === 390 && m.cells > 150 && m.close && errs.length === 0,
-    `scrollX=${m.noX} scène=${m.sceneW} cellules=${m.cells} près=${m.close} err=${errs.length}`);
+  const m = await p3.evaluate(() => {
+    const cards = [...document.querySelectorAll(".c3")];
+    const vh = document.querySelector("#scene").getBoundingClientRect();
+    let vis = 0, full = 0;
+    for (const c of cards) {
+      const r = c.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < vh.height) { vis++; if (r.width >= 240) full++; }
+    }
+    return {
+      noX: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+      cards: cards.length, vis, full,
+      mini: getComputedStyle(document.querySelector("#mini")).display,
+      sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth,
+    };
+  });
+  log("(T13) mobile 390 : zéro scroll horizontal, 260 cartes, cartes ≥240px dans le viewport, minimap masquée, zéro erreur",
+    m.noX && m.cards === 260 && m.full === m.vis && m.vis >= 3 && m.mini === "none" && errs.length === 0,
+    `scrollX=${m.sw}/${m.cw} cartes=${m.cards} vues=${m.vis} ≥240px=${m.full} mini=${m.mini} err=${errs.length}`);
   await p3.screenshot({ path: ART + "I-mobile.png" });
   await ctx.close();
 }
 
-/* ---------- I14 : enregistré dans le comparatif ---------- */
+/* ---------- T14 : enregistré dans le comparatif ---------- */
 {
   const idxOK = await page.evaluate(async (u) => {
     const r = await fetch(u);
     return (await r.text()).includes("perspective-I-helice.html");
   }, BASE + "/index-comparatif.html");
-  log("(I14) I est présenté dans index-comparatif", idxOK, "");
-  log("(I15) aucune erreur JavaScript sur toute la batterie", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | "));
+  log("(T14) I est présenté dans index-comparatif", idxOK, "");
+  log("(T15) aucune erreur JavaScript sur toute la batterie", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | "));
 }
 
 await browser.close();
-console.log("\n===== RESULTATS verif_helice =====");
+console.log("\n===== RESULTATS verif_helice (tresse déroulée) =====");
 for (const r of results) console.log(r);
 const fails = results.filter(r => r.startsWith("FAIL")).length;
 console.log(fails === 0 ? "TOUS LES CHECKS PASSENT" : fails + " CHECK(S) EN ECHEC");
