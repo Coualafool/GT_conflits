@@ -169,12 +169,15 @@ header .badgeI{display:inline-block;background:#44503c;color:#f6f3ec;font-size:1
 /* ====== I · l'Hélice des récits — VERSION « TRESSE DÉROULÉE » ======
    Le cylindre de l'hélice est coupé et redressé : le temps coule de haut en bas (scroll),
    et l'enroulement devient le tressage des trois brins au centre. La géométrie du ruban
-   est EXACTEMENT l'hélice déroulée : x = amp·sin(2π·an/15 + φ), même période (15 ans),
-   mêmes phases (0/120/240°) que la version 3D — aucune rotation, aucun texte incliné,
+   est la même tresse sinusoïdale : x = amp·sin(2π·y/λ + φ), phases (0/120/240°) identiques à
+   la version 3D — mais dessinée APRÈS l'empilement, dans l'espace réel des rangées :
+   le ruban traverse toute la page et chaque point est posé sur le tracé dessiné.
+   Aucune rotation, aucun texte incliné,
    aucune occlusion : tout est lisible. Zéro dépendance, file:// natif. */
 const $=s=>document.querySelector(s);
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
-const YPX=30;                       // px par an — la page est longue : c'est un document qu'on lit
+let YPX=90;                           // px par an — fixé par measure() : l'espace des années doit
+                                      // absorber le contenu des cartes, sinon l'empilement fuit loin du calendrier
 const PAD_TOP=56, PAD_BOT=110, GAP=12;
 const TURN=15, PHI={occ:0,isr:2*Math.PI/3,pal:4*Math.PI/3};
 function escT(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
@@ -187,17 +190,18 @@ let L=null;                         // layout courant : colonnes, largeurs, haut
 function measure(){
   const W=$("#canvas").clientWidth||document.getElementById("canvas").clientWidth;
   const mobile=W<700, mid=W<1000;
+  YPX=mobile?140:(mid?110:90);
   const bandW=mobile?72:(mid?220:260), amp=mobile?24:(mid?74:92);
   const bandCx=mobile?44:W/2;
   const cardW=mobile?Math.min(272,W-96):(mid?200:234), cardW1=mobile?cardW:(mid?178:208);
   const cardH=mobile?54:(mid?62:68), clamp=mobile?1:2;
   const colR=bandCx+150, colL=mobile?92:bandCx-150-cardW;
-  return {W,mobile,bandW,amp,bandCx,cardW,cardW1,cardH,clamp,colL,colR,H:0};
+  return {W,mobile,bandW,amp,bandCx,cardW,cardW1,cardH,clamp,colL,colR,wl:mobile?340:560,H:0};
 }
 function nodeX(k,year){return L.bandCx+L.amp*Math.sin(PHI[k]+(year-T_MIN)*2*Math.PI/TURN);}
 /* x du brin à une ORDONNÉE donnée (pas à l'année) : l'empilement décale les rangées vers le bas,
    les nœuds doivent suivre le brin à la hauteur RÉELLE de la rangée, sinon ils flottent à côté. */
-function ribbonX(k,y){return L.bandCx+L.amp*Math.sin(PHI[k]+(y-PAD_TOP)*2*Math.PI/(TURN*YPX));}
+function ribbonX(k,y){return L.bandCx+L.amp*Math.sin(PHI[k]+(y-PAD_TOP)*2*Math.PI/(L.wl||560));}
 function sideOf(k,year){return Math.sin(PHI[k]+(year-T_MIN)*2*Math.PI/TURN)>=0?"R":"L";}
 
 /* ---- construction : une rangée par fait, empilement par colonne ---- */
@@ -209,31 +213,10 @@ function build(){
   canvas.innerHTML="";
   rows.length=0;
   let out="";
-  /* ères partagées : teintes d'arrière-plan + nom en petites capitales */
-  for(const e of ERAS){
-    const t=yOf(e.a),h=(e.b-e.a)*YPX;
-    out+='<div class="era-band" style="top:'+t.toFixed(1)+'px;height:'+h.toFixed(1)+'px;background:'+e.c+'0f"><span class="lbl" style="color:'+e.c+'">'+escT(e.label)+'</span></div>';
-  }
   let inner="";
-  /* grille des années : trait tous les 10 ans, graduation fine tous les 5 */
-  for(let y=Math.ceil(T_MIN/5)*5;y<=T_MAX;y+=5){
-    const yy=yOf(y).toFixed(1), major=y%10===0, half=L.bandW/2;
-    inner+='<line x1="'+(L.bandCx-half)+'" y1="'+yy+'" x2="'+(L.bandCx+half)+'" y2="'+yy+'" stroke="#cfc7b1" stroke-width="1" opacity="'+(major?.75:.35)+'"/>';
-    if(major&&!L.mobile)inner+='<text x="'+(L.bandCx-half-8).toFixed(1)+'" y="'+(yOf(y)+4).toFixed(1)+'" text-anchor="end" font-family="Georgia,serif" font-size="13" fill="#61604f" opacity=".8">'+y+'</text>';
-  }
-  /* les trois brins : gaine crème + ruban — au croisement, le brin du dessus découpe le dessous :
-     le tressage se LIT (sur/dessous), au lieu de se noyer dans la transparence */
-  for(const k of PERS_KEYS){
-    let d="";
-    for(let t=T_MIN;t<=T_MAX+0.25;t+=0.25){
-      const x=nodeX(k,t),y=yOf(Math.min(t,T_MAX));
-      d+=(d?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);
-    }
-    const w=L.mobile?7:10;
-    inner+='<g class="grp strand"><path d="'+d+'" fill="none" stroke="var(--bg)" stroke-width="'+(w+5)+'" stroke-linecap="round" opacity="1"/>'+
-      '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+w+'" stroke-linecap="round" opacity=".55"/>'+
-      '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+(w-4)+'" stroke-linecap="round" opacity=".95"/></g>';
-  }
+  /* la grille, les ères et les brins sont dessinés APRÈS l'empilement, dans l'espace RÉEL des
+     rangées — dessinés sur l'échelle linéaire, ils s'arrêtaient net pendant que les cartes
+     continuaient : la tresse disparaissait du milieu de la page (le bug signalé). */
   /* hauteur des titres AVANT l'empilement : la carte prend la vraie hauteur du texte.
      (Couper des titres à la hache tuait le sujet même de la page : les mots diffèrent.) */
   const TH={};
@@ -259,7 +242,7 @@ function build(){
     const nat=yOf(EV[i][0]);
     const items=[];
     for(const k of ks){
-      const side=L.mobile?"R":sideOf(k,EV[i][0]);
+      const side=L.mobile?"R":(Math.sin(PHI[k]+(nat-PAD_TOP)*2*Math.PI/L.wl)>=0?"R":"L");   // côté du brin à la HAUTEUR du fait
       const w=lvOf(i,k)>=2?L.cardW:L.cardW1;
       items.push({i,k,side,w,h:TH[i+"|"+k].h,clamp:TH[i+"|"+k].clamp,x:side==="L"?L.colL:L.colR,l:lvOf(i,k)});
     }
@@ -322,6 +305,43 @@ function build(){
   const H=Math.max(H0,curL,curR)+PAD_BOT;
   L.H=H;
   canvas.style.height=H+"px";
+  /* année → ordonnée RÉELLE : l'empilement étire localement le temps, la grille et les ères LE suivent,
+     jamais l'inverse — un trait d'année tombe exactement entre les rangées de son année */
+  function yearY(t){
+    const lastI=EV.length-1;
+    if(t<=EV[0][0])return rows[0].y-(EV[0][0]-t)*YPX;
+    if(t>=EV[lastI][0])return rows[lastI].y+(t-EV[lastI][0])*YPX;
+    for(let i=1;i<=lastI;i++){
+      if(EV[i][0]>=t){
+        const a=EV[i-1][0],b=EV[i][0];
+        if(b===a)return rows[i].y;
+        return rows[i-1].y+(rows[i].y-rows[i-1].y)*(t-a)/(b-a);
+      }
+    }
+    return rows[lastI].y;
+  }
+  /* ères partagées : teintes d'arrière-plan + nom en petites capitales — dans l'espace réel */
+  for(const e of ERAS){
+    const t=yearY(e.a),h=yearY(Math.min(e.b,T_MAX))-t;
+    out+='<div class="era-band" style="top:'+t.toFixed(1)+'px;height:'+h.toFixed(1)+'px;background:'+e.c+'0f"><span class="lbl" style="color:'+e.c+'">'+escT(e.label)+'</span></div>';
+  }
+  /* grille des années : trait tous les 10 ans, graduation fine tous les 5 — collée aux rangées */
+  for(let y=Math.ceil(T_MIN/5)*5;y<=T_MAX;y+=5){
+    const yy=yearY(y), major=y%10===0, half=L.bandW/2;
+    inner+='<line x1="'+(L.bandCx-half)+'" y1="'+yy.toFixed(1)+'" x2="'+(L.bandCx+half)+'" y2="'+yy.toFixed(1)+'" stroke="#cfc7b1" stroke-width="1" opacity="'+(major?.75:.35)+'"/>';
+    if(major&&!L.mobile)inner+='<text x="'+(L.bandCx-half-8).toFixed(1)+'" y="'+(yy+4).toFixed(1)+'" text-anchor="end" font-family="Georgia,serif" font-size="13" fill="#61604f" opacity=".8">'+y+'</text>';
+  }
+  /* les trois brins : gaine crème + ruban, dessinés par balayage en Y sur TOUTE la hauteur réelle —
+     la courbe dessinée et les nœuds partagent ribbonX() : un point ne peut plus flotter hors d'un brin,
+     et le tressage ne peut plus s'arrêter en route (les deux bugs vécus) */
+  for(const k of PERS_KEYS){
+    let d="";
+    for(let yy=2;yy<=H-2;yy+=6)d+=(d?"L":"M")+ribbonX(k,yy).toFixed(1)+" "+yy.toFixed(1);
+    const w=L.mobile?7:10;
+    inner+='<g class="grp strand"><path d="'+d+'" fill="none" stroke="var(--bg)" stroke-width="'+(w+5)+'" stroke-linecap="round" opacity="1"/>'+
+      '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+w+'" stroke-linecap="round" opacity=".55"/>'+
+      '<path d="'+d+'" fill="none" stroke="'+PERS[k].c+'" stroke-width="'+(w-4)+'" stroke-linecap="round" opacity=".95"/></g>';
+  }
   canvas.insertAdjacentHTML("beforeend",
     out+'<svg id="weave" width="'+L.W+'" height="'+H+'" viewBox="0 0 '+L.W+" "+H+'" aria-hidden="true">'+inner+groups.join("")+"</svg>"+cardsHtml);
   buildMini();

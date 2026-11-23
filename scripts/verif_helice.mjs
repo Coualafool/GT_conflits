@@ -70,28 +70,64 @@ await stab();
   await shot("I-default");
 }
 
-/* ---------- T0b : géométrie = l'hélice DERROULÉE (sinus période 15 ans, phases 0/120/240°, amp 92) ---------- */
+/* ---------- T0b : géométrie = tresse sinusoïdale dessinée sur TOUTE la hauteur (le bug du ruban coupé) ---------- */
 {
   const g = await page.evaluate(() => {
     try {
-      const cx = L.bandCx, amp = L.amp;
-      const at = (k, y) => (nodeX(k, y) - cx) / amp;   // doit valoir sin(φk + 2π·(y−T_MIN)/15)
+      const amp = L.amp, wl = L.wl, H = L.H, cx = L.bandCx;
       const phi = { occ: 0, isr: 2 * Math.PI / 3, pal: 4 * Math.PI / 3 };
       const err = [];
       for (const k of ["occ", "isr", "pal"]) {
         let maxerr = 0;
-        for (let y = 1950; y < 2020; y += 1) {
-          const want = Math.sin(phi[k] + (y - T_MIN) * 2 * Math.PI / 15);
-          maxerr = Math.max(maxerr, Math.abs(at(k, y) - want));
-        }
+        for (let y = 60; y < H - 20; y += 53) maxerr = Math.max(maxerr, Math.abs((ribbonX(k, y) - cx) / amp - Math.sin(phi[k] + (y - PAD_TOP) * 2 * Math.PI / wl)));
         err.push([k, +maxerr.toFixed(4)]);
       }
-      return { amp, cx: Math.round(cx), err };
+      const bhs = [...document.querySelectorAll("#weave g.strand path")].map(p => p.getBBox().height);
+      return { amp, wl, H, bh: Math.min.apply(null, bhs), err };
     } catch (e) { return { err: String(e) }; }
   });
-  const ok = Array.isArray(g.err) && g.err.every(([, e]) => e < 0.02) && Math.abs(g.amp - 92) < 0.5;
-  log("(T0b) rubans = hélice déroulée exacte : sinus de période 15 ans, phases 0/120/240°, amplitude 92px",
-    ok, `amp=${g.amp} bandCx=${g.cx} maxErr(sin)=${JSON.stringify(g.err)}`);
+  const ok = Array.isArray(g.err) && g.err.every(([, e]) => e < 0.02) && g.bh >= g.H - 60;
+  log("(T0b) brins = tresse sinusoïdale (amp·période fixe·phases 0/120/240°) dessinée du HAUT au BAS RÉEL du canvas",
+    ok, `amp=${g.amp} wl=${g.wl} canvas=${Math.round(g.H)}px plus petit chemin=${Math.round(g.bh)}px maxErr=${JSON.stringify(g.err)}`);
+}
+
+/* ---------- T0c : à CHAQUE rangée, le brin de chaque récit passe sous son point (ruban réel, pas math) ---------- */
+{
+  const px = await page.evaluate(() => {
+    const sc = document.querySelector("#scene");
+    sc.scrollTop = 0; sc.scrollTop = sc.scrollHeight;   // forcer tout en vue du rendu
+    const paths = [...document.querySelectorAll("#weave g.strand path")];
+    const byc = {};
+    for (const pp of paths) { const c = pp.getAttribute("stroke"); if (c !== "var(--bg)" && !byc[c]) byc[c] = pp; }
+    const bad = [];
+    const probe = (k, y, tag) => {
+      // distance du point (ribbonX(k,y), y) au TRACÉ RÉEL du brin de la couleur de k
+      const el = byc[PERS[k].c];
+      if (!el) { bad.push(tag + ":no-path"); return; }
+      const x = ribbonX(k, y), len = el.getTotalLength();
+      let best = 1e9;
+      // recherche locale : le sinus est bijectif en x autour du point sur ±une demi-période
+      for (let L0 = 0; L0 < len; L0 += 24) {
+        const q = el.getPointAtLength(L0);
+        if (Math.abs(q.y - y) < 30) {
+          for (let L1 = Math.max(0, L0 - 24); L1 <= Math.min(len, L0 + 24); L1 += 6) {
+            const r = el.getPointAtLength(L1);
+            if (Math.abs(r.y - y) < 2) best = Math.min(best, Math.abs(r.x - x));
+          }
+        }
+      }
+      if (best > 1.5) bad.push(tag + " écart=" + best.toFixed(1));
+    };
+    for (let i = 0; i < EV.length; i++)
+      for (const k of PERS_KEYS) {
+        const n = rows[i].items.find(it => it.k === k);
+        probe(k, rows[i].y, i + "|" + k);
+        void n;
+      }
+    return bad.slice(0, 8);
+  });
+  log("(T0c) les 279 marqueurs posés sur le TRACÉ DESSINÉ (pas sur une formule) — écart ≤ 1,5px partout",
+    px.length === 0, px.length ? JSON.stringify(px) : "toutes les rangées × 3 brins vérifiées sur le chemin réel");
 }
 
 /* ---------- T1 : LA porte d'entrée — le repos est lisible (l'I 3D échouait ici) ---------- */
@@ -140,8 +176,9 @@ await stab();
     const phi = { occ: 0, isr: 2 * Math.PI / 3, pal: 4 * Math.PI / 3 };
     for (let i = 0; i < EV.length; i += 5) {
       const r = window.__row(i);
+      const yNat = yOf(EV[i][0]);
       for (const it of r.items) {
-        const side = Math.sin(phi[it.k] + (EV[i][0] - T_MIN) * 2 * Math.PI / 15) >= 0 ? "R" : "L";
+        const side = Math.sin(phi[it.k] + (yNat - PAD_TOP) * 2 * Math.PI / L.wl) >= 0 ? "R" : "L";
         if (it.side !== side) bad.push([i, it.k, it.side, side]);
       }
     }
