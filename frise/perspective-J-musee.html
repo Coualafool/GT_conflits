@@ -242,6 +242,7 @@ function yrLbl(y){ return String(yrOf(y)) + " · " + MONTHS[mthOf(y)]; }
    l'encodage LV est la TAILLE (LV2 grande et lisible, LV1 petite en second plan), jamais la teinte ni l'effacement.
    Les rideaux courent du sol au-dessus des deux rangées : leur largeur bloque le créneau des deux côtés. */
 /*__LAYOUT_START__*/
+function backFace(k){ return k===NROOM-1 ? -((NROOM-1)*(GEO.DEPTH+GEO.PART)) - GEO.DEPTH - GEO.PART + 0.1 : roomRange(k).z1; }  // face réelle du mur du fond : la dernière salle touche la paroi extérieure (face = FARZ+.1), les autres la cloison (face = z1)
 var PW = { pal:{w2:.9,h2:.63,w1:.68,h1:.47}, isr:{w2:.9,h2:.63,w1:.68,h1:.47}, occ:{w2:.86,h2:.6,w1:.66,h1:.45} };
 var CW = 0.95, CH = 2.3;                      // rideau : couverture physique de l'emplacement vide
 var YA = 1.58, YB = 2.3;                      // A à hauteur d'yeux, B au-dessus ; bas du plus grand = 1,20 m
@@ -264,16 +265,23 @@ function pushTrack(items, U, gap){           // pousse 1D année→position, ord
   }
   return items;
 }
-function layoutLane(items, U){                // une paroi de récit : rideaux d'abord, puis affiches en quinconce
+function layoutLane(items, U, doorHalf){      // une paroi de récit : rideaux d'abord, puis affiches en quinconce ; doorHalf>0 : porte centrale à ménager (mur = cloison)
   var GAP = 0.1, scale = 1;
+  var DOORB = doorHalf ? { l:-doorHalf-0.06, r:doorHalf+0.06 } : null;   // l'embrasurement est un obstacle permanent, comme un rideau
   for (var attempt = 0; attempt < 7; attempt++){
     var over = false;
     items.forEach(function(t){ t.w = t.w0 * scale; });
     items.sort(function(a,b){ return a.year-b.year || (a.i<b.i?-1:1); });
     var cts = items.filter(function(t){ return t.kind==="curtain"; });
     pushTrack(cts, U, 0.15);
+    if (DOORB){                                                     // rideaux : jamais dans la porte — poussée droite puis reprise de l'ordre
+      var cpr = -U-9;
+      cts.forEach(function(c){
+        if (c.x + c.w/2 > DOORB.l && c.x - c.w/2 < DOORB.r) c.x = DOORB.r + 0.15 + c.w/2;
+        c.x = Math.max(c.x, cpr + 0.15 + c.w/2); cpr = c.x + c.w/2; });
+    }
     cts.forEach(function(c){ if (c.x - c.w/2 < -U-1e-9 || c.x + c.w/2 > U+1e-9) over = true; });
-    var blocks = cts.map(function(c){ return { l:c.x - c.w/2 - 0.06, r:c.x + c.w/2 + 0.06 }; })
+    var blocks = (DOORB?[DOORB]:[]).concat(cts.map(function(c){ return { l:c.x - c.w/2 - 0.06, r:c.x + c.w/2 + 0.06 }; }))
                     .sort(function(a,b){ return a.l-b.l; });
     function nudgePast(x, w){
       for (var q=0;q<blocks.length;q++){ var b=blocks[q];
@@ -338,8 +346,9 @@ for (var rk=0; rk<NROOM; rk++){
     })(PERS_KEYS[ki]); }
     if (divergent(i2)) cases.push({ i:i2, kind:"case", year:EV[i2][0], a:era.a, b:era.b, w:.62, w0:.62, room:rk });
   }
-  layoutLane(byLane.pal, GEO.U); layoutLane(byLane.isr, GEO.U); layoutLane(byLane.occ, GEO.OCCU);
+  layoutLane(byLane.pal, GEO.U); layoutLane(byLane.isr, GEO.U); layoutLane(byLane.occ, GEO.OCCU, rk < NROOM-1 ? GEO.DOOR/2 : 0);
   var mapZ = function(it){ return rr.z0 - (it.x + GEO.U)/(2*GEO.U) * GEO.DEPTH; };   // avant→fond, années qui avancent
+  var occF = backFace(rk);                                                            // z du mur du fond réel (cloison = z1 ; dernière salle = paroi extérieure)
   var yOf = function(p){ return p.row===1 ? YA : YB; };
   byLane.pal.forEach(function(it){
     if (it.kind==="poster") posters.push({ kind:"poster", i:it.i, lane:"pal", room:rk, x:-(GEO.HALF-.12), z:mapZ(it), y:yOf(it), lv:it.lv,
@@ -350,9 +359,9 @@ for (var rk=0; rk<NROOM; rk++){
       w:it.w, h: (it.lv===2?PW.isr.h2:PW.isr.h1)*it.scale, rotY: -Math.PI/2, target:it.target, row:it.row, scale:it.scale });
     else curtains.push({ kind:"curtain", i:it.i, lane:"isr", room:rk, x:(GEO.HALF-.15), z:mapZ(it), y:CH/2+.14, rotY: -Math.PI/2, w:it.w }); });
   byLane.occ.forEach(function(it){
-    if (it.kind==="poster") posters.push({ kind:"poster", i:it.i, lane:"occ", room:rk, x:it.x, z: rr.z1+.09, y:yOf(it), lv:it.lv,
+    if (it.kind==="poster") posters.push({ kind:"poster", i:it.i, lane:"occ", room:rk, x:it.x, z: occF+.09, y:yOf(it), lv:it.lv,
       w:it.w, h: (it.lv===2?PW.occ.h2:PW.occ.h1)*it.scale, rotY: 0, target:it.target, row:it.row, scale:it.scale });
-    else curtains.push({ kind:"curtain", i:it.i, lane:"occ", room:rk, x: mClamp(it.x,-GEO.OCCU,GEO.OCCU), z: rr.z1+.05, y:CH/2+.14, rotY: 0, w:it.w }); });
+    else curtains.push({ kind:"curtain", i:it.i, lane:"occ", room:rk, x: mClamp(it.x,-GEO.OCCU,GEO.OCCU), z: occF+.05, y:CH/2+.14, rotY: 0, w:it.w }); });
 }
 /* vitrines : DEUX colonnes alternées (x = ±0,95) de part et d'autre de l'allée centrale, par salle,
    position-année sur l'axe z, garde de 1,8 m aux deux parois — 10 vitrines max/salle tiennent ainsi largement */
@@ -442,7 +451,7 @@ for (var fk=0; fk<NROOM; fk++){
   var fr = roomRange(fk);
   rail(.07, GEO.DEPTH-.8, -GEO.HALF+.22, (fr.z0+fr.z1)/2, 0x1f5741);
   rail(.07, GEO.DEPTH-.8,  GEO.HALF-.22, (fr.z0+fr.z1)/2, 0x1d4768);
-  rail(2*GEO.HALF-1.4, .07, 0, fr.z1+.22, 0x6b442a);
+  rail(2*GEO.HALF-1.4, .07, 0, backFace(fk)+.22, 0x6b442a);
   box(7, .03, .34, 0, GEO.WALLH-.02, (fr.z0+fr.z1)/2, new THREE.MeshBasicMaterial({ color:0x3a3529 }));  // bandeau « cuit »
   var sp = new THREE.SpotLight(0xffd296, 46, 15, .8, .55, 1.6);
   sp.position.set(0, GEO.WALLH-.1, (fr.z0+fr.z1)/2 + 2.2);
@@ -602,7 +611,7 @@ for (var tk=0; tk<NROOM; tk++){
     });
     if (k==="pal") labelPlane(1024,72, 6.4, t, -GEO.HALF+.13, 2.86, (tr.z0+tr.z1)/2, Math.PI/2);
     else if (k==="isr") labelPlane(1024,72, 6.4, t, GEO.HALF-.13, 2.86, (tr.z0+tr.z1)/2, -Math.PI/2);
-    else labelPlane(1024,72, 5.6, t, 0, 2.93, tr.z1+.06, 0);   // au-dessus de la rangée haute du mur du fond
+    else labelPlane(1024,72, 5.6, t, 0, 2.93, backFace(tk)+.06, 0);   // au-dessus de la rangée haute du mur du fond
   });
 }
 
@@ -909,10 +918,10 @@ window.__musee = {
       media:{ docs:Object.keys(MEDIA).length, baked:MEDIA_N, loaded:MEDIA_LOADED, fail:MEDIA_FAIL } }; },
   mediaTable: MEDIA,   // lecture harnais : inventaire des documents (clefs = index d'event)
   rooms: function(){ return ERAS.map(function(e,k){ var r = roomRange(k);
-      return { k:k, label:e.label, a:e.a, b:e.b, z0:r.z0, z1:r.z1, xL:-(GEO.HALF-.09), xR:(GEO.HALF-.09) }; }); },
+      return { k:k, label:e.label, a:e.a, b:e.b, z0:r.z0, z1:r.z1, face:backFace(k), door:(k<NROOM-1?GEO.DOOR:0), xL:-(GEO.HALF-.09), xR:(GEO.HALF-.09) }; }); },
   posters: function(){ return posters.map(function(p){ return { i:p.i, lane:p.lane, room:p.room, x:p.x, z:p.z, y:p.y,
       lv:p.lv, key:p.key, row:p.row, year:EV[p.i][0], target:p.target, w:p.w, h:p.h, scale:p.scale }; }); },
-  curtains: function(){ return curtains.map(function(c){ return { i:c.i, lane:c.lane, room:c.room, x:c.x, z:c.z, key:c.key, year:EV[c.i][0], w:c.w }; }); },
+  curtains: function(){ return curtains.map(function(c){ return { i:c.i, lane:c.lane, room:c.room, x:c.x, z:c.z, y:c.y, key:c.key, year:EV[c.i][0], w:c.w }; }); },
   cases: function(){ return cases.map(function(c){ return { i:c.i, room:c.room, x:c.x, z:c.z, key:c.key, year:EV[c.i][0] }; }); },
   counts: function(){
     var rooms = [];

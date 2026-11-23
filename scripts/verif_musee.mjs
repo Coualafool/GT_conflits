@@ -98,11 +98,11 @@ await page.waitForTimeout(1300);
       const r = rooms[p.room];
       if (p.lane === "pal" && Math.abs(p.x + XP) > 0.02) wall = false;
       if (p.lane === "isr" && Math.abs(p.x - XP) > 0.02) wall = false;
-      if (p.lane === "occ" && Math.abs(p.z - (r.z1 + 0.09)) > 0.02) wall = false;
+      if (p.lane === "occ" && Math.abs(p.z - (r.face + 0.09)) > 0.02) wall = false;
       if (p.year < r.a || p.year > r.b) range = false;
     });
     cs.forEach(x => { if (x.lane === "pal" && x.x >= 0) side = false; if (x.lane === "isr" && x.x <= 0) side = false;
-      if (x.lane === "occ" && Math.abs(x.z - (rooms[x.room].z1 + 0.05)) > 0.02) side = false; });
+      if (x.lane === "occ" && Math.abs(x.z - (rooms[x.room].face + 0.05)) > 0.02) side = false; });
     for (const k of PERS_KEYS) for (let room = 0; room < rooms.length; room++) {
       const w1 = ps.filter(p => p.lane === k && p.room === room && p.lv === 1).map(p => p.w);
       const w2 = ps.filter(p => p.lane === k && p.room === room && p.lv === 2).map(p => p.w);
@@ -116,6 +116,36 @@ await page.waitForTimeout(1300);
   log("(J2b) aucune affiche hors de la portée temporelle de sa salle", g.range, "");
   log("(J2c) le poids du récit se LIT : jamais une affiche de second plan plus large qu'une affiche centrale, dans la même salle et le même couloir",
     g.size, `échelle plancher ${g.minScale.toFixed(2)}`);
+}
+
+/* ---------- J2d/J2e/J2f : grammaire verticale + porte ménagée (la classe de bug « affiches en l'air », 2026-11-23) ---------- */
+{
+  const v = await page.evaluate(() => {
+    const geo = window.__musee.geo, rooms = window.__musee.rooms();
+    const ps = window.__musee.posters(), cs = window.__musee.curtains();
+    let vert = true, door = true, ctop = true, badV = "", badD = "";
+    ps.forEach(p => {
+      if (p.y - p.h / 2 < 0.02 || p.y + p.h / 2 > geo.WALLH - 0.02) { vert = false; badV = `salle=${p.room} année=${p.year} y=${p.y} h=${p.h.toFixed(2)}`; }
+      const r = rooms[p.room];
+      if (p.lane === "occ" && r.door > 0) {
+        const d = r.door / 2, lo = p.x - p.w / 2, hi = p.x + p.w / 2;
+        if (hi > -d + 0.03 && lo < d - 0.03) { door = false; badD = `salle=${p.room} année=${p.year} x=${p.x.toFixed(2)} w=${p.w.toFixed(2)}`; }
+      }
+    });
+    cs.forEach(c => {
+      if (typeof c.y !== "number") { ctop = false; return; }
+      if (c.y - 1.15 < -0.02 || c.y + 1.15 > geo.WALLH) ctop = false;
+      const r = rooms[c.room];
+      if (c.lane === "occ" && r.door > 0) {
+        const d = r.door / 2;
+        if (c.x + c.w / 2 > -d + 0.03 && c.x - c.w / 2 < d - 0.03) { door = false; badD = `rideau salle=${c.room} année=${c.year} x=${c.x.toFixed(2)}`; }
+      }
+    });
+    return { vert, door, ctop, badV, badD };
+  });
+  log("(J2d) grammaire verticale : toute affiche tient dans la hauteur de mur (garde sol ↔ garde linteau)", v.vert, v.badV);
+  log("(J2e) porte ménagée : nulle affiche ni rideau du mur du fond n'empiète sur la porte centrale de la cloison", v.door, v.badD);
+  log("(J2f) rideaux dans la hauteur de mur (y exposé et borné)", v.ctop, "");
 }
 
 /* ---------- J3 : vitrines centrales, colonnes, gardes ---------- */
