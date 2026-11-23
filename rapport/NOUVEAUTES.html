@@ -84,8 +84,10 @@
   dans la semaine. Les modifications de fond (contenu des chapitres, cartes, affichage) sont en tête&nbsp;;
   l&rsquo;ordinaire purement technique est replié. <b>Les libellés d&rsquo;origine sont conservés</b> (journal de travail).</p>
   <details class="mo" open>
-    <summary>novembre 2026<span class="cnt">173 modifications</span></summary>
+    <summary>novembre 2026<span class="cnt">176 modifications</span></summary>
     <ul class="log">
+      <li><span class="tag">🛠️ Correction</span>fix(frise·musée J) : revue du correctif « affiches en l'air » — le re-contrôle post-compactage réarme over sur les rideaux hors bornes aussi (défaut latent : seule la simulation hors-ligne l'aurait vu) ; J2f borne sur la hauteur réelle des rideaux exposée (curtainH) au lieu de 1,15 codé ; preuve J2e distingue affiche et rideau — aucune dérive de layout sur le corpus actuel (sim verte, sorties identiques)<code class="sha">9a71bf6</code></li>
+      <li><span class="tag">🛠️ Correction</span>fix(frise·musée J) : fin des affiches en l'air — la porte centrale est un obstacle de mise en raye (rideaux poussés hors de l'embrasurement, bloc permanent dans layoutLane) ; mur du fond de la dernière salle = paroi extérieure (face FARZ+0,1, corrigé pour affiches/rideaux/rail/sous-étiquette, backFace dérivé) ; API __musee expose face/porte/y-rideaux ; harnais : J2 sur face réelle + nouvelles J2d grammaire verticale / J2e porte ménagée / J2f rideaux bornés — 20 affiches + 2 rideaux qui flottaient dans l'embrasurement, 11 à 29 cm du mur, invisibles des 41 checks verts<code class="sha">f0c8f9b</code></li>
       <li><span class="tag">🗺️ Cartes & images</span>fix(chapitre 11) : loi négationnisme 1995 ajoutée (1981 seul était faux) ; figure sortie du &lt;p&gt; (phrase recollée) ; Lockheed clarifié (F-16/F-35 belges comme israéliens) ; près de 80 ans<code class="sha">258b67d</code></li>
       <li><span class="tag">🛠️ Correction</span>fix(chapitre 10) : Krause/Årstad introuvable → Krause, Krause &amp; Bränfors 2018 (International Interactions) ×2 ; Princeton supprimé ; Camp David 80/20 non sourcé → formulation honnête (blocs de colonies) cohérente tableau+encart ; renvois plan Trump 2020/2025 clarifiés ; Mothers' Call né en 2022 (déclaration WWP/WOS)<code class="sha">4db9365</code></li>
       <li><span class="tag">🛠️ Correction</span>fix(chapitre 9) : reconnaissances alignées sur ch4 — 157 (Wikipedia/MIPT, oct. 2026)<code class="sha">4418b43</code></li>
@@ -198,8 +200,9 @@
       <li><span class="tag">🖨️ Affichage & impression</span>Print stylesheet + auto-open accordions on print, injected in all 24 pages<code class="sha">8aba4f0</code></li>
       <li><span class="tag">🗺️ Cartes & images</span>ch1: carte muette exercise links to visual answer keys (OTAN s2, BRICS+ s4)<code class="sha">436cba9</code></li>
     </ul>
-    <details><summary style="cursor:pointer;padding:4px 18px 10px;color:var(--faint);font-size:13px">Coulisses techniques (62)</summary>
+    <details><summary style="cursor:pointer;padding:4px 18px 10px;color:var(--faint);font-size:13px">Coulisses techniques (63)</summary>
     <ul class="log">
+      <li class="coul">docs(nouveautés) : régénération du journal — 10 correctifs d'audit vérifié (ch1-ch11, CIJ/Lancet/famine/Kahan/Krause/PCD) + dates de pied inject_common (39 pages)<code class="sha">234a76e</code></li>
       <li class="coul">docs(nouveautés) : régénération du journal — harmonisation chiffres du 20/11 + dates de pied<code class="sha">9b2280e</code></li>
       <li class="coul">chore(glossaire) : UNRWA — « près de 6 millions » (5,9 M enregistrés, source 2026) dans blocs_glossaire.py + re-run inject_common (20 pages)<code class="sha">997b9c2</code></li>
       <li class="coul">chore(inject) : dates de pied recalées au 20/11 sur les 38 autres pages (re-run inject_common après régénération du journal)<code class="sha">3e0e8e9</code></li>
