@@ -123,7 +123,8 @@ await page.waitForTimeout(1300);
   const v = await page.evaluate(() => {
     const geo = window.__musee.geo, rooms = window.__musee.rooms();
     const ps = window.__musee.posters(), cs = window.__musee.curtains();
-    let vert = true, door = true, ctop = true, badV = "", badD = "";
+    let vert = true, door = true, ctop = true, badV = "", badD = "", badC = "";
+    const CH = window.__musee.curtainH || 2.3, CHH = CH / 2;
     ps.forEach(p => {
       if (p.y - p.h / 2 < 0.02 || p.y + p.h / 2 > geo.WALLH - 0.02) { vert = false; badV = `salle=${p.room} année=${p.year} y=${p.y} h=${p.h.toFixed(2)}`; }
       const r = rooms[p.room];
@@ -134,14 +135,14 @@ await page.waitForTimeout(1300);
     });
     cs.forEach(c => {
       if (typeof c.y !== "number") { ctop = false; return; }
-      if (c.y - 1.15 < -0.02 || c.y + 1.15 > geo.WALLH) ctop = false;
+      if (c.y - CHH < -0.02 || c.y + CHH > geo.WALLH) ctop = false;
       const r = rooms[c.room];
       if (c.lane === "occ" && r.door > 0) {
         const d = r.door / 2;
-        if (c.x + c.w / 2 > -d + 0.03 && c.x - c.w / 2 < d - 0.03) { door = false; badD = `rideau salle=${c.room} année=${c.year} x=${c.x.toFixed(2)}`; }
+        if (c.x + c.w / 2 > -d + 0.03 && c.x - c.w / 2 < d - 0.03) { door = false; badC = `rideau salle=${c.room} année=${c.year} x=${c.x.toFixed(2)}`; }
       }
     });
-    return { vert, door, ctop, badV, badD };
+    return { vert, door, ctop, badV, badD: badD + (badC ? " | " + badC : "") };
   });
   log("(J2d) grammaire verticale : toute affiche tient dans la hauteur de mur (garde sol ↔ garde linteau)", v.vert, v.badV);
   log("(J2e) porte ménagée : nulle affiche ni rideau du mur du fond n'empiète sur la porte centrale de la cloison", v.door, v.badD);
