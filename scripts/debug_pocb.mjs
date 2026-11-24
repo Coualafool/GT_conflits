@@ -26,7 +26,14 @@ window.__dbg=()=>({
   nDraws:(window.__draws||[]).length,
   draws:(window.__draws||[]).slice(0,3).concat((window.__draws||[]).slice(-2)),
   eraX0: (()=>{const r=document.querySelector("#erasG rect"); return r?r.getAttribute("x"):"no-rect";})(),
-  evtX0: (()=>{const c=document.querySelector("#eventsG circle"); return c?c.getAttribute("cx"):"no-circle";})()
+  evtX0: (()=>{const c=document.querySelector("#eventsG circle"); return c?c.getAttribute("cx"):"no-circle";})(),
+  rectProbe: (()=>{const r=document.querySelector("#erasG rect"); if(!r) return "no-rect";
+    const b=r.getBoundingClientRect(); const cs=getComputedStyle(r);
+    return JSON.stringify({ns:r.namespaceURI, vb:[Math.round(b.x),Math.round(b.y),Math.round(b.width),Math.round(b.height)],
+      display:cs.display, vis:cs.visibility, op:cs.opacity, fill:cs.fill,
+      gVB:(()=>{const gb=document.querySelector("#erasG").getBoundingClientRect();return [Math.round(gb.x),Math.round(gb.y),Math.round(gb.width),Math.round(gb.height)];})(),
+      sVB:(()=>{const sb=document.querySelector("#svg").getBoundingClientRect();return [Math.round(sb.x),Math.round(sb.y),Math.round(sb.width),Math.round(sb.height)];})()
+    });})()
 });
 `;
 src = src.replace('window.addEventListener("resize",draw);', probe);
@@ -38,6 +45,7 @@ const page = await (await browser.newContext({ viewport: { width: 1440, height: 
 await page.goto(pathToFileURL(dbgPath).href);
 await page.waitForTimeout(1500);
 console.log('APRES_LOAD=' + JSON.stringify(await page.evaluate(() => window.__dbg())));
+await page.screenshot({ path: path.join(repoRoot, 'artifacts', 'pocb-debug-shot.png') });
 await page.click('[data-years="10"]');
 await page.waitForTimeout(1200);
 console.log('APRES_CLICK=' + JSON.stringify(await page.evaluate(() => window.__dbg())));
