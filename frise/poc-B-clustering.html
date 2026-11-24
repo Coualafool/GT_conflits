@@ -189,7 +189,7 @@ function draw(){
   document.getElementById("zoomReadout").textContent="≈ "+(yrs>=1?Math.round(yrs)+" ans visibles":(Math.round(yrs*12)+" mois visibles"))+" · seuil de regroupement : 38 px";
 }
 /* ---------- Interactions ---------- */
-gEv.addEventListener("mouseover",e=>{
+gEv.node().addEventListener("mouseover",e=>{
   const dot=e.target.closest(".dot");const cl=e.target.closest(".cluster");
   if(dot){const ev=EV.find(v=>v.t.getTime()===Number(dot.dataset.t));
     tip("<b>"+d3.timeFormat("%-d %B %Y")(ev.t)+"</b> — "+ev.title+"<br>"+ev.desc,e.clientX-main.getBoundingClientRect().left,e.clientY-main.getBoundingClientRect().top);
@@ -198,8 +198,8 @@ gEv.addEventListener("mouseover",e=>{
     tip("<b>"+cl.querySelectorAll("text")[0].textContent+" événements</b> de "+d3.timeFormat("%b %Y")(a)+" à "+d3.timeFormat("%b %Y")(b)+"<br>Cliquer pour déplier",e.clientX-main.getBoundingClientRect().left,e.clientY-main.getBoundingClientRect().top);
   }
 });
-gEv.addEventListener("mouseout",e=>{if(e.target.closest(".dot,.cluster"))hideTip();});
-gEv.addEventListener("click",e=>{
+gEv.node().addEventListener("mouseout",e=>{if(e.target.closest(".dot,.cluster"))hideTip();});
+gEv.node().addEventListener("click",e=>{
   const cl=e.target.closest(".cluster");
   if(!cl)return;
   hideTip();
