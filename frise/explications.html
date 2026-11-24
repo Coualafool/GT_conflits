@@ -43,6 +43,9 @@ a{color:var(--accent)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 @media print{body{background:#fff;padding:0}section,nav.toc a{break-inside:avoid;border-color:#bbb}}
 </style>
+<!-- BEGIN commun:pied-head -->
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<!-- END commun:pied-head -->
 </head>
 <body>
 <div class="wrap">
@@ -233,5 +236,35 @@ main suffit — la note de ce qu'elle nous <em>dérange</em> vaut mieux qu'un cl
 novembre&nbsp;2026. Les statuts («&nbsp;candidat&nbsp;», «&nbsp;essai&nbsp;», «&nbsp;historique&nbsp;») reflètent l'état du dépôt
 à la date de ce rapport&nbsp;; si ce dossier contredit le dépôt, le dépôt a raison.</p>
 </div>
+<!-- BEGIN commun:frise-outils -->
+<nav class="frise-outils" aria-label="Navigation vers le kit">
+  <a href="../rapport/rapport_FR.html">← Kit pédagogique</a>
+  <a href="index-comparatif.html">Comparer les vues</a>
+</nav>
+<style>
+  .frise-outils{display:flex;flex-wrap:wrap;gap:4px 16px;background:var(--card,#fff);border-top:1px solid var(--border,#ccc);padding:9px 16px 0;font-size:12px}
+  .frise-outils a{color:var(--accent,#9a511c);text-decoration:none}
+  .frise-outils a:hover{text-decoration:underline}
+</style>
+<!-- END commun:frise-outils -->
+<!-- BEGIN commun:pied -->
+<footer class="pied-commun">
+  <p><b>Outil pédagogique Israël–Palestine</b> · réalisé par le GT (Groupe de travail) · Licence <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr">CC BY-NC-SA 4.0</a></p>
+  <p>Dernière mise à jour de cette page : <time datetime="2026-11-24">24 novembre 2026</time> · <a href="../rapport/NOUVEAUTES.html">Nouveautés du kit</a> · Dépôt : <a href="https://github.com/Coualafool/GT_conflits">github.com/Coualafool/GT_conflits</a></p>
+</footer>
+<style>
+  .pied-commun{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}
+  .pied-commun p{margin:3px 0}
+  .pied-commun a{color:var(--muted)}
+  .pied-commun a:hover{color:var(--ink)}
+</style>
+
+<style>
+  /* pied compact (pages-frise -- inject_common.py) */
+  .pied-commun{border-top:0;margin:0;padding:3px 16px 9px;font-size:12px;line-height:1.5;color:var(--muted,#555);background:var(--card,#fff)}
+  .pied-commun p{display:inline}
+  .pied-commun p+p::before{content:" · "}
+</style>
+<!-- END commun:pied -->
 </body>
 </html>
