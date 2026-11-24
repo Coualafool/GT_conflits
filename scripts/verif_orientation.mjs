@@ -25,6 +25,8 @@ await page.goto(url('frise/index-comparatif.html'), { waitUntil: 'load' });
 {
   const href = await page.$$eval('a[href="explications.html"]', (as) => as.map((a) => a.textContent.trim()));
   ok('comparatif → bouton vers explications.html (1 seul, textuel)', href.length === 1 && href[0].includes('expliquées'));
+  const back = await page.$eval('a[href="../rapport/rapport_FR.html"]', (a) => ({ text: a.textContent.trim(), first: a.parentElement.tagName === 'BODY' }));
+  ok('comparatif → bouton « Retour au kit » en tête de page', back.text.includes('Retour au kit') && back.first);
 }
 await page.goto(url('frise/explications.html'), { waitUntil: 'load' });
 {
