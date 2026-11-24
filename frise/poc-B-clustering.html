@@ -134,6 +134,12 @@ const tip=(html,x,y)=>{tooltip.innerHTML=html;tooltip.style.display="block";
   const r=main.getBoundingClientRect();
   tooltip.style.left=Math.min(x+14,r.width-300)+"px";tooltip.style.top=(y+14)+"px";};
 const hideTip=()=>tooltip.style.display="none";
+/* construction SVG par DOM API (les assignations innerHTML sur un <g> SVG ne produisaient rien) */
+const SVGNS="http://www.w3.org/2000/svg";
+function el(name,attrs,text){const n=document.createElementNS(SVGNS,name);
+  for(const k in attrs)n.setAttribute(k,attrs[k]);
+  if(text!=null)n.textContent=text;return n;}
+function clear(g){while(g.firstChild)g.removeChild(g.firstChild);}
 /* ---------- Clustering : les événements à moins de N px se replient en bulle ---------- */
 function clusterEvents(){
   const sorted=EV.slice().sort((a,b)=>a.t-b.t);
@@ -152,39 +158,43 @@ function draw(){
   const t=xs;
   const ppy=(W-16)/(xs.invert(W-8)-xs.invert(8))/86400000/30.44; /* px par mois */
   /* bandes d'ères : toujours là, quelle que soit l'échelle */
-  let eh="";
+  clear(gEras.node());
   for(const e of ERAS){
     const xa=Math.max(8,t(e.a)),xb=Math.min(W-8,t(e.b));
     if(xb<=8||xa>=W-8)continue;
-    eh+='<g class="eraBand"><rect x="'+xa+'" y="8" width="'+(xb-xa)+'" height="30" rx="7" fill="'+e.c+'"></rect>'
-      +(xb-xa>150?'<text x="'+(xa+10)+'" y="27">'+e.label+'</text>':'')+'</g>';
+    const g=el("g",{class:"eraBand"});
+    g.appendChild(el("rect",{x:xa,y:8,width:xb-xa,height:30,rx:7,fill:e.c}));
+    if(xb-xa>150)g.appendChild(el("text",{x:xa+10,y:27},e.label));
+    gEras.node().appendChild(g);
   }
-  gEras.innerHTML=eh;
   /* axe : d3 choisit le pas « joli » tout seul selon la largeur visible */
   gAxis.attr("transform","translate(0,"+(H-PAD_B)+")")
        .call(d3.axisBottom(t).ticks(Math.max(4,Math.round(W/110))).tickSizeOuter(0));
   /* événements : clusters + libellés à droite de la bulle */
   const clusters=clusterEvents();
   const showLabel=ppy>36; /* ~ plus de 3 px par jour… seuil empirique */
-  let html="";
+  clear(gEv.node());
   for(const c of clusters){
     const cx=(c.xLeft+c.xRight)/2, n=c.members.length;
     const cy=FIELD_TOP+38;
     if(n===1){
       const e=c.members[0];
-      html+='<circle class="dot" data-t="'+e.t.getTime()+'" cx="'+cx+'" cy="'+cy+'" r="'+(6)+'" fill="'+e.era.c+'"></circle>';
+      gEv.node().appendChild(el("circle",{class:"dot","data-t":e.t.getTime(),cx:cx,cy:cy,r:6,fill:e.era.c}));
       if(showLabel){
-        html+='<text class="labEvent" x="'+(cx+10)+'" y="'+(cy+4)+'">'+e.title+' <tspan class="yr">'+d3.timeFormat("%b %Y")(e.t)+'</tspan></text>';
+        const tx=el("text",{class:"labEvent",x:cx+10,y:cy+4});
+        tx.appendChild(document.createTextNode(e.title+" "));
+        tx.appendChild(el("tspan",{class:"yr"},d3.timeFormat("%b %Y")(e.t)));
+        gEv.node().appendChild(tx);
       }
     }else{
       const rad=8+Math.min(14,Math.sqrt(n)*3.4);
       const col=d3.interpolateRgb(c.members[0].era.c,"#22252a")(0.15);
-      html+='<g class="cluster" data-t0="'+c.members[0].t.getTime()+'" data-t1="'+c.members[n-1].t.getTime()+'">'
-        +'<circle cx="'+cx+'" cy="'+cy+'" r="'+rad+'" fill="'+col+'"></circle>'
-        +'<text x="'+cx+'" y="'+cy+'">'+n+'</text></g>';
+      const g=el("g",{class:"cluster","data-t0":c.members[0].t.getTime(),"data-t1":c.members[n-1].t.getTime()});
+      g.appendChild(el("circle",{cx:cx,cy:cy,r:rad,fill:col}));
+      g.appendChild(el("text",{x:cx,y:cy},String(n)));
+      gEv.node().appendChild(g);
     }
   }
-  gEv.innerHTML=html;
   const yrs=(xs.invert(W)-xs.invert(0))/86400000/365.25;
   document.getElementById("zoomReadout").textContent="≈ "+(yrs>=1?Math.round(yrs)+" ans visibles":(Math.round(yrs*12)+" mois visibles"))+" · seuil de regroupement : 38 px";
 }
