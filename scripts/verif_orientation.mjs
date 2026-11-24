@@ -37,6 +37,10 @@ await page.goto(url('frise/explications.html'), { waitUntil: 'load' });
   ok('rapport : le pied ramène au comparatif', back >= 1);
   const ret = await page.$eval('a.retour[href="index-comparatif.html"]', (a) => a.textContent.trim());
   ok('rapport → bouton « Retour au comparatif » en tête de page', ret.includes('Retour au comparatif'));
+  const kitLinks = await page.$$eval('a[href="../rapport/rapport_FR.html"]', (as) => as.length);
+  ok('rapport : plus aucun lien direct vers le kit (sortie = comparatif)', kitLinks === 0);
+  const navBack = await page.$$eval('nav.frise-outils a[href="index-comparatif.html"]', (as) => as.map((a) => a.textContent.trim()));
+  ok('rapport : pastille du bas « ← Comparatif des vues »', navBack.length === 1 && navBack[0].includes('Comparatif'));
   await page.screenshot({ path: 'artifacts/explications-haut.png', clip: { x: 0, y: 0, width: 1440, height: 420 } });
   await page.screenshot({ path: 'artifacts/rapport-apres-deplacement.png' });
 }

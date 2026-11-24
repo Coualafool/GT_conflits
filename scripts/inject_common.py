@@ -234,6 +234,12 @@ def render_pied(path, lang):
 def render_frise_outils(path):
     # sur l'index lui-même, pas de lien vers soi ; les autres pages renvoient
     # au comparatif des vues (variante/perspective/poc).
+    if path.name == "explications.html":
+        # annexe du comparatif : sa sortie naturelle est le comparatif, pas le kit
+        return FRISE_OUTILS_BLOCK.format(idx="").replace(
+            '<a href="../rapport/rapport_FR.html">← Kit pédagogique</a>',
+            '<a href="index-comparatif.html">← Comparatif des vues</a>').replace(
+            'aria-label="Navigation vers le kit"', 'aria-label="Navigation vers le comparatif"')
     idx = "" if path.name == "index-comparatif.html" else \
         '\n  <a href="index-comparatif.html">Comparer les vues</a>'
     return FRISE_OUTILS_BLOCK.format(idx=idx)
