@@ -1,7 +1,10 @@
 # GitHub Pages (deploy from branch main) — exclude internal files from the published site.
-# La frise publique vit dans frise/ (dossier publié) ; interne/ reste privé par politique.
+# Le kit vit dans kit_peda/ ; la racine ne garde que le shim de redirection index.html.
 exclude:
-  - interne
-  - scripts
-  - artifacts
-  - .runtime
+  - kit_peda/interne
+  - kit_peda/scripts
+  - kit_peda/artifacts
+  - kit_peda/.runtime
+  - kit_peda/node_modules
+  - kit_peda/package.json
+  - kit_peda/_runs

@@ -85,7 +85,10 @@ def main() -> int:
             if u.startswith("http"):
                 external.setdefault(u.split("#")[0], set()).add(page.relative_to(ROOT))
             else:
-                target = (page.parent / u).resolve()
+                # « ?query » ignoré pour la résolution disque (le fragment l'est déjà par la regex) ;
+                # chemin absolu racine-de-site (../ inclus) résolu depuis ROOT, pas depuis la page.
+                target = (ROOT / u.split("?")[0].lstrip("/")).resolve() if u.startswith("/") \
+                    else (page.parent / u.split("?")[0]).resolve()
                 if not target.exists():
                     internal.setdefault(str(page.relative_to(ROOT)), []).append(u)
 
