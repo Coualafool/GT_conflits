@@ -27,6 +27,7 @@ await page.goto(url('frise/index-comparatif.html'), { waitUntil: 'load' });
   ok('comparatif → bouton vers explications.html (1 seul, textuel)', href.length === 1 && href[0].includes('expliquées'));
   const back = await page.$eval('a[href="../rapport/rapport_FR.html"]', (a) => ({ text: a.textContent.trim(), first: a.parentElement.tagName === 'BODY' }));
   ok('comparatif → bouton « Retour au kit » en tête de page', back.text.includes('Retour au kit') && back.first);
+  await page.screenshot({ path: 'artifacts/comparatif-haut.png', clip: { x: 0, y: 0, width: 1440, height: 420 } });
 }
 await page.goto(url('frise/explications.html'), { waitUntil: 'load' });
 {
