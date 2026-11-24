@@ -15,3 +15,5 @@ _runs/
 
 # Scratch TARS probes (jamais commités)
 probe*.mjs
+# zips de distrib à la racine (vivent dans dist/, jamais commités)
+/*.zip
