@@ -12,3 +12,6 @@ artifacts/*
 !artifacts/*.log
 !artifacts/*.png
 _runs/
+
+# Scratch TARS probes (jamais commités)
+probe*.mjs
