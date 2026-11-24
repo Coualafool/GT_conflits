@@ -35,8 +35,8 @@ await page.goto(url('frise/explications.html'), { waitUntil: 'load' });
   ok('rapport : images embarquées présentes (' + img + ')', img >= 12);
   const back = await page.$$eval('a[href="index-comparatif.html"]', (as) => as.length);
   ok('rapport : le pied ramène au comparatif', back >= 1);
-  const ret = await page.$eval('a.retour[href="../rapport/rapport_FR.html"]', (a) => a.textContent.trim());
-  ok('rapport → bouton « Retour au kit » en tête de page', ret.includes('Retour au kit'));
+  const ret = await page.$eval('a.retour[href="index-comparatif.html"]', (a) => a.textContent.trim());
+  ok('rapport → bouton « Retour au comparatif » en tête de page', ret.includes('Retour au comparatif'));
   await page.screenshot({ path: 'artifacts/explications-haut.png', clip: { x: 0, y: 0, width: 1440, height: 420 } });
   await page.screenshot({ path: 'artifacts/rapport-apres-deplacement.png' });
 }
