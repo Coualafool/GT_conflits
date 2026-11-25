@@ -385,7 +385,10 @@ try {
   var probe = document.createElement("canvas");
   var pctx = probe.getContext("webgl2") || probe.getContext("webgl");
   if (!pctx) throw new Error("no-webgl");
-  if (pctx.getExtension && pctx.getExtension("WEBGL_lose_context")) pctx.getExtension("WEBGL_lose_context").loseContext();
+  /* PAS loseContext ici : sur la pile GPU de cette machine, détruire le contexte de
+     la sonde rend le contexte MSAA suivant impossible — la page basculait en repli.
+     Le GC collecte le contexte sonde dès que la toile existe. */
+    (void)pctx;
   renderer = new THREE.WebGLRenderer({ antialias:true });   // pas d'antialias si le GPU logiciel plafonne les contextes
   if (!renderer.getContext()) throw new Error("no-context");
 } catch (e) {
