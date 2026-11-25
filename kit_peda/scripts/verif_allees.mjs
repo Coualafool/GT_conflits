@@ -195,7 +195,9 @@ await page.waitForTimeout(1300);
       for (const s of st) {
         A.focus(s.key, true); await ra(250);
         const hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0);
-        if (hit && hit.key === s.key) ok++; else miss.push(s.key + "→" + (hit ? hit.key : "rien"));
+        const stt = A.state();
+        if (hit && hit.key === s.key) ok++;
+        else miss.push(s.key + "→" + (hit ? (hit.key || "miss") : "rien") + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1));
       }
       pick[kind] = { tried: st.length, ok, miss };
     }
