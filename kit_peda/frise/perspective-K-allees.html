@@ -1178,6 +1178,16 @@ window.__allees = {
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance }
                : { miss:true, o:[+cam.position.x.toFixed(2),+cam.position.y.toFixed(2),+cam.position.z.toFixed(2)], d:[+d.x.toFixed(3),+d.y.toFixed(3),+d.z.toFixed(3)], n:hitables.length }; },
+  signProbe: function(){ var out = {};
+    var saveX = cam.rotation.x, saveY = cam.rotation.y;
+    var variants = { s1: [1,-1], s2: [-1,1], s3: [-1,-1], s4: [1,1] };
+    for (var name in variants){ var k = variants[name];
+      cam.rotation.y = k[0]*Math.PI/2; cam.rotation.x = k[1]*0.5; cam.updateMatrixWorld(true);
+      var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion);
+      out["ry=" + (k[0]>0?"+":"-") + "π/2,rx=" + (k[1]>0?"+":"-") + "0.5"] = [+d.x.toFixed(3), +d.y.toFixed(3), +d.z.toFixed(3)];
+    }
+    cam.rotation.x = saveX; cam.rotation.y = saveY; cam.updateMatrixWorld(true);
+    return out; },
   camDump: function(){ cam.updateMatrixWorld(true);
     var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion);
     var m = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 2);   // axe +Z local de la caméra
