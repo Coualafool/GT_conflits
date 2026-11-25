@@ -24,7 +24,9 @@ const ok = (cond, label, extra) => {
 };
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const zoom = process.argv.includes('--zoom'); // ×3 deviceScaleFactor + crops serrés du prop centré
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 },
+  deviceScaleFactor: zoom ? 3 : 1 });
 const consoleErrors = [];
 page.on('console', m => { if (m.type() === 'error' && !/favicon/i.test(m.text())) consoleErrors.push(m.text()); });
 page.on('pageerror', e => consoleErrors.push('pageerror: ' + e.message));
@@ -75,7 +77,12 @@ async function shoot(exprFocus, file, label) {
   const st = await page.evaluate('__musee.state()');
   ok(st.menu === false && st.panel === null, `état propre avant tir ${label}`, { menu: st.menu, panel: st.panel });
   const f = path.join(OUT, file);
-  await page.screenshot({ path: f });
+  if (zoom && exprFocus) {
+    // le poste cadre la vitrine au centre : crop 720×720 autour du centre, en ×3 → prop ~6× plus grand
+    await page.screenshot({ path: f, clip: { x: 360, y: 110, width: 720, height: 720 } });
+  } else {
+    await page.screenshot({ path: f });
+  }
   shots.push({ label, focus: exprFocus || 'room5', file: f, state: st });
   console.log('SHOT ' + label + ' -> ' + f);
 }
