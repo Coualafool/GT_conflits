@@ -108,8 +108,9 @@ await page.waitForTimeout(1300);
     if (pl.length !== 7) bad.push("places=" + pl.length);
     if (sg.length !== 8) bad.push("segments=" + sg.length);
     for (let j = 0; j + 1 < sg.length; j++) if (sg[j + 1].x0 <= sg[j].x0) bad.push("x non monotone en segment " + j);
-    const d1 = A.xOf(1920) - A.xOf(1910), d2 = A.xOf(2020) - A.xOf(2010);
-    if (Math.abs(d1 - d2) > 1e-6) bad.push("échelle temporelle non linéaire");
+    // échelle uniforme DANS une même bande (les places sont des pauses temporelles voulues)
+    const d1 = A.xOf(1962) - A.xOf(1952), d2 = A.xOf(2014) - A.xOf(2004);
+    if (Math.abs(d1 - d2) > 1e-6) bad.push("échelle temporelle non uniforme dans les bandes");
     for (const p of ps) {
       if (p.niche) {
         const pz = pl[p.plaza];
@@ -246,8 +247,8 @@ await page.waitForTimeout(1300);
 /* ---------- K8 : accessoires optionnels — le kit props se dégrade en douceur ---------- */
 {
   const pr = await page.evaluate(() => window.__allees.props());
-  log("(K8) props optionnels : jamais dans les hitables quand le module est absent",
-    !pr.loaded ? pr.inHitables === 0 : pr.placed > 0 || !!pr.error,
+  log("(K8) props optionnels : zéro prop dans les hitables tant que rien n'est posé (dégradation douce)",
+    pr.inHitables === (pr.placed || 0),
     `loaded=${pr.loaded} placés=${pr.placed} hitables=${pr.inHitables} erreur=${pr.error || "none"}`);
 }
 

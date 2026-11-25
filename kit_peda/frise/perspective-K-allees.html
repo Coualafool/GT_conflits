@@ -1035,7 +1035,8 @@ document.addEventListener("pointerlockchange", function(){
 /* zone praticable : couloirs (bornes x = créneaux de segment, jamais les ouvertures non plus — les
    murs d'allée vont d'embrasure à embrasure) + places + sas de portes de place */
 function inZone(x,z){
-  if (z > GEO.FARZC-GEO.BODY || z < -GEO.FARZC+GEO.BODY) return false;
+  var zLim = Math.abs(alleyZ(0)) + GEO.ALLEYW/2 - GEO.BODY;              // la rive extérieure du bâtiment borde la dernière allée
+  if (z > zLim || z < -zLim) return false;
   if (x < -0.05 || x > TLEN+0.05) return false;
   var pj = plazaOfX(x);
   if (pj >= 0){
@@ -1171,7 +1172,7 @@ window.__allees = {
     for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
     if (s) focusStation(s, instant); return !!s; },
   teleportSeg: teleportSeg, teleportPlaza: teleportPlaza, nudgeLook: nudgeLook, snapTo: snapTo,
-  rayHit: function(nx,ny){ var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
+  rayHit: function(nx,ny){ cam.updateMatrixWorld(true); var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i===null?null:hit.object.userData.i,
       brin:hit.object.userData.brin||null, key:hit.object.userData.key||null, dist:hit.distance } : null; },
