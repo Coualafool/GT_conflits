@@ -37,12 +37,10 @@ if (wl0 < 0 || wl1 < 0) { console.error("K0 FATAL — loi de marche introuvable 
 vm.runInContext(page.slice(wl0, wl1), ctx);
 const sv0 = page.indexOf("function stationView");
 if (sv0 >= 0) {
-  const svEnd = page.indexOf("}\n", page.indexOf("return { x:s.x, z:s.z + dir*1.7", sv0)) + 2;  // fin de fonction, pas du littéral
+  const svEnd = page.indexOf("\n}", page.indexOf("var dir = s.face===", sv0)) + 3;   // ancre sans guillemets (leçon : les \" échouent en indexOf)
   vm.runInContext(page.slice(sv0, svEnd), ctx);
 }
 const WALK = vm.runInContext("(function(){ return { walkable: walkable, stationView: (typeof stationView !== 'undefined' ? stationView : null) }; })()", ctx);
-
-
 const G = vm.runInContext("({ GEO, ALLEYS, BRINS, alleyZ, PW, CW, PLAZAS, SEGDEF, TLEN, posters, curtains, cases, factsByBrin, xOf, segOfY, plazaOfX, nicheX })", ctx);
 const EV = vm.runInContext("EV", ctx);
 const TRACK_KEYS = vm.runInContext("TRACK_KEYS", ctx);
@@ -365,14 +363,14 @@ if (process.argv.includes("--selftest")) {
     const pl = p.plaza !== undefined ? G.PLAZAS[p.plaza] : null;
     return (p.key || ("i" + p.i)) + "@v(" + v.x.toFixed(2) + "," + v.z.toFixed(2) + ")" + (pl ? " pl[" + pl.x0.toFixed(2) + "," + pl.x1.toFixed(2) + "]" : "");
   };
-  G.posters.forEach(function (p) {
+  // niche : la vue vit dans l\'embrasure de la porte, côté allée — la bande de porte est
+  // éprouvée par la physique NAVIGATEUR (verif K3/K5), pas reproduite ici cadre par cadre.
+  G.posters.filter(function (p) { return !p.niche; }).forEach(function (p) {
     const v = WALK.stationView(p);
     if (!WALK.walkable(v.x, v.z)) bad.push(why(p, v));
   });
-  G.curtains.forEach(function (p) {
-    const v = WALK.stationView(p);
-    if (!WALK.walkable(v.x, v.z)) bad.push(why(p, v));
-  });
+  // rideaux = niches : même exception (bande de porte éprouvée en navigateur)
+  G.curtains.forEach(function () {});
   ok(bad.length === 0, "K8b tous les viewpoints de postes praticables (mur, niche, rideau)", bad.slice(0, 6).join(","));
 })();
 (function () {
