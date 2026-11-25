@@ -523,8 +523,8 @@ def build_watch(mat):
     chaîne = bande plane en S (16 tris — la fiche dit « 2 tris » ; une courbe en S
     lisible exige quelques segments, la chaîne reste 100 % texture). ≈168 tris."""
     bm = _new_bm()
-    verts, faces = _add_cylinder(bm, r=0.027, depth=0.010, segments=16,
-                                 loc=(0.0, 0.0, 0.006))
+    _add_cylinder(bm, r=0.027, depth=0.010, segments=16,
+                  loc=(0.0, 0.0, 0.006))
     # chanfrein de carrure : arêtes chapeau/flancs du boîtier. Filtre : écart
     # |n1.z − n2.z| > 0,9 (flancs n.z≈0, chapeaux n.z=±1). L'ancien produit
     # n1.z*n2.z < 0 était toujours faux (0 × ±1 = 0) → chanfrein jamais posé.
@@ -533,10 +533,13 @@ def build_watch(mat):
                   abs(e.link_faces[0].normal.z - e.link_faces[1].normal.z) > 0.9]
     _bevel_edges(bm, ring_edges, width=0.0015)
     bm.verts.ensure_lookup_table()
-    # verre bombé : bague de sommets du dessus relevée de 1 mm
-    zmax = max(v.co.z for v in verts)
-    for v in verts:
-        if v.co.z > zmax - 0.0022:
+    # verre bombé : calotte du dessus relevée de 1 mm. RECALCULÉ depuis bm.verts :
+    # la liste issue de _add_cylinder est INVALIDÉE par le bevel (les sommets de
+    # la carrure sont remplacés — run TARS 4 : ReferenceError BMVert removed).
+    # Seule la calotte plate (±0,4 mm du z max) monte, pas l'anneau de chanfrein.
+    zmax = max(v.co.z for v in bm.verts)
+    for v in bm.verts:
+        if abs(v.co.z - zmax) < 0.0004:
             v.co.z += 0.001
     # couronne à « 12 h » (+y), axe horizontal, 4 crans = 4 arêtes chanfreinées
     cv, _cf = _add_cylinder(bm, r=0.006, depth=0.010, segments=6,
