@@ -802,10 +802,12 @@ function stationView(s){
   // yaw = ry (0 = −z, π/2 = +x, π = +z) ; pitch = l'angle de visée (+ = monter, car rx = −pitch).
   if (s.kind==="case") { var d = 1.9;
     return { x:s.x, z:s.z+d, yaw:0, pitch:Math.atan2(GEO.EYE-(s.y||1.24), d) }; }   // caméra au +z de la vitrine, regarde −z ; le verre (1,24) est SOUS l'œil → viser en bas
-  if (s.niche) {   // la niche pend DANS L'EMBRASURE, face à l'allée (normale ±z, mesuré au rayon) :
-                   // on la regarde depuis la broderie, dans l'axe du créneau, GEO.NICHEV en arrière.
-    var dz = s.z <= 0 ? -1 : 1;   // on recule dans l'allée : vers −z au sud de la broderie, vers +z au nord (mesuré) var v = { x: s.x, z: s.z + GEO.NICHEV*dz };   // recul dans l'embrasure vers le centre de l'allée
-    return { x:v.x, z:v.z, yaw:Math.PI, pitch:Math.atan2(GEO.EYE-s.y, GEO.NICHEV + 0.11) }; }   // vue +z (mesuré) : la niche est devant, dans l'embrasure côté place   // ry 0 → vue -z, vers la place
+  if (s.niche) {   // la niche pend DANS L'EMBRASURE, face à l'allée (normale ±z, mesuré au rayon).
+                   // Le visiteur se tient sur la broderie, dans l'axe du créneau, GEO.NICHEV en arrière.
+    var dz = s.z <= 0 ? -1 : 1;                    // recul vers le centre de la broderie (mesuré)
+    var v = { x: s.x, z: s.z + GEO.NICHEV * dz };
+    return { x: v.x, z: v.z, yaw: Math.PI, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.11) };   // vue +z vers l'embrasure
+  }
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : visiteur côté -z → regarde +z (ry=π) ; extérieure : regarde -z (ry=0)
   return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // œuvre AU-DESSUS de l'œil → viser en haut
 }
