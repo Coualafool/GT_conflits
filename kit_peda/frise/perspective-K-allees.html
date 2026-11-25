@@ -701,6 +701,7 @@ cases.forEach(function(v){
 /* fonds de niche : panneau sombre + liseré doré + lampe tiède — le créneau doit se lire « niche »
    depuis l'autre bout de la place, sinon c'est une affiche collée dans un angle mort */
 var mNiche = mat(0x14100b);
+function sign(v){ return v < 0 ? -1 : 1; }
 PLAZAS.forEach(function(p){
   ALLEYS.forEach(function(k, ai){
     var slot = nicheSlot(p, ai);
@@ -798,7 +799,12 @@ function stationView(s){
   // yaw = ry (0 = −z, π/2 = +x, π = +z) ; pitch = l'angle de visée (+ = monter, car rx = −pitch).
   if (s.kind==="case") { var d = 1.9;
     return { x:s.x, z:s.z+d, yaw:0, pitch:Math.atan2(GEO.EYE-(s.y||1.24), d) }; }   // caméra au +z de la vitrine, regarde −z ; le verre (1,24) est SOUS l'œil → viser en bas
-  if (s.niche) { var p = PLAZAS[s.plaza]; var vx = Math.min(s.x + 0.9, p.x1 - 0.45); return { x:vx, z:alleyZ(s.ai), yaw:-Math.PI/2, pitch:Math.atan2(GEO.EYE-s.y, Math.max(0.5, vx-(s.x-0.1))) }; }   // debout dans la porte d allée (axe z, sol de la place), 0,9 m devant l œuvre, regard -x   // caméra sur l'axe, côté place, JAMAIS hors du sol praticable (dernière place), regard −x vers le mur de niche   // le visiteur entre : caméra sur l'axe, côté place (sol praticable garanti), regard vers le mur de niche (−x)
+  if (s.niche) {   // l œuvre est scellée au mur d'entrée (z = axe de porte) : on la regarde en biais depuis le sol de la place
+    var p = PLAZAS[s.plaza]; var dz = (p.x0 - alleyZ(s.ai)) < 0 ? -1 : 1;   // sens « vers la place » depuis l'axe d'allée
+    var cands = [ { x:s.x + 1.1, z:alleyZ(s.ai) + 0.85*dz }, { x:s.x + 1.4, z:alleyZ(s.ai) + 1.45*dz }, { x:p.x0 + 0.75, z:alleyZ(s.ai) + 1.0*dz }, { x:p.x0 + 0.75, z:alleyZ(s.ai) } ];
+    var v = cands[2]; for (var ci=0;ci<cands.length;ci++){ var pp=cands[ci]; if (walkable(pp.x,pp.z)){ v=pp; break; } }
+    var horiz = Math.hypot(s.x - v.x, s.z - v.z);
+    return { x:v.x, z:v.z, yaw:Math.atan2(s.x - v.x, s.z - v.z), pitch:Math.atan2(GEO.EYE-s.y, Math.max(0.5, horiz)) }; }   // loi vue caméra mesurée : ry = atan2(dx, dz)
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : visiteur côté -z → regarde +z (ry=π) ; extérieure : regarde -z (ry=0)
   return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // œuvre AU-DESSUS de l'œil → viser en haut
 }
