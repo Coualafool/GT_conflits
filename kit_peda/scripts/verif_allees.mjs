@@ -129,6 +129,9 @@ await page.waitForTimeout(1300);
       if (Math.abs(cur.x - (pz.x0 + A.nicheXrel(cur.plaza, cur.ai))) > 0.02) bad.push("rideau hors axe A" + cur.ai);
     }
     for (const pz of pl) for (const n of pz.niches) {
+      const grp = ps.filter((p) => p.niche && p.plaza === pz.j && p.ai === n.ai);
+      for (const g of grp) if (g.x - g.w / 2 < n.x - n.U - 0.02 || g.x + g.w / 2 > n.x + n.U + 0.02) bad.push("groupe hors créneau i=" + g.i);
+      for (const c of cs.filter((q) => q.plaza === pz.j && q.ai === n.ai)) if (c.w / 2 > n.U + 0.02) bad.push("rideau hors créneau P" + pz.j + "A" + n.ai);
       const nc = ps.filter((p) => p.niche && p.plaza === pz.j && p.ai === n.ai).length;
       const cc = cs.filter((q) => q.plaza === pz.j && q.ai === n.ai).length;
       if (n.facts.length ? (!nc || cc) : (!cc || nc)) bad.push("niche muette/parlante incohérente P" + pz.j + "A" + n.ai);

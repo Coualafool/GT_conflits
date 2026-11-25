@@ -30,6 +30,17 @@ const block = page.slice(a, b);
 const codeOnly = block.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
 if (/\bconst\s|\blet\s/.test(codeOnly)) { console.error("K0 FATAL — const/let dans le bloc layout (interdits : lecture vm partagée)"); process.exit(1); }
 vm.runInContext(block, ctx);
+/* la loi de marche et les cadrages vivent apres le bloc layout (camera) — on les charge aussi :
+   ces zones ont aveugle la premiere passe navigateur (riv z, vues hors-sol, creneaux de niche) */
+const wl0 = page.indexOf("function inZone"), wl1 = page.indexOf("var SPD = 2.7");
+if (wl0 < 0 || wl1 < 0) { console.error("K0 FATAL — loi de marche introuvable dans la page"); process.exit(1); }
+vm.runInContext(page.slice(wl0, wl1), ctx);
+const sv0 = page.indexOf("function stationView");
+if (sv0 >= 0) {
+  const svEnd = page.indexOf("}\n", page.indexOf("return { x:s.x, z:s.z + dir*1.7", sv0)) + 2;  // fin de fonction, pas du littéral
+  vm.runInContext(page.slice(sv0, svEnd), ctx);
+}
+const WALK = vm.runInContext("(function(){ return { walkable: walkable, stationView: (typeof stationView !== 'undefined' ? stationView : null) }; })()", ctx);
 
 
 const G = vm.runInContext("({ GEO, ALLEYS, BRINS, alleyZ, PW, CW, PLAZAS, SEGDEF, TLEN, posters, curtains, cases, factsByBrin, xOf, segOfY, plazaOfX, nicheX })", ctx);
@@ -319,6 +330,53 @@ if (process.argv.includes("--selftest")) {
   console.log("selftest: " + caught + "/" + expected + " bâtis fautifs rejetés");
   if (caught < expected) fails += expected - caught;
 }
+
+/* ---------- K8 loi de marche + cadrages (les aveugles de la passe navigateur, version sim) ---------- */
+(function () {
+  const bad = [];
+  G.ALLEYS.forEach(function (k, ai) {
+    let prev = null;
+    for (let x = 0.2; x <= G.TLEN - 0.2; x += 0.1) {
+      const w = WALK.walkable(x, G.alleyZ(ai));
+      if (prev !== null && w !== prev) bad.push("A" + ai + " rupture à x=" + x.toFixed(1));
+      prev = w;
+    }
+    if (prev === false) bad.push("A" + ai + " bute avant la fin");
+  });
+  for (let x = 0.5; x < G.TLEN; x += 0.5) {
+    const zMid = (G.alleyZ(0) + G.alleyZ(1)) / 2;
+    if (WALK.walkable(x, zMid)) bad.push("traversée fantôme à x=" + x.toFixed(1));
+  }
+  ok(bad.length === 0, "K8a marche continue : les 4 allées du seuil à la fin, zéro rupture ni fantôme", bad.slice(0, 3).join(" | "));
+})();
+(function () {
+  if (!WALK.stationView) { ok(false, "K8b viewpoints praticables", "stationView non chargé"); return; }
+  const bad = [];
+  G.posters.forEach(function (p) {
+    const v = WALK.stationView(p);
+    if (!WALK.walkable(v.x, v.z)) bad.push(p.key || ("i" + p.i));
+  });
+  G.curtains.forEach(function (p) {
+    const v = WALK.stationView(p);
+    if (!WALK.walkable(v.x, v.z)) bad.push(p.key || "curtain");
+  });
+  ok(bad.length === 0, "K8b tous les viewpoints de postes praticables (mur, niche, rideau)", bad.slice(0, 6).join(","));
+})();
+(function () {
+  const bad = [];
+  G.PLAZAS.forEach(function (p) {
+    G.ALLEYS.forEach(function (k, ai) {
+      const slot = vm.runInContext("nicheSlot(PLAZAS[" + p.j + "]," + ai + ")", ctx);
+      G.posters.filter(function (q) { return q.niche && q.plaza === p.j && q.ai === ai; }).forEach(function (q) {
+        if (q.x - q.w / 2 < slot.cx - slot.U - 0.011 || q.x + q.w / 2 > slot.cx + slot.U + 0.011) bad.push("np" + q.i);
+        if (q.y + q.h / 2 > G.GEO.WALLH - 0.02) bad.push("np" + q.i + " plafond");
+      });
+      const widest = Math.max.apply(null, [0].concat(G.curtains.filter(function(c){return c.plaza===p.j&&c.ai===ai;}).map(function(c){return c.w;})));
+      if (widest/2 > slot.U + 0.011) bad.push("P"+p.j+"A"+ai+" rideau plus large que son créneau");
+    });
+  });
+  ok(bad.length === 0, "K8c niches dans leurs créneaux (entre portes), sous le plafond", bad.slice(0, 6).join(","));
+})();
 
 console.log("--- SIM K : " + passes + " PASS / " + fails + " FAIL");
 process.exit(fails ? 1 : 0);
