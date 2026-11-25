@@ -207,7 +207,11 @@ await page.waitForTimeout(1300);
         for (let t = 0; t < 4 && !(hit && hit.key === s.key); t++) { hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0); if (!(hit && hit.key === s.key)) await new Promise((res) => setTimeout(res, 150)); }
         const stt = A.state();
         if (hit && hit.key === s.key) ok++;
-        else miss.push(s.key + "→" + JSON.stringify(hit) + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1) + " p" + (stt.pitch/Math.PI).toFixed(3) + " pv" + (s.view && s.view.pitch!=null ? (s.view.pitch/Math.PI).toFixed(3) : "?"));
+        else {
+          const it = A.stations().find((q) => q.key === s.key);
+          const straight = A.probeRay(stt.x, 1.62, stt.z, it.x - stt.x, 0, it.z - stt.z, 12);
+          miss.push(s.key + "→" + JSON.stringify(hit) + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1) + " p" + (stt.pitch/Math.PI).toFixed(3) + " obj(" + it.x.toFixed(1) + "," + it.z.toFixed(1) + ") droit:" + JSON.stringify(straight));
+        }
       }
       pick[kind] = { tried: st.length, ok, miss };
     }
