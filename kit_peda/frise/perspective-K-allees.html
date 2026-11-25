@@ -463,7 +463,7 @@ PLAZAS.forEach(function(p){
     var slot = nicheSlot(p, ai); var cx = slot.cx, U = slot.U;
     var ids = p.ids.filter(function(i){ return brOf(i)===k; });
     if (!ids.length){
-      curtains.push({ kind:"curtain", i:null, brin:k, ai:ai, plaza:p.j, x:cx, z:p.x0+0.11, y:Math.max(CH/2+0.14, GEO.EYE+0.3), rotY:-Math.PI/2, lv:null, w:Math.min(CW, 2*U-0.1), niche:true });
+      curtains.push({ kind:"curtain", i:null, brin:k, ai:ai, plaza:p.j, x:cx+0.11, z:alleyZ(ai), y:Math.max(CH/2+0.14, GEO.EYE+0.3), rotY:0, lv:null, w:Math.min(CW, 2*U-0.1), niche:true });
       return;
     }
     var items = ids.map(function(i){ var lv = lvOf(i,k);
@@ -471,7 +471,7 @@ PLAZAS.forEach(function(p){
     items.forEach(function(t){ t.year = t.year - cx; });
     layoutNicheRows(items, U, p.j*4+ai);
     items.forEach(function(t){
-      posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:cx+t.x, z:p.x0+0.11,
+      posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:cx+t.x+0.11, z:alleyZ(ai),
         y:nicheRowY(p.j*4+ai, t.row-1), lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:-Math.PI/2, target:t.x, row:t.row, scale:t.scale, niche:true });
     });
   });
@@ -716,11 +716,11 @@ PLAZAS.forEach(function(p){
                        : Math.min(CW+0.18, 2*slot.U);
     var bh = y1-y0;
     var back = new THREE.Mesh(new THREE.PlaneGeometry(bw, bh), mNiche);
-    back.rotation.y = Math.PI/2; back.position.set(p.x0+0.10, (y0+y1)/2, slot.cx); scene.add(back);   // le long du mur d'entrée (plan x), centré sur le créneau (z=cx)
+    back.rotation.y = 0; back.position.set(p.x0+0.10, (y0+y1)/2, alleyZ(ai)); scene.add(back);   // le long du mur d'entrée (plan x), centré sur le créneau (z=cx)
     var edge = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, bw+0.06), new THREE.MeshBasicMaterial({ color:GOLD }));
-    edge.position.set(p.x0+0.13, y1+0.05, slot.cx); scene.add(edge);
+    edge.position.set(p.x0+0.13, y1+0.05, alleyZ(ai)); scene.add(edge);
     var lamp = new THREE.PointLight(0xffd9a0, np.length?6:3.5, 5.5, 1.6);
-    lamp.position.set(p.x0+0.8, y1+0.35, slot.cx); scene.add(lamp);
+    lamp.position.set(p.x0+0.8, y1+0.35, alleyZ(ai)); scene.add(lamp);
   });
 });
 

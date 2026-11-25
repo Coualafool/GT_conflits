@@ -144,10 +144,12 @@ ok(G.TLEN > 120 && G.TLEN < 190, "K0d longueur du bâtiment plausible", "TLEN=" 
       const p = G.PLAZAS[it.plaza];
       if (!p) { bad.push("niche sans place i=" + (it.i === null ? "curtain" : it.i)); return; }
       const cx = G.PLAZAS[it.plaza].x0 + G.nicheX(G.PLAZAS[it.plaza], it.ai);
-      if (eps(it.z - (p.x0 + 0.11)) > 0.03) bad.push("niche décollée du mur d'entrée (z=" + it.z.toFixed(2) + " face=" + (p.x0+0.11).toFixed(2) + ")");
+      const isCurt = it.kind === "curtain";
+      if (isCurt ? eps(it.x - (cx + 0.11)) > 0.03 : it.x < p.x0 + 0.05) bad.push("niche " + (isCurt?"rideau":"affiche") + " hors mur d'entrée (x=" + it.x.toFixed(2) + " face=" + (p.x0+0.11).toFixed(2) + ")");
+      if (eps(Math.abs(it.z) - Math.abs(G.alleyZ(it.ai))) > 0.03) bad.push("niche hors axe de porte (z=" + it.z.toFixed(2) + " axe=" + G.alleyZ(it.ai).toFixed(2) + ")");
       const U = (p.W - 2 * G.GEO.PDH) / 2 - 0.35;
-      if (it.x - half < cx - U - 0.02 || it.x + half > cx + U + 0.02) bad.push("groupe de niche débordant sous une porte (i=" + (it.i === null ? "rideau" : it.i) + ")");
-      if (it.kind === "curtain" && eps(it.x - cx) > 0.02) bad.push("rideau hors de l'axe d'allée (x=" + it.x.toFixed(2) + " attendu=" + cx.toFixed(2) + ")");
+      if (it.x - half < cx + 0.11 - U - 0.02 || it.x + half > cx + 0.11 + U + 0.02) bad.push("groupe de niche débordant sous une porte (i=" + (it.i === null ? "rideau" : it.i) + ")");
+      if (it.kind === "curtain" && eps(it.x - (cx + 0.11)) > 0.02) bad.push("rideau hors face du mur d'entrée (x=" + it.x.toFixed(2) + " attendu=" + (cx+0.11).toFixed(2) + ")");
     }
     if ((it.h||0) && it.y - it.h / 2 < 0.05) bad.push("œuvre sous 5 cm du sol y=" + it.y.toFixed(2));
     if ((it.h||0) && it.y + it.h / 2 > G.GEO.WALLH - 0.02) bad.push("œuvre au-dessus du mur");
@@ -379,7 +381,7 @@ if (process.argv.includes("--selftest")) {
     G.ALLEYS.forEach(function (k, ai) {
       const slot = vm.runInContext("nicheSlot(PLAZAS[" + p.j + "]," + ai + ")", ctx);
       G.posters.filter(function (q) { return q.niche && q.plaza === p.j && q.ai === ai; }).forEach(function (q) {
-        if (q.x - q.w / 2 < slot.cx - slot.U - 0.011 || q.x + q.w / 2 > slot.cx + slot.U + 0.011) bad.push("np" + q.i);
+        if (q.x - q.w / 2 < slot.cx + 0.11 - slot.U - 0.011 || q.x + q.w / 2 > slot.cx + 0.11 + slot.U + 0.011) bad.push("np" + q.i);
         if (q.y + q.h / 2 > G.GEO.WALLH - 0.02) bad.push("np" + q.i + " plafond");
       });
       const widest = Math.max.apply(null, [0].concat(G.curtains.filter(function(c){return c.plaza===p.j&&c.ai===ai;}).map(function(c){return c.w;})));
