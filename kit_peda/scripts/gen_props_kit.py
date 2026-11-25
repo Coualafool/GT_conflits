@@ -335,26 +335,11 @@ def _finalize(bm, key, mat, slot):
     if key in ROUND_PROPS:
         for p in me.polygons:
             p.use_smooth = True
-        try:  # Blender < 4.1 : auto-smooth sur le maillage
-            me.use_auto_smooth = True
-            me.auto_smooth_angle = math.radians(35.0)
-        except AttributeError:
-            mod = None
-            try:  # Blender >= 4.1 : modificateur « Smooth by Angle », appliqué
-                mod = obj.modifiers.new("SmoothByAngle", "SMOOTH_BY_ANGLE")
-                mod.angle = math.radians(35.0)
-                bpy.context.view_layer.objects.active = obj
-                obj.select_set(True)
-                bpy.ops.object.modifier_apply(modifier=mod.name)
-                obj.select_set(False)
-            except Exception as exc:
-                # dernier repli : doux partout (sans effet sur le rendu final —
-                # three consomme un MeshBasicMaterial, les normales sont ignorées).
-                # IMPÉRATIF : retirer le modificateur résiduel, sinon check()
-                # fait échouer le run pour « modificateurs non appliqués ».
-                if mod is not None and any(m.name == mod.name for m in obj.modifiers):
-                    obj.modifiers.remove(mod)
-                print(f"note: {name}: apply SmoothByAngle échoué ({exc}) — doux partout")
+        # Pas d'auto-smooth ni de modificateur d'angle : use_auto_smooth est mort
+        # en <4.1, l'enum SMOOTH_BY_ANGLE n'existe pas dans le build 4.5 visé
+        # (run TARS 3 : 'enum "SMOOTH_BY_ANGLE" not found') — et le rendu final
+        # consomme un MeshBasicMaterial qui IGNORE les normales. Doux partout est
+        # le comportement cible ; un modificateur résiduel ferait échouer check().
     _uv_slot_box(obj, slot)
     return obj
 
@@ -469,7 +454,7 @@ def build_lantern(mat):
                           matrix=Matrix.Translation((0.0, 0.0, 0.006)))
     # panse renflée (Blender 4.5 : idem create_icosphere, diff d'identité pour les verts)
     vb = set(bm.verts)
-    bmesh.ops.create_icosphere(bm, subdivision=1, radius=0.045)
+    bmesh.ops.create_icosphere(bm, subdivisions=1, radius=0.045)
     panse = [v for v in bm.verts if v not in vb]
     for v in panse:
         v.co.x *= 0.85
