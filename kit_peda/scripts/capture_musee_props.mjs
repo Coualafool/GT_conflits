@@ -59,6 +59,7 @@ if (overlays.w !== 'none') { // sans ça, toute capture est une capture du dialo
 
 const shots = [];
 async function shoot(exprFocus, file, label) {
+  const before = await page.evaluate('__musee.state()');
   if (exprFocus) {
     const done = await page.evaluate(`__musee.focus('${exprFocus}', true)`);
     ok(done === true, `focus('${exprFocus}') a bien téléporté`);
@@ -73,6 +74,11 @@ async function shoot(exprFocus, file, label) {
   } else {
     await page.evaluate('() => __musee.teleportRoom(5)');
     await page.waitForTimeout(2200);
+    // teleportRoom peut ne rien déplacer (répété 3 passes : D restait la vue de C) —
+    // exiger que la caméra ait réellement bougé, sinon le tir large est un doublon silencieux.
+    const moved = await page.evaluate(`(b) => { const s = __musee.state();
+      return Math.abs(s.z - b.z) > 0.5 || Math.abs(s.x - b.x) > 0.1; }`, before);
+    ok(moved === true, `téléportation du tir large a réellement déplacé la caméra`);
   }
   const st = await page.evaluate('__musee.state()');
   ok(st.menu === false && st.panel === null, `état propre avant tir ${label}`, { menu: st.menu, panel: st.panel });
