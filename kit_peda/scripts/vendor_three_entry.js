@@ -13,6 +13,9 @@ import {
   BufferGeometry, Float32BufferAttribute, LineBasicMaterial, Line,
   REVISION,
 } from "three";
+// Chargeur GLB pour les props de vitrines (props-musee.data.js → base64 → ArrayBuffer → GLTFLoader).
+// « three/addons » = export map de three@0.187 (→ examples/jsm) — résolvable par esbuild.
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 globalThis.THREE = {
   Scene, PerspectiveCamera, WebGLRenderer, Group, Object3D,
@@ -25,4 +28,5 @@ globalThis.THREE = {
   ACESFilmicToneMapping, PCFSoftShadowMap,
   BufferGeometry, Float32BufferAttribute, LineBasicMaterial, Line,
   REVISION,
+  GLTFLoader,
 };

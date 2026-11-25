@@ -454,6 +454,34 @@ const BACK = /^..\/chapitres\/chapitre-\d+-espace\.html#s\d+$/;
   await ctx3.close();
 }
 
+/* ---------- J14 : props de vitrine (module optionnel props-musee.data.js) — dégradation douce aujourd'hui, placement complet demain ---------- */
+{
+  await page.goto(PAGE, { waitUntil: "load" });
+  await page.waitForTimeout(1100);
+  const P = await page.evaluate(() => ({
+    props: window.__musee.props(),
+    nCases: window.__musee.cases().length,
+    ndiv: window.__musee.counts().ndiv,
+  }));
+  const hasData = existsSync(fileURLToPath(new URL("../frise/props-musee.data.js", import.meta.url)));
+  if (!hasData) {
+    log("(J14) sans module de props : le musée tourne — aucune prop, aucune vitrine retirée (dégradation douce)",
+      P.props.loaded === false && P.props.placed === 0 && P.props.inHitables === 0 && P.nCases === P.ndiv,
+      `module absent → loaded=${P.props.loaded} placées=${P.props.placed} hitables=${P.props.inHitables} vitrines=${P.nCases}/${P.ndiv}`);
+  } else {
+    log("(J14) module de props présent : les props sont réellement chargées et posées dans les vitrines",
+      P.props.loaded === true && P.props.placed > 0 && P.props.placed === P.nCases,
+      `loaded=${P.props.loaded} placées=${P.props.placed}/${P.nCases} sautées=${P.props.skipped} sources=${(P.props.sources || []).join(",")}`);
+  }
+  log("(J14b) les props ne sont JAMAIS des cibles de visée : zéro prop dans hitables, quel que soit le mode",
+    P.props.inHitables === 0, `inHitables=${P.props.inHitables}`);
+  const badNames = (P.props.placedNames || []).filter(n => !/^prop_[a-z]+_\d+$/.test(n));
+  log("(J14c) nommage des props posées : prop_<archétype>_<index> (vide aujourd'hui — passe verte par absence)",
+    badNames.length === 0, badNames.length ? badNames.slice(0, 3).join(" | ") : `noms=${(P.props.placedNames || []).length}`);
+  log("(J14d) si le module charge, chaque vitrine reçoit SA prop : placées = vitrines (effectif dérivé, jamais codé en dur)",
+    !P.props.loaded || P.props.placed === P.nCases, `loaded=${P.props.loaded} placées=${P.props.placed} vitrines=${P.nCases}`);
+}
+
 /* ---------- J10 : mobile, comparatif, zéro erreur ---------- */
 {
   const ctx4 = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });

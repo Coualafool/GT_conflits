@@ -204,6 +204,7 @@ body.locked #hBack{opacity:.35}   /* en marche, la souris est captif du canvas :
 <script src="poc-data.js"></script>
 <script src="poc-perspectives.js"></script>
 <script src="poc-media.js"></script>
+<script src="props-musee.data.js"></script>
 <script>
 /* Le Musée des récits — salles 3D marchables (three.js vendorisé ; feuille de décision interne/FRISE-MUSEE-DECISIONS).
    ZÉRO donnée nouvelle : EV/LV/REN/ERAS viennent des modules partagés ; la page ne possède que la caméra.
@@ -592,9 +593,59 @@ cases.forEach(function(v){
   });
   var pl = new THREE.Mesh(new THREE.PlaneGeometry(.56,.42), new THREE.MeshBasicMaterial({ map:tt }));
   pl.position.set(0, .62, .2515); g.add(pl);
-  v.mesh = gl; hitables.push(ped); hitables.push(gl);
+  v.mesh = gl; v.group = g; hitables.push(ped); hitables.push(gl);
   ped.userData = { kind:"case", i:v.i, room:v.room }; gl.userData = ped.userData;
 });
+
+/* ---------- props de vitrine (module de données optionnel props-musee.data.js) ----------
+   Dégradation douce intégrale : module absent → passe silencieuse ; bundle sans GLTFLoader → 'sans-loader'.
+   Contrainte file:// : JAMAIS fetch() du GLB — il est décodé depuis glbBase64 (atob → Uint8Array → parse).
+   Les props sont ajoutées au groupe de la vitrine (raycast non récursif : elles ne peuvent pas être hitables). */
+var __propsStatus = { loaded:false, placed:0, skipped:0, sources:[], error:null };
+var propSources = {};          // nom exact du GLB ('prop_radio') → mesh source
+var propsPlacedNames = [];     // noms des instances posées (assert harnais)
+function propsDecodeGlb(b64){
+  var bin = atob(b64), u8 = new Uint8Array(bin.length);
+  for (var q=0;q<bin.length;q++) u8[q] = bin.charCodeAt(q);
+  return u8;
+}
+function placeProps(){
+  var D = window.__VITRINE_PROPS;
+  cases.forEach(function(v){
+    try {
+      var row = D.rows && D.rows["v"+v.i];
+      if (!row){ __propsStatus.skipped++; return; }
+      var src = propSources["prop_"+row.a];
+      if (!src || !v.group){ __propsStatus.skipped++; return; }
+      var m = src.clone(true);                               // clone simple : pas de skinning, SkeletonUtils inutile
+      m.position.y = 0.95;                                   // plateau du socle (haut du socle = 0,95 m)
+      m.rotation.y = THREE.MathUtils.degToRad(row.r||0);
+      m.name = "prop_"+row.a+"_"+v.i;                        // débogable ; jamais poussé dans hitables
+      v.group.add(m);
+      propsPlacedNames.push(m.name);
+      __propsStatus.placed++;
+    } catch (e) { __propsStatus.skipped++; }                 // une prop pourrie ne tue jamais la passe
+  });
+}
+function propsStart(){
+  try {
+    var D = window.__VITRINE_PROPS;
+    if (!D || !window.THREE) { __propsStatus.error = "absent"; return; }
+    if (typeof THREE.GLTFLoader !== "function") { __propsStatus.error = "sans-loader"; return; }
+    var bytes = propsDecodeGlb(D.glbBase64);
+    new THREE.GLTFLoader().parse(bytes.buffer, "", function(gltf){
+      try {
+        gltf.scene.traverse(function(o){                     // map nom→mesh des 7 sources prop_*
+          if (o.isMesh && /^prop_[a-z]+$/.test(o.name) && !propSources[o.name]) propSources[o.name] = o;
+        });
+        __propsStatus.sources = Object.keys(propSources);
+        __propsStatus.loaded = __propsStatus.sources.length > 0;
+        if (__propsStatus.loaded) placeProps();              // les vitrines existent déjà : parse lancé en fin d'init
+        else __propsStatus.error = "aucune-source";
+      } catch (e) { __propsStatus.error = "placement: " + String((e && e.message) || e); }
+    }, function(e){ __propsStatus.error = "parse: " + String((e && e.message) || e); });
+  } catch (e) { __propsStatus.error = "props: " + String((e && e.message) || e); }
+}
 /* plaque de salle NEUTRE au-dessus de la porte entrée ; sous-étiquettes d'époque par paroi (comme H laissait
    chaque couloir étiqueter son sol) — jamais un récit ne rebaptise la salle */
 for (var tk=0; tk<NROOM; tk++){
@@ -954,10 +1005,16 @@ window.__musee = {
     return { open:panelEl.classList.contains("open"), key:panelEl.__key||null,
       backHref: a ? a.getAttribute("href") : null }; },
   curtainH: CH,   // hauteur des rideaux, exposée pour que J2f borne sur la valeur réelle et non un 1,15 codé en dur
+  props: function(){ return { loaded:__propsStatus.loaded, placed:__propsStatus.placed,
+      skipped:__propsStatus.skipped, error:__propsStatus.error,
+      sources: __propsStatus.sources.slice(),                 // noms des sources trouvées dans le GLB
+      placedNames: propsPlacedNames.slice(),                  // instances posées (regex harnais)
+      inHitables: hitables.filter(function(h){ return /^prop_/.test(h.name); }).length }; },
   geo: GEO
 };
 
 /* ---------- premier rendu, puis entrées profondes ---------- */
+propsStart();   // props de vitrine : parse async du GLB (si module présent) — placement dans le callback, vitrines déjà construites
 deepLink();
 initialized = true;
 requestAnimationFrame(frame);

@@ -13,3 +13,7 @@ Reconstruire (three.js ne se met à jour qu'ainsi) :
 
 Fichier livré : `three.bundle.js` — IIFE classique, expose `window.THREE` (REVISION 187).
 Ne pas éditer à la main. Les pages du site ne chargent QUE ce fichier (jamais un CDN).
+
+Depuis le 2026-11-25 : l'entry importe aussi `{ GLTFLoader } from "three/addons/loaders/GLTFLoader.js"`
+(map d'exports de three@0.187 → examples/jsm, résolu par esbuild) et l'expose dans `THREE` —
+chargement des props de vitrines depuis `frise/props-musee.data.js`. Bundle : 615 Ko (avant 539 Ko).
