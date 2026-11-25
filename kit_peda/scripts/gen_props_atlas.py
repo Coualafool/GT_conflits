@@ -17,7 +17,8 @@ Doctrine (cf. interne/BLENDER-PROPS-KIT.md) :
     (code divergence réservé au rail) — asserted à la fin.
   - Deterministe : random.seed(11).
 
-Usage : python3 scripts/gen_props_atlas.py --out <chemin.png>
+Usage : python3 scripts/gen_props_atlas.py --out <chemin.png|chemin.jpg>
+(.jpg/.jpeg → JPEG qualité 80, calibré pour l'embarquement direct dans le GLB.)
 """
 
 import argparse
@@ -610,7 +611,13 @@ def build(out_path):
         stats.append((k, name, slot_luma(slot)))
 
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
-    atlas.save(out_path)
+    if os.path.splitext(out_path)[1].lower() in (".jpg", ".jpeg"):
+        # JPEG direct : l'exporteur glTF 'AUTO' embarque ces octets tels quels —
+        # un PNG 2048×1024 de cette densité de grain pèse ~1,2 Mo et fait exploser
+        # le budget GLB 400 Ko (run TARS 5 : 1 281 240 o).
+        atlas.save(out_path, quality=80, optimize=True)
+    else:
+        atlas.save(out_path)
 
     # ------------------------------------------------------------ auto-contrôles
     fails = []

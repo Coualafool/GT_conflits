@@ -541,9 +541,11 @@ def build_watch(mat):
     for v in bm.verts:
         if abs(v.co.z - zmax) < 0.0004:
             v.co.z += 0.001
-    # couronne à « 12 h » (+y), axe horizontal, 4 crans = 4 arêtes chanfreinées
+    # couronne à « 12 h » (+y), axe horizontal, 4 crans = 4 arêtes chanfreinées.
+    # y 0,024 (pas 0,030) : avec la demi-profondeur 0,005 la couronne portait le
+    # bbox y à 0,062+chanfrein > cible 0,06 (run TARS 5 : FAIL bbox montre).
     cv, _cf = _add_cylinder(bm, r=0.006, depth=0.010, segments=6,
-                            loc=(0.0, 0.030, 0.008), axis="Y")
+                            loc=(0.0, 0.024, 0.008), axis="Y")
     crown_edges = [e for e in {e for v in cv for e in v.link_edges}
                    if len(e.link_faces) == 2 and
                   abs(e.link_faces[0].normal.y - e.link_faces[1].normal.y) > 0.5]
