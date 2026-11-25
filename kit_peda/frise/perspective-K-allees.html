@@ -802,7 +802,7 @@ function stationView(s){
   if (s.niche) {   // la niche pend DANS L'EMBRASURE, face à l'allée (normale ±z, mesuré au rayon) :
                    // on la regarde depuis la broderie, dans l'axe du créneau, GEO.NICHEV en arrière.
     var dz = s.z <= 0 ? 1 : -1; var v = { x: s.x, z: s.z + GEO.NICHEV*dz };   // recul dans l'embrasure vers le centre de l'allée
-    return { x:v.x, z:v.z, yaw:0, pitch:-Math.atan2(GEO.EYE-s.y, GEO.NICHEV + 0.11) }; }   // ry 0 → vue -z, vers la place
+    return { x:v.x, z:v.z, yaw:Math.PI, pitch:Math.atan2(GEO.EYE-s.y, GEO.NICHEV + 0.11) }; }   // vue +z (mesuré) : la niche est devant, dans l'embrasure côté place   // ry 0 → vue -z, vers la place
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : visiteur côté -z → regarde +z (ry=π) ; extérieure : regarde -z (ry=0)
   return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // œuvre AU-DESSUS de l'œil → viser en haut
 }
