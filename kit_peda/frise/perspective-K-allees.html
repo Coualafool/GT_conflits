@@ -794,11 +794,12 @@ function propsStart(){
 var allStations = posters.concat(curtains, cases).sort(function(a,b){ return a.x-b.x; });
 allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
 function stationView(s){
-  if (s.kind==="case"){ var d = 1.9;
-    return { x:s.x, z:s.z+d, yaw:Math.PI, pitch:-Math.atan2(GEO.EYE-1.05, d) }; }
-  if (s.niche) return { x:s.x-1.7, z:alleyZ(s.ai), yaw:Math.PI/2, pitch:(s.y>2.2 ? .22 : .10) };   // dans la place, sur l'axe d'allée, face au mur d'entrée (+x)
+  // le pitch vise l'objet : + monte, - descend (cam.rotation.x = -pitch → écran)
+  if (s.kind==="case") { var d = 1.9;
+    return { x:s.x, z:s.z+d, yaw:Math.PI, pitch:Math.atan2(1.05-GEO.EYE, d) }; }
+  if (s.niche) return { x:s.x-1.7, z:alleyZ(s.ai), yaw:Math.PI/2, pitch:Math.atan2(s.y-GEO.EYE, 1.7) };   // dans la place, sur l'axe d'allée, face au mur d'entrée (+x)
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : le visiteur est côté -z de la paroi ; extérieure : +z
-  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: s.y>2 ? .18 : 0 };
+  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(s.y-GEO.EYE, 1.7) };
 }
 
 /* ---------- caméra : sauts de poste ---------- */
