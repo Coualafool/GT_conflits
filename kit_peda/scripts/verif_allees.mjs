@@ -199,12 +199,17 @@ await page.waitForTimeout(1300);
         for (let t = 0; t < 4 && !(hit && hit.key === s.key); t++) { hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0); if (!(hit && hit.key === s.key)) await new Promise((res) => setTimeout(res, 150)); }
         const stt = A.state();
         if (hit && hit.key === s.key) ok++;
-        else miss.push(s.key + "→" + (hit ? (hit.key || "miss") : "rien") + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1) + " p" + (stt.pitch/Math.PI).toFixed(2));
+        else miss.push(s.key + "→" + JSON.stringify(hit) + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1) + " p" + (stt.pitch/Math.PI).toFixed(3) + " pv" + (s.view && s.view.pitch!=null ? (s.view.pitch/Math.PI).toFixed(3) : "?"));
       }
       pick[kind] = { tried: st.length, ok, miss };
     }
     return pick;
   });
+  for (const k2 of ["nc0-0", "pv0"]) {          // preuve visuelle directe du cadrage niche / vitrine
+    await page.evaluate((k) => window.__allees.focus(k, true), k2);
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: ART + "K5-" + k2 + ".png", timeout: 90000 });
+  }
   const allOk = ["poster", "curtain", "case"].every((k) => r[k].ok === r[k].tried);
   log("(K5) chaque type de poste est cadré depuis son viewpoint (affiche, rideau, vitrine)",
     allOk, ["poster", "curtain", "case"].map((k) => `${k}:${r[k].ok}/${r[k].tried}${r[k].miss.length ? " ratés=" + r[k].miss.join(",") : ""}`).join(" "));
