@@ -243,7 +243,9 @@ await page.waitForTimeout(1300);
   const e33 = await page.evaluate(() => {
     const pn = window.__allees.panel();
     const st = window.__allees.state();
-    return { key: pn.key, open: pn.open, near: Math.hypot(st.x - window.__allees.xOf(0) * 0 - (window.__allees.posters().find((p) => p.i === 33) || {}).x, st.z - (window.__allees.posters().find((p) => p.i === 33) || {}).z) };
+    const q = window.__allees.posters().find((p) => p.i === 33);
+    const al = window.__allees.alleys()[q.ai].z;          // le visiteur est sur l axe d allée, pas au plan du mur
+    return { key: pn.key, open: pn.open, near: Math.hypot(st.x - q.x, st.z - al) };
   });
   log("(K7b) ?ev=33 — entrée profonde cadre le poste du fait 33 (fiche ouverte)",
     e33.open && /^(np)?33-/.test(e33.key || "") && e33.near < 5, `clé=${e33.key} ouvert=${e33.open} dist=${e33.near.toFixed(1)}m`);
