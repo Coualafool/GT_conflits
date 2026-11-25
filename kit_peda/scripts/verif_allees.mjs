@@ -194,8 +194,9 @@ await page.waitForTimeout(1300);
       let ok = 0; const miss = [];
       for (const s of st) {
         A.focus(s.key, true);
+        await new Promise((res) => setTimeout(res, 400));   // laisser la frame appliquer pose + pitch à la caméra
         let hit = null;
-        for (let t = 0; t < 6 && !(hit && hit.key === s.key); t++) { await new Promise((res) => setTimeout(res, 120)); hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0); }
+        for (let t = 0; t < 4 && !(hit && hit.key === s.key); t++) { hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0); if (!(hit && hit.key === s.key)) await new Promise((res) => setTimeout(res, 150)); }
         const stt = A.state();
         if (hit && hit.key === s.key) ok++;
         else miss.push(s.key + "→" + (hit ? (hit.key || "miss") : "rien") + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1) + " p" + (stt.pitch/Math.PI).toFixed(2));
