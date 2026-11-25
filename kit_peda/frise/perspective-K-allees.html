@@ -222,7 +222,7 @@ else (function(){
 try {
 
 /* ---------- constantes du bâtiment (preamble : nécessaire à la simulation hors-ligne) ---------- */
-var GEO = { WALLH:3.1, EYE:1.62, NICHEV:1.05, PITCH:1.45,
+var GEO = { WALLH:3.1, EYE:1.62, NICHEV:0.8, PITCH:1.45,
   ALLEYW:4.0, PART:0.3, DOOR:2.6, PDOOR:2.2, PDH:0.95,
   PPY:1.0, PW0:1.15, PLAZAMIN:6.6,
   BODY:0.55, HALF:6.95, FARZC:7.1 };
@@ -807,7 +807,7 @@ function stationView(s){
     var versPlace = s.z <= 0 ? 1 : -1;             // sens « vers le centre » depuis l'axe d'allée
     var v = { x: s.x, z: s.z + GEO.NICHEV * versPlace };
     var regardeVers = -versPlace;                   // la niche est entre le visiteur et l'extérieur de la broderie
-    return { x: v.x, z: v.z, yaw: regardeVers < 0 ? 0 : Math.PI, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.11) };
+    return { x: v.x, z: v.z, yaw: regardeVers < 0 ? 0 : Math.PI, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.21) };
   }
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : visiteur côté -z → regarde +z (ry=π) ; extérieure : regarde -z (ry=0)
   return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // œuvre AU-DESSUS de l'œil → viser en haut
