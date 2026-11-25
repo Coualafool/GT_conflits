@@ -15,7 +15,7 @@ Règle cardinale : les props sont **décoratifs** — ils n'encodent aucun fait 
 | pivot | **bas-centre du bbox**, origine au sol | sinon rotY de la page fait orbiter le prop au lieu de le tourner |
 | distance de lecture | 1,2–2,2 m, **35–55° de dessus**, à travers un verre teinté opacité 0,1 | poste visiteur + œil 1,62 m |
 | matériau | UN seul, `MeshBasicMaterial` côté three → **l'éclairage est cuit dans la texture**, pas de PBR, pas de normales-map sauf nécessité de silhouette | doctrine « baked-look, pas de lights » |
-| atlas | une seule texture diffuse 1024² (AO + couleur chaudes cuites), export KTX2 uastc via `gltfpack -tc` | budget distrib : atlas ≤ 256 Ko, GLB ≤ 150 Ko Draco |
+| atlas | une seule texture diffuse **2048×1024** (4×2 créneaux de 512², AO + couleur chaudes cuites, JPEG qualité 8 embarqué dans le GLB — `export_image_format="AUTO"` ; KTX2 uastc par `gltfpack -tc` = amélioration future si le budget le permet) | budget distrib : GLB ≤ 400 Ko Draco (seuil `build_props.mjs`) ; la page complète reste ≤ ~1,4 Mo |
 | couleurs | palette « warm archive » : papier #cfc2a8 / #ece6da, bois #4a3b28, laiton #a8853f, tissu #3a2f24 ; **jamais d'or** (#d2a63f = code divergence, réservé au rail) | même code couleur que toutes les vues |
 
 Conséquence du point de vue : la **silhouette et les faces du dessus** portent le prop.
@@ -28,7 +28,7 @@ se cuitent dans la texture, ils ne reçoivent jamais de géométrie.
 2. Nommage des meshs = clé exacte du JSON : `prop_docstack`, `prop_maproll`, `prop_radio`,
    `prop_lantern`, `prop_letter`, `prop_watch`, `prop_books`. La page instancie par nom — un nom
    inventé = prop qui n'apparaît jamais.
-3. Un seul matériau partagé (`M_props_atlas`), UV empaquetés dans l'atlas 1024² avec 8 px de bleed.
+3. Un seul matériau partagé (`M_props_atlas`), UV empaquetés dans l'atlas 2048×1024 (8 créneaux de 512², grille 4×2) avec 8 px de bleed.
    Densité texel : privilégier les faces hautes (le prop est vu de dessus).
 4. Bakes : AO (32–64 samples, distance 2 cm) + diffuse couleur chaude **avec le dégradé de spot
    simulé** (plus clair au centre du volume, plus sombre vers le bas — c'est le spot du plafond qui
@@ -121,10 +121,11 @@ modifiers (le générateur d'audit vérifiera) ; « silhouette » = ce que l'œi
 ## Pipeline & acceptation
 
 ```
-Blender (7 meshs, M_props_atlas, bakes 1024²)
+Blender (7 meshs, M_props_atlas, atlas 2048×1024, JPEG q8 embarqué à l'export)
   → export glTF 2.0 (apply modifiers, +Y up default, sans lights/anim)
-  → gltfpack -i props-musee.glb -o props-musee.glb -cc -tc   (Draco + KTX2)
-  → budget : GLB ≤ 150 Ko, atlas ≤ 256 Ko
+  → gltfpack -i props-musee.glb -o props-musee.glb -cc   (Draco ; -tc KTX2 = étape
+    optionnelle tant que gltfpack n'est pas installé côté runneur)
+  → budget : GLB ≤ 400 Ko Draco (seuil dur build_props.mjs)
 ```
 
 Checklist d'acceptation PAR prop (à faire tourner, script Blender fourni en fin de doc) :

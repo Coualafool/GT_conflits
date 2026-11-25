@@ -8,9 +8,9 @@ pivot bas-centre, 1 matériau M_props_atlas, UV dans l'atlas 2048×1024 en
 seed 7, aucune horloge, géométrie construite en bmesh pur (pas de bpy.ops
 de modélisation), bevels appliqués en édition, zéro modificateur résiduel.
 
-Usage (les deux fonctionnent) :
+Usage (Blender headless, SEUL mode supporté) :
   blender --background --python scripts/gen_props_kit.py -- --out props-musee.glb [--atlas atlas.png]
-  python3 -m bpy-importable... scripts/gen_props_kit.py --out props-musee.glb [--atlas atlas.png]
+Chemins --out/--atlas absolutisés (images.load/export résolvent le relatif contre le .blend).
 
 Couleurs de référence (palette « warm archive », cuites dans l'atlas par
 l'agent atlas — jamais d'or, jamais le code de divergence) :
@@ -236,17 +236,24 @@ def _get_or_make_image(atlas_path):
             img = bpy.data.images.load(path, check_existing=False)
             img.name = IMG_NAME
             return img
-    # repli : damier « papier » aux deux teintes de la palette, jamais d'or
+    # repli : damier « papier » aux deux teintes de la palette, jamais d'or.
+    # pixels attend des FLOTTANTS 0..1 (les bytes 0..255 seraient écrasés à 1.0).
+    from array import array
     img = bpy.data.images.new(IMG_NAME, ATLAS_W, ATLAS_H, alpha=False)
-    a = (0.812, 0.761, 0.659, 1.0)   # #cfc2a8
-    b = (0.925, 0.902, 0.855, 1.0)   # #ece6da
-    px = bytearray()
+    a = (0.812, 0.761, 0.659)   # #cfc2a8
+    b = (0.925, 0.902, 0.855)   # #ece6da
     cell = 64
-    for y in range(ATLAS_H):
+    rows = []
+    for parity in (0, 1):       # une rangée type par parité de (x // cell)
+        c_row = array("f")
         for x in range(ATLAS_W):
-            c = a if ((x // cell) + (y // cell)) % 2 == 0 else b
-            px += bytes(int(v * 255) for v in c)
-    img.pixels = bytes(px)
+            r, g, bl = a if (x // cell) % 2 == parity else b
+            c_row.extend((r, g, bl, 1.0))
+        rows.append(c_row)
+    px = array("f")
+    for y in range(ATLAS_H):    # damier : a quand (x//cell + y//cell) pair
+        px.extend(rows[(y // cell) % 2])
+    img.pixels.foreach_set(px)
     return img
 
 
@@ -305,6 +312,9 @@ def _finalize(bm, key, mat, slot):
         if old is not None:
             (bpy.data.objects.remove if isinstance(old, bpy.types.Object)
              else bpy.data.meshes.remove)(old)
+    # winding garanti sortant AVANT export/bake : le wedge du bec, les caps des
+    # sweeps et les shells solidify ont des enroulements écrits à la main.
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     me = bpy.data.meshes.new(name)
     bm.to_mesh(me)
     bm.free()
@@ -329,6 +339,7 @@ def _finalize(bm, key, mat, slot):
             me.use_auto_smooth = True
             me.auto_smooth_angle = math.radians(35.0)
         except AttributeError:
+            mod = None
             try:  # Blender >= 4.1 : modificateur « Smooth by Angle », appliqué
                 mod = obj.modifiers.new("SmoothByAngle", "SMOOTH_BY_ANGLE")
                 mod.angle = math.radians(35.0)
@@ -336,8 +347,14 @@ def _finalize(bm, key, mat, slot):
                 obj.select_set(True)
                 bpy.ops.object.modifier_apply(modifier=mod.name)
                 obj.select_set(False)
-            except Exception:
-                pass  # dernier repli : doux partout, la silhouette reste plate aux arêtes vives
+            except Exception as exc:
+                # dernier repli : doux partout (sans effet sur le rendu final —
+                # three consomme un MeshBasicMaterial, les normales sont ignorées).
+                # IMPÉRATIF : retirer le modificateur résiduel, sinon check()
+                # fait échouer le run pour « modificateurs non appliqués ».
+                if mod is not None and any(m.name == mod.name for m in obj.modifiers):
+                    obj.modifiers.remove(mod)
+                print(f"note: {name}: apply SmoothByAngle échoué ({exc}) — doux partout")
     _uv_slot_box(obj, slot)
     return obj
 
@@ -497,11 +514,17 @@ def build_letter(mat):
             v.co.z += 0.0667 * tan6 - (v.co.x - 0.0333) * tan6 * 0.97
     boundary = [e for e in bm.edges if e.is_boundary]
     bmesh.ops.solidify(bm, geom=boundary + faces, thickness=0.0006)
-    zs = [v.co.z for v in bm.verts]
-    ztop = max(zs)
-    # cachet : borne éteint, ø 0,032 × 3 mm, excentré sur le tiers supérieur (x > 0)
+    # cachet : borne éteint, ø 0,032 × 3 mm, excentré sur le tiers supérieur (x > 0).
+    # Posé via la fonction du pli au x du cachet (l'ancien ztop global le faisait
+    # flotter ~2,4 mm au-dessus du tiers droit, qui redescend vers x = 0,10).
+    def _fold_z(x):
+        if x < -0.0333:
+            return 0.0
+        if x < 0.0333:
+            return (x + 0.0333) * tan6
+        return 0.0667 * tan6 - (x - 0.0333) * tan6 * 0.97
     _add_cylinder(bm, r=0.016, depth=0.003, segments=8,
-                  loc=(0.060, 0.018, ztop + 0.0012))
+                  loc=(0.060, 0.018, _fold_z(0.060) + 0.0013))
     return _finalize(bm, "letter", mat, ARCHES.index("letter"))
 
 
@@ -517,10 +540,12 @@ def build_watch(mat):
     bm = _new_bm()
     verts, faces = _add_cylinder(bm, r=0.027, depth=0.010, segments=16,
                                  loc=(0.0, 0.0, 0.006))
-    # chanfrein de carrure : toutes les arêtes hautes et basses du boîtier
+    # chanfrein de carrure : arêtes chapeau/flancs du boîtier. Filtre : écart
+    # |n1.z − n2.z| > 0,9 (flancs n.z≈0, chapeaux n.z=±1). L'ancien produit
+    # n1.z*n2.z < 0 était toujours faux (0 × ±1 = 0) → chanfrein jamais posé.
     ring_edges = [e for e in bm.edges
                   if len(e.link_faces) == 2 and
-                  e.link_faces[0].normal.z * e.link_faces[1].normal.z < 0]
+                  abs(e.link_faces[0].normal.z - e.link_faces[1].normal.z) > 0.9]
     _bevel_edges(bm, ring_edges, width=0.0015)
     bm.verts.ensure_lookup_table()
     # verre bombé : bague de sommets du dessus relevée de 1 mm
@@ -622,7 +647,9 @@ def check(objs):
         if obj is None or obj.name != name or obj.data.name != name:
             fails.append(f"{name}: nom de mesh/objet manquant ou inexact")
             continue
-        if len(obj.data.users_collection) == 0:
+        if len(obj.users_collection) == 0:
+            # l'OBJET doit être sous collection ; le maillage ne l'est jamais
+            # directement (les collections ne linkent que des objets).
             fails.append(f"{name}: objet hors collection")
         dx, dy, dz, minz = measure(obj)
         tris = tris_of(obj)
