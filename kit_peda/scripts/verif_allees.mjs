@@ -17,7 +17,7 @@ const PAGE = BASE + "/perspective-K-allees.html";
 const results = [];
 function log(id, pass, evidence) { results.push((pass ? "PASS" : "FAIL") + "  " + id + " — " + evidence); }
 
-const browser = await chromium.launch({ channel: "msedge", headless: true });
+const browser = await chromium.launch({ channel: "msedge", headless: true, args: (process.env.K_GL === "sw" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []) });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const pageErrors = [];
 page.on("pageerror", (e) => pageErrors.push(String(e)));
