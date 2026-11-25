@@ -28,7 +28,7 @@ const shot = async (name) => {
 };
 
 /* ---------- K0 : seuil Three.js — la scène vit sur le bundle vendorisé ---------- */
-await page.goto(PAGE, { waitUntil: "load" });
+await page.goto(PAGE + (PAGE.includes("?") ? "&" : "?") + "nocache=" + Date.now(), { waitUntil: "load" });
 await page.waitForTimeout(1300);
 {
   const s = await page.evaluate(() => ({
@@ -236,7 +236,7 @@ await page.waitForTimeout(1300);
 
 /* ---------- K7 : entrées profondes — ?pl=j téléporte à la place · ?ev=i cadre le poste du fait ---------- */
 {
-  await page.goto(PAGE + "?pl=2", { waitUntil: "load" });
+  await page.goto(PAGE + "?pl=2&nocache=" + Date.now(), { waitUntil: "load" });
   await page.waitForTimeout(1200); await dismiss();
   const s2 = await page.evaluate(() => {
     const st = window.__allees.state();
@@ -245,7 +245,7 @@ await page.waitForTimeout(1300);
   });
   log("(K7) ?pl=2 — entrée profonde pose le visiteur sur la place 2", s2.pj === 2, `x=${s2.x.toFixed(1)} place=${s2.pj}`);
   await shot("K-place-2");
-  await page.goto(PAGE + "?ev=33", { waitUntil: "load" });
+  await page.goto(PAGE + "?ev=33&nocache=" + Date.now(), { waitUntil: "load" });
   await page.waitForTimeout(1200); await dismiss();
   const e33 = await page.evaluate(() => {
     const pn = window.__allees.panel();
