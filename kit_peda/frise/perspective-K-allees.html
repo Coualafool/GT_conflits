@@ -1172,10 +1172,14 @@ window.__allees = {
     for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
     if (s) focusStation(s, instant); return !!s; },
   teleportSeg: teleportSeg, teleportPlaza: teleportPlaza, nudgeLook: nudgeLook, snapTo: snapTo,
-  forwardHit: function(){ cam.updateMatrixWorld(true); var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion);
+  forwardHit: function(){ cam.updateMatrixWorld(true); var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion).normalize();
     var rc = new THREE.Raycaster(cam.position.clone(), d, 0.05, 12);
     var hit = rc.intersectObjects(hitables, false)[0];
-    return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance } : null; },
+    return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance }
+               : { miss:true, o:[+cam.position.x.toFixed(2),+cam.position.y.toFixed(2),+cam.position.z.toFixed(2)], d:[+d.x.toFixed(3),+d.y.toFixed(3),+d.z.toFixed(3)], n:hitables.length }; },
+  probeRay: function(ox,oy,oz,dx,dy,dz,max){ var rc = new THREE.Raycaster(new THREE.Vector3(ox,oy,oz), new THREE.Vector3(dx,dy,dz).normalize(), 0.02, max||12);
+    var hits = rc.intersectObjects(hitables, false);
+    return hits.slice(0,3).map(function(h){ return { key:h.object.userData.key||h.object.name||"?", dist:+h.distance.toFixed(2) }; }); },
   rayHit: function(nx,ny){ cam.updateMatrixWorld(true); var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i===null?null:hit.object.userData.i,
