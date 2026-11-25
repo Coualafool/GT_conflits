@@ -352,13 +352,17 @@ if (process.argv.includes("--selftest")) {
 (function () {
   if (!WALK.stationView) { ok(false, "K8b viewpoints praticables", "stationView non chargé"); return; }
   const bad = [];
+  const why = (p, v) => {
+    const pl = p.plaza !== undefined ? G.PLAZAS[p.plaza] : null;
+    return (p.key || ("i" + p.i)) + "@v(" + v.x.toFixed(2) + "," + v.z.toFixed(2) + ")" + (pl ? " pl[" + pl.x0.toFixed(2) + "," + pl.x1.toFixed(2) + "]" : "");
+  };
   G.posters.forEach(function (p) {
     const v = WALK.stationView(p);
-    if (!WALK.walkable(v.x, v.z)) bad.push(p.key || ("i" + p.i));
+    if (!WALK.walkable(v.x, v.z)) bad.push(why(p, v));
   });
   G.curtains.forEach(function (p) {
     const v = WALK.stationView(p);
-    if (!WALK.walkable(v.x, v.z)) bad.push(p.key || "curtain");
+    if (!WALK.walkable(v.x, v.z)) bad.push(why(p, v));
   });
   ok(bad.length === 0, "K8b tous les viewpoints de postes praticables (mur, niche, rideau)", bad.slice(0, 6).join(","));
 })();
