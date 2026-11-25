@@ -802,12 +802,12 @@ function stationView(s){
   // yaw = ry (0 = −z, π/2 = +x, π = +z) ; pitch = l'angle de visée (+ = monter, car rx = −pitch).
   if (s.kind==="case") { var d = 1.9;
     return { x:s.x, z:s.z+d, yaw:0, pitch:Math.atan2(GEO.EYE-(s.y||1.24), d) }; }   // caméra au +z de la vitrine, regarde −z ; le verre (1,24) est SOUS l'œil → viser en bas
-  if (s.niche) {   // la niche pend DANS L'EMBRASURE, face à l'allée (normale ±z, mesuré au rayon).
-                   // Le visiteur se tient côté place (vers z=0), dans l'axe du créneau, GEO.NICHEV en arrière.
-    var versPlace = s.z <= 0 ? 1 : -1;             // sens « vers le centre » depuis l'axe d'allée
-    var v = { x: s.x, z: s.z + GEO.NICHEV * versPlace };
-    var regardeVers = -versPlace;                   // la niche est entre le visiteur et l'extérieur de la broderie
-    return { x: v.x, z: v.z, yaw: regardeVers < 0 ? 0 : Math.PI, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.21) };
+  if (s.niche) {   // la niche pend dans l'embrasure de la porte d'allée (rayons : normale ±z, rideau centré sur l'axe).
+                   // Vue éprouvée par K5 : debout GEO.NICHEV du côté place (vers z=0), regard vers l'œuvre.
+    var side = s.z <= 0 ? 1 : -1;
+    var v = { x: s.x, z: s.z + GEO.NICHEV * side };
+    var vz = s.z - v.z;
+    return { x: v.x, z: v.z, yaw: vz > 0 ? Math.PI : 0, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.21) };
   }
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : visiteur côté -z → regarde +z (ry=π) ; extérieure : regarde -z (ry=0)
   return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // œuvre AU-DESSUS de l'œil → viser en haut

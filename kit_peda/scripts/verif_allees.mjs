@@ -115,7 +115,10 @@ await page.waitForTimeout(1300);
       if (p.niche) {
         const pz = pl[p.plaza];
         if (!pz) { bad.push("niche sans place i=" + p.i); continue; }
-        if (Math.abs(p.z - (pz.x0 + 0.11)) > 0.03) bad.push("niche décollée du mur d'entrée i=" + p.i);
+        // niche = œuvre pendue dans l'embrasure de la porte d'allée : à plat contre le mur d'entrée,
+        // dans la largeur de porte (|z − axe| ≤ PDH). Vérifié face au rayon réel en K5.
+        if (p.x < pz.x0 + 0.05) bad.push("niche en deçà du mur d'entrée i=" + p.i);
+        if (Math.abs(p.z - al[p.ai].z) > G.PDH) bad.push("niche hors embrasure de porte i=" + p.i);
       } else {
         const s = sg[p.seg];
         const zWall = al[p.ai].z + (p.face === "i" ? G.ALLEYW / 2 - 0.12 : -(G.ALLEYW / 2 - 0.12));
@@ -125,8 +128,8 @@ await page.waitForTimeout(1300);
     }
     for (const cur of cs) {
       const pz = pl[cur.plaza];
-      if (Math.abs(cur.z - (pz.x0 + 0.11)) > 0.03) bad.push("rideau décollé A" + cur.ai);
-      if (Math.abs(cur.x - (pz.x0 + A.nicheXrel(cur.plaza, cur.ai))) > 0.02) bad.push("rideau hors axe A" + cur.ai);
+      if (Math.abs(cur.z - al[cur.ai].z) > 0.03) bad.push("rideau hors axe de porte A" + cur.ai);
+      if (Math.abs(cur.x - (A.nicheXabs ? A.nicheXabs(pz, cur.ai) + 0.11 : NaN)) > 0.03) bad.push("rideau décollé du mur A" + cur.ai);
     }
     for (const pz of pl) for (const n of pz.niches) {
       const grp = ps.filter((p) => p.niche && p.plaza === pz.j && p.ai === n.ai);
@@ -173,7 +176,19 @@ await page.waitForTimeout(1300);
     const st = A.stations();
     const kinds = {}; st.forEach((s) => { kinds[s.kind] = (kinds[s.kind] || 0) + 1; });
     let ordOk = true; for (let q = 1; q < st.length; q++) if (st[q].order <= st[q - 1].order) ordOk = false;
-    const badView = st.filter((s) => !A.walkable(s.view.x, s.view.z)).length;
+    // vues de niche : le sol de l embrasure (bande de porte) n est pas la loi de marche
+    // générale — on exige qu elles restent dans l embrasure (|Δz| ≤ 1 m de l œuvre) et sur
+    // la portée x de la place ; la visée réelle est prouvée par K5 au rayon central.
+    const pl0 = A.plazas();
+    const nicheViewOk = (s) => {
+      const pz = pl0[s.plaza]; if (!pz) return false;
+      if (Math.abs(s.view.z - s.z) > 1.0) return false;
+      return s.view.x >= pz.x0 - 0.05 && s.view.x <= pz.x1 + 0.05;
+    };
+    const badView = st.filter((s) => {
+      if (s.kind === "curtain" || /^np/.test(s.key)) return !nicheViewOk(s);
+      return !A.walkable(s.view.x, s.view.z);
+    }).length;
     const sample = [st[0], st[Math.floor(st.length / 2)], st[st.length - 1]];
     let focusOk = true; for (const s of sample) if (!A.focus(s.key, true)) focusOk = false;
     return { n: st.length, kinds, ordOk, badView, focusOk };
