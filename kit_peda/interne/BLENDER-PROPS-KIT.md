@@ -11,7 +11,7 @@ Règle cardinale : les props sont **décoratifs** — ils n'encodent aucun fait 
 |---|---|---|
 | volume intérieur du verre | 0,60 L × 0,44 P × 0,52 H (m) | `BoxGeometry(.6,.52,.44)`, centre y=1,24 |
 | **enveloppe prop max** | **0,56 × 0,40 × 0,48 (m)** | garde-fou 2 cm par côté sous le verre |
-| sol du prop | plan y = 0 (pivot bas-centre) | la page posera le prop à y = 0,98, rotY depuis le JSON |
+| sol du prop | plan y = 0 (pivot bas-centre) | la page posera le prop à y = 0,95 (dessus du socle = 0,475 + 0,95/2) |
 | pivot | **bas-centre du bbox**, origine au sol | sinon rotY de la page fait orbiter le prop au lieu de le tourner |
 | distance de lecture | 1,2–2,2 m, **35–55° de dessus**, à travers un verre teinté opacité 0,1 | poste visiteur + œil 1,62 m |
 | matériau | UN seul, `MeshBasicMaterial` côté three → **l'éclairage est cuit dans la texture**, pas de PBR, pas de normales-map sauf nécessité de silhouette | doctrine « baked-look, pas de lights » |
