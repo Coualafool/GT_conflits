@@ -799,13 +799,11 @@ function stationView(s){
   // yaw = ry (0 = −z, π/2 = +x, π = +z) ; pitch = l'angle de visée (+ = monter, car rx = −pitch).
   if (s.kind==="case") { var d = 1.9;
     return { x:s.x, z:s.z+d, yaw:0, pitch:Math.atan2(GEO.EYE-(s.y||1.24), d) }; }   // caméra au +z de la vitrine, regarde −z ; le verre (1,24) est SOUS l'œil → viser en bas
-  if (s.niche) {   // l œuvre est scellée au mur d'entrée, centrée sur l'axe de porte : on la regarde d'AXE en AXE,
-                   // à rebours du voyage (le visiteur arrive par la place). PAS d'appel à walkable ici — il n'existe
-                   // qu'après la caméra (TDZ : en navigateur, l'appeler à la charge plantait tout le module).
-    var p = PLAZAS[s.plaza]; var v = { x: s.x + GEO.NICHEV, z: s.z };   // s.x porte déjà le fruit face (cx+0,11) : on recule depuis L'ŒUVRE
-    if (v.x > p.x1 - 0.45) v.x = p.x1 - 0.45;      // jamais au-delà du sol de la place
-    var horiz = Math.max(0.5, v.x - s.x);
-    return { x:v.x, z:v.z, yaw:0, pitch:Math.atan2(GEO.EYE-s.y, horiz) }; }   // axe → axe = pure -x = ry 0 (loi caméra mesurée)
+  if (s.niche) {   // la niche pend DANS LA PORTE (face ±z, dans l\'embrasure) : on la regarde depuis
+                   // l\'allée, dans l\'axe de porte (x = creneau), 1,2 m en arrière sur la broderie.
+    var v = { x: s.z, z: s.z + GEO.NICHEV };   // s.z porte l\'axe de porte (alleyZ) ; recul côté allée
+    var horiz = GEO.NICHEV + 0.11;
+    return { x:v.x, z:v.z, yaw:0, pitch:Math.atan2(GEO.EYE-s.y, horiz) }; }   // vue = -z (loi caméra mesurée : ry 0 → dir -z)
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : visiteur côté -z → regarde +z (ry=π) ; extérieure : regarde -z (ry=0)
   return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // œuvre AU-DESSUS de l'œil → viser en haut
 }
@@ -1206,7 +1204,7 @@ window.__allees = {
       d:[+d.x.toFixed(3),+d.y.toFixed(3),+d.z.toFixed(3)], zloc:[+m.x.toFixed(3),+m.y.toFixed(3),+m.z.toFixed(3)], order:cam.rotation.order }; },
   probeRay: function(ox,oy,oz,dx,dy,dz,max){ var rc = new THREE.Raycaster(new THREE.Vector3(ox,oy,oz), new THREE.Vector3(dx,dy,dz).normalize(), 0.02, max||12);
     var hits = rc.intersectObjects(hitables, false);
-    return hits.slice(0,3).map(function(h){ return { key:h.object.userData.key||h.object.name||"?", dist:+h.distance.toFixed(2) }; }); },
+    return hits.slice(0,3).map(function(h){ return { key:h.object.userData.key||h.object.name||"?", dist:+h.distance.toFixed(2), at:[+h.point.x.toFixed(2),+h.point.y.toFixed(2),+h.point.z.toFixed(2)] }; }); },
   curtainProbe: function(){ var out = [];
     for (var q=0;q<curtainMeshes.length && out.length<3;q++){ var m = curtainMeshes[q];
       m.updateMatrixWorld(true); var wp = new THREE.Vector3(); m.getWorldPosition(wp);
