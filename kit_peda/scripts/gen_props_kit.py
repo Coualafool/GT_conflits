@@ -550,13 +550,17 @@ def build_watch(mat):
                    if len(e.link_faces) == 2 and
                   abs(e.link_faces[0].normal.y - e.link_faces[1].normal.y) > 0.5]
     _bevel_edges(bm, crown_edges[:4], width=0.002)
-    # chaîne : bande plane de 8 segments courbée en S, posée sur le sol
+    # chaîne : bande plane de 8 segments courbée en S, posée sur le sol.
+    # y = 0,022 + 0,004·sin : pic à 0,026 + 0,004 de demi-largeur = 0,030 →
+    # profondeur totale 0,027+0,030 = 0,057 ≤ 0,06 (run TARS 6 : l'ancien
+    # 0,026+0,006·sin picotait à 0,036 → bbox 0,063, le vrai coupable n'était
+    # pas la couronne mais le ventre de la chaîne).
     n = 8
     rows = []
     for j in range(n + 1):
         t = j / n
         x = 0.020 + 0.016 * t
-        y = 0.026 + 0.006 * math.sin(t * math.pi * 2.0)
+        y = 0.022 + 0.004 * math.sin(t * math.pi * 2.0)
         rows.append([bm.verts.new((x, y - 0.004, 0.0012)),
                      bm.verts.new((x, y + 0.004, 0.0012))])
     for j in range(n):
