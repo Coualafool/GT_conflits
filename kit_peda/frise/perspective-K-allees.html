@@ -1180,6 +1180,18 @@ window.__allees = {
   probeRay: function(ox,oy,oz,dx,dy,dz,max){ var rc = new THREE.Raycaster(new THREE.Vector3(ox,oy,oz), new THREE.Vector3(dx,dy,dz).normalize(), 0.02, max||12);
     var hits = rc.intersectObjects(hitables, false);
     return hits.slice(0,3).map(function(h){ return { key:h.object.userData.key||h.object.name||"?", dist:+h.distance.toFixed(2) }; }); },
+  meshProbe: function(key){ var m = null, idx = -1;
+    for (var q=0;q<hitables.length;q++){ if (hitables[q].userData.key===key){ m = hitables[q]; idx = q; break; } }
+    if (!m) return { found:false, n:hitables.length };
+    m.updateMatrixWorld(true);
+    var wp = new THREE.Vector3(); m.getWorldPosition(wp);
+    var rc = new THREE.Raycaster(new THREE.Vector3(2,1.58,-4.4), new THREE.Vector3(0,0,-1), 0.02, 12);
+    var one = m.raycast ? (function(){ var a=[]; m.raycast(rc, a); return a.length; })() : -1;
+    var two = rc.intersectObject(m, false).length;
+    var sph = m.geometry.boundingSphere ? { c:[m.geometry.boundingSphere.center.x.toFixed(2),m.geometry.boundingSphere.center.y.toFixed(2),m.geometry.boundingSphere.center.z.toFixed(2)], r:m.geometry.boundingSphere.radius.toFixed(2) } : "none";
+    return { found:true, idx:idx, wp:[+wp.x.toFixed(2),+wp.y.toFixed(2),+wp.z.toFixed(2)],
+      isMesh:!!m.isMesh, isInstanced:!!m.isInstancedMesh, type:m.type, raycastFn:one, rcIntersect:two, sph:sph,
+      three: (window.THREE&&THREE.REVISION)||"?", matSide: m.material ? m.material.side : null }; },
   rayHit: function(nx,ny){ cam.updateMatrixWorld(true); var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i===null?null:hit.object.userData.i,
