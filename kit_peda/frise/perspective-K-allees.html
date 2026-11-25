@@ -492,7 +492,7 @@ try {
   /* PAS loseContext ici : sur la pile GPU de cette machine, détruire le contexte de
      la sonde rend le contexte MSAA suivant impossible — la page basculait en repli.
      Le GC collecte le contexte sonde dès que la toile existe. */
-    (void)pctx;
+    pctx.getExtension;
   renderer = new THREE.WebGLRenderer({ antialias:true });
   if (!renderer.getContext()) throw new Error("no-context");
 } catch (e) {
