@@ -237,7 +237,7 @@ var PW = { w2:.92, h2:.64, w1:.7, h1:.48 };                    // encodage LV = 
 var CW = 0.95, CH = 2.3, YA = 1.58, YB = 2.3;                  // rows A hauteur d'yeux / B au-dessus ; rideau sol→au-dessus des rangées
 
 /* ---------- helpers locaux (aucun nom partagé avec les modules de données) ---------- */
-function mClamp(v,a,b){ return v<a?a:(v>b?b:v); }
+function mClamp(v,a,b){ if (b<a){ var t=a; a=b; b=t; } return v<a?a:(v>b?b:v); }
 function mEsc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function yrOf(y){ return Math.floor(y); }
 function mthOf(y){ var m = Math.floor((y-Math.floor(y))*12); return m>=12?11:(m<0?0:m); }
@@ -309,7 +309,7 @@ function xOf(year){
 function segOfY(y){ for (var i=0;i<SEGDEF.length;i++) if (y>=SEGDEF[i].ya && y<=SEGDEF[i].yb) return i; return -1; }
 function segOfX(xv){ for (var i=0;i<SEGDEF.length;i++) if (xv>=SEGDEF[i].x0 && xv<=SEGDEF[i].x1) return i; return -1; }
 function plazaOfX(xv){ for (var i=0;i<PLAZAS.length;i++) if (xv>=PLAZAS[i].x0 && xv<=PLAZAS[i].x1) return i; return -1; }
-function nicheX(p, ai){ return (ai+0.5)/ALLEYS.length * (p.x1-p.x0); }   // RELATIF à p.x0 — niche de l'allée ai : mur d'entrée de la place, dans sa largeur
+function nicheX(p, ai){ return nicheSlot(p, ai).cx - p.x0; }   // RELATIF à p.x0 — centre du créneau de niche (entre axes de portes voisines)
 
 /* ---------- une paroi : créneaux [−U,U] (bornes = ouvertures, jamais traversées) ---------- */
 function layoutWall(items, U){
@@ -417,30 +417,62 @@ Object.keys(wallItems).forEach(function(key){
   items.forEach(function(t){
     t.xabs = t.x + (s.x0+s.x1)/2;
     var zc = alleyZ(ai), side = face==="i" ? 1 : -1;
-    var xw = zc + side*(GEO.ALLEYW/2 - 0.12);
+    var xw = zc + side*(GEO.ALLEYW/2 - 0.13);
     posters.push({ kind:"poster", i:t.i, brin:t.brin, ai:ai, face:face, seg:j, niche:false, x:t.xabs, z:xw,
       y: t.row===1 ? YA : YB, lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale,
       rotY: face==="i" ? Math.PI : 0, target:t.target+(s.x0+s.x1)/2, row:t.row, scale:t.scale });
   });
 });
 
+/* créneau de niche : le panneau de paroi entre deux portes — centré entre les axes de porte,
+   largeur physique = distance porte→porte (la niche ne peut jamais déborder sous une porte) */
+function nicheSlot(p, ai){
+  var dPrev = ai===0 ? p.x0 : (p.x0 + (ai-0.5)/ALLEYS.length*(p.x1-p.x0));
+  var dNext = ai===ALLEYS.length-1 ? p.x1 : (p.x0 + (ai+0.5)/ALLEYS.length*(p.x1-p.x0));
+  var cx = (dPrev + dNext)/2;
+  return { cx:cx, U:(dNext-dPrev)/2 - 0.12 };
+}
+var NICHE_R = [];                                                     // géométrie de rangée par groupe (nicheRowY lit la sienne)
+function layoutNicheRows(items, U, gid){                              // grille de niche remplie dans l'ordre du temps,
+  var best = null;                                                    // colonnes selon la largeur du creneau, puis scale
+  [1,2,3].forEach(function(cols){
+    if (cols*(0.7+0.10) - 0.10 + 0.16 > 2*U) return;
+    var nrows = Math.ceil(items.length/cols); if (nrows > 3) return;
+    var s = 1;
+    for (var attempt=0; attempt<14; attempt++){                       // la rangee la plus pleine decide
+      var maxc = Math.min(cols, items.length - (nrows-1)*cols);
+      var hMax = 0; items.forEach(function(t){ hMax = Math.max(hMax, (t.lv===2?PW.h2:PW.h1)); });
+      if (maxc*(0.7*s) + (maxc-1)*0.10 + 0.16 <= 2*U && hMax*s + 0.06 < 0.70) break;
+      s *= 0.9;
+    }
+    var cellW = 2*U/cols, pitch = nrows===1 ? 0.55 : Math.min(0.72, 1.55/(nrows-1));
+    if (!best || s > best.scale) best = { cols:cols, rows:nrows, scale:s, cellW:cellW, pitch:pitch };
+  });
+  if (!best) best = { cols:1, rows:Math.min(3, items.length), scale:0.5, cellW:2*U, pitch:0.55 };
+  NICHE_R[gid] = { y0:1.34, pitch:best.pitch };
+  items.forEach(function(t, q){
+    var ri = Math.floor(q/best.cols), ci = q % best.cols;
+    t.scale = best.scale; t.row = ri+1; t.w = t.w0*best.scale; t.x = -U + best.cellW*(ci+0.5); });
+  return items;
+}
+function nicheRowY(gid, ri){ var g = NICHE_R[gid] || { y0:1.34, pitch:0.6 }; return g.y0 + g.pitch*ri; }
+
 /* places : niches par allée (affiche si le brin a des faits dans la fenêtre, rideau sinon) + vitrine centrale */
 PLAZAS.forEach(function(p){
   ALLEYS.forEach(function(k, ai){
-    var cx = p.x0 + nicheX(p, ai);
+    var slot = nicheSlot(p, ai); var cx = slot.cx, U = slot.U;
     var ids = p.ids.filter(function(i){ return brOf(i)===k; });
-    var U = (p.W - 2*GEO.PDH)/2 - 0.35;                        // créneau de niche : jamais sous une porte
     if (!ids.length){
-      curtains.push({ kind:"curtain", i:null, brin:k, ai:ai, plaza:p.j, x:cx, z:p.x0, y:CH/2+0.14, rotY:0, w:CW, niche:true });
+      curtains.push({ kind:"curtain", i:null, brin:k, ai:ai, plaza:p.j, x:cx, z:p.x0+0.11, y:CH/2+0.14, rotY:0, w:CW, niche:true });
       return;
     }
     var items = ids.map(function(i){ var lv = lvOf(i,k);
       return { i:i, kind:"poster", lv:lv, year:xOf(EV[i][0]), w:0, w0: lv===2?PW.w2:PW.w1, brin:k, ai:ai, plaza:p.j }; });
     items.forEach(function(t){ t.year = t.year - cx; });
-    layoutNiche(items, U);
+    layoutNicheRows(items, U, p.j*4+ai);
     items.forEach(function(t){
-      posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:cx+t.x, z:p.x0,
-        y:YA, lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:0, target:t.x, row:1, scale:t.scale, niche:true });
+      posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:cx+t.x, z:p.x0+0.11,
+        y:nicheRowY(p.j*4+ai, t.row-1), lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:0, target:t.x, row:t.row, scale:t.scale, niche:true });
     });
   });
   cases.push({ kind:"case", plaza:p.j, x:(p.x0+p.x1)/2, z:0, i:p.ids[0], w:.62, w0:.62 });
@@ -477,7 +509,7 @@ document.getElementById("stage").appendChild(renderer.domElement);
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(BG);
-scene.fog = new THREE.Fog(BG, 6, 40);
+scene.fog = new THREE.Fog(BG, 10, 55);
 var cam = new THREE.PerspectiveCamera(68, innerWidth/innerHeight, .05, 70);
 cam.rotation.order = "YXZ";
 var yaw = -Math.PI/2, pitch = 0, pxCur = 1.4, pzCur = alleyZ(0);   // arrivée : seuil de l'allée du sol, regard vers les années
@@ -498,22 +530,28 @@ box(TLEN, GEO.WALLH, .2, TLEN/2, GEO.WALLH/2, -GEO.FARZC, mWall);
 box(.2, GEO.WALLH, 2*GEO.FARZC, -.1, GEO.WALLH/2, 0, mWall);      // seuil d'entrée (derrière le visiteur)
 box(.2, GEO.WALLH, 2*GEO.FARZC, TLEN+.1, GEO.WALLH/2, 0, mWall);  // paroi du « maintenant »
 
-/* cloisons par allée : segments entre places + portes de place des deux côtés ; jamais de porte dans les segments
-   (volontaire : on change d'allée UNIQUEMENT par une place — la rareté des rencontres est l'argument) */
-for (var pi=0; pi<=ALLEYS.length-2; pi++){
-  var zp = (alleyZ(pi)+alleyZ(pi+1))/2;
-  for (var sj=0; sj<SEGDEF.length; sj++){
-    var sg = SEGDEF[sj];
+/* parois des couloirs — LA structure : chaque allée a ses deux murs, de bout en bout.
+   Cloisons = entre allées voisines (à 0,12 dans l'axe, faces pile au plan des affiches) ;
+   extérieures = aux rives du bâtiment. Segments pleins entre places ; dans les places,
+   murs à plat de porte (le passage est dans l'axe de l'allée, l'encadrement est la règle).
+   Jamais de porte dans les segments : on change d'allée UNIQUEMENT par une place. */
+function zWallsAll(){ var zs = [alleyZ(0)+GEO.ALLEYW/2, alleyZ(ALLEYS.length-1)-GEO.ALLEYW/2];
+  for (var pi=0; pi<=ALLEYS.length-2; pi++) zs.push((alleyZ(pi)+alleyZ(pi+1))/2);
+  return zs; }
+zWallsAll().forEach(function(zp){
+  SEGDEF.forEach(function(sg){
     box(sg.x1-sg.x0, GEO.WALLH, GEO.PART, (sg.x0+sg.x1)/2, GEO.WALLH/2, zp, mPart);
-  }
+  });
   PLAZAS.forEach(function(p){
     var seg = p.x1-p.x0-2*GEO.PDH;
-    box(seg/2, GEO.WALLH, GEO.PART, p.x0+GEO.PDH+seg/4, GEO.WALLH/2, zp, mPart);
-    box(seg/2, GEO.WALLH, GEO.PART, p.x1-GEO.PDH-seg/4, GEO.WALLH/2, zp, mPart);
-    box(2*GEO.PDH, .5, GEO.PART, p.x0+GEO.PDH, GEO.WALLH-.25, zp, mPart);      // linteaux
-    box(2*GEO.PDH, .5, GEO.PART, p.x1-GEO.PDH, GEO.WALLH-.25, zp, mPart);
+    if (seg > 0.05){
+      box(seg/2, GEO.WALLH, GEO.PART, p.x0+GEO.PDH+seg/4, GEO.WALLH/2, zp, mPart);
+      box(seg/2, GEO.WALLH, GEO.PART, p.x1-GEO.PDH-seg/4, GEO.WALLH/2, zp, mPart);
+    }
+    box(2*GEO.PDH, GEO.WALLH-2.2, GEO.PART, p.x0+GEO.PDH, GEO.WALLH-(GEO.WALLH-2.2)/2, zp, mPart);  // piédroits+bandeau : porte = trou 2,20
+    box(2*GEO.PDH, GEO.WALLH-2.2, GEO.PART, p.x1-GEO.PDH, GEO.WALLH-(GEO.WALLH-2.2)/2, zp, mPart);
   });
-}
+});
 /* parois de place (blocs pleins entre allées, sauf ouvertures de porte) */
 PLAZAS.forEach(function(p){
   var zt = GEO.FARZC - 0.1;
@@ -660,11 +698,36 @@ cases.forEach(function(v){
   ped.userData = { kind:"case", i:v.i, plaza:v.plaza, key:v.key }; gl.userData = ped.userData;
 });
 
+/* fonds de niche : panneau sombre + liseré doré + lampe tiède — le créneau doit se lire « niche »
+   depuis l'autre bout de la place, sinon c'est une affiche collée dans un angle mort */
+var mNiche = mat(0x14100b);
+PLAZAS.forEach(function(p){
+  ALLEYS.forEach(function(k, ai){
+    var slot = nicheSlot(p, ai);
+    var np = posters.filter(function(q){ return q.niche && q.plaza===p.j && q.ai===ai; });
+    var ct = curtains.filter(function(q){ return q.plaza===p.j && q.ai===ai; });
+    var y0, y1;
+    if (np.length){ var hs=np.map(function(q){return q.h;}); ys=np.map(function(q){return q.y;});
+      y0=Math.min.apply(null, ys.map(function(y,q){return y-hs[q]/2;}))-0.08;
+      y1=Math.max.apply(null, ys.map(function(y,q){return y+hs[q]/2;}))+0.08; }
+    else { y0=0.14; y1=CH/2+0.14+CH/2+0.10; }
+    var bw = np.length ? (Math.max.apply(null, np.map(function(q){return q.x+q.w/2;})) - Math.min.apply(null, np.map(function(q){return q.x-q.w/2;}))) + 0.16
+                       : Math.min(CW+0.18, 2*slot.U);
+    var bh = y1-y0;
+    var back = new THREE.Mesh(new THREE.PlaneGeometry(bw, bh), mNiche);
+    back.position.set(slot.cx, (y0+y1)/2, p.x0+0.10); scene.add(back);
+    var edge = new THREE.Mesh(new THREE.BoxGeometry(bw+0.06, 0.03, 0.03), new THREE.MeshBasicMaterial({ color:GOLD }));
+    edge.position.set(slot.cx, y1+0.05, p.x0+0.13); scene.add(edge);
+    var lamp = new THREE.PointLight(0xffd9a0, np.length?6:3.5, 5.5, 1.6);
+    lamp.position.set(slot.cx, y1+0.35, p.x0+0.8); scene.add(lamp);
+  });
+});
+
 /* bandeaux d'allée (la grammaire, lisible en marchant) + cartels de place + en-tête d'entrée */
 ALLEYS.forEach(function(k, ai){
   var face = ai===0 ? -1 : 1;                                   // ter : face extérieure nord ; les autres : paroi intérieure
-  var zBand = alleyZ(ai) + face*(GEO.ALLEYW/2-0.15);
-  var rot = face===1 ? -Math.PI/2 : Math.PI/2;
+  var zBand = alleyZ(ai) + face*(GEO.ALLEYW/2-0.13);
+  var rot = face===1 ? Math.PI/2 : -Math.PI/2;
   var t = tex(1200,110,function(x,w,h){
     x.fillStyle=LANE[k].t; x.font="700 54px system-ui";
     x.fillText("ALLÉE · " + TRACKS[k].name.toUpperCase(), 12, h*.66);
@@ -682,7 +745,7 @@ PLAZAS.forEach(function(p){
 labelPlane(2400,150, 12, tex(2400,150,function(x,w,h){
   x.fillStyle="#ece6da"; x.font="700 60px system-ui"; x.textAlign="center";
   x.fillText("ENTREZ PAR UNE ALLÉE — LE TEMPS AVANCE VERS LA DROITE ; ON NE CHANGE D’ALLÉE QU’AUX PLACES", w/2, h*.66);
-}), 0.12, 2.7, 0, Math.PI/2);
+}), 0.12, 2.7, 0, -Math.PI/2);
 
 /* ---------- props de vitrine (module optionnel props-musee.data.js ; les vitrines K sont des places → jamais de clé commune) ---------- */
 var __propsStatus = { loaded:false, placed:0, skipped:0, sources:[], error:null };
@@ -733,10 +796,9 @@ allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
 function stationView(s){
   if (s.kind==="case"){ var d = 1.9;
     return { x:s.x, z:s.z+d, yaw:0, pitch:-Math.atan2(GEO.EYE-1.05, d) }; }
-  if (s.niche && s.kind==="poster") return { x:s.x, z:s.z-2.0, yaw:0, pitch:.18 };
-  if (s.niche) return { x:s.x, z:s.z-2.2, yaw:0, pitch:.05 };
+  if (s.niche) return { x:s.x-1.9, z:s.z, yaw:Math.PI/2, pitch:(s.y>2 ? .22 : .10) };   // dans la place, face au mur d'entrée (+x)
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : le visiteur est côté -z de la paroi ; extérieure : +z
-  return { x:s.x, z:s.z + dir*2.0, yaw: s.face==="i" ? 0 : Math.PI, pitch: s.y>2 ? .18 : 0 };
+  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? 0 : Math.PI, pitch: s.y>2 ? .18 : 0 };
 }
 
 /* ---------- caméra : sauts de poste ---------- */
@@ -976,10 +1038,14 @@ function inZone(x,z){
   if (z > GEO.FARZC-GEO.BODY || z < -GEO.FARZC+GEO.BODY) return false;
   if (x < -0.05 || x > TLEN+0.05) return false;
   var pj = plazaOfX(x);
-  if (pj >= 0){ var p = PLAZAS[pj]; return true; }
+  if (pj >= 0){
+    var p = PLAZAS[pj];
+    for (var ai=0; ai<ALLEYS.length; ai++) if (Math.abs(z-alleyZ(ai)) <= GEO.PDH-GEO.BODY) return true;
+    return Math.abs(z) <= (GEO.PDH-GEO.BODY) + 1.2;            // travée centrale dorée (la vitrine)
+  }
   var sj = segOfX(x); if (sj < 0) return false;
-  for (var ai=0; ai<ALLEYS.length; ai++){
-    if (Math.abs(z-alleyZ(ai)) <= GEO.ALLEYW/2 - GEO.BODY) return true;
+  for (var ai2=0; ai2<ALLEYS.length; ai2++){
+    if (Math.abs(z-alleyZ(ai2)) <= GEO.ALLEYW/2 - GEO.BODY) return true;
   }
   return false;
 }

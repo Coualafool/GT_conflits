@@ -62,6 +62,17 @@ await page.waitForTimeout(1300);
   await dismiss();
   await page.waitForTimeout(450);
   await page.screenshot({ path: ART + "K-poster-read.png", timeout: 90000 });
+  // la place avec son groupe de niche le plus fourni (la grille se lit-elle ?)
+  await page.evaluate(() => {
+    const A = window.__allees, cs = A.curtains();
+    const counts = {}; A.posters().filter((p) => p.niche).forEach((p) => { counts[p.plaza] = (counts[p.plaza] || 0) + 1; });
+    const pj = +Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+    A.teleportPlaza(pj);
+  });
+  await page.waitForTimeout(700);
+  await dismiss();
+  await page.waitForTimeout(450);
+  await page.screenshot({ path: ART + "K-niche.png", timeout: 90000 });
 }
 
 /* ---------- K1 : intégrité du corpus — tout dérivé d'EV, rien de codé en dur ---------- */
@@ -98,7 +109,7 @@ await page.waitForTimeout(1300);
       if (p.niche) {
         const pz = pl[p.plaza];
         if (!pz) { bad.push("niche sans place i=" + p.i); continue; }
-        if (Math.abs(p.z - pz.x0) > 0.03) bad.push("niche décollée du mur d'entrée i=" + p.i);
+        if (Math.abs(p.z - (pz.x0 + 0.11)) > 0.03) bad.push("niche décollée du mur d'entrée i=" + p.i);
       } else {
         const s = sg[p.seg];
         const zWall = al[p.ai].z + (p.face === "i" ? G.ALLEYW / 2 - 0.12 : -(G.ALLEYW / 2 - 0.12));
@@ -108,7 +119,7 @@ await page.waitForTimeout(1300);
     }
     for (const cur of cs) {
       const pz = pl[cur.plaza];
-      if (Math.abs(cur.z - pz.x0) > 0.03) bad.push("rideau décollé A" + cur.ai);
+      if (Math.abs(cur.z - (pz.x0 + 0.11)) > 0.03) bad.push("rideau décollé A" + cur.ai);
       if (Math.abs(cur.x - (pz.x0 + A.nicheXrel(cur.plaza, cur.ai))) > 0.02) bad.push("rideau hors axe A" + cur.ai);
     }
     for (const pz of pl) for (const n of pz.niches) {
@@ -158,7 +169,7 @@ await page.waitForTimeout(1300);
     let focusOk = true; for (const s of sample) if (!A.focus(s.key, true)) focusOk = false;
     return { n: st.length, kinds, ordOk, badView, focusOk };
   });
-  log("(K4) stations : viewpoints praticables, ordre-temps strict",
+  log("(K4) stations : TOUS les viewpoints praticables, ordre-temps strict",
     r.ordOk && r.badView === 0, `${r.n} stations ${JSON.stringify(r.kinds)} vuesHorsSol=${r.badView}`);
   log("(K4b) focus fonctionne (début / milieu / fin)", r.focusOk, String(r.focusOk));
 }

@@ -133,7 +133,7 @@ ok(G.TLEN > 120 && G.TLEN < 190, "K0d longueur du bâtiment plausible", "TLEN=" 
       const p = G.PLAZAS[it.plaza];
       if (!p) { bad.push("niche sans place i=" + (it.i === null ? "curtain" : it.i)); return; }
       const cx = G.PLAZAS[it.plaza].x0 + G.nicheX(G.PLAZAS[it.plaza], it.ai);
-      if (eps(it.z - p.x0) > 0.03) bad.push("niche décollée du mur d'entrée (z=" + it.z.toFixed(2) + " face=" + p.x0.toFixed(2) + ")");
+      if (eps(it.z - (p.x0 + 0.11)) > 0.03) bad.push("niche décollée du mur d'entrée (z=" + it.z.toFixed(2) + " face=" + (p.x0+0.11).toFixed(2) + ")");
       const U = (p.W - 2 * G.GEO.PDH) / 2 - 0.35;
       if (it.x - half < cx - U - 0.02 || it.x + half > cx + U + 0.02) bad.push("groupe de niche débordant sous une porte (i=" + (it.i === null ? "rideau" : it.i) + ")");
       if (it.kind === "curtain" && eps(it.x - cx) > 0.02) bad.push("rideau hors de l'axe d'allée (x=" + it.x.toFixed(2) + " attendu=" + cx.toFixed(2) + ")");
@@ -169,12 +169,13 @@ ok(G.TLEN > 120 && G.TLEN < 190, "K0d longueur du bâtiment plausible", "TLEN=" 
     byFace.get(key).push(p);
   });
   byFace.forEach(function (list, key) {
-    const rows = { 1: [], 2: [] };
-    list.forEach(function (p) { rows[p.row].push(p); });
-    Object.keys(rows).forEach(function (r) {
-      rows[r].sort(function (a, b) { return a.x - b.x; });
-      for (let q = 1; q < rows[r].length; q++) {
-        const gap = rows[r][q].x - rows[r][q].w / 2 - (rows[r][q - 1].x + rows[r][q - 1].w / 2);
+    const rows = new Map();
+    list.forEach(function (p) { if (!rows.has(p.row)) rows.set(p.row, []); rows.get(p.row).push(p); });
+    Array.from(rows.keys()).forEach(function (r) {
+      rows.get(r).sort(function (a, b) { return a.x - b.x; });
+      const rl = rows.get(r);
+      for (let q = 1; q < rl.length; q++) {
+        const gap = rl[q].x - rl[q].w / 2 - (rl[q - 1].x + rl[q - 1].w / 2);
         if (gap < 0.02) bad.push(key + " rang" + r + " chevauchement " + gap.toFixed(3));
       }
     });
@@ -188,13 +189,13 @@ ok(G.TLEN > 120 && G.TLEN < 190, "K0d longueur du bâtiment plausible", "TLEN=" 
 })();
 (function () { // les niches non plus ne se chevauchent pas
   const bad = [];
-  const byNiche = new Map();
+  const byNicheRow = new Map();
   G.posters.filter(function (p) { return p.niche; }).forEach(function (p) {
-    const key = p.plaza + "-" + p.ai;
-    if (!byNiche.has(key)) byNiche.set(key, []);
-    byNiche.get(key).push(p);
+    const key = p.plaza + "-" + p.ai + "-r" + p.row;
+    if (!byNicheRow.has(key)) byNicheRow.set(key, []);
+    byNicheRow.get(key).push(p);
   });
-  byNiche.forEach(function (list, key) {
+  byNicheRow.forEach(function (list, key) {
     list.sort(function (a, b) { return a.x - b.x; });
     for (let q = 1; q < list.length; q++) {
       const gap = list[q].x - list[q].w / 2 - (list[q - 1].x + list[q - 1].w / 2);
