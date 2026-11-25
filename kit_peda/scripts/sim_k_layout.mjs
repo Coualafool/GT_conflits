@@ -350,6 +350,13 @@ if (process.argv.includes("--selftest")) {
   ok(bad.length === 0, "K8a marche continue : les 4 allées du seuil à la fin, zéro rupture ni fantôme", bad.slice(0, 3).join(" | "));
 })();
 (function () {
+  /* gate TDZ : stationView s'exécute à la CHARGE du module, avant la caméra. S'il appelle
+     walkable/posAt/inZone (définis plus bas), le navigateur plante — vm ne le voit pas. */
+  const svSrc = page.slice(sv0, page.indexOf("/* ---------- caméra", sv0));
+  const badCalls = ["walkable", "posAt", "inZone", "inDoorBand"].filter((f) => new RegExp("\\b" + f + "\\s*\\(").test(svSrc));
+  ok(badCalls.length === 0, "K8a stationView n'appelle aucune fonction définie après lui (TDZ navigateur)", badCalls.join(","));
+})();
+(function () {
   if (!WALK.stationView) { ok(false, "K8b viewpoints praticables", "stationView non chargé"); return; }
   const bad = [];
   const why = (p, v) => {
