@@ -265,7 +265,9 @@ def _uv_slot_box(obj, k):
     """Projection plane par le dessus (vue de lecture) vers le rectangle du
     créneau k, échelle 0,94 centrée. Déterministe, aucune dépendance à l'opérateur."""
     me = obj.data
-    me.uv_layers.clear()
+    # Blender 4.5 : uv_layers.clear() supprimé de l'API — retrait élément par élément.
+    while me.uv_layers:
+        me.uv_layers.remove(me.uv_layers[0])
     uvl = me.uv_layers.new(name="UVMap")
     coords = [v.co for v in me.vertices]
     xs = [c.x for c in coords]
@@ -675,6 +677,12 @@ def parse_args(argv=None):
         out = argv[argv.index("--out") + 1]
     if "--atlas" in argv:
         atlas = argv[argv.index("--atlas") + 1]
+    # Chimie Blender : images.load/export résolvent les chemins RELATIFS contre le
+    # .blend actif, pas le cwd du shell — tout absolutiser ici (cwd = répertoire de launch).
+    import os
+    out = os.path.abspath(os.path.expanduser(out))
+    if atlas:
+        atlas = os.path.abspath(os.path.expanduser(atlas))
     return out, atlas
 
 
