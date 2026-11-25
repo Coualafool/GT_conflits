@@ -1104,7 +1104,7 @@ window.__allees = {
   focus: function(key, instant){ var s = null;
     for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
     if (s) focusStation(s, instant); return !!s; },
-  teleportSeg: teleportSeg, teleportPlaza: teleportPlaza, nudgeLook: nudgeLook,
+  teleportSeg: teleportSeg, teleportPlaza: teleportPlaza, nudgeLook: nudgeLook, snapTo: snapTo,
   rayHit: function(nx,ny){ var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i===null?null:hit.object.userData.i,

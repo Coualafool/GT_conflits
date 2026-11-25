@@ -42,6 +42,26 @@ await page.waitForTimeout(1300);
     s.has && s.rev === "187" && s.fallback === "none" && s.canvas[0] >= 1400 && s.canvas[1] >= 700,
     `api=${s.has} rev=${s.rev} toile=${s.canvas.join("×")} fallback=${s.fallback}`);
   await shot("K-default");
+  // preuve visuelle : une capture par allée depuis l'entrée (l'œil humain juge ce que la sim ne voit pas)
+  for (let ai = 0; ai < 4; ai++) {
+    await page.evaluate((ai) => {
+      const A = window.__allees, al = A.alleys()[ai];
+      A.snapTo({ x: 1.4, z: al.z, yaw: -Math.PI / 2, pitch: -0.06 }, true);
+    }, ai);
+    await page.waitForTimeout(500);
+    await dismiss();
+    await page.waitForTimeout(450);
+    await page.screenshot({ path: ART + "K-alley-" + ai + ".png", timeout: 90000 });
+  }
+  // et une lecture d'affiche de près (le texte est-il coupé ? l'humain répond sur la capture)
+  await page.evaluate(() => {
+    const A = window.__allees, p = A.posters().find((q) => q.lv === 2 && !q.niche);
+    A.focus("p" + p.i + "-" + p.ai + "-" + p.face + "-" + p.seg, true);
+  });
+  await page.waitForTimeout(600);
+  await dismiss();
+  await page.waitForTimeout(450);
+  await page.screenshot({ path: ART + "K-poster-read.png", timeout: 90000 });
 }
 
 /* ---------- K1 : intégrité du corpus — tout dérivé d'EV, rien de codé en dur ---------- */
