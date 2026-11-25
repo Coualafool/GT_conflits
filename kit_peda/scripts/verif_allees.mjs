@@ -193,11 +193,12 @@ await page.waitForTimeout(1300);
       const st = A.stations().filter((s) => s.kind === kind).slice(0, 3);
       let ok = 0; const miss = [];
       for (const s of st) {
-        A.focus(s.key, true); await ra(250);
-        const hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0);
+        A.focus(s.key, true);
+        let hit = null;
+        for (let t = 0; t < 6 && !(hit && hit.key === s.key); t++) { await new Promise((res) => setTimeout(res, 120)); hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0); }
         const stt = A.state();
         if (hit && hit.key === s.key) ok++;
-        else miss.push(s.key + "→" + (hit ? (hit.key || "miss") : "rien") + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1));
+        else miss.push(s.key + "→" + (hit ? (hit.key || "miss") : "rien") + "@cam" + stt.x.toFixed(1) + "," + stt.z.toFixed(1) + " p" + (stt.pitch/Math.PI).toFixed(2));
       }
       pick[kind] = { tried: st.length, ok, miss };
     }

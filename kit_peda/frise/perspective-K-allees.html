@@ -1111,7 +1111,7 @@ function frame(now){
   var dt = Math.min(.05, (now-last)/1000); last = now;
   step(dt);
   cam.position.set(pxCur, GEO.EYE, pzCur);
-  cam.rotation.y = -yaw; cam.rotation.x = -pitch;   // caméra vue empirique (bundle 187 prouvé) : dir = (sin yw, -sin p·cos yw, cos yw) avec rot=(-yw,-pitch)
+  cam.rotation.y = -yaw; cam.rotation.x = pitch;    // vue caméra = (sin yw, sin pitch·cos yw, cos yw) — +pitch monte, et stationView vise l objet
   lamp.position.set(pxCur, GEO.EYE+.2, pzCur);
   renderer.render(scene, cam);
   refreshNear();
