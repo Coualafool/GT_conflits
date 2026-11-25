@@ -80,11 +80,13 @@ def _new_bm():
 
 def _add_box(bm, sx, sy, sz, loc=(0.0, 0.0, 0.0), rot_z=0.0):
     """Pavé sx×sy×sz centré sur loc, pivot au CENTRE, rotation ±z optionnelle. Renvoie les faces."""
+    # Blender 4.5 : le dict retour de create_cube n'expose plus "faces" — diff d'identité.
+    before = set(bm.faces)
     m = (Matrix.Translation(Vector(loc)) @
          Matrix.Rotation(math.radians(rot_z), 4, "Z") @
          Matrix.Diagonal((sx / 2.0, sy / 2.0, sz / 2.0, 1.0)))
-    res = bmesh.ops.create_cube(bm, size=1.0, matrix=m)
-    return res["faces"]
+    bmesh.ops.create_cube(bm, size=1.0, matrix=m)
+    return [f for f in bm.faces if f not in before]
 
 
 def _add_cylinder(bm, r, depth, segments, loc=(0.0, 0.0, 0.0), axis="Z",
@@ -95,11 +97,15 @@ def _add_cylinder(bm, r, depth, segments, loc=(0.0, 0.0, 0.0), axis="Z",
     rot = {"Z": Matrix.Identity(4),
            "X": Matrix.Rotation(math.radians(90), 4, "Y"),
            "Y": Matrix.Rotation(math.radians(-90), 4, "X")}[axis]
+    # Blender 4.5 : create_cone ne retourne plus "faces" — snapshots d'identité bmesh.
+    vb = set(bm.verts)
+    fb = set(bm.faces)
     m = Matrix.Translation(Vector(loc)) @ rot
-    res = bmesh.ops.create_cone(bm, cap_ends=cap_ends, cap_tris=False,
-                                segments=segments, radius1=r, radius2=r,
-                                depth=depth, matrix=m)
-    verts, faces = res["verts"], res["faces"]
+    bmesh.ops.create_cone(bm, cap_ends=cap_ends, cap_tris=False,
+                          segments=segments, radius1=r, radius2=r,
+                          depth=depth, matrix=m)
+    verts = [v for v in bm.verts if v not in vb]
+    faces = [f for f in bm.faces if f not in fb]
     if taper_ends > 0.0 and axis == "X":
         # boucles d'extrémité = sommets aux x extrêmes du cylindre (avant translation)
         xs = [v.co.x for v in verts]
@@ -444,9 +450,10 @@ def build_lantern(mat):
     bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=12,
                           radius1=0.048, radius2=0.034, depth=0.012,
                           matrix=Matrix.Translation((0.0, 0.0, 0.006)))
-    # panse renflée
-    res = bmesh.ops.create_icosphere(bm, subdivision=1, radius=0.045)
-    panse = res["verts"]
+    # panse renflée (Blender 4.5 : idem create_icosphere, diff d'identité pour les verts)
+    vb = set(bm.verts)
+    bmesh.ops.create_icosphere(bm, subdivision=1, radius=0.045)
+    panse = [v for v in bm.verts if v not in vb]
     for v in panse:
         v.co.x *= 0.85
         v.co.y *= 0.68
