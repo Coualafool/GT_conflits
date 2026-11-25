@@ -181,6 +181,14 @@ await page.waitForTimeout(1300);
   log("(K4) stations : TOUS les viewpoints praticables, ordre-temps strict",
     r.ordOk && r.badView === 0, `${r.n} stations ${JSON.stringify(r.kinds)} vuesHorsSol=${r.badView}`);
   log("(K4b) focus fonctionne (début / milieu / fin)", r.focusOk, String(r.focusOk));
+  {
+    const stamp = await page.evaluate(() => {
+      const A = window.__allees;
+      const pv = A.stations().find((s) => s.key === "pv0");
+      return { pvPitch: pv && pv.view ? +pv.view.pitch.toFixed(3) : null, oldFormula: document.documentElement.innerHTML.includes("EYE-(s.y") };
+    });
+    console.log("STAMP page vue pv0:", JSON.stringify(stamp));
+  }
 }
 
 /* ---------- K5 : chaque type de poste est cadré depuis son viewpoint (rayon central) ---------- */
