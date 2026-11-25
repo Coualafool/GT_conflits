@@ -1206,6 +1206,14 @@ window.__allees = {
   probeRay: function(ox,oy,oz,dx,dy,dz,max){ var rc = new THREE.Raycaster(new THREE.Vector3(ox,oy,oz), new THREE.Vector3(dx,dy,dz).normalize(), 0.02, max||12);
     var hits = rc.intersectObjects(hitables, false);
     return hits.slice(0,3).map(function(h){ return { key:h.object.userData.key||h.object.name||"?", dist:+h.distance.toFixed(2) }; }); },
+  curtainProbe: function(){ var out = [];
+    for (var q=0;q<curtainMeshes.length && out.length<3;q++){ var m = curtainMeshes[q];
+      m.updateMatrixWorld(true); var wp = new THREE.Vector3(); m.getWorldPosition(wp);
+      out.push({ key:m.userData.key, wp:[+wp.x.toFixed(2),+wp.y.toFixed(2),+wp.z.toFixed(2)],
+        visible:m.visible, inScene:!!m.parent, sc:[m.scale.x,m.scale.y,m.scale.z],
+        geo: m.geometry.parameters, rotY:+m.rotation.y.toFixed(2) });
+    }
+    return { n:curtainMeshes.length, sample:out }; },
   meshProbe: function(key){ var m = null, idx = -1;
     for (var q=0;q<hitables.length;q++){ if (hitables[q].userData.key===key){ m = hitables[q]; idx = q; break; } }
     if (!m) return { found:false, n:hitables.length };
