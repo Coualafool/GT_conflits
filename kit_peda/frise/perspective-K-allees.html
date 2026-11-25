@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Allées du temps — quatre récits qui ne se rencontrent que sept fois</title>
+<style>
+:root{
+  --bg:#0f0b07; --card:#191410; --ink:#ece6da; --muted:#a59a8c; --faint:#9a9082;
+  --border:#3a3122; --gold:#d2a63f;
+  --pal:#2e7d5b; --isr:#2f6f9e; --occ:#8a5a3c; --ter:#a06417;
+  --palT:#7ed3ab; --isrT:#8ec6ee; --occT:#e2a979; --terT:#e8b45c;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%}
+.skip{position:absolute;left:-9999px;z-index:60;background:var(--bg);color:var(--ink);padding:10px 16px;border:1px solid var(--gold)}
+.skip:focus{left:8px;top:8px}
+/* ---- HUD ---- */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:20}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 58%,rgba(10,7,4,.55) 100%)}
+#cross{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;
+  background:rgba(236,230,218,.75);box-shadow:0 0 0 2px rgba(10,7,4,.5);display:none}
+body.locked #cross{display:block}
+#afford{position:absolute;left:50%;top:calc(50% + 26px);transform:translateX(-50%);max-width:min(560px,86vw);
+  background:rgba(16,12,8,.86);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:13.5px;color:var(--ink);display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#afford kbd{background:#2a221a;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace;color:var(--gold)}
+/* ---- navigateur (temps : segments puis places) + minimap plan ---- */
+#nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;max-width:min(1160px,94vw);
+  overflow-x:auto;padding:4px;background:rgba(16,12,8,.78);border:1px solid var(--border);border-radius:12px;pointer-events:auto;scrollbar-width:none}
+#nav button{flex:0 0 auto;background:#1e1812;color:var(--muted);border:1px solid transparent;border-radius:8px;
+  padding:5px 11px;font:600 12.5px system-ui;cursor:pointer;text-align:left}
+#nav button b{display:block;color:var(--ink);font-size:12px;font-weight:700}
+#nav button.place b{color:var(--gold)}
+#nav button[aria-current="true"]{border-color:var(--gold)}
+#nav button[aria-current="true"] b{color:var(--gold)}
+#nav button:hover,#nav button:focus-visible{border-color:var(--muted);outline:none}
+#nav button:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+#say{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);
+  background:rgba(16,12,8,.7);border-radius:8px;padding:2px 10px;opacity:0;transition:opacity .3s}
+#say.show{opacity:1}
+#badge{position:absolute;top:10px;left:10px;max-width:min(360px,60vw);background:rgba(16,12,8,.86);border:1px solid var(--gold);
+  border-radius:10px;padding:7px 12px;font-size:13px;display:none}
+#badge.show{display:block}
+#hBack{position:absolute;left:86px;bottom:12px;display:flex;align-items:center;gap:7px;min-height:40px;
+  background:rgba(16,12,8,.78);border:1px solid var(--border);border-radius:10px;padding:9px 13px;
+  font:600 13px system-ui;color:var(--ink);text-decoration:none;pointer-events:auto}
+#hBack:hover,#hBack:focus-visible{border-color:var(--gold);outline:none}
+#hBack:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+body.locked #hBack{opacity:.35}
+#mini{position:absolute;left:12px;bottom:12px;width:150px;background:rgba(16,12,8,.72);border:1px solid var(--border);
+  border-radius:10px;padding:6px;pointer-events:auto}
+#mini svg{display:block;width:100%;height:auto}
+#mini .al{cursor:pointer}
+#mini .al rect{fill:#1e1812;stroke:#3a3122;stroke-width:1}
+#mini .al:hover rect{stroke:var(--muted)}
+#mini .pz{fill:rgba(210,166,63,.34);stroke:#d2a63f;stroke-width:1;cursor:pointer}
+#mini .cam{fill:var(--gold)}
+/* ---- panneau (doctrine héritée de H/J) ---- */
+#panel{position:absolute;top:0;right:0;width:min(400px,92vw);height:100%;background:rgba(20,15,10,.97);
+  border-left:1px solid var(--border);padding:22px 22px 40px;overflow-y:auto;pointer-events:auto;
+  transform:translateX(103%);transition:transform .22s ease}
+#panel.open{transform:none}
+#panel h2{font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
+#panel .yr{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.04em;margin:0}
+#panel .desc{color:#cfd3da;font-size:14.5px;margin:10px 0 4px}
+#panel .divb{display:inline-block;margin:8px 0 0;font-size:11.5px;font-weight:700;color:#141108;background:var(--gold);border-radius:999px;padding:1px 9px}
+#panel .voix{margin:14px 0 0;border-top:1px solid var(--border);padding-top:12px}
+#panel .voix h3{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+#panel .vx{margin:0 0 10px;padding-left:12px;border-left:3px solid var(--border)}
+#panel .vx b{display:block;font-size:14.5px}
+#panel .vx span{font-size:12px;color:var(--faint)}
+#panel .vx.sil b{color:var(--muted);font-weight:500;font-style:italic}
+#panel .pied{margin-top:16px;border-top:1px solid var(--border);padding-top:12px;font-size:13px;color:var(--muted)}
+#panel .pied a{color:var(--gold);text-decoration:none}
+#panel .pied a:hover,#panel .pied a:focus-visible{text-decoration:underline}
+#panel .x{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer;padding:6px}
+#panel .x:hover{color:var(--ink)}
+.vx.pal{border-color:var(--pal)} .vx.pal b{color:var(--palT)}
+.vx.isr{border-color:var(--isr)} .vx.isr b{color:var(--isrT)}
+.vx.occ{border-color:var(--occ)} .vx.occ b{color:var(--occT)}
+.vx.ter{border-color:var(--ter)} .vx.ter b{color:var(--terT)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.dot.pal{background:var(--pal)} .dot.isr{background:var(--isr)} .dot.occ{background:var(--occ)} .dot.ter{background:var(--ter)}
+/* ---- stations (navigation clavier) ---- */
+#stations{position:fixed;left:0;top:74px;z-index:40;width:1px}
+#stations button{position:fixed;left:-9999px;width:1px;height:1px;overflow:hidden}
+#stations button:focus{outline:none}
+/* ---- accueil / aide / menu ---- */
+#menu{position:fixed;inset:0;z-index:60;background:rgba(12,8,5,.86);display:none;align-items:center;justify-content:center;pointer-events:auto}
+#menu.open{display:flex}
+#menu .box{max-width:460px;margin:24px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 28px;overflow-y:auto;max-height:92vh}
+#menu h2{margin:0 0 16px;font-size:20px;letter-spacing:-.01em}
+#menu .grp{margin:0 0 16px}
+#menu .grp>b{display:block;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+#menu .seg{display:flex;gap:6px;flex-wrap:wrap}
+#menu .seg button{background:#1e1812;border:1px solid var(--border);border-radius:9px;color:var(--muted);font:inherit;font-size:13px;padding:7px 14px;cursor:pointer}
+#menu .seg button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+#menu .seg button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--gold)}
+#menu .act{display:flex;flex-direction:column;gap:9px;margin-top:20px}
+#menu .act a,#menu .act button{display:block;text-align:center;text-decoration:none;font:inherit;font-size:14px;font-weight:600;border-radius:11px;padding:11px 16px;cursor:pointer}
+#menu .act .go{background:var(--gold);color:#14110a;border:1px solid var(--gold)}
+#menu .act .out{background:transparent;color:var(--muted);border:1px solid var(--border)}
+#menu .act a:hover,#menu .act button:hover,#menu .act a:focus-visible,#menu .act button:focus-visible{border-color:var(--gold);outline:none}
+#welcome{position:fixed;inset:0;z-index:50;background:rgba(12,8,5,.92);display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#welcome.gone{display:none}
+#welcome .box{max-width:680px;margin:24px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px 30px;overflow-y:auto;max-height:92vh}
+#welcome h1{margin:0 0 4px;font-size:24px;letter-spacing:-.01em}
+#welcome .lead{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+#welcome .gram{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+#welcome .gram span{font-size:12.5px;border:1px solid var(--border);border-radius:999px;padding:3px 11px;color:#cfd3da}
+#welcome .gram .d{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
+#welcome .btns{display:flex;gap:10px;flex-wrap:wrap}
+#welcome .btns a,#welcome .btns button{font:600 14px system-ui;border-radius:10px;padding:9px 16px;cursor:pointer;text-decoration:none}
+#welcome .go{background:var(--gold);color:#141108;border:0}
+#welcome .alt{background:#1c2029;color:var(--ink);border:1px solid var(--border)}
+#welcome .rm{margin:14px 0 0;font-size:12.5px;color:var(--faint)}
+#welcome kbd{background:#2a221a;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace}
+/* ---- défaut : la 3D n'est jamais la seule porte ---- */
+#fallback{position:fixed;inset:0;z-index:70;background:var(--bg);display:none;align-items:center;justify-content:center;text-align:center}
+#fallback .box{max-width:520px;padding:30px}
+#fallback h2{margin-top:0}
+#fallback a{color:var(--gold);font-size:17px}
+@media (prefers-reduced-motion: reduce){ #panel{transition:none} #say{transition:none} }
+</style>
+<!-- BEGIN commun:pied-head -->
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<!-- END commun:pied-head -->
+</head>
+<body>
+<a class="skip" id="skip" href="#stations">Aller aux postes d’observation (navigation clavier)</a>
+<div id="stage" aria-hidden="true"></div>
+
+<div id="hud">
+  <div id="vig"></div>
+  <div id="cross" aria-hidden="true"></div>
+  <div id="afford" aria-hidden="true"></div>
+  <div id="nav" role="navigation" aria-label="Le temps du bâtiment : moments et places"></div>
+  <div id="say" role="status"></div>
+  <div id="badge" aria-hidden="true"></div>
+  <div id="mini" aria-hidden="true"></div>
+  <a id="hBack" href="index-comparatif.html" aria-label="Retour à l’index des frises">← Les frises</a>
+  <aside id="panel" aria-label="Fiche de l’observation"></aside>
+</div>
+
+<div id="stations" aria-label="Postes d’observation des allées, dans l’ordre du temps"></div>
+
+<div id="menu" role="dialog" aria-modal="true" aria-labelledby="menu-t">
+  <div class="box">
+    <h2 id="menu-t">Menu des allées</h2>
+    <div class="grp"><b>Sensibilité du regard</b><div class="seg" id="mSens">
+      <button type="button" data-k="douce">Douce</button><button type="button" data-k="normale">Normale</button><button type="button" data-k="rapide">Rapide</button>
+    </div></div>
+    <div class="grp"><b>Vitesse de marche</b><div class="seg" id="mSpd">
+      <button type="button" data-k="lente">Lente</button><button type="button" data-k="normale">Normale</button><button type="button" data-k="rapide">Rapide</button>
+    </div></div>
+    <div class="grp"><b>Regard vertical</b><div class="seg" id="mInv">
+      <button type="button" data-k="normal">Normal</button><button type="button" data-k="inverse">Inversé</button>
+    </div></div>
+    <div class="act">
+      <button type="button" id="mResume" class="go">Reprendre la visite</button>
+      <a href="../index.html" id="mHome">Quitter — accueil du kit</a>
+    </div>
+  </div>
+</div>
+
+<div id="welcome">
+  <div class="box">
+    <h1>Les Allées du temps</h1>
+    <p class="lead">Quatre couloirs parallèles, un par fil du document « Outil péda » — 79 faits datés,
+      de 1890 à aujourd’hui. Le temps avance vers la droite. Chaque couloir ne raconte qu’une piste :
+      <b>d’ordinaire, on n’y croise personne.</b> Les sept salles dorées sont les seuls moments où les
+      quatre récits se trouvent au même endroit — et souvent, trois des quatre s’y taisent :
+      une <em>niche voilée</em> pend là où une piste n’a rien à dire. À chaque place, choisissez
+      dans quelle allée vous confiez la suite.</p>
+    <div class="gram">
+      <span><i class="d" style="background:var(--ter)"></i>allée du sol — le territoire</span>
+      <span><i class="d" style="background:var(--pal)"></i>allée habitée — Palestine</span>
+      <span><i class="d" style="background:var(--isr)"></i>allée bâtie — Yichouv / Israël</span>
+      <span><i class="d" style="background:var(--occ)"></i>allée du haut — influence occidentale / ONU</span>
+      <span><i class="d" style="background:var(--gold)"></i>places dorées — les 7 moments communs</span>
+    </div>
+    <div class="btns">
+      <button id="bWalk" class="go">Entrer dans une allée (souris verrouillée)</button>
+      <button id="bStations" class="alt">Naviguer au clavier (postes)</button>
+      <a class="alt" href="perspective-I2-pdf.html">Préférer la tresse déroulée</a>
+    </div>
+    <p class="rm"><kbd>ZQSD</kbd>/<kbd>WASD</kbd> marcher · souris regarder · <kbd>E</kbd> ouvrir une affiche ·
+      <kbd>Échap</kbd> relâcher — ou <kbd>Tab</kbd> pour parcourir les 79 faits sans souris.
+      Le clavier suffit à tout voir : chaque poste déplace la caméra et ouvre sa fiche
+      (mode « sans animation » du système : sauts instantanés, souris jamais verrouillée d’office).</p>
+  </div>
+</div>
+
+<div id="fallback">
+  <div class="box">
+    <h2>Les allées 3D ne s’ouvrent pas ici</h2>
+    <p>Ce navigateur n’a pas pu initialiser WebGL (ou un fichier s’est mal chargé).
+      Le bâtiment n’est qu’une façon de voir — le contenu complet reste accessible.</p>
+    <p><a href="perspective-I2-pdf.html">→ Ouvrir la tresse de l’outil péda (I²)</a></p>
+  </div>
+</div>
+
+<script src="vendor/three.bundle.js"></script>
+<script src="perspective-I2-data.js"></script>
+<script src="perspective-K-data.js"></script>
+<script src="props-musee.data.js"></script>
+<script>
+/* Les Allées du temps — bâtiment tressé marchable (three.js vendorisé ; feuille de décision interne/FRISE-ALLEES-DECISIONS).
+   ZÉRO donnée nouvelle : le corpus vit dans perspective-I2-data.js ; la couche places vit dans perspective-K-data.js
+   (généré, gates intégrées) ; la page ne possède que la caméra et la géométrie.
+   Doctrine : 4 allées = 4 brins (ordre ter·pal·isr·occ), le temps avance vers +x, une seule échelle temporelle
+   pour tout le bâtiment ; les places sont des RACCOURCIS et des CHOIX, jamais des carrefours forcés —
+   chaque couloir est continu du début à la fin. Niches voilées = silences du document à la place.
+   Conventions harnais : API window.__allees (postes, inventaires, caméra, raycast, GEO). */
+"use strict";
+function fallbackOn(){ document.getElementById("fallback").style.display="flex"; document.getElementById("welcome").classList.add("gone"); }
+if (!window.THREE || typeof EV === "undefined" || typeof TRACKS === "undefined" || typeof window.__K_ALLIES === "undefined") { fallbackOn(); }
+else (function(){
+try {
+
+/* ---------- constantes du bâtiment (preamble : nécessaire à la simulation hors-ligne) ---------- */
+var GEO = { WALLH:3.1, EYE:1.62, PITCH:1.45,
+  ALLEYW:4.0, PART:0.3, DOOR:2.6, PDOOR:2.2, PDH:1.1,
+  PPY:1.0, PW0:1.15, PLAZAMIN:6.6,
+  BODY:0.55, HALF:6.95, FARZC:7.1 };
+var ALLEYS = ["ter","pal","isr","occ"];                       // ordre outer→inner : le sol en bordure, la main extérieure à l'extérieur
+var BRINS = TRACK_KEYS;                                        // ["occ","pal","isr","ter"] — identité des faits = EV[i][1]
+function alleyIndex(k){ return ALLEYS.indexOf(k); }
+function alleyZ(ai){ return 6.6 - 4.4*ai; }                    // ter +6.6 · pal +2.2 · isr −2.2 · occ −6.6
+var LANE = { pal:{t:"#7ed3ab"}, isr:{t:"#8ec6ee"}, occ:{t:"#e2a979"}, ter:{t:"#e8b45c"} };
+var GOLD = "#d2a63f";
+var WALLC = 0x2d2820, PARTC = 0x322c24, FLOORC = 0x1a1611, CEILC = 0x120e0a, BG = 0x0f0b07;
+var PW = { w2:.92, h2:.64, w1:.7, h1:.48 };                    // encodage LV = TAILLE, jamais teinte ni effacement
+var CW = 0.95, CH = 2.3, YA = 1.58, YB = 2.3;                  // rows A hauteur d'yeux / B au-dessus ; rideau sol→au-dessus des rangées
+
+/* ---------- helpers locaux (aucun nom partagé avec les modules de données) ---------- */
+function mClamp(v,a,b){ return v<a?a:(v>b?b:v); }
+function mEsc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function yrOf(y){ return Math.floor(y); }
+function mthOf(y){ var m = Math.floor((y-Math.floor(y))*12); return m>=12?11:(m<0?0:m); }
+var MONTHS_K = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];  // local : jamais re-déclaré depuis un module (collision const inter-scripts = page morte)
+function yrLbl(y){ return String(yrOf(y)) + " · " + MONTHS_K[mthOf(y)]; }
+function brOf(i){ return BRINS[EV[i][1]]; }
+function brName(k){ return TRACKS[k].short; }
+
+/* ---------- chronologie→géométrie : places d'abord, segments entre les places, échelle partagée ---------- */
+/*__LAYOUT_START__*/
+function pushTrack(items, U, gap){                            // pousse 1D année→position, ordre préservé, dans [-U, U]
+  items.sort(function(a,b){ return a.year-b.year || (a.i<b.i?-1:1); });
+  var prevR = -U-9;
+  for (var i=0;i<items.length;i++){
+    var t = items[i];
+    t.target = mClamp(t.year, -U + t.w/2, U - t.w/2);         // t.year porte déjà la position-x cible (années→x faites avant)
+    t.x = Math.max(t.target, prevR + gap + t.w/2);
+    prevR = t.x + t.w/2;
+  }
+  var nextL = U + 9;
+  for (var j=items.length-1;j>=0;j--){
+    var u = items[j];
+    if (u.x + u.w/2 > U) u.x = U - u.w/2;
+    u.x = Math.min(u.x, nextL - gap - u.w/2);
+    nextL = u.x - u.w/2;
+  }
+  return items;
+}
+var PLAZAS = window.__K_ALLIES.plazas.map(function(p, j){
+  var maxb = 1;
+  for (var q=0;q<BRINS.length;q++){
+    var n = p.ids.filter(function(i){ return brOf(i)===BRINS[q]; }).length;
+    if (n > maxb) maxb = n;
+  }
+  var W = Math.max(GEO.PLAZAMIN, GEO.PW0*maxb + 2*GEO.PDH + 1.4);
+  return { j:j, y0:p.y0, y1:p.y1, label:p.label, ids:p.ids, just:p.just, W:W, maxb:maxb };
+});
+var SEGDEF = [];                                               // segment j = entre fin de place j-1 et début de place j
+(function(){
+  var A = window.__K_ALLIES.segAfter, minY = window.__K_ALLIES.minY, maxY = window.__K_ALLIES.maxY;
+  for (var j=0;j<=PLAZAS.length;j++){
+    var ya = j===0 ? minY : A[j-1][0];
+    var yb = j===PLAZAS.length ? maxY : A[j][1];
+    SEGDEF.push({ j:j, ya:ya, yb:yb, years:yb-ya });
+  }
+})();
+var LENC = PLAZAS.reduce(function(s,p){ return s+p.W; }, 0);
+var TLEN = 0;
+(function(){
+  var x = 0;
+  for (var j=0;j<=PLAZAS.length;j++){
+    SEGDEF[j].x0 = x; SEGDEF[j].x1 = x + SEGDEF[j].years*GEO.PPY; x = SEGDEF[j].x1;
+    if (j < PLAZAS.length){ PLAZAS[j].x0 = x; PLAZAS[j].x1 = x + PLAZAS[j].W; x = PLAZAS[j].x1; }
+  }
+  if (SEGDEF.length && PLAZAS.length){
+    SEGDEF[0].y0 = SEGDEF[0].ya; SEGDEF[0].y1 = SEGDEF[0].yb;
+    for (var j2=1;j2<SEGDEF.length;j2++){ SEGDEF[j2].y0 = PLAZAS[j2-1].y1; SEGDEF[j2].y1 = j2<PLAZAS.length ? PLAZAS[j2].y0 : window.__K_ALLIES.maxY; }
+  }
+  TLEN = x;                                                    // longueur totale du bâtiment (x de 0 à TLEN)
+})();
+function xOf(year){
+  var i;
+  for (i=0;i<PLAZAS.length;i++){ var p=PLAZAS[i];
+    if (year >= p.y0 && year <= p.y1) return (p.x0+p.x1)/2; }
+  for (i=0;i<SEGDEF.length;i++){ var s=SEGDEF[i];
+    if (year >= s.ya && year <= s.yb) return s.x0 + (year-s.ya)/((s.yb-s.ya)||1)*(s.x1-s.x0); }
+  return year < SEGDEF[0].ya ? SEGDEF[0].x0 : TLEN;
+}
+function segOfY(y){ for (var i=0;i<SEGDEF.length;i++) if (y>=SEGDEF[i].ya && y<=SEGDEF[i].yb) return i; return -1; }
+function segOfX(xv){ for (var i=0;i<SEGDEF.length;i++) if (xv>=SEGDEF[i].x0 && xv<=SEGDEF[i].x1) return i; return -1; }
+function plazaOfX(xv){ for (var i=0;i<PLAZAS.length;i++) if (xv>=PLAZAS[i].x0 && xv<=PLAZAS[i].x1) return i; return -1; }
+function nicheX(p, ai){ return (ai+0.5)/ALLEYS.length * (p.x1-p.x0); }   // RELATIF à p.x0 — niche de l'allée ai : mur d'entrée de la place, dans sa largeur
+
+/* ---------- une paroi : créneaux [−U,U] (bornes = ouvertures, jamais traversées) ---------- */
+function layoutWall(items, U){
+  var GAP = 0.1, scale = 1;
+  for (var attempt=0; attempt<7; attempt++){
+    var over = false;
+    items.forEach(function(t){ t.w = t.w0*scale; });
+    var cts = items.filter(function(t){ return t.kind==="curtain"; });
+    pushTrack(cts, U, 0.15);
+    cts.forEach(function(c){ if (c.x-c.w/2 < -U-1e-9 || c.x+c.w/2 > U+1e-9) over = true; });
+    var blocks = cts.map(function(c){ return { l:c.x-c.w/2-0.06, r:c.x+c.w/2+0.06 }; }).sort(function(a,b){ return a.l-b.l; });
+    function nudgePast(x,w){
+      for (var q=0;q<blocks.length;q++){ var b=blocks[q];
+        if (x+w/2 > b.l && x-w/2 < b.r) x = b.r + GAP + w/2; }
+      return x;
+    }
+    var free = [-U-9,-U-9], row = 0, posters2 = items.filter(function(t){ return t.kind==="poster"; });
+    posters2.forEach(function(pp){
+      row = 1-row;
+      var x = mClamp(pp.year, -U+pp.w/2, U-pp.w/2);            // pp.year = cible-x (avant pushTrack ; relue ci-dessous)
+      x = nudgePast(Math.max(x, free[row]+GAP+pp.w/2), pp.w);
+      if (x + pp.w/2 > U){
+        var x2 = nudgePast(Math.max(x, free[1-row]+GAP+pp.w/2), pp.w);
+        if (x2 + pp.w/2 <= U){ row = 1-row; x = x2; }
+        else over = true;
+      }
+      pp.x = x; pp.row = row+1; free[row] = Math.max(free[row], x+pp.w/2);
+      pp.target = mClamp(pp.year, -U+pp.w/2, U-pp.w/2);
+    });
+    if (over){
+      [1,2].forEach(function(rw){
+        var R = posters2.filter(function(pp){ return pp.row===rw; }).sort(function(a,b){ return b.x-a.x; });
+        var nextL = U + 9;
+        R.forEach(function(pp){
+          if (pp.x+pp.w/2 > U) pp.x = U - pp.w/2;
+          pp.x = Math.min(pp.x, nextL - GAP - pp.w/2);
+          for (var q=blocks.length-1;q>=0;q--){ var b=blocks[q];
+            if (pp.x+pp.w/2 > b.l && pp.x-pp.w/2 < b.r) pp.x = b.l - 0.06 - pp.w/2; }
+          pp.x = Math.max(pp.x, -U+pp.w/2);
+          nextL = Math.min(nextL, pp.x-pp.w/2);
+        });
+      });
+      over = false;
+      posters2.forEach(function(pp){
+        if (pp.x+pp.w/2 > U+1e-9 || pp.x-pp.w/2 < -U-1e-9) over = true;
+        for (var q=0;q<blocks.length;q++){ var b=blocks[q];
+          if (pp.x+pp.w/2 > b.l+1e-3 && pp.x-pp.w/2 < b.r-1e-3) over = true; }
+      });
+      cts.forEach(function(c){ if (c.x-c.w/2 < -U-1e-9 || c.x+c.w/2 > U+1e-9) over = true; });
+      [1,2].forEach(function(rw){
+        var R = posters2.filter(function(pp){ return pp.row===rw; }).sort(function(a,b){ return a.x-b.x; });
+        for (var q=1;q<R.length;q++) if (R[q].x-R[q].w/2 < R[q-1].x+R[q-1].w/2+0.02) over = true;
+      });
+    }
+    cts.forEach(function(c){ c.row = 0; });
+    if (!over) break;
+    scale *= 0.9;
+  }
+  items.forEach(function(t){ t.scale = scale; });
+  return items;
+}
+function layoutNiche(items, U){
+  var scale = 1;
+  for (var attempt=0; attempt<7; attempt++){
+    var over = false;
+    items.forEach(function(t){ t.w = t.w0*scale; });
+    items.sort(function(a,b){ return a.year-b.year || (a.i<b.i?-1:1); });
+    pushTrack(items, U, 0.1);
+    items.forEach(function(t){ if (t.x-t.w/2 < -U-1e-9 || t.x+t.w/2 > U+1e-9) over = true; });
+    if (!over) break;
+    scale *= 0.9;
+  }
+  items.forEach(function(t){ t.scale = scale; t.row = 1; });
+  return items;
+}
+
+/* ---------- inventaires : affiches d'allée (murs), niches et rideaux de place, une vitrine par place ---------- */
+var posters = [], curtains = [], cases = [];
+var factsByBrin = {};
+BRINS.forEach(function(k){ factsByBrin[k] = []; });
+for (var ei=0; ei<EV.length; ei++) factsByBrin[brOf(ei)].push(ei);
+
+/* murs d'allée : chaque allée possède ses DEUX faces (extérieures ou cloisons) ; un fait hors fenêtre
+   tombe dans le segment de sa date, sur l'une ou l'autre face (packing deux rangées par face) */
+var wallItems = {};                                             // key "ai-face-j" → items (cible-x déjà projetée)
+ALLEYS.forEach(function(k, ai){
+  var faceOf = ai===0 ? ["o","i"] : ai===ALLEYS.length-1 ? ["i","o"] : ["i","o"];
+  factsByBrin[k].forEach(function(i){
+    var pHit = null; for (var q=0;q<PLAZAS.length;q++) if (EV[i][0]>=PLAZAS[q].y0 && EV[i][0]<=PLAZAS[q].y1) pHit = PLAZAS[q];
+    if (pHit) return;                                          // les faits de fenêtre vivent en niche, pas au mur
+    var j = segOfY(EV[i][0]); if (j < 0) return;
+    var s = SEGDEF[j], lv = lvOf(i,k), w0 = lv===2 ? PW.w2 : PW.w1;
+    var face = faceOf[i % 2];                                  // alterné : les deux parois de l'allée portent le récit
+    var key = ai+"-"+face+"-"+j;
+    (wallItems[key] = wallItems[key] || []).push({ i:i, kind:"poster", lv:lv, year:xOf(EV[i][0]),
+      w:0, w0:w0, ai:ai, face:face, seg:j, brin:k });
+  });
+});
+Object.keys(wallItems).forEach(function(key){
+  var parts = key.split("-"), ai = +parts[0], face = parts[1], j = +parts[2];
+  var s = SEGDEF[j], U = (s.x1-s.x0)/2 - 0.35;                 // garde aux ouvertures : le créneau ne touche jamais l'embrasure
+  var items = wallItems[key];
+  items.forEach(function(t){ t.year = t.year - (s.x0+s.x1)/2; });  // repère local de la face
+  layoutWall(items, U);
+  items.forEach(function(t){
+    t.xabs = t.x + (s.x0+s.x1)/2;
+    var zc = alleyZ(ai), side = face==="i" ? 1 : -1;
+    var xw = zc + side*(GEO.ALLEYW/2 - 0.12);
+    posters.push({ kind:"poster", i:t.i, brin:t.brin, ai:ai, face:face, seg:j, niche:false, x:t.xabs, z:xw,
+      y: t.row===1 ? YA : YB, lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale,
+      rotY: face==="i" ? Math.PI : 0, target:t.target+(s.x0+s.x1)/2, row:t.row, scale:t.scale });
+  });
+});
+
+/* places : niches par allée (affiche si le brin a des faits dans la fenêtre, rideau sinon) + vitrine centrale */
+PLAZAS.forEach(function(p){
+  ALLEYS.forEach(function(k, ai){
+    var cx = p.x0 + nicheX(p, ai);
+    var ids = p.ids.filter(function(i){ return brOf(i)===k; });
+    var U = (p.W - 2*GEO.PDH)/2 - 0.35;                        // créneau de niche : jamais sous une porte
+    if (!ids.length){
+      curtains.push({ kind:"curtain", i:null, brin:k, ai:ai, plaza:p.j, x:cx, z:p.x0, y:CH/2+0.14, rotY:0, w:CW, niche:true });
+      return;
+    }
+    var items = ids.map(function(i){ var lv = lvOf(i,k);
+      return { i:i, kind:"poster", lv:lv, year:xOf(EV[i][0]), w:0, w0: lv===2?PW.w2:PW.w1, brin:k, ai:ai, plaza:p.j }; });
+    items.forEach(function(t){ t.year = t.year - cx; });
+    layoutNiche(items, U);
+    items.forEach(function(t){
+      posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:cx+t.x, z:p.x0,
+        y:YA, lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:0, target:t.x, row:1, scale:t.scale, niche:true });
+    });
+  });
+  cases.push({ kind:"case", plaza:p.j, x:(p.x0+p.x1)/2, z:0, i:p.ids[0], w:.62, w0:.62 });
+});
+/* clés de poste stables (dérivées de la GÉOMÉTRIE, pas de l'ordre) — avant le maillage, le harnais s'y adosse */
+posters.forEach(function(p){ p.key = p.niche ? ("np"+p.i+"-"+p.plaza+"-"+p.ai) : ("p"+p.i+"-"+p.ai+"-"+p.face+"-"+p.seg); });
+curtains.forEach(function(c){ c.key = "nc"+c.plaza+"-"+c.ai; });
+cases.forEach(function(v){ v.key = "pv"+v.plaza; });
+/*__LAYOUT_END__*/
+
+/* ---------- scène ---------- */
+var renderer;
+try {
+  var probe = document.createElement("canvas");
+  var pctx = probe.getContext("webgl2") || probe.getContext("webgl");
+  if (!pctx) throw new Error("no-webgl");
+  if (pctx.getExtension && pctx.getExtension("WEBGL_lose_context")) pctx.getExtension("WEBGL_lose_context").loseContext();
+  renderer = new THREE.WebGLRenderer({ antialias:true });
+  if (!renderer.getContext()) throw new Error("no-context");
+} catch (e) {
+  try { if (renderer) renderer.dispose(); } catch (e2) {}
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias:false });
+    if (!renderer.getContext()) throw new Error("no-context-aa-off");
+  } catch (e3) { fallbackOn(); return; }
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
+var MAX_ANISO = 1;
+try { MAX_ANISO = renderer.capabilities.getMaxAnisotropy(); } catch(e){}
+var PX_UNIT = (renderer.capabilities.maxTextureSize || 2048) >= 8192 ? 800 : 400;
+var K_TEX = PX_UNIT / 400;
+renderer.setSize(innerWidth, innerHeight);
+document.getElementById("stage").appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(BG);
+scene.fog = new THREE.Fog(BG, 6, 40);
+var cam = new THREE.PerspectiveCamera(68, innerWidth/innerHeight, .05, 70);
+cam.rotation.order = "YXZ";
+var yaw = -Math.PI/2, pitch = 0, pxCur = 1.4, pzCur = alleyZ(0);   // arrivée : seuil de l'allée du sol, regard vers les années
+
+scene.add(new THREE.HemisphereLight(0x5c4c38, 0x231b12, 1.5));
+var lamp = new THREE.PointLight(0xffcf94, 20, 12, 1.6);
+scene.add(lamp);
+
+function mat(c){ return new THREE.MeshLambertMaterial({ color:c }); }
+var mWall = mat(WALLC), mPart = mat(PARTC), mFloor = mat(FLOORC), mCeil = mat(CEILC);
+function box(w,h,d,x,y,z,m,rotY){ var o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.position.set(x,y,z); if (rotY) o.rotation.y = rotY; scene.add(o); return o; }
+
+/* sol, plafond, parois extérieures continues */
+box(TLEN+2, .1, 2*GEO.FARZC, TLEN/2, -.05, 0, mFloor);
+box(TLEN+2, .1, 2*GEO.FARZC, TLEN/2, GEO.WALLH+.05, 0, mCeil);
+box(TLEN, GEO.WALLH, .2, TLEN/2, GEO.WALLH/2, GEO.FARZC, mWall);
+box(TLEN, GEO.WALLH, .2, TLEN/2, GEO.WALLH/2, -GEO.FARZC, mWall);
+box(.2, GEO.WALLH, 2*GEO.FARZC, -.1, GEO.WALLH/2, 0, mWall);      // seuil d'entrée (derrière le visiteur)
+box(.2, GEO.WALLH, 2*GEO.FARZC, TLEN+.1, GEO.WALLH/2, 0, mWall);  // paroi du « maintenant »
+
+/* cloisons par allée : segments entre places + portes de place des deux côtés ; jamais de porte dans les segments
+   (volontaire : on change d'allée UNIQUEMENT par une place — la rareté des rencontres est l'argument) */
+for (var pi=0; pi<=ALLEYS.length-2; pi++){
+  var zp = (alleyZ(pi)+alleyZ(pi+1))/2;
+  for (var sj=0; sj<SEGDEF.length; sj++){
+    var sg = SEGDEF[sj];
+    box(sg.x1-sg.x0, GEO.WALLH, GEO.PART, (sg.x0+sg.x1)/2, GEO.WALLH/2, zp, mPart);
+  }
+  PLAZAS.forEach(function(p){
+    var seg = p.x1-p.x0-2*GEO.PDH;
+    box(seg/2, GEO.WALLH, GEO.PART, p.x0+GEO.PDH+seg/4, GEO.WALLH/2, zp, mPart);
+    box(seg/2, GEO.WALLH, GEO.PART, p.x1-GEO.PDH-seg/4, GEO.WALLH/2, zp, mPart);
+    box(2*GEO.PDH, .5, GEO.PART, p.x0+GEO.PDH, GEO.WALLH-.25, zp, mPart);      // linteaux
+    box(2*GEO.PDH, .5, GEO.PART, p.x1-GEO.PDH, GEO.WALLH-.25, zp, mPart);
+  });
+}
+/* parois de place (blocs pleins entre allées, sauf ouvertures de porte) */
+PLAZAS.forEach(function(p){
+  var zt = GEO.FARZC - 0.1;
+  /* intervalles pleins le long de z : entre paroi extérieure et rive de porte, puis entre portes voisines */
+  var spans = [[alleyZ(0)+GEO.PDH, zt], [zt*-1, alleyZ(3)-GEO.PDH]];
+  for (var g=0; g<ALLEYS.length-1; g++) spans.push([alleyZ(g+1)+GEO.PDH, alleyZ(g)-GEO.PDH]);
+  [p.x0+GEO.PDH, p.x1-GEO.PDH].forEach(function(xw){
+    spans.forEach(function(sp){
+      var d = sp[1]-sp[0];
+      if (d > 0.02) box(2*GEO.PDH, GEO.WALLH, d, xw, GEO.WALLH/2, (sp[0]+sp[1])/2, mPart);
+    });
+  });
+});
+
+/* rails de sol colorés + rails de place (la grammaire apprise une fois : la couleur, c'est l'allée) */
+function rail(w,d,x,z,col){ box(w,.02,d,x,.011,z,new THREE.MeshBasicMaterial({ color:col })); }
+var RAILC = { ter:0xa06417, pal:0x1f5741, isr:0x1d4768, occ:0x6b442a };
+ALLEYS.forEach(function(k, ai){
+  SEGDEF.forEach(function(s){
+    rail(s.x1-s.x0-.6, .07, (s.x0+s.x1)/2, alleyZ(ai)+GEO.ALLEYW/2-0.22, RAILC[k]);
+    rail(s.x1-s.x0-.6, .07, (s.x0+s.x1)/2, alleyZ(ai)-GEO.ALLEYW/2+0.22, RAILC[k]);
+  });
+  PLAZAS.forEach(function(p){
+    rail(.07, GEO.ALLEYW-0.6, p.x0 + nicheX(p,ai), alleyZ(ai), RAILC[k]);   // rappel de couleur vers la niche
+  });
+});
+PLAZAS.forEach(function(p){
+  rail(p.W-.4, .07, (p.x0+p.x1)/2, GEO.FARZC-.35, 0xd2a63f);
+  rail(p.W-.4, .07, (p.x0+p.x1)/2, -(GEO.FARZC-.35), 0xd2a63f);
+});
+
+/* éclairage : une source au centre de chaque segment, deux par place (le brouillard fait le reste) */
+SEGDEF.forEach(function(s){
+  ALLEYS.forEach(function(k, ai){
+    var pl = new THREE.PointLight(0xf6d9a4, 9, Math.max(10,(s.x1-s.x0)*0.85), 1.5);
+    pl.position.set((s.x0+s.x1)/2, GEO.WALLH-0.3, alleyZ(ai)); scene.add(pl);
+  });
+});
+PLAZAS.forEach(function(p){
+  var pl = new THREE.PointLight(0xffd9a0, 16, p.W*1.6, 1.5);
+  pl.position.set((p.x0+p.x1)/2, GEO.WALLH-0.3, 0); scene.add(pl);
+});
+
+/* ---------- textes cuits ---------- */
+function tex(wpx,hpx,draw){
+  var c = document.createElement("canvas"); c.width=wpx; c.height=hpx;
+  draw(c.getContext("2d"), wpx, hpx);
+  var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = MAX_ANISO; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter;
+  return t;
+}
+function wrap2(ctx,text,maxW,maxL){
+  var words=String(text).split(/\s+/), lines=[], cur="";
+  for (var i=0;i<words.length;i++){ var tt = cur?cur+" "+words[i]:words[i];
+    if (ctx.measureText(tt).width>maxW && cur){ lines.push(cur); cur=words[i];
+      if (lines.length>=maxL){ lines[maxL-1]+="…"; return lines; } }
+    else cur=tt; }
+  if (cur) lines.push(cur); return lines;
+}
+function labelPlane(wpx,hpx,mw,texObj,x,y,z,rotY){
+  var m = new THREE.Mesh(new THREE.PlaneGeometry(mw, mw*hpx/wpx),
+        new THREE.MeshBasicMaterial({ map:texObj, side:THREE.DoubleSide }));
+  m.position.set(x,y,z); m.rotation.y = rotY||0; scene.add(m); return m;
+}
+function posterTex(p){
+  var wpx = Math.round(p.w*PX_UNIT), hpx = Math.round(p.h*PX_UNIT), tint = LANE[p.brin].t;
+  return tex(wpx,hpx,function(x,w,h){
+    x.fillStyle="#221c14"; x.fillRect(0,0,w,h);
+    x.fillStyle=TRACKS[p.brin].c; x.fillRect(0,0,w,Math.max(6,h*.028));
+    x.fillStyle=tint; x.font="700 "+Math.round(h*.13)+"px system-ui";
+    x.fillText(yrLbl(EV[p.i][0]), w*.06, h*.22);
+    x.fillStyle="#ece6da"; x.font="600 "+Math.round(h*.115)+"px system-ui";
+    var lines = wrap2(x, titleOf(p.i,p.brin), w*.88, 4);
+    for (var q=0;q<lines.length;q++) x.fillText(lines[q], w*.06, h*.42+q*h*.15);
+  });
+}
+function curtainTexK(brin){
+  var tint = LANE[brin].t;
+  return tex(192,448,function(x,w,h){
+    x.fillStyle="#1c1712"; x.fillRect(0,0,w,h);
+    for (var f=0; f<6; f++){ var g=x.createLinearGradient(f*w/6,0,(f+1)*w/6,0);
+      g.addColorStop(0,"#0e1013"); g.addColorStop(.5,"#1f232a"); g.addColorStop(1,"#0e1013");
+      x.fillStyle=g; x.fillRect(f*w/6,0,w/6,h); }
+    x.fillStyle=TRACKS[brin].c; x.fillRect(0,h*.935,w,h*.03);
+    x.fillStyle=tint; x.font="700 26px system-ui"; x.textAlign="center";
+    x.fillText(brName(brin), w/2, h*.10);
+    x.fillStyle="rgba(236,230,218,.55)"; x.font="500 16px system-ui";
+    x.fillText("cette piste se tait", w/2, h*.16);
+    x.fillText("à ce moment", w/2, h*.215);
+  });
+}
+/* ---------- murs : affiches, rideaux, vitrines maillés ---------- */
+var hitables = [];
+posters.forEach(function(p){
+  var mesh = new THREE.Mesh(new THREE.PlaneGeometry(p.w, p.h),
+        new THREE.MeshBasicMaterial({ map:posterTex(p) }));
+  mesh.position.set(p.x, p.y, p.z); mesh.rotation.y = p.rotY;
+  scene.add(mesh);
+  var frame = new THREE.Mesh(new THREE.PlaneGeometry(p.w+.1, p.h+.1), mat(0x19140f));
+  frame.position.set(p.x, p.y, p.z); frame.rotation.y = p.rotY;
+  frame.translateZ(-.02);
+  scene.add(frame);
+  p.mesh = mesh; hitables.push(mesh);
+  mesh.userData = { kind:"poster", i:p.i, brin:p.brin, key:p.key };
+});
+var curtainMeshes = [];
+curtains.forEach(function(c){
+  var mesh = new THREE.Mesh(new THREE.PlaneGeometry(CW, CH),
+        new THREE.MeshBasicMaterial({ map:curtainTexK(c.brin), side:THREE.DoubleSide }));
+  mesh.position.set(c.x, c.y, c.z); mesh.rotation.y = c.rotY;
+  scene.add(mesh);
+  c.mesh = mesh; hitables.push(mesh);
+  mesh.userData = { kind:"curtain", i:null, brin:c.brin, key:c.key };
+  curtainMeshes.push(mesh);
+});
+var mGold = new THREE.MeshBasicMaterial({ color:GOLD });
+var mGlass = new THREE.MeshBasicMaterial({ color:0xe0cda6, transparent:true, opacity:.1, side:THREE.DoubleSide, depthWrite:false });
+cases.forEach(function(v){
+  var p = PLAZAS[v.plaza];
+  var g = new THREE.Group(); g.position.set(v.x, 0, v.z); scene.add(g);
+  var ped = new THREE.Mesh(new THREE.BoxGeometry(.66,.95,.5), mat(0x2a231a)); ped.position.y=.475; g.add(ped);
+  var railG = new THREE.Mesh(new THREE.BoxGeometry(.7,.028,.54), mGold); railG.position.y=1.5; g.add(railG);
+  var gl = new THREE.Mesh(new THREE.BoxGeometry(.6,.52,.44), mGlass); gl.position.y=1.24; gl.renderOrder=6; g.add(gl);
+  var tt = tex(512*K_TEX,400*K_TEX,function(x,w,h){
+    x.fillStyle="#17130e"; x.fillRect(0,0,w,h);
+    x.fillStyle="#d2a63f"; x.font="700 18px system-ui";
+    x.fillText("PLACE — LES QUATRE PISTES À CE MOMENT", 16, 34);
+    var yy = 76;
+    ALLEYS.forEach(function(k){
+      var ids = p.ids.filter(function(ii){ return brOf(ii)===k; });
+      x.fillStyle = ids.length ? LANE[k].t : "#787f89"; x.font="700 21px system-ui";
+      x.fillText(brName(k) + (ids.length ? "" : " · se tait"), 16, yy); yy += 27;
+      x.fillStyle="#ece6da"; x.font="600 19px system-ui";
+      ids.slice(0,2).forEach(function(ii){
+        var lines = wrap2(x, titleOf(ii,k), w-40, 1);
+        x.fillText(lines[0], 26, yy); yy += 24;
+      });
+      if (ids.length > 2){ x.fillStyle="#9a8f7f"; x.fillText("et " + (ids.length-2) + " autre(s)…", 26, yy); yy += 24; }
+    });
+  });
+  var pl = new THREE.Mesh(new THREE.PlaneGeometry(.56,.44), new THREE.MeshBasicMaterial({ map:tt }));
+  pl.position.set(0, .62, .2515); g.add(pl);
+  v.mesh = gl; v.group = g; hitables.push(ped); hitables.push(gl);
+  ped.userData = { kind:"case", i:v.i, plaza:v.plaza, key:v.key }; gl.userData = ped.userData;
+});
+
+/* bandeaux d'allée (la grammaire, lisible en marchant) + cartels de place + en-tête d'entrée */
+ALLEYS.forEach(function(k, ai){
+  var face = ai===0 ? -1 : 1;                                   // ter : face extérieure nord ; les autres : paroi intérieure
+  var zBand = alleyZ(ai) + face*(GEO.ALLEYW/2-0.15);
+  var rot = face===1 ? -Math.PI/2 : Math.PI/2;
+  var t = tex(1200,110,function(x,w,h){
+    x.fillStyle=LANE[k].t; x.font="700 54px system-ui";
+    x.fillText("ALLÉE · " + TRACKS[k].name.toUpperCase(), 12, h*.66);
+  });
+  var step = 26;
+  for (var xq = 8; xq < TLEN-4; xq += step) labelPlane(1200,110, 4.2, t, xq, 2.72, zBand, rot);
+});
+PLAZAS.forEach(function(p){
+  var t = tex(1600,140,function(x,w,h){
+    x.fillStyle="#d2a63f"; x.font="700 62px system-ui"; x.textAlign="center";
+    x.fillText("PLACE · " + p.label + " · " + yrOf(p.y0)+"–"+yrOf(p.y1), w/2, h*.66);
+  });
+  labelPlane(1600,140, Math.min(p.W-1, 10), t, (p.x0+p.x1)/2, 2.8, GEO.FARZC-0.12, Math.PI);
+});
+labelPlane(2400,150, 12, tex(2400,150,function(x,w,h){
+  x.fillStyle="#ece6da"; x.font="700 60px system-ui"; x.textAlign="center";
+  x.fillText("ENTREZ PAR UNE ALLÉE — LE TEMPS AVANCE VERS LA DROITE ; ON NE CHANGE D’ALLÉE QU’AUX PLACES", w/2, h*.66);
+}), 0.12, 2.7, 0, Math.PI/2);
+
+/* ---------- props de vitrine (module optionnel props-musee.data.js ; les vitrines K sont des places → jamais de clé commune) ---------- */
+var __propsStatus = { loaded:false, placed:0, skipped:0, sources:[], error:null };
+var propSources = {}, propsPlacedNames = [];
+function propsDecodeGlb(b64){
+  var bin = atob(b64), u8 = new Uint8Array(bin.length);
+  for (var q=0;q<bin.length;q++) u8[q] = bin.charCodeAt(q);
+  return u8;
+}
+function placeProps(){
+  cases.forEach(function(v){
+    try {
+      var D = window.__VITRINE_PROPS;
+      var row = D.rows && D.rows[v.key];
+      if (!row){ __propsStatus.skipped++; return; }
+      var src = propSources["prop_"+row.a];
+      if (!src || !v.group){ __propsStatus.skipped++; return; }
+      var m = src.clone(true);
+      m.position.y = 0.95; m.rotation.y = THREE.MathUtils.degToRad(row.r||0);
+      m.name = "prop_"+row.a+"_"+v.key;
+      v.group.add(m); propsPlacedNames.push(m.name); __propsStatus.placed++;
+    } catch (e) { __propsStatus.skipped++; }
+  });
+}
+function propsStart(){
+  try {
+    var D = window.__VITRINE_PROPS;
+    if (!D || !window.THREE) { __propsStatus.error = "absent"; return; }
+    if (typeof THREE.GLTFLoader !== "function") { __propsStatus.error = "sans-loader"; return; }
+    var bytes = propsDecodeGlb(D.glbBase64);
+    new THREE.GLTFLoader().parse(bytes.buffer, "", function(gltf){
+      try {
+        gltf.scene.traverse(function(o){
+          if (o.isMesh && /^prop_[a-z]+$/.test(o.name) && !propSources[o.name]) propSources[o.name] = o;
+        });
+        __propsStatus.sources = Object.keys(propSources);
+        __propsStatus.loaded = __propsStatus.sources.length > 0;
+        if (__propsStatus.loaded) placeProps();
+        else __propsStatus.error = "aucune-source";
+      } catch (e) { __propsStatus.error = "placement: " + String((e && e.message) || e); }
+    }, function(e){ __propsStatus.error = "parse: " + String((e && e.message) || e); });
+  } catch (e) { __propsStatus.error = "props: " + String((e && e.message) || e); }
+}
+
+/* ---------- stations : tous les postes dans l'ordre du temps (x croissant) ---------- */
+var allStations = posters.concat(curtains, cases).sort(function(a,b){ return a.x-b.x; });
+allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
+function stationView(s){
+  if (s.kind==="case"){ var d = 1.9;
+    return { x:s.x, z:s.z+d, yaw:0, pitch:-Math.atan2(GEO.EYE-1.05, d) }; }
+  if (s.niche && s.kind==="poster") return { x:s.x, z:s.z-2.0, yaw:0, pitch:.18 };
+  if (s.niche) return { x:s.x, z:s.z-2.2, yaw:0, pitch:.05 };
+  var dir = s.face==="i" ? -1 : 1;                 // face intérieure : le visiteur est côté -z de la paroi ; extérieure : +z
+  return { x:s.x, z:s.z + dir*2.0, yaw: s.face==="i" ? 0 : Math.PI, pitch: s.y>2 ? .18 : 0 };
+}
+
+/* ---------- caméra : sauts de poste ---------- */
+var glide = null;
+function reduced(){ return matchMedia("(prefers-reduced-motion: reduce)").matches; }
+function normYaw(y){ while (y>Math.PI) y-=2*Math.PI; while (y<-Math.PI) y+=2*Math.PI; return y; }
+function snapTo(v, instant){
+  if (instant===undefined) instant = reduced();
+  var ty = normYaw(v.yaw);
+  if (instant){ pxCur=v.x; pzCur=v.z; yaw=ty; pitch=v.pitch; glide=null; return; }
+  glide = { fx:pxCur, fz:pzCur, fy:yaw, fp:pitch, tx:v.x, tz:v.z, ty:ty, tp:v.pitch, t0:performance.now(), ms:380 };
+}
+function focusStation(s, instant){ snapTo(s.view, instant); openPanel(s); }
+function posAt(x,z){
+  var pj = plazaOfX(x);
+  if (pj >= 0) return { kind:"plaza", plaza:pj, ai:aiNear(z) };
+  var sj = segOfX(x);
+  return { kind:"seg", seg:sj<0?SEGDEF.length-1:sj, ai:aiNear(z) };
+}
+function aiNear(z){ var best=0, bd=1e9;
+  for (var q=0;q<ALLEYS.length;q++){ var d=Math.abs(z-alleyZ(q)); if (d<bd){ bd=d; best=q; } } return best; }
+
+/* ---------- panneau : fait de la piste, puis regard croisé sur les trois autres (±2 ans) ---------- */
+var panelEl = document.getElementById("panel");
+function croise(i){
+  var y = EV[i][0], me = brOf(i), out = "";
+  ALLEYS.forEach(function(k){
+    if (k===me) return;
+    var near = factsByBrin[k].filter(function(ii){ return Math.abs(EV[ii][0]-y) <= 2; });
+    if (near.length){
+      near.slice(0,3).forEach(function(ii){
+        out += '<p class="vx '+k+'"><b><span class="dot '+k+'"></span>'+mEsc(titleOf(ii,k))+'</b><span>'+mEsc(TRACKS[k].name)+' · '+yrLbl(EV[ii][0])+'</span></p>';
+      });
+    } else {
+      out += '<p class="vx '+k+' sil"><b>Aucun fait de cette piste dans un rayon de deux ans.</b><span>'+mEsc(TRACKS[k].name)+'</span></p>';
+    }
+  });
+  return out;
+}
+function nicheVoilees(p){
+  var sil = ALLEYS.filter(function(k){ return !p.ids.some(function(ii){ return brOf(ii)===k; }); });
+  return sil.length ? "Pistes muettes ici : " + sil.map(brName).join(", ") + "." : "Ici, les quatre pistes parlent.";
+}
+function openPanel(s){
+  var html = '<button class="x" aria-label="Fermer">×</button>';
+  if (s.kind==="curtain"){
+    html += '<p class="yr">Niche voilée · '+(s.plaza!==undefined?PLAZAS[s.plaza].label:"")+'</p>'+
+      '<h2>Ici, «&nbsp;'+mEsc(brName(s.brin))+'&nbsp;» n’a rien à dire</h2>'+
+      '<p class="desc">La place réunit les récits au même moment — et cette piste n’y apporte aucun fait. Le voile ne dit pas «&nbsp;faux&nbsp;» : il dit «&nbsp;le document ne raconte pas ceci par cette piste&nbsp;». Question à travailler&nbsp;: qu’aurait signifié ce fait, raconté depuis là&nbsp;?</p>';
+  } else if (s.kind==="case"){
+    var p = PLAZAS[s.plaza];
+    html += '<p class="yr">Place de convergence · '+yrOf(p.y0)+'–'+yrOf(p.y1)+'</p><h2>'+mEsc(p.label)+'</h2>'+
+      '<p class="desc">'+mEsc(nicheVoilees(p))+'</p>'+
+      '<div class="voix"><h3>Autour du fait</h3>'+croise(s.i)+'</div>'+
+      '<div class="voix"><h3>Pourquoi cette place&nbsp;?</h3><p class="desc">'+mEsc(p.just)+'</p><p class="desc">Les places sont un choix éditorial du kit, pas une donnée du document&nbsp;; chaque rattachement est justifié dans l’interface.</p></div>';
+  } else {
+    var i = s.i, ev = EV[i];
+    html += '<p class="yr">'+yrLbl(ev[0])+' · allée '+mEsc(brName(s.brin))+'</p><h2>'+mEsc(titleOf(i,s.brin))+'</h2>'+
+      '<p class="desc">'+mEsc(ev[3])+'</p>'+
+      (divergent(i)?'<span class="divb">≠ lecture incertaine conservée du document</span>':'')+
+      '<div class="voix"><h3>Regard croisé — les autres pistes vers '+yrOf(ev[0])+'</h3>'+croise(i)+'</div>';
+  }
+  html += '<div class="pied"><a href="index-comparatif.html">← Toutes les vues de la frise</a><br>'+
+    (s.kind==="case" ? "place de convergence (choix éditorial justifié)"
+      : s.kind==="curtain" ? "niche voilée — silence du document · place "+(s.plaza+1)
+      : "mur&nbsp;: allée "+mEsc(TRACKS[s.brin].name))+'</div>';
+  panelEl.innerHTML = html;
+  panelEl.classList.add("open");
+  panelEl.scrollTop = 0;
+  panelEl.querySelector(".x").addEventListener("click", closePanel);
+  panelEl.__key = s.key;
+  var bd = document.getElementById("badge");
+  bd.textContent = (s.kind==="curtain" ? "Niche voilée · " : s.kind==="case" ? "Place · " : "") +
+    (s.kind==="case" ? PLAZAS[s.plaza].label : s.kind==="curtain" ? brName(s.brin)+" se tait" : yrLbl(EV[s.i][0])+" — "+titleOf(s.i,s.brin));
+  bd.classList.add("show");
+}
+function closePanel(){ panelEl.classList.remove("open"); panelEl.__key=null; document.getElementById("badge").classList.remove("show"); }
+
+/* ---------- stations DOM : Tab dans l'ordre du temps ---------- */
+var stWrap = document.getElementById("stations");
+allStations.forEach(function(s){
+  var b = document.createElement("button");
+  b.textContent = s.kind==="curtain" ? ("Niche voilée — « "+brName(s.brin)+" » se tait à la place "+(s.plaza+1)+" ("+PLAZAS[s.plaza].label+")")
+    : s.kind==="case" ? ("Place "+(s.plaza+1)+" — "+PLAZAS[s.plaza].label+" — carrefour des quatre pistes")
+    : (yrLbl(EV[s.i][0])+" — "+titleOf(s.i,s.brin)+" (allée "+brName(s.brin)+")");
+  b.setAttribute("data-key", s.key);
+  b.addEventListener("focus", function(){ focusStation(s); });
+  stWrap.appendChild(b);
+});
+document.getElementById("skip").addEventListener("click", function(){ var b = stWrap.firstChild; if (b) b.focus(); });
+
+/* ---------- navigateur : le temps — segments puis places, chronologique ---------- */
+var navEl = document.getElementById("nav");
+function buildNav(){
+  for (var j=0;j<SEGDEF.length;j++){
+    (function(k){
+      var s = SEGDEF[k];
+      var b = document.createElement("button");
+      b.setAttribute("data-target","s"+k);
+      b.innerHTML = "<b>"+yrOf(s.y0)+"–"+yrOf(s.y1)+"</b>les allées";
+      b.addEventListener("click", function(){ teleportSeg(k); });
+      navEl.appendChild(b);
+    })(j);
+    if (j < PLAZAS.length){
+      (function(k){
+        var p = PLAZAS[k];
+        var b = document.createElement("button");
+        b.className = "place";
+        b.setAttribute("data-target","p"+k);
+        b.innerHTML = "<b>"+yrOf(p.y0)+"–"+yrOf(p.y1)+"</b>"+mEsc(p.label);
+        b.addEventListener("click", function(){ teleportPlaza(k); });
+        navEl.appendChild(b);
+      })(j);
+    }
+  }
+}
+function teleportSeg(j){
+  var s = SEGDEF[j];
+  snapTo({ x:s.x0+1.2, z:alleyZ(aiNear(pzCur)), yaw:-Math.PI/2, pitch:0 });
+  say(yrOf(s.y0)+"–"+yrOf(s.y1)+" · les quatre allées continuent");
+}
+function teleportPlaza(j){
+  var p = PLAZAS[j];
+  snapTo({ x:(p.x0+p.x1)/2, z:0, yaw:0, pitch:0 });
+  say("Place "+p.label+" · "+p.ids.length+" fait(s) — "+nicheVoilees(p));
+}
+buildNav();
+
+/* ---------- minimap : le plan du bâtiment, en vrai (4 allées × places) ---------- */
+(function(){
+  var MX = 3.0, MZ = 7.2, W = (TLEN+2)*MX, H = (GEO.FARZC*2+2)*MZ;
+  var svg = '<svg viewBox="0 0 '+W.toFixed(0)+' '+H.toFixed(0)+'" role="img" aria-label="Plan des allées">';
+  SEGDEF.forEach(function(s, sj){
+    ALLEYS.forEach(function(k, ai){
+      svg += '<g class="al" data-seg="'+sj+'" data-ai="'+ai+'"><rect x="'+((s.x0+1)*MX).toFixed(1)+'" y="'+((GEO.FARZC-alleyZ(ai)-2)*MZ).toFixed(1)+'" width="'+((s.x1-s.x0)*MX).toFixed(1)+'" height="'+(4*MZ).toFixed(1)+'"/></g>';
+    });
+  });
+  PLAZAS.forEach(function(p, pj){
+    svg += '<rect class="pz" data-plaza="'+pj+'" x="'+((p.x0+1)*MX).toFixed(1)+'" y="4" width="'+(p.W*MX).toFixed(1)+'" height="'+(H-8).toFixed(1)+'"/>';
+  });
+  svg += '<circle class="cam" id="camdot" cx="8" cy="'+(H/2).toFixed(0)+'" r="4.2"/></svg>';
+  document.getElementById("mini").innerHTML = svg;
+  Array.prototype.forEach.call(document.querySelectorAll("#mini .al"), function(rc){
+    rc.addEventListener("click", function(){
+      var sj = +rc.getAttribute("data-seg"), ai = +rc.getAttribute("data-ai");
+      snapTo({ x:SEGDEF[sj].x0+1.2, z:alleyZ(ai), yaw:-Math.PI/2, pitch:0 });
+      say("Allée "+brName(ALLEYS[ai])+" · "+yrOf(SEGDEF[sj].y0)+"–"+yrOf(SEGDEF[sj].y1));
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#mini .pz"), function(rc){
+    rc.addEventListener("click", function(){ teleportPlaza(+rc.getAttribute("data-plaza")); });
+  });
+})();
+var sayT = 0;
+function say(msg){ var s = document.getElementById("say"); s.textContent = msg; s.classList.add("show");
+  clearTimeout(sayT); sayT = setTimeout(function(){ s.classList.remove("show"); }, 3200); }
+
+/* ---------- entrées profondes : ?ev=i (poste du fait) · ?pl=j (place) ---------- */
+function stationForEvent(i){
+  for (var q=0;q<posters.length;q++) if (posters[q].i===i) return posters[q];
+  return null;
+}
+function deepLink(){
+  var pr = new URLSearchParams(location.search);
+  if (pr.has("pl")){ var pj = +pr.get("pl"); if (PLAZAS[pj]){ teleportPlaza(pj); return; } }
+  if (pr.has("ev")){ var i3 = +pr.get("ev"); if (EV[i3]){ var st = stationForEvent(i3); if (st){ focusStation(st, true); return; } } }
+  snapTo({ x:1.4, z:alleyZ(0), yaw:-Math.PI/2, pitch:0 }, true);
+}
+
+/* ---------- marche première personne ---------- */
+var locked = false, keys = {};
+function panelOpen(){ return panelEl.classList.contains("open"); }
+var menuEl = document.getElementById("menu");
+function menuOpen(){ return menuEl.classList.contains("open"); }
+function openMenu(){ var wasLocked = locked;
+  if (locked) document.exitPointerLock();
+  menuEl.__resumeLock = wasLocked;
+  menuEl.classList.add("open"); paintMenu();
+  document.getElementById("mResume").focus();
+}
+function closeMenu(){ menuEl.classList.remove("open");
+  if (menuEl.__resumeLock) lockCanvas(); menuEl.__resumeLock = false; }
+function paintMenu(){
+  [["mSens",OPT.sens],["mSpd",OPT.spd],["mInv",OPT.inv]].forEach(function(g){
+    document.getElementById(g[0]).querySelectorAll("button").forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-k")===g[1] ? "true" : "false"); }); });
+}
+[["mSens","sens"],["mSpd","spd"],["mInv","inv"]].forEach(function(g){
+  document.getElementById(g[0]).addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    OPT[g[1]] = b.getAttribute("data-k"); saveOpts(); paintMenu(); });
+});
+document.getElementById("mResume").addEventListener("click", closeMenu);
+menuEl.addEventListener("click", function(e){ if (e.target===menuEl) closeMenu(); });
+document.addEventListener("keydown", function(e){
+  if (e.key==="Escape"){ if (locked) document.exitPointerLock();
+    if (panelOpen()){ closePanel(); return; }
+    if (menuOpen()){ closeMenu(); return; }
+    var w = document.getElementById("welcome");
+    if (!w.classList.contains("gone")){ w.classList.add("gone"); return; }
+    openMenu(); return; }
+  if (e.key==="?"||e.key==="h"||e.key==="H"){ document.getElementById("welcome").classList.remove("gone"); return; }
+  keys[e.key.toLowerCase()] = true;
+  if (locked && e.key.toLowerCase()==="e" && nearStation && !panelOpen()){ focusStation(nearStation); e.preventDefault(); }
+});
+document.addEventListener("keyup", function(e){ keys[e.key.toLowerCase()] = false; });
+document.addEventListener("mousemove", function(e){
+  if (!locked) return;
+  nudgeLook(e.movementX, e.movementY);
+});
+var OPTS_SENS = { douce:.0015, normale:.0023, rapide:.0034 };
+var OPTS_SPD  = { lente:1.8, normale:2.7, rapide:3.9 };
+var OPT = (function(){ var d = { sens:"normale", spd:"normale", inv:"normal" };
+  try { var s = JSON.parse(localStorage.getItem("allees-opts-v1") || "{}");
+    if (s && typeof s === "object"){
+      if (OPTS_SENS[s.sens]) d.sens = s.sens;
+      if (OPTS_SPD[s.spd]) d.spd = s.spd;
+      if (s.inv === "inverse") d.inv = "inverse";
+    } } catch(e){}
+  return d; })();
+function saveOpts(){ try { localStorage.setItem("allees-opts-v1", JSON.stringify(OPT)); } catch(e){} }
+function nudgeLook(dx,dy){
+  var s = OPTS_SENS[OPT.sens] || OPTS_SENS.normale;
+  yaw = normYaw(yaw - dx*s);
+  pitch = mClamp(pitch + (OPT.inv === "inverse" ? 1 : -1)*dy*s, -GEO.PITCH, GEO.PITCH);
+}
+function lockCanvas(){ try { var pr = renderer.domElement.requestPointerLock();
+  if (pr && pr.catch) pr.catch(function(){}); } catch(e){} }
+renderer.domElement.addEventListener("click", function(){ if (!locked && !menuOpen()) lockCanvas(); });
+document.addEventListener("pointerlockchange", function(){
+  locked = document.pointerLockElement === renderer.domElement;
+  document.body.classList.toggle("locked", locked);
+});
+/* zone praticable : couloirs (bornes x = créneaux de segment, jamais les ouvertures non plus — les
+   murs d'allée vont d'embrasure à embrasure) + places + sas de portes de place */
+function inZone(x,z){
+  if (z > GEO.FARZC-GEO.BODY || z < -GEO.FARZC+GEO.BODY) return false;
+  if (x < -0.05 || x > TLEN+0.05) return false;
+  var pj = plazaOfX(x);
+  if (pj >= 0){ var p = PLAZAS[pj]; return true; }
+  var sj = segOfX(x); if (sj < 0) return false;
+  for (var ai=0; ai<ALLEYS.length; ai++){
+    if (Math.abs(z-alleyZ(ai)) <= GEO.ALLEYW/2 - GEO.BODY) return true;
+  }
+  return false;
+}
+/* portes de place : dans la bande de cloison, on ne passe que dans l'emprise d'une porte */
+function inDoorBand(x,z){
+  for (var pj2=0; pj2<PLAZAS.length; pj2++){ var p2 = PLAZAS[pj2];
+    var inWest = x >= p2.x0-0.35 && x <= p2.x0+0.35;
+    var inEast = x >= p2.x1-0.35 && x <= p2.x1+0.35;
+    if (!inWest && !inEast) continue;
+    for (var ai2=0; ai2<ALLEYS.length; ai2++) if (Math.abs(z-alleyZ(ai2)) <= GEO.PDH-0.25) return true;
+  }
+  return false;
+}
+function walkable(x,z){ return inZone(x,z) || inDoorBand(x,z); }
+var SPD = 2.7;
+function spdNow(){ return OPTS_SPD[OPT.spd] || SPD; }
+function step(dt){
+  if (locked && !panelOpen() && !glide){
+    var f = (keys["z"]||keys["w"]||keys["arrowup"]?1:0) - (keys["s"]||keys["arrowdown"]?1:0);
+    var r2 = (keys["q"]||keys["a"]?1:0) - (keys["d"]?1:0);
+    if (keys["arrowleft"]) yaw = normYaw(yaw + 1.7*dt);
+    if (keys["arrowright"]) yaw = normYaw(yaw - 1.7*dt);
+    if (f || r2){
+      var fx = -Math.sin(yaw), fz = -Math.cos(yaw);
+      var lx = -Math.cos(yaw), lz = Math.sin(yaw);
+      var vx = fx*f + lx*r2, vz = fz*f + lz*r2, n = Math.hypot(vx,vz)||1, d = spdNow()*dt/n;
+      var nx = pxCur + vx*d, nz = pzCur + vz*d;
+      if (walkable(nx, pzCur)) pxCur = nx;
+      if (walkable(pxCur, nz)) pzCur = nz;
+    }
+  }
+  if (glide){
+    var t = Math.min(1, (performance.now()-glide.t0)/glide.ms), e2 = t*t*(3-2*t);
+    pxCur = glide.fx + (glide.tx-glide.fx)*e2; pzCur = glide.fz + (glide.tz-glide.fz)*e2;
+    yaw = normYaw(glide.fy + (glide.ty-glide.fy)*e2); pitch = glide.fp + (glide.tp-glide.fp)*e2;
+    if (t>=1) glide = null;
+  }
+}
+
+/* ---------- affordance E ---------- */
+var nearStation = null;
+var affordEl = document.getElementById("afford");
+function refreshNear(){
+  var best = null, bd = 2.4;
+  for (var q=0;q<allStations.length;q++){ var s = allStations[q];
+    var d = Math.hypot(s.x-pxCur, s.z-pzCur);
+    if (d < bd){ bd = d; best = s; } }
+  nearStation = best;
+  if (best && !panelOpen() && !glide){
+    affordEl.innerHTML = "<kbd>E</kbd> " + mEsc(best.kind==="case" ? ("place · "+PLAZAS[best.plaza].label)
+      : best.kind==="curtain" ? ("niche voilée · "+brName(best.brin))
+      : titleOf(best.i,best.brin));
+    affordEl.style.display = "block";
+  } else affordEl.style.display = "none";
+}
+
+/* ---------- boucle ---------- */
+var last = performance.now(), curPos = "";
+function frame(now){
+  requestAnimationFrame(frame);
+  var dt = Math.min(.05, (now-last)/1000); last = now;
+  step(dt);
+  cam.position.set(pxCur, GEO.EYE, pzCur);
+  cam.rotation.y = yaw; cam.rotation.x = pitch;
+  lamp.position.set(pxCur, GEO.EYE+.2, pzCur);
+  renderer.render(scene, cam);
+  refreshNear();
+  var pp = posAt(pxCur, pzCur), pk = pp.kind+":"+(pp.plaza!==undefined?pp.plaza:pp.seg);
+  if (pk !== curPos){ curPos = pk;
+    var tkey = pp.kind==="plaza" ? ("p"+pp.plaza) : ("s"+pp.seg);
+    Array.prototype.forEach.call(navEl.children, function(b){
+      b.setAttribute("aria-current", b.getAttribute("data-target")===tkey ? "true" : "false"); });
+    if (initialized){
+      if (pp.kind==="plaza"){ var pz2 = PLAZAS[pp.plaza];
+        say("Place "+pz2.label+" · "+pz2.ids.length+" fait(s) — "+nicheVoilees(pz2)); }
+      else say("Allée "+brName(ALLEYS[pp.ai])+" · "+yrOf(SEGDEF[pp.seg].y0)+"–"+yrOf(SEGDEF[pp.seg].y1));
+    } }
+  var cd = document.getElementById("camdot");
+  if (cd){ cd.setAttribute("cx", ((pxCur+1)*3.0).toFixed(1)); cd.setAttribute("cy", ((GEO.FARZC-pzCur+1)*7.2).toFixed(1)); }
+}
+var initialized = false;
+addEventListener("resize", function(){ cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+/* ---------- accueil ---------- */
+var welEl = document.getElementById("welcome");
+document.getElementById("bWalk").addEventListener("click", function(){ welEl.classList.add("gone"); lockCanvas(); });
+document.getElementById("bStations").addEventListener("click", function(){ welEl.classList.add("gone"); var b = stWrap.firstChild; if (b) b.focus(); });
+welEl.addEventListener("click", function(e){ if (e.target===welEl) welEl.classList.add("gone"); });
+
+/* ---------- API de harnais : inventaires, géométrie dérivée, caméra, raycast ---------- */
+window.__allees = {
+  state: function(){ return { x:pxCur, z:pzCur, yaw:yaw, pitch:pitch, pos:posAt(pxCur,pzCur),
+      locked:!!document.pointerLockElement, gliding:!!glide, reduced:reduced(), panel:panelEl.__key||null,
+      aa:{ msaa:!!(renderer.getContext().getContextAttributes()||{}).antialias, aniso:MAX_ANISO, pxu:PX_UNIT, maxTex:renderer.capabilities.maxTextureSize },
+      menu:menuOpen(), opts:{ sens:OPT.sens, spd:OPT.spd, inv:OPT.inv } }; },
+  geo: GEO, TLEN: TLEN,
+  alleys: function(){ return ALLEYS.map(function(k, ai){ return { ai:ai, k:k, z:alleyZ(ai) }; }); },
+  segs: function(){ return SEGDEF.map(function(s){ return { j:s.j, ya:s.ya, yb:s.yb, x0:s.x0, x1:s.x1 }; }); },
+  plazas: function(){ return PLAZAS.map(function(p){ return { j:p.j, y0:p.y0, y1:p.y1, label:p.label, ids:p.ids.slice(), W:p.W, x0:p.x0, x1:p.x1,
+      niches:ALLEYS.map(function(k, ai){ return { ai:ai, brin:k, x:p.x0 + nicheX(p,ai),
+        facts:p.ids.filter(function(i){ return brOf(i)===k; }) }; }) }; }); },
+  posters: function(){ return posters.map(function(p){ return { i:p.i, brin:p.brin, ai:p.ai, face:p.face, seg:p.seg===undefined?null:p.seg,
+      plaza:p.plaza===undefined?null:p.plaza, niche:!!p.niche, x:p.x, z:p.z, y:p.y, w:p.w, h:p.h, lv:p.lv, row:p.row, key:p.key, year:EV[p.i][0], scale:p.scale }; }); },
+  curtains: function(){ return curtains.map(function(c){ return { brin:c.brin, ai:c.ai, plaza:c.plaza, x:c.x, z:c.z, y:c.y, w:c.w, key:c.key }; }); },
+  cases: function(){ return cases.map(function(c){ return { plaza:c.plaza, i:c.i, x:c.x, z:c.z, key:c.key }; }); },
+  counts: function(){
+    var perBrin = {};
+    BRINS.forEach(function(k){
+      var wallFacts = factsByBrin[k].filter(function(i){ return segOfY(EV[i][0]) >= 0; }).length;
+      perBrin[k] = { n:factsByBrin[k].length,
+        wallPosters: posters.filter(function(p){ return p.brin===k && !p.niche; }).length,
+        nichePosters: posters.filter(function(p){ return p.brin===k && p.niche; }).length };
+    });
+    return { corpus:EV.length, perBrin:perBrin,
+      nicheCurtains: curtains.length,
+      ndiv: EV.reduce(function(s,_,i){ return s+(divergent(i)?1:0); },0),
+      placesIn: PLAZAS.reduce(function(s,p){ return s+p.ids.length; },0) };
+  },
+  xOf: xOf, segOfY: segOfY, plazaOfX: plazaOfX, nicheXabs: function(pj,ai){ return PLAZAS[pj].x0 + nicheX(PLAZAS[pj],ai); }, nicheXrel: function(pj,ai){ return nicheX(PLAZAS[pj],ai); },
+  walkable: walkable,
+  stations: function(){ return allStations.map(function(s){ return { key:s.key, kind:s.kind, i:s.i===undefined?null:s.i, brin:s.brin||null, plaza:s.plaza===undefined?null:s.plaza, order:s.order, x:s.x, z:s.z, view:s.view }; }); },
+  focus: function(key, instant){ var s = null;
+    for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
+    if (s) focusStation(s, instant); return !!s; },
+  teleportSeg: teleportSeg, teleportPlaza: teleportPlaza, nudgeLook: nudgeLook,
+  rayHit: function(nx,ny){ var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
+    var hit = rc.intersectObjects(hitables, false)[0];
+    return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i===null?null:hit.object.userData.i,
+      brin:hit.object.userData.brin||null, key:hit.object.userData.key||null, dist:hit.distance } : null; },
+  panel: function(){ var a = panelEl.querySelector(".pied a");
+    return { open:panelEl.classList.contains("open"), key:panelEl.__key||null, backHref: a ? a.getAttribute("href") : null }; },
+  props: function(){ return { loaded:__propsStatus.loaded, placed:__propsStatus.placed,
+      skipped:__propsStatus.skipped, error:__propsStatus.error,
+      sources: __propsStatus.sources.slice(), placedNames: propsPlacedNames.slice(),
+      inHitables: hitables.filter(function(h){ return /^prop_/.test(h.name); }).length }; }
+};
+
+/* ---------- premier rendu, puis entrées profondes ---------- */
+propsStart();
+deepLink();
+initialized = true;
+requestAnimationFrame(frame);
+
+} catch (err) {
+  console.error(err);
+  fallbackOn();
+}
+})();
+</script>
+</body>
+</html>
