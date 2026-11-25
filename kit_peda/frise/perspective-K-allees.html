@@ -796,10 +796,10 @@ allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
 function stationView(s){
   // le pitch vise l'objet : + monte, - descend (cam.rotation.x = -pitch → écran)
   if (s.kind==="case") { var d = 1.9;
-    return { x:s.x, z:s.z+d, yaw:Math.PI, pitch:Math.atan2((s.y||1.24)-GEO.EYE, d) }; }
-  if (s.niche) return { x:s.x-1.7, z:alleyZ(s.ai), yaw:-Math.PI/2, pitch:Math.atan2(s.y-GEO.EYE, 1.7) };  // +x = mur d'entrée (loi caméra mesurée)   // dans la place, sur l'axe d'allée, face au mur d'entrée (+x)
+    return { x:s.x, z:s.z+d, yaw:Math.PI, pitch:Math.atan2(GEO.EYE-(s.y||1.24), d) }; }   // +pitch = monter (loi caméra mesurée)
+  if (s.niche) return { x:s.x-1.7, z:alleyZ(s.ai), yaw:-Math.PI/2, pitch:Math.atan2(GEO.EYE-s.y, 1.7) };  // regarde le +x (mur d'entrée), vise la hauteur de l'œuvre   // dans la place, sur l'axe d'allée, face au mur d'entrée (+x)
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : le visiteur est côté -z de la paroi ; extérieure : +z
-  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? 0 : Math.PI, pitch: Math.atan2(s.y-GEO.EYE, 1.7) };   // regarde la paroi (loi caméra mesurée)
+  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? 0 : Math.PI, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // regarde la paroi ; +pitch = monter
 }
 
 /* ---------- caméra : sauts de poste ---------- */
@@ -1111,7 +1111,7 @@ function frame(now){
   var dt = Math.min(.05, (now-last)/1000); last = now;
   step(dt);
   cam.position.set(pxCur, GEO.EYE, pzCur);
-  cam.rotation.y = -yaw; cam.rotation.x = pitch;    // LOI MESURÉE (bundle 187) : dir = (−sin ry·cos rx, sin rx, −cos ry·cos rx) → ici dir = (sin yaw, sin pitch·cos yaw, cos yaw)
+  cam.rotation.y = -yaw; cam.rotation.x = -pitch;  // LOI MESURÉE (bundle 187, trois tirs à rotation connue) : dir = (sin yaw, −sin pitch, cos yaw) ; +pitch = monter
   lamp.position.set(pxCur, GEO.EYE+.2, pzCur);
   renderer.render(scene, cam);
   refreshNear();
