@@ -463,7 +463,7 @@ PLAZAS.forEach(function(p){
     var slot = nicheSlot(p, ai); var cx = slot.cx, U = slot.U;
     var ids = p.ids.filter(function(i){ return brOf(i)===k; });
     if (!ids.length){
-      curtains.push({ kind:"curtain", i:null, brin:k, ai:ai, plaza:p.j, x:cx, z:p.x0+0.11, y:CH/2+0.14, rotY:0, w:Math.min(CW, 2*U-0.1), niche:true });
+      curtains.push({ kind:"curtain", i:null, brin:k, ai:ai, plaza:p.j, x:cx, z:p.x0+0.11, y:CH/2+0.14, rotY:-Math.PI/2, w:Math.min(CW, 2*U-0.1), niche:true });
       return;
     }
     var items = ids.map(function(i){ var lv = lvOf(i,k);
@@ -472,7 +472,7 @@ PLAZAS.forEach(function(p){
     layoutNicheRows(items, U, p.j*4+ai);
     items.forEach(function(t){
       posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:cx+t.x, z:p.x0+0.11,
-        y:nicheRowY(p.j*4+ai, t.row-1), lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:0, target:t.x, row:t.row, scale:t.scale, niche:true });
+        y:nicheRowY(p.j*4+ai, t.row-1), lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:-Math.PI/2, target:t.x, row:t.row, scale:t.scale, niche:true });
     });
   });
   cases.push({ kind:"case", plaza:p.j, x:(p.x0+p.x1)/2, z:0, i:p.ids[0], w:.62, w0:.62 });
@@ -715,7 +715,7 @@ PLAZAS.forEach(function(p){
                        : Math.min(CW+0.18, 2*slot.U);
     var bh = y1-y0;
     var back = new THREE.Mesh(new THREE.PlaneGeometry(bw, bh), mNiche);
-    back.position.set(slot.cx, (y0+y1)/2, p.x0+0.10); scene.add(back);
+    back.rotation.y = -Math.PI/2; back.position.set(slot.cx, (y0+y1)/2, p.x0+0.10); scene.add(back);
     var edge = new THREE.Mesh(new THREE.BoxGeometry(bw+0.06, 0.03, 0.03), new THREE.MeshBasicMaterial({ color:GOLD }));
     edge.position.set(slot.cx, y1+0.05, p.x0+0.13); scene.add(edge);
     var lamp = new THREE.PointLight(0xffd9a0, np.length?6:3.5, 5.5, 1.6);
@@ -795,10 +795,10 @@ var allStations = posters.concat(curtains, cases).sort(function(a,b){ return a.x
 allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
 function stationView(s){
   if (s.kind==="case"){ var d = 1.9;
-    return { x:s.x, z:s.z+d, yaw:0, pitch:-Math.atan2(GEO.EYE-1.05, d) }; }
+    return { x:s.x, z:s.z+d, yaw:Math.PI, pitch:-Math.atan2(GEO.EYE-1.05, d) }; }
   if (s.niche) return { x:s.x-1.7, z:alleyZ(s.ai), yaw:Math.PI/2, pitch:(s.y>2.2 ? .22 : .10) };   // dans la place, sur l'axe d'allée, face au mur d'entrée (+x)
   var dir = s.face==="i" ? -1 : 1;                 // face intérieure : le visiteur est côté -z de la paroi ; extérieure : +z
-  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? 0 : Math.PI, pitch: s.y>2 ? .18 : 0 };
+  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: s.y>2 ? .18 : 0 };
 }
 
 /* ---------- caméra : sauts de poste ---------- */
@@ -1110,7 +1110,7 @@ function frame(now){
   var dt = Math.min(.05, (now-last)/1000); last = now;
   step(dt);
   cam.position.set(pxCur, GEO.EYE, pzCur);
-  cam.rotation.y = yaw; cam.rotation.x = pitch;
+  cam.rotation.y = -yaw; cam.rotation.x = -pitch;   // la caméra regarde son -Z local : yaw caméra = -yaw monde
   lamp.position.set(pxCur, GEO.EYE+.2, pzCur);
   renderer.render(scene, cam);
   refreshNear();
@@ -1172,6 +1172,10 @@ window.__allees = {
     for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
     if (s) focusStation(s, instant); return !!s; },
   teleportSeg: teleportSeg, teleportPlaza: teleportPlaza, nudgeLook: nudgeLook, snapTo: snapTo,
+  forwardHit: function(){ cam.updateMatrixWorld(true); var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion);
+    var rc = new THREE.Raycaster(cam.position.clone(), d, 0.05, 12);
+    var hit = rc.intersectObjects(hitables, false)[0];
+    return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance } : null; },
   rayHit: function(nx,ny){ cam.updateMatrixWorld(true); var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i===null?null:hit.object.userData.i,
