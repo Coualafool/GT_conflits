@@ -1220,7 +1220,7 @@ window.__allees = {
     if (!m) return { found:false, n:hitables.length };
     m.updateMatrixWorld(true);
     var wp = new THREE.Vector3(); m.getWorldPosition(wp);
-    var rc = new THREE.Raycaster(new THREE.Vector3(2,1.58,-4.4), new THREE.Vector3(0,0,-1), 0.02, 12);
+    var mp = m.position; var rc = new THREE.Raycaster(new THREE.Vector3(mp.x + 4, mp.y, mp.z), new THREE.Vector3(-1,0,0), 0.02, 12);
     var one = m.raycast ? (function(){ var a=[]; m.raycast(rc, a); return a.length; })() : -1;
     var two = rc.intersectObject(m, false).length;
     var sph = m.geometry.boundingSphere ? { c:[m.geometry.boundingSphere.center.x.toFixed(2),m.geometry.boundingSphere.center.y.toFixed(2),m.geometry.boundingSphere.center.z.toFixed(2)], r:m.geometry.boundingSphere.radius.toFixed(2) } : "none";
