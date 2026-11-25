@@ -1179,6 +1179,9 @@ window.__allees = {
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance }
                : { miss:true, o:[+cam.position.x.toFixed(2),+cam.position.y.toFixed(2),+cam.position.z.toFixed(2)], d:[+d.x.toFixed(3),+d.y.toFixed(3),+d.z.toFixed(3)], n:hitables.length }; },
+  poseTest: function(ry, rx){ cam.rotation.y = ry; cam.rotation.x = rx; cam.updateMatrixWorld(true);
+    var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion);
+    return [+d.x.toFixed(3), +d.y.toFixed(3), +d.z.toFixed(3)]; },
   signProbe: function(){ var out = {};
     var saveX = cam.rotation.x, saveY = cam.rotation.y;
     var variants = { s1: [1,-1], s2: [-1,1], s3: [-1,-1], s4: [1,1] };
