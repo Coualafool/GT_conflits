@@ -500,7 +500,7 @@ try {
   try {
     renderer = new THREE.WebGLRenderer({ antialias:false });
     if (!renderer.getContext()) throw new Error("no-context-aa-off");
-  } catch (e3) { fallbackOn(); return; }
+  } catch (e3) { window.__K_FAIL = String(e3 && e3.stack || e3).slice(0, 400); fallbackOn(); return; }
 }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
 var MAX_ANISO = 1;
