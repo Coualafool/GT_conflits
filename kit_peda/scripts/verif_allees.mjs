@@ -36,11 +36,16 @@ await page.waitForTimeout(1300);
     rev: window.THREE ? window.THREE.REVISION : null,
     canvas: (() => { const c = document.querySelector("#stage canvas"); if (!c) return [0, 0];
       const r = c.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; })(),
-    fallback: getComputedStyle(document.getElementById("fallback")).display,
+    fallback: (() => { const f = document.getElementById("fallback"); return f ? getComputedStyle(f).display : "ABSENT"; })(),
   }));
   log("(K0) seuil Three.js : scène vivante sur le bundle vendorisé (REVISION 187, zéro CDN)",
     s.has && s.rev === "187" && s.fallback === "none" && s.canvas[0] >= 1400 && s.canvas[1] >= 700,
     `api=${s.has} rev=${s.rev} toile=${s.canvas.join("×")} fallback=${s.fallback}`);
+  if (!s.has) {   // pas d'API = module tué par une exception : on s'arrête là, la suite n'a pas de sens
+    await browser.close();
+    console.log("\n===== RÉSULTATS verif_allees ====="); results.forEach((r) => console.log(r));
+    console.log("--- ARRÊT : window.__allees absente (exception dans le module page)"); process.exit(1);
+  }
   await shot("K-default");
   // preuve visuelle : une capture par allée depuis l'entrée (l'œil humain juge ce que la sim ne voit pas)
   for (let ai = 0; ai < 4; ai++) {

@@ -707,7 +707,7 @@ PLAZAS.forEach(function(p){
     var np = posters.filter(function(q){ return q.niche && q.plaza===p.j && q.ai===ai; });
     var ct = curtains.filter(function(q){ return q.plaza===p.j && q.ai===ai; });
     var y0, y1;
-    if (np.length){ var hs=np.map(function(q){return q.h;}); ys=np.map(function(q){return q.y;});
+    if (np.length){ var hs=np.map(function(q){return q.h;}); var ys=np.map(function(q){return q.y;});
       y0=Math.min.apply(null, ys.map(function(y,q){return y-hs[q]/2;}))-0.08;
       y1=Math.max.apply(null, ys.map(function(y,q){return y+hs[q]/2;}))+0.08; }
     else { y0=0.14; y1=CH/2+0.14+CH/2+0.10; }
