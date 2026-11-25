@@ -802,7 +802,7 @@ function stationView(s){
   if (s.niche) {   // l œuvre est scellée au mur d'entrée, centrée sur l'axe de porte : on la regarde d'AXE en AXE,
                    // à rebours du voyage (le visiteur arrive par la place). PAS d'appel à walkable ici — il n'existe
                    // qu'après la caméra (TDZ : en navigateur, l'appeler à la charge plantait tout le module).
-    var p = PLAZAS[s.plaza]; var v = { x: s.x + GEO.NICHEV, z: alleyZ(s.ai) };
+    var p = PLAZAS[s.plaza]; var v = { x: s.x + GEO.NICHEV, z: s.z };   // s.x porte déjà le fruit face (cx+0,11) : on recule depuis L'ŒUVRE
     if (v.x > p.x1 - 0.45) v.x = p.x1 - 0.45;      // jamais au-delà du sol de la place
     var horiz = Math.max(0.5, v.x - s.x);
     return { x:v.x, z:v.z, yaw:0, pitch:Math.atan2(GEO.EYE-s.y, horiz) }; }   // axe → axe = pure -x = ry 0 (loi caméra mesurée)
@@ -1215,6 +1215,18 @@ window.__allees = {
         geo: m.geometry.parameters, rotY:+m.rotation.y.toFixed(2) });
     }
     return { n:curtainMeshes.length, sample:out }; },
+  faceProbe: function(key, ax){ var m=null; for (var q=0;q<hitables.length;q++) if (hitables[q].userData.key===key){ m=hitables[q]; break; }
+    if (!m) return { found:false }; m.updateMatrixWorld(true); var mp = m.position.clone();
+    var dirs = { x:[1,0,0], mx:[-1,0,0], z:[0,0,1], mz:[0,0,-1] }[ax||"z"];
+    var o = mp.clone().add(new THREE.Vector3(dirs[0],dirs[1],dirs[2]).multiplyScalar(-4));
+    var rc = new THREE.Raycaster(o, new THREE.Vector3(dirs[0],dirs[1],dirs[2]), 0.02, 12);
+    var one = rc.intersectObject(m, false); var all = rc.intersectObjects(hitables, false);
+    var rec = rc.intersectObject(scene, true);
+    var recHit = null; for (var w=0;w<rec.length;w++){ if (rec[w].object === m){ recHit = rec[w].distance.toFixed(2); break; } }
+    var geoOk = { pos: !!(m.geometry.getAttribute("position")), nor: !!(m.geometry.getAttribute("normal")),
+      bc: (m.geometry.boundingSphere? "yes":"no"), p0: m.geometry.getAttribute("position") ? Array.from(m.geometry.getAttribute("position").array.slice(0,3)) : null };
+    return { found:true, o:[+o.x.toFixed(2),+o.y.toFixed(2),+o.z.toFixed(2)], one:one.length, recScene: recHit,
+      firstAll: all.length ? all[0].object.userData.key+"@"+all[0].distance.toFixed(2) : null, n:all.length, geoOk:geoOk }; },
   meshProbe: function(key){ var m = null, idx = -1;
     for (var q=0;q<hitables.length;q++){ if (hitables[q].userData.key===key){ m = hitables[q]; idx = q; break; } }
     if (!m) return { found:false, n:hitables.length };
