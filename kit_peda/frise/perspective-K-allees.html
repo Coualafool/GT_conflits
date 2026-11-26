@@ -471,7 +471,7 @@ PLAZAS.forEach(function(p){
     items.forEach(function(t){ t.year = t.year - cx; });
     layoutNicheRows(items, U, p.j*4+ai);
     items.forEach(function(t){
-      posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:Math.max(p.x0+0.06, cx+t.x+0.11), z:alleyZ(ai),
+      posters.push({ kind:"poster", i:t.i, brin:k, ai:ai, face:"n", plaza:p.j, x:mClamp(cx+t.x+0.11, Math.max(p.x0+0.06, cx-U+(t.w||PW.w1)/2), cx+U-(t.w||PW.w1)/2), z:alleyZ(ai),
         y:nicheRowY(p.j*4+ai, t.row-1), lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:-Math.PI/2, target:t.x, row:t.row, scale:t.scale, niche:true });
     });
   });
