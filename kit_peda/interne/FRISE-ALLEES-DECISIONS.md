@@ -1,4 +1,6 @@
-# « Les Allées » — bâtiment tressé : 4 allées-pistes + places de convergence (brainstorm 2026-11-25, NOT built)
+# « Les Allées » — bâtiment tressé : 4 allées-pistes + places de convergence (brainstorm 2026-11-25 — construit : `frise/perspective-K-allees.html`)
+
+Plan du bâtiment (vue de dessus, géométrie réelle issue de `frise/perspective-K-data.js`) : [`plan-quatre-allees.html`](plan-quatre-allees.html).
 
 Idée de l'utilisateur : une allée par brin de la tresse I² (perspective-I2-pdf.html),
 allées séparées sauf aux grands événements communs ; à ces moments, toutes les allées
