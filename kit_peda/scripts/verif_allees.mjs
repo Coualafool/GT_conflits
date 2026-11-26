@@ -248,6 +248,29 @@ await page.waitForTimeout(1300);
     allOk, ["poster", "curtain", "case"].map((k) => `${k}:${r[k].ok}/${r[k].tried}${r[k].miss.length ? " ratés=" + r[k].miss.join(",") : ""}`).join(" "));
 }
 
+/* ---------- K5b : face aux œuvres — de bout en bout, aucune affiche ne se voit par le dos ---------- */
+{
+  const r = await page.evaluate(async () => {
+    const A = window.__allees;
+    const bad = [];
+    const keys = A.stations().filter(s => s.kind === "poster" && (s.key.indexOf("-0-") > 0 || s.key.indexOf("-3-") > 0));
+    const sample = keys.filter((s, idx) => idx % 4 === 0).slice(0, 10);
+    for (const s of sample) {
+      A.focus(s.key, true);
+      for (let w = 0; w < 24; w++) {
+        const c0 = A.state();
+        if (Math.hypot(c0.x - s.view.x, c0.z - s.view.z) < 0.06 && Math.abs(c0.pitch - s.view.pitch) < 0.02) break;
+        await new Promise((res) => setTimeout(res, 80));
+      }
+      const hit = A.forwardHit();
+      if (!(hit && hit.key === s.key)) bad.push(s.key + "→" + (hit ? hit.key || hit.kind : "miss"));
+    }
+    return { n: sample.length, bad };
+  });
+  log("(K5b) face aux œuvres : le rayon central touche CHAQUE poste échantillonné, de bout en bout — zéro dos",
+    r.bad.length === 0, r.bad.length ? r.bad.slice(0, 6).join(" ") : r.n + " postes vus de face (rayon réel)");
+}
+
 /* ---------- K6 : panneau — focus affiche → fiche ouverte avec regard croisé, Échap referme ---------- */
 {
   const key = await page.evaluate(() => {
