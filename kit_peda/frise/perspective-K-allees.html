@@ -813,8 +813,8 @@ function stationView(s){
     var vz = s.z - v.z;
     return { x: v.x, z: v.z, yaw: vz > 0 ? Math.PI : 0, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.21) };
   }
-  var dir = s.face==="i" ? -1 : 1;                 // face intérieure : visiteur côté -z → regarde +z (ry=π) ; extérieure : regarde -z (ry=0)
-  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // œuvre AU-DESSUS de l'œil → viser en haut
+  var dir = s.face==="i" ? -1 : 1;                 // poste intérieur : le visiteur est sur l'axe, l œuvre est du côté +z
+  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // loi MESURÉE (poseTest) : vue = −(sin yaw,·,cos yaw) → π = +z
 }
 
 /* ---------- caméra : sauts de poste ---------- */
