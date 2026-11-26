@@ -802,19 +802,20 @@ function propsStart(){
 var allStations = posters.concat(curtains, cases).sort(function(a,b){ return a.x-b.x; });
 allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
 function stationView(s){
-  // ANGLEs EN REPÈRE CAMÉRA (prouvé par signProbe sur le bundle : cam.rotation=(ry,rx) ⇒ vue monde = (sin ry·cos rx, −sin rx, −cos ry·cos rx)).
-  // yaw = ry (0 = −z, π/2 = +x, π = +z) ; pitch = l'angle de visée (+ = monter, car rx = −pitch).
+  // LOI MESURÉE (yawTable — rayon central via setFromCamera sur le bundle servi) :
+  //   vue monde = (−sin yaw, ·, −cos yaw)  et  vue.y = −sin(rotation.x) ; l'appli pose rotation.x = −pitch ⇒ pitch>0 = viser EN HAUT.
+  // (0 = −z, π/2 = −x, π = +z, 3π/2 = +x.)
   if (s.kind==="case") { var d = 1.9;
-    return { x:s.x, z:s.z+d, yaw:0, pitch:Math.atan2(GEO.EYE-(s.y||1.24), d) }; }   // caméra au +z de la vitrine, regarde −z ; le verre (1,24) est SOUS l'œil → viser en bas
+    return { x:s.x, z:s.z+d, yaw:0, pitch:Math.atan2((s.y||1.24)-GEO.EYE, d) }; }   // caméra au +z, regarde −z ; le verre (1,24) est SOUS l'œil → pitch<0 = viser en bas
   if (s.niche) {   // la niche pend dans l'embrasure de la porte d'allée (rayons : normale ±z, rideau centré sur l'axe).
                    // Vue éprouvée par K5 : debout GEO.NICHEV du côté place (vers z=0), regard vers l'œuvre.
     var side = s.z <= 0 ? 1 : -1;
     var v = { x: s.x, z: s.z + GEO.NICHEV * side };
     var vz = s.z - v.z;
-    return { x: v.x, z: v.z, yaw: vz > 0 ? Math.PI : 0, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.21) };
+    return { x: v.x, z: v.z, yaw: vz > 0 ? Math.PI : 0, pitch: Math.atan2(s.y - GEO.EYE, GEO.NICHEV + 0.21) };
   }
   var dir = s.face==="i" ? -1 : 1;                 // poste intérieur : le visiteur est sur l'axe, l œuvre est du côté +z
-  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? 0 : Math.PI, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // FACE-PROBE (p2-3-i-0) : 0 → +z, π → −z (le rayon central ne ment pas)
+  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(s.y-GEO.EYE, 1.7) };   // i → yaw π = +z (loi yawTable)
 }
 
 /* ---------- caméra : sauts de poste ---------- */
@@ -1086,8 +1087,8 @@ function step(dt){
     if (keys["arrowleft"]) yaw = normYaw(yaw + 1.7*dt);
     if (keys["arrowright"]) yaw = normYaw(yaw - 1.7*dt);
     if (f || r2){
-      var fx = Math.sin(yaw), fz = -Math.cos(yaw);         // loi caméra (ry) : avance = (sin ry, −cos ry)
-      var lx = -Math.cos(yaw), lz = -Math.sin(yaw);
+      var fx = -Math.sin(yaw), fz = -Math.cos(yaw);         // loi MESURÉE (yawTable) : avance = (−sin yaw, −cos yaw)
+      var lx = Math.cos(yaw), lz = -Math.sin(yaw);          // gauche = vue ∧ up
       var vx = fx*f + lx*r2, vz = fz*f + lz*r2, n = Math.hypot(vx,vz)||1, d = spdNow()*dt/n;
       var nx = pxCur + vx*d, nz = pzCur + vz*d;
       if (walkable(nx, pzCur)) pxCur = nx;
