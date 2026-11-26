@@ -1194,6 +1194,7 @@ window.__allees = {
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance }
                : { miss:true, o:[+cam.position.x.toFixed(2),+cam.position.y.toFixed(2),+cam.position.z.toFixed(2)], d:[+d.x.toFixed(3),+d.y.toFixed(3),+d.z.toFixed(3)], n:hitables.length }; },
+  sceneRef: function(){ return scene; },
   yawTable: function(){ var sx=cam.rotation.x, sy=cam.rotation.y, rows=[];
     for (var k=0;k<8;k++){ var yaw=k*Math.PI/4; var pp=0.0;
       cam.rotation.y = yaw; cam.rotation.x = -pp; cam.updateMatrixWorld(true);
