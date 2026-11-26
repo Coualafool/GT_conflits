@@ -814,7 +814,7 @@ function stationView(s){
     return { x: v.x, z: v.z, yaw: vz > 0 ? Math.PI : 0, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.21) };
   }
   var dir = s.face==="i" ? -1 : 1;                 // poste intérieur : le visiteur est sur l'axe, l œuvre est du côté +z
-  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? Math.PI : 0, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // loi MESURÉE (poseTest) : vue = −(sin yaw,·,cos yaw) → π = +z
+  return { x:s.x, z:s.z + dir*1.7, yaw: s.face==="i" ? 0 : Math.PI, pitch: Math.atan2(GEO.EYE-s.y, 1.7) };   // FACE-PROBE (p2-3-i-0) : 0 → +z, π → −z (le rayon central ne ment pas)
 }
 
 /* ---------- caméra : sauts de poste ---------- */
@@ -1193,6 +1193,16 @@ window.__allees = {
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance }
                : { miss:true, o:[+cam.position.x.toFixed(2),+cam.position.y.toFixed(2),+cam.position.z.toFixed(2)], d:[+d.x.toFixed(3),+d.y.toFixed(3),+d.z.toFixed(3)], n:hitables.length }; },
+  yawTable: function(){ var sx=cam.rotation.x, sy=cam.rotation.y, rows=[];
+    for (var k=0;k<8;k++){ var yaw=k*Math.PI/4; var pp=0.0;
+      cam.rotation.y = yaw; cam.rotation.x = -pp; cam.updateMatrixWorld(true);
+      var rc=new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(0,0), cam);
+      var d=rc.ray.direction; rows.push([+(yaw/Math.PI).toFixed(2), +d.x.toFixed(2), +d.y.toFixed(2), +d.z.toFixed(2)]); }
+    for (var q=0;q<4;q++){ var pitch=(q-1)*0.4;
+      cam.rotation.y = 0; cam.rotation.x = -pitch; cam.updateMatrixWorld(true);
+      var rc2=new THREE.Raycaster(); rc2.setFromCamera(new THREE.Vector2(0,0), cam);
+      var d2=rc2.ray.direction; rows.push(["p"+pitch.toFixed(1), +d2.x.toFixed(2), +d2.y.toFixed(2), +d2.z.toFixed(2)]); }
+    cam.rotation.x=sx; cam.rotation.y=sy; cam.updateMatrixWorld(true); return rows; },
   poseTest: function(ry, rx){ cam.rotation.y = ry; cam.rotation.x = rx; cam.updateMatrixWorld(true);
     var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion);
     return [+d.x.toFixed(3), +d.y.toFixed(3), +d.z.toFixed(3)]; },
