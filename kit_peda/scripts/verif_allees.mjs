@@ -263,7 +263,8 @@ await page.waitForTimeout(1300);
         await new Promise((res) => setTimeout(res, 80));
       }
       const hit = A.forwardHit();
-      if (!(hit && hit.key === s.key)) bad.push(s.key + "→" + (hit ? hit.key || hit.kind : "miss"));
+      const c1 = A.state();
+      if (!(hit && hit.key === s.key)) bad.push(s.key + "→" + (hit ? hit.key || hit.kind : "miss") + "@cam" + c1.x.toFixed(1) + "," + c1.z.toFixed(1) + " p" + (c1.pitch/Math.PI).toFixed(2) + " visé " + s.view.x.toFixed(1) + "," + s.view.z.toFixed(1));
     }
     return { n: sample.length, bad };
   });
