@@ -38,6 +38,8 @@ body.locked #cross{display:block}
 #nav button[aria-current="true"] b{color:var(--gold)}
 #nav button:hover,#nav button:focus-visible{border-color:var(--muted);outline:none}
 #nav button:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+#nav::after{content:"";position:absolute;inset:0 -1px 0 auto;width:34px;pointer-events:none;border-radius:0 12px 12px 0;
+  background:linear-gradient(90deg,transparent,rgba(16,12,8,.92))}   /* la puce coupée à droite = il y a la suite, ça se fait défiler */
 #say{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);
   background:rgba(16,12,8,.7);border-radius:8px;padding:2px 10px;opacity:0;transition:opacity .3s}
 #say.show{opacity:1}
@@ -731,7 +733,9 @@ PLAZAS.forEach(function(p){
 ALLEYS.forEach(function(k, ai){
   var face = ai===0 ? -1 : 1;                                   // ter : face extérieure nord ; les autres : paroi intérieure
   var zBand = alleyZ(ai) + face*(GEO.ALLEYW/2-0.13);
-  var rot = face===1 ? Math.PI/2 : -Math.PI/2;
+  // Le bandeau court LE LONG de la paroi (face ±z vers les visiteurs de l allée),
+  // il ne baille pas au fond du couloir : face=+1 → mur au-delà de l axe, regard +z → face −z.
+  var rot = face===1 ? Math.PI : 0;
   var t = tex(1200,110,function(x,w,h){
     x.fillStyle=LANE[k].t; x.font="700 54px system-ui";
     x.fillText("ALLÉE · " + TRACKS[k].name.toUpperCase(), 12, h*.66);
