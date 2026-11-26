@@ -1189,7 +1189,7 @@ window.__allees = {
     for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
     if (s) focusStation(s, instant); return !!s; },
   teleportSeg: teleportSeg, teleportPlaza: teleportPlaza, nudgeLook: nudgeLook, snapTo: snapTo,
-  forwardHit: function(){ cam.updateMatrixWorld(true); var d = new THREE.Vector3(0,0,-1).applyQuaternion(cam.quaternion).normalize();
+  forwardHit: function(){ cam.updateMatrixWorld(true); var rc0 = new THREE.Raycaster(); rc0.setFromCamera(new THREE.Vector2(0,0), cam); var d = rc0.ray.direction;   // mÊME chemin que yawTable (rayon central réel), plus de convention supposée
     var rc = new THREE.Raycaster(cam.position.clone(), d, 0.05, 12);
     var hit = rc.intersectObjects(hitables, false)[0];
     return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance }
