@@ -812,6 +812,9 @@ function stationView(s){
     var side = s.z <= 0 ? 1 : -1;
     var v = { x: s.x, z: s.z + GEO.NICHEV * side };
     var vz = s.z - v.z;
+    if (!s.curtain) {   // affiches de niche : face −x (normal mesuré) — le visiteur est dans la voie d entrée, il regarde +x.
+      return { x: s.x - 1.5, z: s.z, yaw: -Math.PI / 2, pitch: Math.atan2(GEO.EYE - s.y, 1.7) };
+    }
     return { x: v.x, z: v.z, yaw: vz > 0 ? Math.PI : 0, pitch: Math.atan2(GEO.EYE - s.y, GEO.NICHEV + 0.21) };   // d.y=−sin(pitch)
   }
   var dir = s.face==="i" ? -1 : 1;                 // poste intérieur : le visiteur est sur l'axe, l œuvre est du côté +z

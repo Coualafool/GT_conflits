@@ -183,7 +183,7 @@ await page.waitForTimeout(1300);
     const nicheViewOk = (s) => {
       const pz = pl0[s.plaza]; if (!pz) return false;
       if (Math.abs(s.view.z - s.z) > 1.0) return false;
-      return s.view.x >= pz.x0 - 0.05 && s.view.x <= pz.x1 + 0.05;
+      return s.view.x >= pz.x0 - 1.8 && s.view.x <= pz.x1 + 0.05;   // voie d entrée : on peut se tenir juste avant la porte
     };
     const badView = st.filter((s) => {
       if (s.kind === "curtain" || /^np/.test(s.key)) return !nicheViewOk(s);
