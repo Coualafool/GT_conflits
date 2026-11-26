@@ -129,7 +129,7 @@ await page.waitForTimeout(1300);
     for (const cur of cs) {
       const pz = pl[cur.plaza];
       if (Math.abs(cur.z - al[cur.ai].z) > 0.03) bad.push("rideau hors axe de porte A" + cur.ai);
-      if (Math.abs(cur.x - (A.nicheXabs ? A.nicheXabs(pz, cur.ai) + 0.11 : NaN)) > 0.03) bad.push("rideau décollé du mur A" + cur.ai);
+      if (Math.abs(cur.x - (A.nicheXabs ? A.nicheXabs(cur.plaza, cur.ai) + 0.11 : NaN)) > 0.03) bad.push("rideau décollé du mur A" + cur.ai);
     }
     for (const pz of pl) for (const n of pz.niches) {
       const grp = ps.filter((p) => p.niche && p.plaza === pz.j && p.ai === n.ai);
