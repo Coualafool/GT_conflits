@@ -217,7 +217,13 @@ await page.waitForTimeout(1300);
       let ok = 0; const miss = [];
       for (const s of st) {
         A.focus(s.key, true);
-        await new Promise((res) => setTimeout(res, 400));   // laisser la frame appliquer pose + pitch à la caméra
+        // le glide caméra (~900 ms) : on attend qu elle soit POSÉE avant de tirer le rayon
+        for (let w = 0; w < 24; w++) {
+          const c0 = A.state();
+          if (Math.hypot(c0.x - s.view.x, c0.z - s.view.z) < 0.06 && Math.abs(c0.pitch - s.view.pitch) < 0.02) break;
+          await new Promise((res) => setTimeout(res, 80));
+        }
+        await new Promise((res) => setTimeout(res, 120));
         let hit = null;
         for (let t = 0; t < 4 && !(hit && hit.key === s.key); t++) { hit = A.forwardHit ? A.forwardHit() : A.rayHit(0, 0); if (!(hit && hit.key === s.key)) await new Promise((res) => setTimeout(res, 150)); }
         const stt = A.state();
