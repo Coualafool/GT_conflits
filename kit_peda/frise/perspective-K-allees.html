@@ -615,8 +615,9 @@ function wrap2(ctx,text,maxW,maxL){
   if (cur) lines.push(cur); return lines;
 }
 function labelPlane(wpx,hpx,mw,texObj,x,y,z,rotY){
+  // FRONT uniquement : de dos, une inscription en miroir est une insulte — mieux vaut le mur nu.
   var m = new THREE.Mesh(new THREE.PlaneGeometry(mw, mw*hpx/wpx),
-        new THREE.MeshBasicMaterial({ map:texObj, side:THREE.DoubleSide }));
+        new THREE.MeshBasicMaterial({ map:texObj, side:THREE.FrontSide }));
   m.position.set(x,y,z); m.rotation.y = rotY||0; scene.add(m); return m;
 }
 function posterTex(p){
