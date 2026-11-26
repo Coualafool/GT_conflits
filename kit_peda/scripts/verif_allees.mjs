@@ -257,12 +257,9 @@ await page.waitForTimeout(1300);
     const sample = keys.filter((s, idx) => idx % 4 === 0).slice(0, 10);
     for (const s of sample) {
       A.focus(s.key, true);
-      for (let w = 0; w < 24; w++) {
-        const c0 = A.state();
-        if (Math.hypot(c0.x - s.view.x, c0.z - s.view.z) < 0.06 && Math.abs(c0.pitch - s.view.pitch) < 0.02) break;
-        await new Promise((res) => setTimeout(res, 80));
-      }
-      const hit = A.forwardHit();
+      // le glide caméra (~900 ms) : on suit le RAYON jusqu à la face attendue, pas le snap logique
+      let hit = null;
+      for (let t2 = 0; t2 < 16; t2++) { hit = A.forwardHit(); if (hit && hit.key === s.key) break; await new Promise((res) => setTimeout(res, 150)); }
       const c1 = A.state();
       if (!(hit && hit.key === s.key)) bad.push(s.key + "→" + (hit ? hit.key || hit.kind : "miss") + "@cam" + c1.x.toFixed(1) + "," + c1.z.toFixed(1) + " p" + (c1.pitch/Math.PI).toFixed(2) + " visé " + s.view.x.toFixed(1) + "," + s.view.z.toFixed(1));
     }
