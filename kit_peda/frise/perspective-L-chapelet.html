@@ -889,7 +889,7 @@ function step(dt){
     if (keys["arrowright"]) yaw = normYaw(yaw - 1.7*dt);
     if (f || r2){
       var fx = -Math.sin(yaw), fz = -Math.cos(yaw);         // loi MESURÉE (yawTable) : avance = (−sin yaw, −cos yaw)
-      var lx = Math.cos(yaw), lz = -Math.sin(yaw);          // gauche = vue ∧ up
+      var lx = -Math.cos(yaw), lz = Math.sin(yaw);          // gauche (up × avant) — MESURÉ : à yaw 0 on regarde −z, gauche = −x. (l'ancien signe était inversé : D allait à gauche, plainte utilisateur 2026-11-27 ; loi identique au musée J)
       var vx = fx*f + lx*r2, vz = fz*f + lz*r2, n = Math.hypot(vx,vz)||1, d = spdNow()*dt/n;
       var nx = pxCur + vx*d, nz = pzCur + vz*d;
       if (walkable(nx, pzCur)) pxCur = nx;

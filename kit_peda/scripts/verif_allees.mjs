@@ -312,6 +312,42 @@ await page.waitForTimeout(1300);
     e33.open && /^(np)?33-/.test(e33.key || "") && e33.near < 5, `clé=${e33.key} ouvert=${e33.open} dist=${e33.near.toFixed(1)}m`);
 }
 
+/* ---------- K7b : pas latéraux ZQSD — D à droite, Q à gauche, Z vers l'avant, mesurés en marche réelle ----------
+   Le bug signalé par l'utilisateur (2026-11-27 : « je presse D, je vais à gauche ») passait au travers
+   de TOUTES les gates : aucune ne marchait vraiment. Cette gate mesure le déplacement sous verrou souris,
+   la loi étant évaluée contre le yaw mesuré (pas d'axe codé en dur) — elle REJETTE le vecteur inversé. */
+{
+  await dismiss();
+  await page.mouse.click(720, 450);   // geste utilisateur vérifié -> verrou souris sur la toile
+  let lk = false;
+  for (let i = 0; i < 25 && !lk; i++) { await page.waitForTimeout(100); lk = await page.evaluate(() => !!window.__allees.state().locked); }
+  let wmsg = "verrou souris indisponible sur ce poste — direction du pas NON mesurée";
+  if (lk) {
+    wmsg = await page.evaluate(async () => {
+      const C = window.__allees, pl = C.plazas()[2], al = C.alleys()[1];
+      const YAW = 1.1;   // yaw oblique arbitraire : on teste la LOI, pas un axe
+      const go = async (k) => {
+        C.snapTo({ x: (pl.x0 + pl.x1) / 2, z: al.z, yaw: YAW, pitch: 0 }, true);
+        const a = C.state();
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: k }));
+        await new Promise((r) => setTimeout(r, 450));
+        document.dispatchEvent(new KeyboardEvent("keyup", { key: k }));
+        await new Promise((r) => setTimeout(r, 90));
+        const b = C.state();
+        const dx = b.x - a.x, dz = b.z - a.z, y = b.yaw;
+        return { dist: Math.hypot(dx, dz), right: dx * Math.cos(y) - dz * Math.sin(y), fwd: -dx * Math.sin(y) - dz * Math.cos(y) };
+      };
+      const d = await go("d"), q = await go("q"), z = await go("z");
+      document.exitPointerLock();
+      return `ok=${d.dist > 0.3 && q.dist > 0.3 && z.dist > 0.3 && d.right > 0.2 && q.right < -0.2 && z.fwd > 0.2} ` +
+        `D->droite=${d.right.toFixed(2)}m Q->gauche=${q.right.toFixed(2)}m Z->avant=${z.fwd.toFixed(2)}m pas=${d.dist.toFixed(1)}/${q.dist.toFixed(1)}/${z.dist.toFixed(1)}m`;
+    });
+  }
+  await page.waitForTimeout(300);
+  log("(K7b) pas latéraux ZQSD mesurés en marche réelle : D va à droite, Q à gauche, Z vers l'avant (yaw oblique)",
+    wmsg.startsWith("ok=true"), wmsg);
+}
+
 /* ---------- K8 : accessoires optionnels — le kit props se dégrade en douceur ---------- */
 {
   const pr = await page.evaluate(() => window.__allees.props());
