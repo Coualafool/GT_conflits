@@ -176,9 +176,8 @@ await page.waitForTimeout(1500);
   let wmsg = "verrou souris indisponible sur ce poste — direction du pas NON mesurée";
   if (lk) {
     wmsg = await page.evaluate(async () => {
-      // sonde de vie de la boucle rAF : un snapTo glissé doit se terminer de lui-même.
-      const hu0 = C.hubs ? C.hubs()[3] : null;
       const C = window.__chapelet, hu = C.hubs()[3];
+      // sonde de vie de la boucle rAF : un snapTo glissé doit se terminer de lui-même.
       const YAW = 1.1;   // yaw oblique arbitraire : on teste la LOI, pas un axe
       C.snapTo({ x: 0, z: (hu.z0 + hu.z1) / 2, yaw: YAW, pitch: 0 }, false);
       await new Promise((r) => setTimeout(r, 800));
@@ -191,6 +190,10 @@ await page.waitForTimeout(1500);
         await new Promise((r) => setTimeout(r, 120));
         const a = C.state();
         document.dispatchEvent(new KeyboardEvent("keydown", { key: k }));
+        await new Promise((r) => setTimeout(r, 250));
+        const m0 = C.state();
+        const dbg = "kd=" + !!(C.keys && C.keys[k]) + " panel=" + m0.panel + " lock=" + m0.locked + " glide=" + m0.gliding +
+          " walkR=" + C.walkable(a.x + Math.cos(a.yaw) * 0.5, a.z - Math.sin(a.yaw) * 0.5);
         let dx = 0, dz = 0, tries = 0;
         while (tries < 120) {
           tries++;
@@ -203,12 +206,12 @@ await page.waitForTimeout(1500);
         await new Promise((r) => setTimeout(r, 120));
         const b = C.state();
         const fdx = b.x - a.x, fdz = b.z - a.z, y = b.yaw;
-        return { dist: Math.hypot(fdx, fdz), right: fdx * Math.cos(y) - fdz * Math.sin(y), fwd: -fdx * Math.sin(y) - fdz * Math.cos(y) };
+        return { dist: Math.hypot(fdx, fdz), right: fdx * Math.cos(y) - fdz * Math.sin(y), fwd: -fdx * Math.sin(y) - fdz * Math.cos(y), dbg };
       };
       const d = await go("d"), q = await go("q"), z = await go("z");
       document.exitPointerLock();
       const ok = rafAlive && d.dist > 0.3 && q.dist > 0.3 && z.dist > 0.3 && d.right > 0.2 && q.right < -0.2 && z.fwd > 0.2;
-      return `ok=${ok} raf=${rafAlive ? "vivant" : "MORTE"} ` +
+      return `ok=${ok} raf=${rafAlive ? "vivant" : "MORTE"} D[${d.dbg}] Q[${q.dbg}] Z[${z.dbg}] ` +
         `D->droite=${d.right.toFixed(2)}m Q->gauche=${q.right.toFixed(2)}m Z->avant=${z.fwd.toFixed(2)}m pas=${d.dist.toFixed(1)}/${q.dist.toFixed(1)}/${z.dist.toFixed(1)}m`;
     });
   }

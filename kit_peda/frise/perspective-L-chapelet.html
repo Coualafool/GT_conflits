@@ -957,6 +957,7 @@ welEl.addEventListener("click", function(e){ if (e.target===welEl) welEl.classLi
 
 /* ---------- API de harnais : inventaires, géométrie dérivée, caméra, raycast ---------- */
 window.__chapelet = {
+  keys: keys,   // référence vivante — harnais : prouver que les keydown arrivent
   state: function(){ return { x:pxCur, z:pzCur, yaw:yaw, pitch:pitch, pos:posAt(pxCur,pzCur),
       locked:!!document.pointerLockElement, gliding:!!glide, reduced:reduced(), panel:panelEl.__key||null,
       aa:{ msaa:!!(renderer.getContext().getContextAttributes()||{}).antialias, aniso:MAX_ANISO, pxu:PX_UNIT, maxTex:renderer.capabilities.maxTextureSize },
