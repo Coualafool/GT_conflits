@@ -326,20 +326,35 @@ await page.waitForTimeout(1300);
     wmsg = await page.evaluate(async () => {
       const C = window.__allees, pl = C.plazas()[2], al = C.alleys()[1];
       const YAW = 1.1;   // yaw oblique arbitraire : on teste la LOI, pas un axe
+      C.snapTo({ x: (pl.x0 + pl.x1) / 2, z: al.z, yaw: YAW, pitch: 0 }, false);
+      await new Promise((r) => setTimeout(r, 800));
+      const rafAlive = !C.state().gliding;
+      // PASSER LES TOUCHES piloté par les IMAGES : on maintient la touche jusqu'à ce que la position
+      // ait bougé (le rendu SwiftShader tourne parfois à ~1 image/s — une fenêtre de temps fixe
+      // ne prenait 0 image et mesurait 0,00 m, ce n'était PAS le bug de direction).
       const go = async (k) => {
         C.snapTo({ x: (pl.x0 + pl.x1) / 2, z: al.z, yaw: YAW, pitch: 0 }, true);
+        await new Promise((r) => setTimeout(r, 120));
         const a = C.state();
         document.dispatchEvent(new KeyboardEvent("keydown", { key: k }));
-        await new Promise((r) => setTimeout(r, 450));
+        let dx = 0, dz = 0, tries = 0;
+        while (tries < 120) {
+          tries++;
+          await new Promise((r) => setTimeout(r, 100));
+          const b = C.state();
+          dx = b.x - a.x; dz = b.z - a.z;
+          if (Math.hypot(dx, dz) >= 0.35) break;
+        }
         document.dispatchEvent(new KeyboardEvent("keyup", { key: k }));
-        await new Promise((r) => setTimeout(r, 90));
+        await new Promise((r) => setTimeout(r, 120));
         const b = C.state();
-        const dx = b.x - a.x, dz = b.z - a.z, y = b.yaw;
-        return { dist: Math.hypot(dx, dz), right: dx * Math.cos(y) - dz * Math.sin(y), fwd: -dx * Math.sin(y) - dz * Math.cos(y) };
+        const fdx = b.x - a.x, fdz = b.z - a.z, y = b.yaw;
+        return { dist: Math.hypot(fdx, fdz), right: fdx * Math.cos(y) - fdz * Math.sin(y), fwd: -fdx * Math.sin(y) - fdz * Math.cos(y) };
       };
       const d = await go("d"), q = await go("q"), z = await go("z");
       document.exitPointerLock();
-      return `ok=${d.dist > 0.3 && q.dist > 0.3 && z.dist > 0.3 && d.right > 0.2 && q.right < -0.2 && z.fwd > 0.2} ` +
+      const ok = rafAlive && d.dist > 0.3 && q.dist > 0.3 && z.dist > 0.3 && d.right > 0.2 && q.right < -0.2 && z.fwd > 0.2;
+      return `ok=${ok} raf=${rafAlive ? "vivant" : "MORTE"} ` +
         `D->droite=${d.right.toFixed(2)}m Q->gauche=${q.right.toFixed(2)}m Z->avant=${z.fwd.toFixed(2)}m pas=${d.dist.toFixed(1)}/${q.dist.toFixed(1)}/${z.dist.toFixed(1)}m`;
     });
   }
