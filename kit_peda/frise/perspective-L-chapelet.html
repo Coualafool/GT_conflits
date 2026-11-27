@@ -216,7 +216,9 @@ var GEO = { WALLH:3.1, EYE:1.62, PITCH:1.45, BODY:0.55, PART:0.3,
   COLSP:8.0,          // pas entre colonnes de couloirs (le plan)
   HALFW:3.1,          // demi-largeur hors-tout d'une salle
   RD:5.6, NK:1.8,     // profondeur salle / profondeur boyau (murs inclus)
-  DOORW:1.15,         // demi-largeur d'ouverture de porte (les portes percent le mur au centre du couloir)
+  DOORW:1.00,         // demi-largeur d'ouverture de porte = demi-largeur du couloir (la porte NE DÉPASSE plus l'empreinte praticable : pas de recoin de mur marchable)
+  RPW:{w2:1.85,h2:1.29,w1:1.4,h1:.96},   // FORMAT SALLE : une salle = un fait = une œuvre qui DOMINE la paroi
+                       // (~×2 des formats muraux I/J, dimensionnée pour le plein 1,2→3,05 m côté porte).
   STUB:1.7,           // souchon d'entrée et de sortie d'un segment
   HD:9.0,             // profondeur d'un carrefour (hall doré)
   HALLX:15.6,         // demi-largeur du hall : bords extérieurs des couloirs + 0,5
@@ -341,7 +343,7 @@ function nicheRowY(gid, ri){ var g = NICHE_R[gid] || { y0:1.05, pitch:0.6 }; ret
       var zt = zTop - GEO.STUB;
       rects.push({ x0:x-1.0, x1:x+1.0, z0:zt, z1:zTop, kind:"stub", seg:j, ai:ai2 });
       for (var q=0;q<ids.length;q++){
-        var i = ids[q], zb = zt - GEO.RD, lv = lvOf(i,k), w0 = lv===2 ? PW.w2 : PW.w1;
+        var i = ids[q], zb = zt - GEO.RD, lv = lvOf(i,k), w0 = lv===2 ? GEO.RPW.w2 : GEO.RPW.w1;
         rooms.push({ i:i, brin:k, ai:ai2, seg:j, x:x, zt:zt, zb:zb });
         rects.push({ x0:x-(GEO.HALFW-0.3), x1:x+(GEO.HALFW-0.3), z0:zb+0.15, z1:zt-0.15, kind:"room", seg:j, ai:ai2, i:i });
         rects.push({ x0:x-1.0, x1:x+1.0, z0:zb-GEO.PART, z1:zb+GEO.PART, kind:"door", seg:j, ai:ai2 });
@@ -349,9 +351,9 @@ function nicheRowY(gid, ri){ var g = NICHE_R[gid] || { y0:1.05, pitch:0.6 }; ret
         /* LA PORTE EST AU CENTRE DU MUR DU FOND : une affiche au centre flotterait dans la nuit
            du boyau (prouvé capture L-room). Le plein est sur les côtés — l'affiche y pend,
            alternée ; on la lit avant de passer la porte, jamais dedans. */
-        var pxs = x + ((q%2) ? 1 : -1)*(GEO.DOORW + (GEO.HALFW-0.1-GEO.DOORW)/2);
+        var pxs = x + ((q%2) ? 1 : -1)*(GEO.DOORW + 0.2 + ((GEO.HALFW-0.05) - (GEO.DOORW+0.2))/2);
         posters.push({ kind:"poster", mode:"room", i:i, brin:k, ai:ai2, seg:j, niche:false,
-          x:pxs, z:zb+0.17, y:YA, lv:lv, w:w0, h:(lv===2?PW.h2:PW.h1), rotY:0, scale:1 });
+          x:pxs, z:zb+0.17, y:YA, lv:lv, w:w0, h:(lv===2?GEO.RPW.h2:GEO.RPW.h1), rotY:0, scale:1 });
         if (q < ids.length-1)
           rects.push({ x0:x-1.0, x1:x+1.0, z0:zb-GEO.NK, z1:zb, kind:"neck", seg:j, ai:ai2 });
         zt = zb - GEO.NK;
@@ -580,6 +582,23 @@ function curtainTexL(brin){
 }
 
 /* ---------- murs : affiches, rideaux, stèles, vitrines maillés ---------- */
+/* Spot peint, pas spot lampé : une flaque radiale additive derrière chaque affiche de salle
+   (MeshBasic, zéro lampe de plus) — la salle devient le cadre lumineux du fait. La texture est
+   calculée au ratio exact de la flaque : le dégradé meurt à zéro sur les bords, pas de rectangle. */
+function poolTex(wpx, hpx){
+  var cv = document.createElement("canvas"); cv.width=wpx; cv.height=hpx;
+  var c2 = cv.getContext("2d"); var g = c2.createRadialGradient(wpx/2,hpx/2,0,wpx/2,hpx/2,Math.min(wpx,hpx)/2);
+  g.addColorStop(0,"rgba(255,226,176,.55)"); g.addColorStop(.45,"rgba(255,214,150,.22)");
+  g.addColorStop(.8,"rgba(255,204,130,.05)"); g.addColorStop(1,"rgba(255,200,125,0)");
+  c2.fillStyle=g; c2.fillRect(0,0,wpx,hpx);
+  var t = new THREE.CanvasTexture(cv); return t;
+}
+var POOL_R = {};
+function poolFor(w,h){
+  var k = w.toFixed(2)+"x"+h.toFixed(2);
+  if (!POOL_R[k]){ var wpx = Math.round(w*PX_UNIT), hpx = Math.round(h*PX_UNIT); POOL_R[k] = poolTex(wpx,hpx); }
+  return POOL_R[k];
+}
 var hitables = [];
 posters.forEach(function(p){
   var mesh = new THREE.Mesh(new THREE.PlaneGeometry(p.w, p.h),
@@ -590,6 +609,15 @@ posters.forEach(function(p){
   frame.position.set(p.x, p.y, p.z); frame.rotation.y = p.rotY;
   frame.translateZ(-.02);
   scene.add(frame);
+  if (p.mode === "room"){
+    // la flaque s'étend surtout EN HAUTEUR (la largeur utile du plein est bornée par porte+angle) ;
+    // le dégradé vaut 0 sur les bords : aucun dbordement visible sur la porte ou l'angle du mur.
+    var pool = new THREE.Mesh(new THREE.PlaneGeometry(p.w+0.35, p.h+1.15),
+      new THREE.MeshBasicMaterial({ map:poolFor(p.w+0.35, p.h+1.15), transparent:true,
+        blending:THREE.AdditiveBlending, depthWrite:false }));
+    pool.position.set(p.x, p.y+0.12, p.z-0.025); pool.rotation.y = p.rotY;   // contre le mur, sous l'œuvre : la peint
+    scene.add(pool);
+  }
   p.mesh = mesh; hitables.push(mesh);
   mesh.userData = { kind:"poster", i:p.i, brin:p.brin, key:p.key };
 });
