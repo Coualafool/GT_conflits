@@ -202,8 +202,9 @@ body.locked #hBack{opacity:.35}
    viennent de perspective-K-data.js (window.__K_ALLIES — mêmes 7 moments que « Les Allées », même doctrine
    éditoriale justifiée). La page ne possède que la géométrie et la caméra.
    Doctrine : temps qui DESCEND (−z) ; une salle = un fait ; les couloirs sont SCELLÉS entre eux —
-   la seule traversée d’une piste à l’autre est le hall doré d’un carrefour. Couloir vide = conduit nu
-   avec rideau (silence du document, jamais un mur caché). Niches/stèles = faits de la fenêtre du moment.
+   la seule traversée d’une piste à l’autre est le hall doré d’un carrefour. PAS DE FAIT = PAS D’ALLÉE
+   (choix utilisateur 2026-11-27 : « quand historiquement il n’y a rien à dire, ne pas mettre d’allée ») —
+   colonne muette sur une fenêtre = mur scellé + massif plein ; on suit chaque chemin là où il existe. Niches/stèles = faits de la fenêtre du moment.
    Conventions harnais : API window.__chapelet (postes, inventaires, caméra, raycast, GEO). */
 "use strict";
 function fallbackOn(){ document.getElementById("fallback").style.display="flex"; document.getElementById("welcome").classList.add("gone"); }
@@ -273,7 +274,7 @@ var factsByBrin = {};
 BRINS.forEach(function(k){ factsByBrin[k] = []; });
 for (var ei=0; ei<EV.length; ei++) factsByBrin[brOf(ei)].push(ei);
 
-var HUBS = [], SEGS = [], rooms = [], posters = [], curtains = [], cases = [], rects = [], blockers = [];
+var HUBS = [], SEGS = [], rooms = [], posters = [], curtains = [], cases = [], rects = [], blockers = [], fillers = [];
 var NICHE_R = [];
 function layoutNicheRows(items, U, gid){                     // grille de stèle (loi mesurée K : vraies largeurs LV, ≤3 rangées)
   var best = null;
@@ -314,32 +315,36 @@ function nicheRowY(gid, ri){ var g = NICHE_R[gid] || { y0:1.05, pitch:0.6 }; ret
       return factsByBrin[k].filter(function(i){ return segOfYL(EV[i][0])===j; })
         .sort(function(a,b){ return EV[a][0]-EV[b][0] || a-b; });
     });
-    var depth = 4.8;                                         // gageure : un segment jamais trop court pour un conduit
+    /* LA CHEMINÉE N'EXISTE QUE LÀ OÙ LE RÉCIT S'EST DIT. Colonne sans fait dans la fenêtre =
+       aucune allée, aucune porte, massif plein. Exception architecturale unique : un segment muet
+       des quatre côtés (2026 → aujourd'hui) SOUDE les deux halls en une descente dorée — sinon le
+       dernier hall serait physiquement atteignable par personne. */
+    var alive = per.map(function(ids){ return ids.length > 0; });
+    var depth = 0;
     for (var ai=0; ai<COLS.length; ai++){
+      if (!alive[ai]) continue;
       var n = per[ai].length;
-      var d = n ? (2*GEO.STUB + n*GEO.RD + (n-1)*GEO.NK) : (2*GEO.STUB + 2.6);
-      if (d > depth) depth = d;
+      depth = Math.max(depth, 2*GEO.STUB + n*GEO.RD + (n-1)*GEO.NK);
     }
+    var merged = depth === 0;
+    if (merged) depth = 0.6;                                   // seuil de la descente (union continue, z strict)
     var zBot = zTop - depth;
-    SEGS.push({ j:j, y0:SEGW[j].ya, y1:SEGW[j].yb, zTop:zTop, zBot:zBot, depth:depth });
+    SEGS.push({ j:j, y0:SEGW[j].ya, y1:SEGW[j].yb, zTop:zTop, zBot:zBot, depth:depth, alive:alive, merged:merged });
+    if (merged) rects.push({ x0:-GEO.HALLX+0.3, x1:GEO.HALLX-0.3, z0:zBot, z1:zTop, kind:"descente", seg:j });
     var hj = HUBS.length;
     HUBS.push({ h:hj, kind: j<WIN.length ? "moment" : "fin", win: j<WIN.length ? WIN[j] : null,
                 z0:zBot, z1:zBot-GEO.HD, label: j<WIN.length ? WIN[j].label : "Aujourd’hui" });
-    /* chaînes : une salle par fait, dans l'ordre du temps ; chaîne vide = conduit nu + rideau */
+    /* chaînes : une salle par fait, dans l'ordre du temps ; muet = massif, jamais un corridor */
     for (var ai2=0; ai2<COLS.length; ai2++){
       var k = COLS[ai2], ids = per[ai2], x = xcOf(ai2);
+      if (merged) continue;                                    // descente dorée : aucune allée de brin
+      if (!alive[ai2]){ fillers.push({ x:x, z0:zBot, z1:zTop, seg:j, ai:ai2 }); continue; }
       /* PONTS DE PORTE — le colliseur est une UNION de rectangles, et chaque rectangle se retire
          de 0,15 du mur : sans pont, la TOUSSEUR du mur (0,30) reste morte au droit de chaque porte
          = mur invisible dans l'ouverture (208 bandes prouvées au balayage 5 cm, plainte utilisateur
          « impossible d'entrer dans une allée », 2026-11-27). Emprise exacte du couloir (±1,0). */
       rects.push({ x0:x-1.0, x1:x+1.0, z0:zTop-GEO.PART, z1:zTop+GEO.PART, kind:"door", seg:j, ai:ai2 });
       rects.push({ x0:x-1.0, x1:x+1.0, z0:zBot-GEO.PART, z1:zBot+GEO.PART, kind:"door", seg:j, ai:ai2 });
-      if (!ids.length){
-        rects.push({ x0:x-1.0, x1:x+1.0, z0:zBot, z1:zTop, kind:"conduit", seg:j, ai:ai2 });
-        curtains.push({ kind:"curtain", mode:"conduit", i:null, brin:k, ai:ai2, seg:j,
-          x:x, z:(zTop+zBot)/2, y:CH/2+0.05, rotY:0, w:Math.min(CW, 1.9), lv:null });
-        continue;
-      }
       var zt = zTop - GEO.STUB;
       rects.push({ x0:x-1.0, x1:x+1.0, z0:zt, z1:zTop, kind:"stub", seg:j, ai:ai2 });
       for (var q=0;q<ids.length;q++){
@@ -461,20 +466,26 @@ box(2*GEO.HALLX+1.0, GEO.WALLH, 2*GEO.PART, 0, GEO.WALLH/2, 0.5, mWall);        
 box(2*GEO.HALLX+1.0, GEO.WALLH, 2*GEO.PART, 0, GEO.WALLH/2, ZMIN-0.5, mWall);         // paroi du « maintenant »
 
 /* parois d'un carrefour : mur plein à 4 portes (largeur 2×DOORW) + linteaux — pleines aux deux rives du temps */
-function hubWall(zc, solid){
-  if (solid){ box(2*GEO.HALLX, GEO.WALLH, GEO.PART, 0, GEO.WALLH/2, zc, mPart); return; }
-  var spans = [[-GEO.HALLX, xcOf(0)-GEO.DOORW]];
-  for (var g=0; g<COLS.length-1; g++) spans.push([xcOf(g)+GEO.DOORW, xcOf(g+1)-GEO.DOORW]);
-  spans.push([xcOf(COLS.length-1)+GEO.DOORW, GEO.HALLX]);
+function hubWall(zc, alive){
+  var open = [];
+  if (alive) COLS.forEach(function(k, ai){ if (alive[ai]) open.push(ai); });
+  if (!open.length){ box(2*GEO.HALLX, GEO.WALLH, GEO.PART, 0, GEO.WALLH/2, zc, mPart); return; }  // pleine
+  var spans = [], edge = -GEO.HALLX;
+  open.forEach(function(ai){
+    spans.push([edge, xcOf(ai)-GEO.DOORW]); edge = xcOf(ai)+GEO.DOORW;
+    box(2*GEO.DOORW, GEO.WALLH-2.2, GEO.PART, xcOf(ai), GEO.WALLH-(GEO.WALLH-2.2)/2, zc, mPart);  // linteau : trou 2,20
+  });
+  spans.push([edge, GEO.HALLX]);
   spans.forEach(function(sp){
     var w = sp[1]-sp[0];
     if (w > 0.02) box(w, GEO.WALLH, GEO.PART, (sp[0]+sp[1])/2, GEO.WALLH/2, zc, mPart);
   });
-  COLS.forEach(function(k, ai){
-    box(2*GEO.DOORW, GEO.WALLH-2.2, GEO.PART, xcOf(ai), GEO.WALLH-(GEO.WALLH-2.2)/2, zc, mPart);  // linteau : porte = trou 2,20
-  });
 }
-HUBS.forEach(function(hu){ hubWall(hu.z0); hubWall(hu.z1); });
+HUBS.forEach(function(hu){
+  var up = hu.h > 0 ? SEGS[hu.h-1] : null, dn = hu.h < SEGS.length ? SEGS[hu.h] : null;
+  if (up && !up.merged) hubWall(hu.z0, up.alive);              // rive d'entrée / soudure : rien à percer
+  if (dn && !dn.merged) hubWall(hu.z1, dn.alive);              // rive « maintenant » idem
+});
 
 /* salles : murs latéraux, parois de bout à porte centrale + linteau, boyaux */
 function roomWalls(rm){
@@ -499,11 +510,12 @@ SEGS.forEach(function(sg){
       [x-1.0, x+1.0].forEach(function(xw){
         box(0.2, GEO.WALLH, qRooms[q].zb - qRooms[q+1].zt - 0.4, xw, GEO.WALLH/2, (qRooms[q].zb + qRooms[q+1].zt)/2, mPart);
       });
-    if (!qRooms.length)                                            // conduit nu : parois + rideau au milieu
-      [x-1.2, x+1.2].forEach(function(xw){
-        box(0.2, GEO.WALLH, sg.zTop-sg.zBot, xw, GEO.WALLH/2, (sg.zTop+sg.zBot)/2, mPart);
-      });
   });
+});
+
+/* MASSIFS : le volume des allées que le récit n'a pas dites — on le voit bouché, on n'y entre pas. */
+fillers.forEach(function(fl){
+  box(2*GEO.HALFW-0.2, GEO.WALLH, (fl.z1-fl.z0)-0.02, fl.x, GEO.WALLH/2, (fl.z0+fl.z1)/2, mPart);
 });
 
 /* rails de sol colorés (la grammaire : la couleur, c'est le couloir) + or des halls */
@@ -523,6 +535,7 @@ HUBS.forEach(function(hu){
 /* éclairage : une source par chaîne et par hall (jamais par salle — plafond de lights WebGL) */
 SEGS.forEach(function(sg){
   COLS.forEach(function(k, ai){
+    if (sg.merged || !sg.alive[ai]) return;                    // pas de lampe dans un massif ni une descente
     var pl = new THREE.PointLight(0xf6d9a4, 8, Math.max(9, sg.depth*0.6), 1.5);
     pl.position.set(xcOf(ai), GEO.WALLH-0.3, (sg.zTop+sg.zBot)/2); scene.add(pl);
   });
@@ -1002,7 +1015,7 @@ window.__chapelet = {
   cols: function(){ return COLS.map(function(k, ai){ return { ai:ai, k:k, x:xcOf(ai) }; }); },
   hubs: function(){ return HUBS.map(function(hu){ return { h:hu.h, kind:hu.kind, label:hu.label, z0:hu.z0, z1:hu.z1,
       win: hu.win ? { y0:hu.win.y0, y1:hu.win.y1, ids:hu.win.ids.slice() } : null }; }); },
-  segs: function(){ return SEGS.map(function(s){ return { j:s.j, y0:s.y0, y1:s.y1, zTop:s.zTop, zBot:s.zBot, depth:s.depth }; }); },
+  segs: function(){ return SEGS.map(function(s){ return { j:s.j, y0:s.y0, y1:s.y1, zTop:s.zTop, zBot:s.zBot, depth:s.depth, alive:s.alive, merged:!!s.merged }; }); },
   rooms: function(){ return rooms.map(function(r){ return { i:r.i, brin:r.brin, ai:r.ai, seg:r.seg, x:r.x, zt:r.zt, zb:r.zb }; }); },
   rects: function(){ return rects.slice(); }, blockers: function(){ return blockers.slice(); },
   posters: function(){ return posters.map(function(p){ return { i:p.i, brin:p.brin, ai:p.ai, mode:p.mode, seg:p.seg===undefined?null:p.seg,

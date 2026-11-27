@@ -65,7 +65,7 @@ await page.waitForTimeout(1500);
   });
   const cov = inv.unique === inv.corpus && inv.dup === 0 && inv.posters === inv.corpus;
   log("(L1) un fait = exactement une affiche (salle ou stèle) ; carrefours et segments complets",
-    cov && inv.hubs === 9 && inv.segs === 8 && inv.steleCurtains === inv.expSC && inv.cases === 7,
+    cov && inv.hubs === 9 && inv.segs === 8 && inv.steleCurtains === inv.expSC && inv.cases === 7 && inv.conduits === 0,
     `corpus=${inv.corpus} affiches=${inv.posters} (${inv.roomPosters} salles + ${inv.stelePosters} stèles) rideaux=${inv.steleCurtains} conduits=${inv.conduits} vitrines=${inv.cases} hubs=${inv.hubs} segments=${inv.segs} dup=${inv.dup}`);
 }
 
@@ -76,6 +76,14 @@ await page.waitForTimeout(1500);
     C.cols().forEach((col) => {
       for (let h = 0; h < H.length - 1; h++) {
         const sg = S[h];
+        if (sg.merged) {                       // soudure « aujourd'hui » : le centre doit passer
+          if (!C.walkable(0, (sg.zTop + sg.zBot) / 2)) bad.push("descente@" + h);
+          continue;
+        }
+        if (!sg.alive[col.ai]) {               // loi 2026-11-27 : muet = scellé — une porte fantôme ici est une FAILLE
+          if (C.walkable(col.x, sg.zTop - 0.2) || C.walkable(col.x, sg.zBot + 0.2)) bad.push(col.k + "@h" + h + ":porte-fantome");
+          continue;
+        }
         for (let z = sg.zTop; z >= sg.zBot; z -= 0.5)
           if (!C.walkable(col.x, z) && !C.walkable(col.x, z + 0.3) && !C.walkable(col.x, z - 0.3)) bad.push(col.k + "@" + z.toFixed(1));
       }
@@ -283,6 +291,12 @@ await page.waitForTimeout(1500);
     C.snapTo({ x: p.x, z: p.z + 2.2, yaw: 0, pitch: -0.05 }, true);   // dans la salle, face à l'affiche sur le plein
   });
   await shot("L-room");
+  await page.evaluate(() => {
+    const C = window.__chapelet;
+    const hu = C.hubs()[0], col = C.cols().find((c) => !C.segs()[0].alive[c.ai]);   // une colonne scellée dès l'entrée
+    C.snapTo({ x: col.x, z: hu.z1 + 1.6, yaw: 0, pitch: -0.03 }, true);              // face au mur scellé, portes voisines ouvertes
+  });
+  await shot("L-sealed");
 }
 
 /* ---------- L7 : zéro exception de page ---------- */

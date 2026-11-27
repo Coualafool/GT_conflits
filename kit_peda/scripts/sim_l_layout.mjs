@@ -33,7 +33,7 @@ const wl1 = page.indexOf("var glide = null;");
 if (wl0 < 0 || wl1 < 0) { console.error("L0 FATAL — loi de marche introuvable dans la page"); process.exit(1); }
 vm.runInContext(page.slice(wl0, wl1), ctx);
 
-const L = vm.runInContext("({ GEO, COLS, BRINS, WIN, SEGW, segOfYL, inWin, HUBS, SEGS, rooms, posters, curtains, cases, rects, blockers, allStations, factsByBrin, xcOf, nicheRowY, NICHE_R, ZMIN })", ctx);
+const L = vm.runInContext("({ GEO, COLS, BRINS, WIN, SEGW, segOfYL, inWin, HUBS, SEGS, rooms, posters, curtains, cases, rects, blockers, fillers, allStations, factsByBrin, xcOf, nicheRowY, NICHE_R, ZMIN })", ctx);
 const walkable = vm.runInContext("walkable", ctx);
 const EV = vm.runInContext("EV", ctx);
 
@@ -77,9 +77,20 @@ L.SEGS.forEach((sg) => L.COLS.forEach((k, ai) => {
   if (!n) conduitExpected++;
 }));
 const steleCurt = L.curtains.filter((c) => c.mode === "stele").length;
-const conduit = L.curtains.filter((c) => c.mode === "conduit").length;
 ok(steleCurt === steleCurtExpected, "L4a rideaux de stèle == silences de fenêtre", steleCurt + " vs attendu " + steleCurtExpected);
-ok(conduit === conduitExpected, "L4b conduits nus == couloirs vides de segment", conduit + " vs attendu " + conduitExpected);
+/* L4b nouvelle loi (utilisateur 2026-11-27) : muet = PAS d'allée — zéro conduit, zéro rideau de
+   conduit, un massif par cellule muette, et la seule soudure possible est le segment tout-muet
+   (descente dorée vers « aujourd'hui »), jamais atteignable sinon. */
+const conduit = L.curtains.filter((c) => c.mode === "conduit").length;
+const silentCells = L.SEGS.reduce((s, sg) => sg.merged ? s : s + sg.alive.filter((a) => !a).length, 0);
+const mergedSegs = L.SEGS.filter((sg) => sg.merged);
+ok(conduit === 0 && L.rects.filter((r) => r.kind === "conduit").length === 0 && L.curtains.length === steleCurt,
+   "L4b zéro conduit nu : rien à dire = pas d'allée", "conduits=" + conduit);
+ok(L.fillers.length === silentCells && mergedSegs.every((sg) => sg.alive.every((a) => !a)),
+   "L4d massif plein sous chaque cellule muette (" + silentCells + ")", "massifs=" + L.fillers.length);
+ok(mergedSegs.length <= 1 && mergedSegs.every((sg) =>
+   walkable(0, (sg.zTop + sg.zBot) / 2)),
+   "L4e descente dorée : « aujourd'hui » reste atteignable", "soudure(s)=" + mergedSegs.length);
 ok(L.cases.length === 7, "L4c une vitrine par moment commun", "trouvé " + L.cases.length);
 
 /* L5 : géométrie saine — aucune dimension négative, z strictement décroissant */
@@ -156,12 +167,22 @@ const hallMid = L.HUBS[3];
 ok(walkable(0, (hallMid.z0 + hallMid.z1) / 2), "L10c le centre d'un hall est praticable");
 ok(!walkable(0, -1e3) && !walkable(0, 1e3), "L10d hors du bâtiment = pas de marche");
 /* le visiteur passe-t-il le mur de hall ? (porte à xc, linteau) — point médian de l'embrasure */
-let doorOk = true;
+/* L10e portes EXACTES : franchissables là où l'allée existe, scellées là où le récit se tait.
+   (une porte fantôme = trou dans le mur vers un massif ; une allée sans porte = piège au seuil) */
+let doorMissing = [], doorPhantom = [];
 L.HUBS.forEach(function(hu){ L.COLS.forEach(function(k, ai){
-  if (hu.h > 0 && !walkable(L.xcOf(ai), hu.z0)) doorOk = false;                    // porte proche : sauf rive d'entrée
-  if (hu.h < L.HUBS.length-1 && !walkable(L.xcOf(ai), hu.z1)) doorOk = false;      // porte lointaine : sauf rive « maintenant »
+  [[hu.h > 0 ? L.SEGS[hu.h-1] : null, hu.z0], [hu.h < L.HUBS.length-1 ? L.SEGS[hu.h] : null, hu.z1]]
+  .forEach(function(pair){
+    const sg = pair[0], z = pair[1];
+    if (!sg || sg.merged) return;                               // rives du temps / soudure : rien à vérifier
+    const open = sg.alive[ai];
+    if (open && !walkable(L.xcOf(ai), z)) doorMissing.push("h" + hu.h + "/" + k);
+    if (!open && walkable(L.xcOf(ai), z)) doorPhantom.push("h" + hu.h + "/" + k);
+  });
 }); });
-ok(doorOk, "L10e les 8 portes de chaque carrefour sont franchissables");
+ok(doorMissing.length === 0 && doorPhantom.length === 0,
+   "L10e portes exactes : franchissables où l'allée existe, mur scellé où le récit se tait",
+   "absentes=" + doorMissing.join(",") + " fantômes=" + doorPhantom.join(","));
 
 /* L11 : progression du temps dans la chaîne — une salle plus profonde = date plus tardive */
 let orderBad = "";
