@@ -173,13 +173,13 @@ await page.waitForTimeout(1500);
   await page.evaluate(() => {
     const C = window.__chapelet;
     const hu = C.hubs()[3];
-    C.snapTo({ x: -4, z: hu.z0 - 4.4, yaw: 0, pitch: 0 }, true);   // dans le hall, face à la stèle palestinienne
+    C.snapTo({ x: -4, z: hu.z0 - 1.6, yaw: 0, pitch: -0.08 }, true);   // debout dans le hall, la stèle palestinienne en face à 1,5 m
   });
   await shot("L-hub3");
   await page.evaluate(() => {
     const C = window.__chapelet;
-    const r = C.rooms()[8];
-    C.snapTo({ x: r.x, z: r.zb + 2.4, yaw: 0, pitch: -0.05 }, true);
+    const p = C.posters().filter((q) => q.mode === "room")[8];
+    C.snapTo({ x: p.x, z: p.z + 2.2, yaw: 0, pitch: -0.05 }, true);   // dans la salle, face à l'affiche sur le plein
   });
   await shot("L-room");
 }

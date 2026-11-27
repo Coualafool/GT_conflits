@@ -37,7 +37,7 @@ body.locked #cross{display:block}
 #nav button[aria-current="true"] b{color:var(--gold)}
 #nav button:hover,#nav button:focus-visible{border-color:var(--muted);outline:none}
 #nav button:focus-visible{box-shadow:0 0 0 2px var(--gold)}
-#say{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);
+#say{position:absolute;top:118px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);
   background:rgba(16,12,8,.7);border-radius:8px;padding:2px 10px;opacity:0;transition:opacity .3s}
 #say.show{opacity:1}
 #badge{position:absolute;top:10px;left:10px;max-width:min(360px,60vw);background:rgba(16,12,8,.86);border:1px solid var(--gold);
@@ -338,8 +338,12 @@ function nicheRowY(gid, ri){ var g = NICHE_R[gid] || { y0:1.05, pitch:0.6 }; ret
         var i = ids[q], zb = zt - GEO.RD, lv = lvOf(i,k), w0 = lv===2 ? PW.w2 : PW.w1;
         rooms.push({ i:i, brin:k, ai:ai2, seg:j, x:x, zt:zt, zb:zb });
         rects.push({ x0:x-(GEO.HALFW-0.3), x1:x+(GEO.HALFW-0.3), z0:zb+0.15, z1:zt-0.15, kind:"room", seg:j, ai:ai2, i:i });
+        /* LA PORTE EST AU CENTRE DU MUR DU FOND : une affiche au centre flotterait dans la nuit
+           du boyau (prouvé capture L-room). Le plein est sur les côtés — l'affiche y pend,
+           alternée ; on la lit avant de passer la porte, jamais dedans. */
+        var pxs = x + ((q%2) ? 1 : -1)*(GEO.DOORW + (GEO.HALFW-0.1-GEO.DOORW)/2);
         posters.push({ kind:"poster", mode:"room", i:i, brin:k, ai:ai2, seg:j, niche:false,
-          x:x, z:zb+0.17, y:YA, lv:lv, w:w0, h:(lv===2?PW.h2:PW.h1), rotY:0, scale:1 });
+          x:pxs, z:zb+0.17, y:YA, lv:lv, w:w0, h:(lv===2?PW.h2:PW.h1), rotY:0, scale:1 });
         if (q < ids.length-1)
           rects.push({ x0:x-1.0, x1:x+1.0, z0:zb-GEO.NK, z1:zb, kind:"neck", seg:j, ai:ai2 });
         zt = zb - GEO.NK;
@@ -657,7 +661,7 @@ SEGS.forEach(function(sg){
       x.fillStyle=LANE[k].t; x.font="700 54px system-ui";
       x.fillText("COULOIR · " + TRACKS[k].name.toUpperCase() + " · " + yrOf(sg.y0)+"–"+yrOf(sg.y1), 12, h*.66);
     });
-    labelPlane(1200,110, 5.6, t, xcOf(ai), 2.82, zt0+0.02, 0);
+    labelPlane(1200,110, 5.6, t, xcOf(ai), 2.82, zt0+0.14, 0);   // face extérieure du mur d'entrée (0,20 d'épaisseur)
   });
 });
 HUBS.forEach(function(hu){
@@ -668,7 +672,7 @@ HUBS.forEach(function(hu){
     x.fillStyle= hu.kind==="entrée" ? "#ece6da" : "#d2a63f";
     x.font="700 " + (hu.kind==="entrée" ? 52 : 62) + "px system-ui"; x.textAlign="center";
     x.fillText(msg, w/2, h*.66);
-  }), 0, 2.8, hu.z1+0.12, 0);
+  }), 0, 2.8, hu.z1+0.18, 0);   // hors du mur (0,30 d'épaisseur) — à +0,12 il était mangé par le mur
 });
 
 /* ---------- panneau : fait de couloir, stèle de carrefour, rideau, vitrine — regard croisé ---------- */
