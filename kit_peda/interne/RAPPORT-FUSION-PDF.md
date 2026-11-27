@@ -1,6 +1,6 @@
 # Rapport de fusion — corpus « outil péda n°5 » + corpus du kit
 
-Généré par `scripts/gen_pdf_corpus.py`. 79 événements datés lus dans le PDF, 53 retenus, 26 écartés comme doublons d'un fait du kit (similarité ≥ 0,50 sur texte normalisé, fenêtre ±1,2 an).
+Généré par `scripts/gen_pdf_corpus.py`. 91 événements datés lus dans le PDF, 65 retenus, 26 écartés comme doublons d'un fait du kit (similarité ≥ 0,50 sur texte normalisé, fenêtre ±1,2 an).
 
 ## Doublons écartés
 
@@ -49,38 +49,50 @@ Généré par `scripts/gen_pdf_corpus.py`. 79 événements datés lus dans le PD
 - 1922 : Palestine passe du contrôle ottoman à un mandat britannique attribué par la SDN
 
 ### Palestine / territoires palestiniens
+- 1917-1948 : mandat britannique
 - 1933 : Allemagne Nazi
 - 1933 : accords de Hoavaro [!] facilitant l'arrivée, notamment, en Palestine de 53.000 juifs allemands socioéco. aisés
 - 1933 : nouvelle révolte anti-coloniale et anti-immigration juive : répression sévère
+- 1922-1947 : mouvements migratoires vers la Palestine (origine polonaise en grande partie) [?]
 - 1936 : accroissement de l'autosuffisance économique du Yichouv
+- 1935-1939 : grandes révoltes / grèves arabes en Palestine mandataire
 - 1937 : Plan Peel : 1er proposition britannique de partition de la Palestine mandataire en 3 zones (juive, arabe, sacr
 - 1938 : Nuit de Cristal
 - 1938 : conférence d'Évian
 - 1939 : L'opposition arabe anti-britannique est presque totalement anéantie
 - 1939 : Les arabes se voient notamment promettre l'indépendance à venir
 - 1939 : la population juive représentante [!] 30 % de la population palestinienne
+- GM2 : GM2 : génocide juif
+- 1940-1948 : les terroristes sionistes [!]
 - 1947-49 : effondrement de l'économie palestinienne
 - nov. 1947 : début de la guerre dite d'indépendance [libellé partiellement tronqué]
+- 1948-1949 : les 5 guerres arabes [?]
 - 1949 : Israël prend le contrôle de 78 % du territoire de la Palestine mandataire dont la majeure partie de Jérusalem
 - nov. 1949-1951 : accueil de 500.000 juifs issus d'Europe et de pays arabes
 - 1958 : développement de résistance arabe. Souvent sous forme d'actions terroristes
 
 ### Yichouv / Israël
+- NOTE (bandeau) : La population historiquement présente en Palestine depuis des siècles (appelée l'ancien Yichouv) vit en bonne 
 - 1967 : l'ONU adopte la résolution 242 qui doit forcer Israël à quitter les 70.000 km² [unité incertaine sur le docume
 - 1967 : les pays arabes et l'OLP refusent de négociations avec Israël
 - 1972 : Attentat palestinien aux J.O. de Munich
 - 1973 : accords de paix de Genève
 - 1974 : reconnaissance de l'OLP par l'ONU comme représentante de l'État palestinien
 - 1976 : la Pal. devient membre de la ligue des États arabes
+- 1970-1990 : multiplication d'attentats et actes terroristes envers Israël – forte répression
 - 1982 : affrontements violents entre les partisans de l'OLP et du Hamas : plus de 800 morts [!]
 - 1987 : répression violente de la part de Tsahal
+- 1987-1993 : la Intifada (1ère)
 - 1995 : des factions palestiniennes hostiles aux accords multiplient les attentats
 - 2000 : Visite controversée d'A. Sharon sur l'esplanade des Mosquées de Jérusalem
 - 2002 : construction d'un mur de sécurité
+- 2000-2005 : 2e Intifada
 - 2003 : nouvelle tentative d'un accord de paix (Genève), échec des négociations
 - 2004 : renforcement sécuritaire des frontières israéliennes, création de zones tampons, contrôle des frontières et de
 
 ### Le territoire
+- NOTE (bandeau) : Palestine = lieu clé des 3 religions monothéistes / influence ottomane, coexistence pacifique
+- [date non lisible] : construction d'une barrière de 65 km de long destinée à bloquer toute circulation de personnes ou de marchandi
 - 2006 : violents affrontements entre les partisans du Fatah (ancien OLP [!]) et du Hamas
 - 2009 : B. Netanyahou arrive au pouvoir. Encouragement de la colonisation
 - 2011 : Dôme de fer, système antimissile

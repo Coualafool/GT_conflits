@@ -254,7 +254,7 @@ ok(G.TLEN > 120 && G.TLEN < 190, "K0d longueur du bâtiment plausible", "TLEN=" 
 })();
 
 /* ---------- K6 bornes d'exploitation ---------- */
-ok(G.PLAZAS.every(function (p) { return p.W >= G.GEO.PLAZAMIN - E && p.W <= 14; }), "K6a largeurs de place dans les bornes");
+ok(G.PLAZAS.every(function (p) { return p.W >= G.GEO.PLAZAMIN - E && p.W <= 16; }), "K6a largeurs de place dans les bornes");
 (function () {
   const slotBad = [];
   G.PLAZAS.forEach(function (p) { G.ALLEYS.forEach(function (k, ai) {

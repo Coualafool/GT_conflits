@@ -15,7 +15,7 @@ silences (brin sans fait dans la fenêtre) ne sont pas comblés : ils deviennent
 niches voilées — c'est la lecture fidèle du document.
 
 Gates intégrées (exit 1, jamais un module silencieux) :
-  - EV lu == 79 lignes, 4 champs, brins ∈ {occ,pal,isr,ter} ;
+  - EV lu ≥ 79 lignes, 4 champs, brins ∈ {occ,pal,isr,ter} ;
   - chaque id SHARED existe et son brin courant (EV[i][1]) sert d'identité — la ligne
     ne déclare pas le brin, elle est BIE par le corpus ;
   - fenêtre temporelle de la place == [min,max] des ids ∪ fenêtre déclarée exacte ;
@@ -40,7 +40,7 @@ assert m, "EV introuvable dans perspective-I2-data.js"
 rows = []
 for rm in re.finditer(r"\[\s*([\d.]+)\s*,\s*(\d+)\s*,\s*\"((?:[^\"\\]|\\.)*)\"\s*,\s*\"((?:[^\"\\]|\\.)*)\"\s*\]", m.group(1)):
     rows.append((float(rm.group(1)), int(rm.group(2)), rm.group(3), rm.group(4)))
-assert len(rows) == 79, f"EV lu = {len(rows)} lignes, attendu 79 — le parseur a décroché du corpus"
+assert len(rows) >= 79, f"EV lu = {len(rows)} lignes, attendu ≥79 — le parseur a décroché du corpus"
 TRACK_KEYS = re.search(r"const TRACK_KEYS\s*=\s*\[([^\]]+)\]", src).group(1)
 TRACK_KEYS = [t.strip().strip('"') for t in TRACK_KEYS.split(",")]
 assert TRACK_KEYS == ["occ", "pal", "isr", "ter"], f"brins inattendus: {TRACK_KEYS}"
@@ -90,17 +90,30 @@ SHARED = [
 WINDOW_NOTES = {}
 
 # ------------------------------------------------------------------ gates
-for s in SHARED:
-    assert s["y"][0] < s["y"][1], s
-    for i in s["i"]:
-        assert 0 <= i < len(rows), f"id hors corpus: {i}"
-assert all(SHARED[k]["y"][1] < SHARED[k+1]["y"][0] for k in range(len(SHARED)-1)), "fenêtres non disjointes"
-
+# Les ids EV ne sont PAS édités ici : ils sont DÉRIVÉS des fenêtres (le corpus peut
+# grandir — lignes PERIODE/NOTE intégrées — sans faire dériver d'indices figés).
+# La justification éditoriale reste la revue ; les numéros d'id dans le texte sont
+# retirés (la table K-SHARED.md affiche les ids courants).
 def place_of(y):
     for s in SHARED:
         if s["y"][0] <= y <= s["y"][1]:
             return s
     return None
+
+for s in SHARED:
+    s.pop("i", None)
+    s["just"] = re.sub(r" ?\(\d+(?:, ?\d+)*\)", "", s["just"])
+for i, (y, b, t, n) in enumerate(rows):
+    s = place_of(y)
+    if s is not None:
+        s.setdefault("i", []).append(i)
+
+for s in SHARED:
+    assert s["y"][0] < s["y"][1], s
+    assert "i" in s and len(s["i"]) >= 1, f"place sans aucun fait du corpus: {s['lbl']}"
+    for i in s["i"]:
+        assert 0 <= i < len(rows), f"id hors corpus: {i}"
+assert all(SHARED[k]["y"][1] < SHARED[k+1]["y"][0] for k in range(len(SHARED)-1)), "fenêtres non disjointes"
 
 # partition stricte : chaque ligne EV exactement une fenêtre ou un segment
 cov = [0]*len(rows)

@@ -6,19 +6,21 @@ const NOW=2024.54;
 const TRACK_KEYS=["occ","pal","isr","ter"];
 const TRACKS={
   occ:{key:"occ",name:"Influence occidentale / décisions de l'ONU",short:"Occidental",c:"#8a5a3c",cLight:"rgba(138,90,60,.10)",count:16},
-  pal:{key:"pal",name:"Palestine / territoires palestiniens",short:"Palestinien",c:"#2e7d5b",cLight:"rgba(46,125,91,.10)",count:22},
-  isr:{key:"isr",name:"Yichouv / Israël",short:"Israélien",c:"#2f6f9e",cLight:"rgba(47,111,158,.10)",count:26},
-  ter:{key:"ter",name:"Le territoire",short:"Territoire",c:"#a06417",cLight:"rgba(160,100,23,.10)",count:15}
+  pal:{key:"pal",name:"Palestine / territoires palestiniens",short:"Palestinien",c:"#2e7d5b",cLight:"rgba(46,125,91,.10)",count:28},
+  isr:{key:"isr",name:"Yichouv / Israël",short:"Israélien",c:"#2f6f9e",cLight:"rgba(47,111,158,.10)",count:30},
+  ter:{key:"ter",name:"Le territoire",short:"Territoire",c:"#a06417",cLight:"rgba(160,100,23,.10)",count:17}
 };
 const ERAS=[{a:1888,b:1917,label:"Empires & promesses",c:"#6e6459"},{a:1917,b:1948,label:"Mandat & partages",c:"#8a6d3b"},{a:1948,b:1967,label:"Guerres & exils",c:"#3d6b8a"},{a:1967,b:1993,label:"Occupation & Intifadas",c:"#8a3d3d"},{a:1993,b:2005,label:"Oslo & effondrement",c:"#4d7a4d"},{a:2005,b:2023,label:"Blocus & lois",c:"#6b4d7a"},{a:2023,b:2026.1,label:"Guerre à Gaza",c:"#994d1a"}];
 const ERAS_DOC={
   occ:[{a:1890.54,b:1901.21,label:"Empires & promesses",c:"#8a5a3c"},{a:1901.21,b:1911.87,label:"Mandat & partages",c:"#8a5a3c"},{a:1911.87,b:1922.56,label:"Diplomatie contestée",c:"#8a5a3c"}],
   pal:[{a:1929.54,b:1939.21,label:"Société & révoltes",c:"#2e7d5b"},{a:1939.21,b:1948.87,label:"Nakba & dépossessions",c:"#2e7d5b"},{a:1948.87,b:1958.56,label:"Intifadas & après",c:"#2e7d5b"}],
-  isr:[{a:1964.54,b:1977.87,label:"Yichouv & migrations",c:"#2f6f9e"},{a:1977.87,b:1991.21,label:"État & guerres",c:"#2f6f9e"},{a:1991.21,b:2004.56,label:"Droite & territoire",c:"#2f6f9e"}],
-  ter:[{a:2004.54,b:2011.21,label:"Dépendances & barrières",c:"#a06417"},{a:2011.21,b:2017.87,label:"Blocus & boucliers",c:"#a06417"},{a:2017.87,b:2024.56,label:"Lois & guerre",c:"#a06417"}]
+  isr:[{a:1890.58,b:1928.57,label:"Yichouv & migrations",c:"#2f6f9e"},{a:1928.57,b:1966.55,label:"État & guerres",c:"#2f6f9e"},{a:1966.55,b:2004.56,label:"Droite & territoire",c:"#2f6f9e"}],
+  ter:[{a:1890.58,b:1935.23,label:"Dépendances & barrières",c:"#a06417"},{a:1935.23,b:1979.89,label:"Blocus & boucliers",c:"#a06417"},{a:1979.89,b:2024.56,label:"Lois & guerre",c:"#a06417"}]
 };
 const EV=[
   [1890.54,0,"naissance du sionisme",""],
+  [1890.58,2,"La population historiquement présente en","Note du document — alestine depuis des siècles (appelée l'ancien Yichouv) vit en bonne entente avec les autres peuples."],
+  [1890.58,3,"Palestine = lieu clé des","Note du document — religions monothéistes / influence ottomane, coexistence pacifique"],
   [1896.54,0,"Th. Herzl publie Der Judenstaat",""],
   [1897.54,0,"1er congrès sioniste de Bâle",""],
   [1898.04,0,"1ère Aliya",""],
@@ -35,11 +37,14 @@ const EV=[
   [1920.54,0,"début des confrontations entre Juifs et Arabes [?]",""],
   [1922.54,0,"Palestine passe du contrôle ottoman à un mandat britannique attribué par la SDN",""],
   [1929.54,1,"émeutes anti-juives basées sur des fausses rumeurs complotistes",""],
+  [1933.04,1,"mandat britannique","Période du document — mandat britannique"],
   [1933.54,1,"Allemagne Nazi",""],
   [1933.54,1,"accords de Hoavaro [!] facilitant l'arrivée, notamment, en","alestine de 53.000 juifs allemands socioéco. aisés"],
   [1933.54,1,"nouvelle révolte anti-coloniale et anti-immigration juive : répression sévère",""],
+  [1935.04,1,"mouvements migratoires vers la","Période du document — alestine (origine polonaise en grande partie) [?]"],
   [1936.54,1,"Grande révolte Arabe anti-britannique et anti-juive",""],
   [1936.54,1,"accroissement de l'autosuffisance économique du Yichouv",""],
+  [1937.54,1,"grandes révoltes / grèves arabes en Palestine mandataire","Période du document — grandes révoltes / grèves arabes en Palestine mandataire"],
   [1937.54,1,"Plan Peel : 1er proposition britannique de partition de la","alestine mandataire en 3 zones (juive, arabe, sacrée). Refus des différents côtés"],
   [1938.54,1,"Nuit de Cristal",""],
   [1938.54,1,"conférence d'Évian",""],
@@ -47,11 +52,14 @@ const EV=[
   [1939.54,1,"L'opposition arabe anti-britannique est presque totalement anéantie",""],
   [1939.54,1,"Les arabes se voient notamment promettre l'indépendance à venir",""],
   [1939.54,1,"la population juive représentante [!] 30 % de la population palestinienne",""],
+  [1942.04,1,"GM2 : génocide juif","Période du document — GM2 : génocide juif"],
+  [1944.54,1,"les terroristes sionistes [!]","Période du document — les terroristes sionistes [!]"],
   [1947.54,1,"Plan de partage de la","alestine par l'ONU. Israël obtiendrait 57 % du territoire de la Palestine mandataire"],
   [1947.54,1,"Nakba (=catastrophe)","le nettoyage ethnique. 800.000 arabes sont chassés de leur terre par l'armée israélienne"],
   [1947.54,1,"effondrement de l'économie palestinienne",""],
   [1947.88,1,"début de la guerre dite d'indépendance [libellé partiellement tronqué]",""],
   [1948.54,1,"Indépendance d'Israël",""],
+  [1949.04,1,"les 5 guerres arabes [?]","Période du document — les 5 guerres arabes [?]"],
   [1949.54,1,"Israël prend le contrôle de","8 % du territoire de la Palestine mandataire dont la majeure partie de Jérusalem"],
   [1950.54,1,"loi du retour",""],
   [1950.88,1,"accueil de 500.000 juifs issus d'Europe et de pays arabes",""],
@@ -66,9 +74,11 @@ const EV=[
   [1974.54,2,"reconnaissance de l'OLP par l'ONU comme représentante de l'État palestinien",""],
   [1976.54,2,"la Pal. devient membre de la ligue des États arabes",""],
   [1978.54,2,"1er accord de paix de","amp David entre Israël et l'Egypte"],
+  [1980.54,2,"multiplication d'attentats et actes terroristes envers Israël – forte répression","Période du document — multiplication d'attentats et actes terroristes envers Israël – forte répression"],
   [1982.54,2,"affrontements violents entre les partisans de l'OLP et du Hamas : plus de 800 morts [!]",""],
   [1987.54,2,"nombreuses violences perpétrées à l'égard des","uifs dans la bande de Gaza et en Cisjordanie + émergence du Hamas comme faction politique islamiste"],
   [1987.54,2,"répression violente de la part de Tsahal",""],
+  [1990.54,2,"la Intifada (1ère)","Période du document — la Intifada (1ère)"],
   [1993.54,2,"Accords d'Oslo",""],
   [1995.54,2,"Accords d'Oslo II : les territoires palestiniens sont divisés en 3 zones",""],
   [1995.54,2,"Yasser Arafat accepte la partition temporaire de la Palestine en 3 zones [?]",""],
@@ -78,11 +88,13 @@ const EV=[
   [1996.54,2,"échec des mises en application des accords d'Oslo",""],
   [2000.54,2,"Visite controversée d'A. Sharon sur l'esplanade des Mosquées de Jérusalem",""],
   [2002.54,2,"construction d'un mur de sécurité",""],
+  [2003.04,2,"2e Intifada","Période du document — 2e Intifada"],
   [2003.54,2,"nouvelle tentative d'un accord de paix","Genève), échec des négociations"],
   [2004.54,2,"Mort de Yasser Arafat, remplacé par Mahmoud Abbas",""],
   [2004.54,2,"évacuation des 21 colonies juives de peuplement implantées à Gaza et des","implantées en Cisjordanie après 38 ans d'occupation [date à vérifier : l'évacuation de Gaza est datée 2005 sur la frise voisine]"],
   [2004.54,2,"renforcement sécuritaire des frontières israéliennes, création de zones tampons, contrôle","des frontières et de l'espace maritime et aérien"],
   [2004.54,3,"Gaza est dépendante d'Israël en ce qui concerne l'eau, l'électricité et les moyens de communication",""],
+  [2004.54,3,"construction d'une barrière de","5 km de long destinée à bloquer toute circulation de personnes ou de marchandises à des fins militaires [date non lisible sur le document — position 2004 éditoriale]"],
   [2005.54,3,"Israël instaure un blocus sur","aza en représailles à l'arrivée du Hamas"],
   [2006.54,3,"Le Hamas remporte les élections à Gaza, tandis que le Fatah gère la Cisjordanie",""],
   [2006.54,3,"violents affrontements entre les partisans du","atah (ancien OLP [!]) et du Hamas"],

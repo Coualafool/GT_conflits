@@ -169,7 +169,7 @@ body.locked #hBack{opacity:.35}
 <div id="welcome">
   <div class="box">
     <h1>Les Allées du temps</h1>
-    <p class="lead">Quatre couloirs parallèles, un par fil du document « Outil péda » — 79 faits datés,
+    <p class="lead">Quatre couloirs parallèles, un par fil du document « Outil péda » — <span id="nFaits">91</span> faits datés,
       de 1890 à aujourd’hui. Le temps avance vers la droite. Chaque couloir ne raconte qu’une piste :
       <b>d’ordinaire, on n’y croise personne.</b> Les sept places dorées sont les seuls moments où les
       quatre récits se trouvent au même endroit — et souvent, trois des quatre s’y taisent :
@@ -188,7 +188,7 @@ body.locked #hBack{opacity:.35}
       <a class="alt" href="perspective-I2-pdf.html">Préférer la tresse déroulée</a>
     </div>
     <p class="rm"><kbd>ZQSD</kbd>/<kbd>WASD</kbd> marcher · souris regarder · <kbd>E</kbd> ouvrir une affiche ·
-      <kbd>Échap</kbd> relâcher — ou <kbd>Tab</kbd> pour parcourir les 79 faits sans souris.
+      <kbd>Échap</kbd> relâcher — ou <kbd>Tab</kbd> pour parcourir tous les faits sans souris.
       Le clavier suffit à tout voir : chaque poste déplace la caméra et ouvre sa fiche
       (mode « sans animation » du système : sauts instantanés, souris jamais verrouillée d’office).</p>
   </div>
@@ -234,6 +234,8 @@ var LANE = { pal:{t:"#7ed3ab"}, isr:{t:"#8ec6ee"}, occ:{t:"#e2a979"}, ter:{t:"#e
 var GOLD = "#d2a63f";
 var WALLC = 0x2d2820, PARTC = 0x322c24, FLOORC = 0x1a1611, CEILC = 0x120e0a, BG = 0x0f0b07;
 var PW = { w2:.92, h2:.64, w1:.7, h1:.48 };                    // encodage LV = TAILLE, jamais teinte ni effacement
+var _nf = (typeof document !== "undefined") ? document.getElementById("nFaits") : null;
+if (_nf) _nf.textContent = String(EV.length);   // le chiffre d'accueil suit le corpus (le sim node n'a pas de DOM)
 var CW = 0.95, CH = 2.3, YA = 1.58, YB = 2.3;                  // rows A hauteur d'yeux / B au-dessus ; rideau sol→au-dessus des rangées
 
 /* ---------- helpers locaux (aucun nom partagé avec les modules de données) ---------- */
@@ -435,20 +437,26 @@ function nicheSlot(p, ai){
 var NICHE_R = [];                                                     // géométrie de rangée par groupe (nicheRowY lit la sienne)
 function layoutNicheRows(items, U, gid){                              // grille de niche remplie dans l'ordre du temps,
   var best = null;                                                    // colonnes selon la largeur du creneau, puis scale
-  [1,2,3].forEach(function(cols){
-    if (cols*(0.7+0.10) - 0.10 + 0.16 > 2*U) return;
+  var wMax = 0, hMax = 0;                                             // vraies dimensions LV (0,7 était le lvisse du lv1 :
+  items.forEach(function(t){                                          // les lv2 font 0,92 et chevauchaient au-delà de 9 pièces)
+    wMax = Math.max(wMax, (t.lv===2?PW.w2:PW.w1)); hMax = Math.max(hMax, (t.lv===2?PW.h2:PW.h1)); });
+  [1,2,3,4].forEach(function(cols){
+    if (cols*(wMax+0.10) - 0.10 + 0.16 > 2*U) return;
     var nrows = Math.ceil(items.length/cols); if (nrows > 3) return;
     var s = 1;
     for (var attempt=0; attempt<14; attempt++){                       // la rangee la plus pleine decide
       var maxc = Math.min(cols, items.length - (nrows-1)*cols);
-      var hMax = 0; items.forEach(function(t){ hMax = Math.max(hMax, (t.lv===2?PW.h2:PW.h1)); });
-      if (maxc*(0.7*s) + (maxc-1)*0.10 + 0.16 <= 2*U && hMax*s + 0.06 < 0.70) break;
+      if (maxc*(wMax*s) + (maxc-1)*0.10 + 0.16 <= 2*U && hMax*s + 0.06 < 0.70) break;
       s *= 0.9;
     }
     var cellW = 2*U/cols, pitch = nrows===1 ? 0.55 : Math.min(0.72, 1.55/(nrows-1));
     if (!best || s > best.scale) best = { cols:cols, rows:nrows, scale:s, cellW:cellW, pitch:pitch };
   });
-  if (!best) best = { cols:1, rows:Math.min(3, items.length), scale:0.5, cellW:2*U, pitch:0.55 };
+  if (!best){                                                      // filet de sécurité : colonnes assez nombreuses pour ≤3 rangées,
+    var fbC = Math.max(1, Math.ceil(items.length/3));               // JAMAIS empiler 10 affiches vers le plafond
+    var fbR = Math.ceil(items.length/fbC);
+    best = { cols:fbC, rows:fbR, scale:0.5, cellW:2*U/fbC, pitch: fbR===1 ? 0.55 : Math.min(0.6, 1.55/(fbR-1)) };
+  }
   NICHE_R[gid] = { y0:1.34, pitch:best.pitch };
   items.forEach(function(t, q){
     var ri = Math.floor(q/best.cols), ci = q % best.cols;

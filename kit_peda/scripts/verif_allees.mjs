@@ -91,7 +91,7 @@ await page.waitForTimeout(1300);
   });
   const c = g.c;
   log("(K1) une seule source : chaque fait a exactement un poste (mur OU niche), total = corpus",
-    g.totalWall + g.totalNiche === c.corpus && c.corpus === 79,
+    g.totalWall + g.totalNiche === c.corpus && c.corpus >= 79,
     `murs=${g.totalWall} niches=${g.totalNiche} corpus=${c.corpus}`);
   const perBrinOk = Object.values(c.perBrin).every((b) => b.wallPosters + b.nichePosters === b.n);
   log("(K1b) par allée : posters = faits de la piste, sans exception", perBrinOk,

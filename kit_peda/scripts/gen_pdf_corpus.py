@@ -52,16 +52,59 @@ def parse_md():
                 if norm(n)[:14] in norm(m.group(1)):
                     track = k
             continue
+        mn = re.match(r"^- NOTE \(piste (\d)\)\s*:\s*«\s*(.+?)\s*»", line)
+        if mn:  # NOTE de bandeau rattachée à une piste → prologue du couloir, en tête d'axe
+            events.append({"t": None, "track": TK[int(mn.group(1)) - 1],
+                           "raw": mn.group(2), "date": "NOTE (bandeau)", "kind": "N"})
+            continue
+        mp = re.match(r"^PERIODE\s*:\s*(.+)$", line)
+        if mp and track is not None:
+            e = parse_periode(mp.group(1).strip(), track)
+            if e:
+                events.append(e)
+            else:
+                print(f"  période écartée (hors axe daté) : {mp.group(1)[:70]}")
+            continue
         if not line.startswith("| ") or track is None:
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) != 2 or cells[0] in ("Date",) or set(cells[0]) <= set("- "):
             continue
         t = parse_date(cells[0])
+        if t is None and "non lisible" in cells[0]:
+            # ligne sans date lisible : position éditoriale 2004 (contexte adjacent), marqué tel
+            events.append({"t": 2004.54, "track": track,
+                           "raw": cells[1] + " [date non lisible sur le document — position 2004 éditoriale]",
+                           "date": cells[0], "kind": ""})
+            continue
         if t is None:
             continue
-        events.append({"t": t, "track": track, "raw": cells[1], "date": cells[0]})
+        events.append({"t": t, "track": track, "raw": cells[1], "date": cells[0], "kind": ""})
+    axis = min(e["t"] for e in events if e["t"] is not None)
+    for e in events:
+        if e["t"] is None:
+            e["t"] = round(axis + 0.04, 2)   # prologue : tout au début de l'axe
     return events
+
+def parse_periode(inner, track):
+    """Ligne PERIODE du document → événement daté au MILIEU de la période (fidèle au texte)."""
+    if inner.startswith("GM2"):
+        return {"t": 1942.04, "track": track, "raw": inner, "date": "GM2", "kind": "P"}
+    m = re.match(r"^(\d{4})\s*[–-]\s*(\d{2}|\d{4})\s*:\s*(.+)$", inner)
+    if m:
+        a = int(m.group(1)); b = m.group(2)
+        b = int(b) if len(b) == 4 else int(str(a)[:2] + b.zfill(2))
+        if b < a: b = a
+        return {"t": round((a + b) / 2 + (7 - 0.5) / 12, 2), "track": track,
+                "raw": m.group(3), "date": f"{a}-{b}", "kind": "P"}
+    m = re.search(r"(\d{4})\s*[–-]\s*(\d{2,4})", inner)
+    if m:
+        t = parse_date(m.group(0))
+        if t is None or t < 1886:
+            return None                      # avant l'axe daté du document → hors corpus
+        return {"t": t, "track": track, "raw": inner[:m.start()].rstrip(" :.,;"),
+                "date": m.group(0), "kind": "P"}
+    return None
 
 def parse_date(cell):
     nums = re.findall(r"\d{4}", cell)
@@ -188,6 +231,10 @@ def main():
     rows = []
     for e in pdf_sorted:
         title, desc = split_title(e["raw"])
+        if e.get("kind") == "P":
+            desc = "Période du document — " + (desc or title)
+        elif e.get("kind") == "N":
+            desc = "Note du document — " + (desc or title)
         rows.append(f'  [{e["t"]},{oi[e["track"]]},"{jsq(title)}","{jsq(desc)}"]')
     tmin = round(pdf_sorted[0]["t"] - 2, 2)
     tmax = round(pdf_sorted[-1]["t"] + 1.6, 2)

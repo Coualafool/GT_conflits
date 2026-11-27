@@ -44,72 +44,74 @@ window.__K_ALLIES = {
    "y1": 1918.5,
    "label": "Les promesses impériales",
    "ids": [
-    6,
-    7,
     8,
     9,
-    10
+    10,
+    11,
+    12
    ],
-   "just": "1915-1917, tout se décide d'en haut : promesse d'indépendance (6), guerre mondiale au libellé tronqué conservé (7), partage Sykes-Picot (8), foyer juif Balfour (9) — plus le séisme russe (10) qui pousse les persécutions et les fuites. Cinq faits, un seul moment : le tracé du siècle."
+   "just": "1915-1917, tout se décide d'en haut : promesse d'indépendance, guerre mondiale au libellé tronqué conservé, partage Sykes-Picot, foyer juif Balfour — plus le séisme russe qui pousse les persécutions et les fuites. Cinq faits, un seul moment : le tracé du siècle."
   },
   {
    "y0": 1935.5,
    "y1": 1939.9,
    "label": "Révolte, partition, Livre blanc",
    "ids": [
-    20,
-    21,
-    22,
-    23,
     24,
     25,
     26,
     27,
-    28
+    28,
+    29,
+    30,
+    31,
+    32,
+    33
    ],
-   "just": "De la Grande révolte (20) à l'anéantissement de l'opposition palestinienne (26) en passant par Peel (22), le tournant britannique (25) et les promesses (27) : les deux sociétés se transforment en parallèle (autosuffisance du Yichouv 21, 30 % de la population 28) pendant que l'Europe bascule (23, 24)."
+   "just": "De la Grande révolte à l'anéantissement de l'opposition palestinienne en passant par Peel, le tournant britannique et les promesses : les deux sociétés se transforment en parallèle (autosuffisance du Yichouv 21, 30 % de la population 28) pendant que l'Europe bascule."
   },
   {
    "y0": 1946.5,
    "y1": 1949.9,
    "label": "1947-1949 : le partage et la Nakba",
    "ids": [
-    29,
-    30,
-    31,
-    32,
-    33,
-    34
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42
    ],
-   "just": "Le moment où tout se noue : vote de partage (29), expulsion (30), effondrement économique (31), guerre (32), indépendance (33), redessin de la carte (34). Fait de lecture fort : le document range ces six faits sous le seul récit palestinien — la place se traverse donc avec TROIS niches voilées (occ, isr, ter). Ce n'est pas notre tri : c'est celui de la source, et ça se discute."
+   "just": "Le moment où tout se noue : vote de partage, expulsion, effondrement économique, guerre, indépendance, redessin de la carte. Fait de lecture fort : le document range ces six faits sous le seul récit palestinien — la place se traverse donc avec TROIS niches voilées (occ, isr, ter). Ce n'est pas notre tri : c'est celui de la source, et ça se discute."
   },
   {
    "y0": 1966.5,
    "y1": 1968.5,
    "label": "1967 : la carte et le droit",
    "ids": [
-    39,
-    40,
-    41
+    47,
+    48,
+    49
    ],
-   "just": "La guerre (39), la résolution 242 (40), le refus de négocier (41) : trois faits majeurs, et le document ne les raconte que par le récit israélien — trois niches voilées. Le visiteur cherche en vain la plaque « territoire » au moment où la carte bascule : c'est exactement la question à travailler."
+   "just": "La guerre, la résolution 242, le refus de négocier : trois faits majeurs, et le document ne les raconte que par le récit israélien — trois niches voilées. Le visiteur cherche en vain la plaque « territoire » au moment où la carte bascule : c'est exactement la question à travailler."
   },
   {
    "y0": 1986.5,
    "y1": 1988.5,
    "label": "1987 : les deux violences",
    "ids": [
-    49,
-    50
+    58,
+    59
    ],
-   "just": "Attaques contre des Juifs (49) et répression de Tsahal (50) : le document pose les deux faits côte à côte sous le récit israélien. Les deux autres brins se taisent jusqu'en 1993 — un creux qui se marche."
+   "just": "Attaques contre des Juifs et répression de Tsahal : le document pose les deux faits côte à côte sous le récit israélien. Les deux autres brins se taisent jusqu'en 1993 — un creux qui se marche."
   },
   {
    "y0": 1992.5,
    "y1": 1993.9,
    "label": "1993 : Oslo",
    "ids": [
-    51
+    61
    ],
    "just": "Un seul fait dans la fenêtre, et c'est l'expérience même de la place : Oslo n'existe que dans un brin. Trois niches voilées — le « processus de paix » comme un récit à une voix."
   },
@@ -118,11 +120,11 @@ window.__K_ALLIES = {
    "y1": 2026.5,
    "label": "2023 : la rupture",
    "ids": [
-    76,
-    77,
-    78
+    88,
+    89,
+    90
    ],
-   "just": "Victimes israéliennes (76), attaques du Hamas (77) et l'« offensive punitive » (78, datation douteuse conservée du document : l'année 2025 seule lisible) — le moment n'est porté que par le brin du territoire. Le silence des trois autres brins après 2023 est celui du document lui-même — pas un tri de notre part."
+   "just": "Victimes israéliennes, attaques du Hamas et l'« offensive punitive » (78, datation douteuse conservée du document : l'année 2025 seule lisible) — le moment n'est porté que par le brin du territoire. Le silence des trois autres brins après 2023 est celui du document lui-même — pas un tri de notre part."
   }
  ]
 };
