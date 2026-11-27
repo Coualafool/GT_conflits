@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Chapelet du temps — neuf carrefours dorés, quatre couloirs de salles</title>
+<style>
+:root{
+  --bg:#0f0b07; --card:#191410; --ink:#ece6da; --muted:#a59a8c; --faint:#9a9082;
+  --border:#3a3122; --gold:#d2a63f;
+  --pal:#2e7d5b; --isr:#2f6f9e; --occ:#8a5a3c; --ter:#a06417;
+  --palT:#7ed3ab; --isrT:#8ec6ee; --occT:#e2a979; --terT:#e8b45c;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%}
+.skip{position:absolute;left:-9999px;z-index:60;background:var(--bg);color:var(--ink);padding:10px 16px;border:1px solid var(--gold)}
+.skip:focus{left:8px;top:8px}
+/* ---- HUD ---- */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:20}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 58%,rgba(10,7,4,.55) 100%)}
+#cross{position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;
+  background:rgba(236,230,218,.75);box-shadow:0 0 0 2px rgba(10,7,4,.5);display:none}
+body.locked #cross{display:block}
+#afford{position:absolute;left:50%;top:calc(50% + 26px);transform:translateX(-50%);max-width:min(560px,86vw);
+  background:rgba(16,12,8,.86);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:13.5px;color:var(--ink);display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#afford kbd{background:#2a221a;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace;color:var(--gold)}
+#nav{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:min(1240px,94vw);
+  padding:4px;background:rgba(16,12,8,.78);border:1px solid var(--border);border-radius:12px;pointer-events:auto}
+#nav button{flex:0 0 auto;background:#1e1812;color:var(--muted);border:1px solid transparent;border-radius:8px;
+  padding:5px 11px;font:600 12.5px system-ui;cursor:pointer;text-align:left}
+#nav button b{display:block;color:var(--ink);font-size:12px;font-weight:700}
+#nav button.place b{color:var(--gold)}
+#nav button[aria-current="true"]{border-color:var(--gold)}
+#nav button[aria-current="true"] b{color:var(--gold)}
+#nav button:hover,#nav button:focus-visible{border-color:var(--muted);outline:none}
+#nav button:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+#say{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--muted);
+  background:rgba(16,12,8,.7);border-radius:8px;padding:2px 10px;opacity:0;transition:opacity .3s}
+#say.show{opacity:1}
+#badge{position:absolute;top:10px;left:10px;max-width:min(360px,60vw);background:rgba(16,12,8,.86);border:1px solid var(--gold);
+  border-radius:10px;padding:7px 12px;font-size:13px;display:none}
+#badge.show{display:block}
+#hBack{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:7px;min-height:40px;
+  background:rgba(16,12,8,.78);border:1px solid var(--border);border-radius:10px;padding:9px 13px;
+  font:600 13px system-ui;color:var(--ink);text-decoration:none;pointer-events:auto}
+#hBack:hover,#hBack:focus-visible{border-color:var(--gold);outline:none}
+#hBack:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+body.locked #hBack{opacity:.35}
+/* ---- panneau (doctrine héritée de H/J/K) ---- */
+#panel{position:absolute;top:0;right:0;width:min(400px,92vw);height:100%;background:rgba(20,15,10,.97);
+  border-left:1px solid var(--border);padding:22px 22px 40px;overflow-y:auto;pointer-events:auto;
+  transform:translateX(103%);transition:transform .22s ease}
+#panel.open{transform:none}
+#panel h2{font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
+#panel .yr{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.04em;margin:0}
+#panel .desc{color:#cfd3da;font-size:14.5px;margin:10px 0 4px}
+#panel .divb{display:inline-block;margin:8px 0 0;font-size:11.5px;font-weight:700;color:#141108;background:var(--gold);border-radius:999px;padding:1px 9px}
+#panel .voix{margin:14px 0 0;border-top:1px solid var(--border);padding-top:12px}
+#panel .voix h3{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+#panel .vx{margin:0 0 10px;padding-left:12px;border-left:3px solid var(--border)}
+#panel .vx b{display:block;font-size:14.5px}
+#panel .vx span{font-size:12px;color:var(--faint)}
+#panel .vx.sil b{color:var(--muted);font-weight:500;font-style:italic}
+#panel .pied{margin-top:16px;border-top:1px solid var(--border);padding-top:12px;font-size:13px;color:var(--muted)}
+#panel .pied a{color:var(--gold);text-decoration:none}
+#panel .pied a:hover,#panel .pied a:focus-visible{text-decoration:underline}
+#panel .x{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer;padding:6px}
+#panel .x:hover{color:var(--ink)}
+.vx.pal{border-color:var(--pal)} .vx.pal b{color:var(--palT)}
+.vx.isr{border-color:var(--isr)} .vx.isr b{color:var(--isrT)}
+.vx.occ{border-color:var(--occ)} .vx.occ b{color:var(--occT)}
+.vx.ter{border-color:var(--ter)} .vx.ter b{color:var(--terT)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.dot.pal{background:var(--pal)} .dot.isr{background:var(--isr)} .dot.occ{background:var(--occ)} .dot.ter{background:var(--ter)}
+/* ---- stations (navigation clavier) ---- */
+#stations{position:fixed;left:0;top:74px;z-index:40;width:1px}
+#stations button{position:fixed;left:-9999px;width:1px;height:1px;overflow:hidden}
+#stations button:focus{outline:none}
+/* ---- accueil / aide / menu ---- */
+#menu{position:fixed;inset:0;z-index:60;background:rgba(12,8,5,.86);display:none;align-items:center;justify-content:center;pointer-events:auto}
+#menu.open{display:flex}
+#menu .box{max-width:460px;margin:24px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 28px;overflow-y:auto;max-height:92vh}
+#menu h2{margin:0 0 16px;font-size:20px;letter-spacing:-.01em}
+#menu .grp{margin:0 0 16px}
+#menu .grp>b{display:block;font-size:12px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+#menu .seg{display:flex;gap:6px;flex-wrap:wrap}
+#menu .seg button{background:#1e1812;border:1px solid var(--border);border-radius:9px;color:var(--muted);font:inherit;font-size:13px;padding:7px 14px;cursor:pointer}
+#menu .seg button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+#menu .seg button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--gold)}
+#menu .act{display:flex;flex-direction:column;gap:9px;margin-top:20px}
+#menu .act a,#menu .act button{display:block;text-align:center;text-decoration:none;font:inherit;font-size:14px;font-weight:600;border-radius:11px;padding:11px 16px;cursor:pointer}
+#menu .act .go{background:var(--gold);color:#14110a;border:1px solid var(--gold)}
+#menu .act .out{background:transparent;color:var(--muted);border:1px solid var(--border)}
+#menu .act a:hover,#menu .act button:hover,#menu .act a:focus-visible,#menu .act button:focus-visible{border-color:var(--gold);outline:none}
+#welcome{position:fixed;inset:0;z-index:50;background:rgba(12,8,5,.92);display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#welcome.gone{display:none}
+#welcome .box{max-width:680px;margin:24px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px 30px;overflow-y:auto;max-height:92vh}
+#welcome h1{margin:0 0 4px;font-size:24px;letter-spacing:-.01em}
+#welcome .lead{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+#welcome .gram{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+#welcome .gram span{font-size:12.5px;border:1px solid var(--border);border-radius:999px;padding:3px 11px;color:#cfd3da}
+#welcome .gram .d{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}
+#welcome .btns{display:flex;gap:10px;flex-wrap:wrap}
+#welcome .btns a,#welcome .btns button{font:600 14px system-ui;border-radius:10px;padding:9px 16px;cursor:pointer;text-decoration:none}
+#welcome .go{background:var(--gold);color:#141108;border:0}
+#welcome .alt{background:#1c2029;color:var(--ink);border:1px solid var(--border)}
+#welcome .rm{margin:14px 0 0;font-size:12.5px;color:var(--faint)}
+#welcome kbd{background:#2a221a;border:1px solid var(--border);border-radius:5px;padding:0 6px;font:600 12px ui-monospace,monospace}
+/* ---- défaut : la 3D n'est jamais la seule porte ---- */
+#fallback{position:fixed;inset:0;z-index:70;background:var(--bg);display:none;align-items:center;justify-content:center;text-align:center}
+#fallback .box{max-width:520px;padding:30px}
+#fallback h2{margin-top:0}
+#fallback a{color:var(--gold);font-size:17px}
+@media (prefers-reduced-motion: reduce){ #panel{transition:none} #say{transition:none} }
+</style>
+<!-- BEGIN commun:pied-head -->
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<!-- END commun:pied-head -->
+</head>
+<body>
+<a class="skip" id="skip" href="#stations">Aller aux postes d’observation (navigation clavier)</a>
+<div id="stage" aria-hidden="true"></div>
+
+<div id="hud">
+  <div id="vig"></div>
+  <div id="cross" aria-hidden="true"></div>
+  <div id="afford" aria-hidden="true"></div>
+  <div id="nav" role="navigation" aria-label="Les carrefours du temps"></div>
+  <div id="say" role="status"></div>
+  <div id="badge" aria-hidden="true"></div>
+  <a id="hBack" href="index-comparatif.html" aria-label="Retour à l’index des frises">← Les frises</a>
+  <aside id="panel" aria-label="Fiche de l’observation"></aside>
+</div>
+
+<div id="stations" aria-label="Postes d’observation du chapelet, dans l’ordre du temps"></div>
+
+<div id="menu" role="dialog" aria-modal="true" aria-labelledby="menu-t">
+  <div class="box">
+    <h2 id="menu-t">Menu du chapelet</h2>
+    <div class="grp"><b>Sensibilité du regard</b><div class="seg" id="mSens">
+      <button type="button" data-k="douce">Douce</button><button type="button" data-k="normale">Normale</button><button type="button" data-k="rapide">Rapide</button>
+    </div></div>
+    <div class="grp"><b>Vitesse de marche</b><div class="seg" id="mSpd">
+      <button type="button" data-k="lente">Lente</button><button type="button" data-k="normale">Normale</button><button type="button" data-k="rapide">Rapide</button>
+    </div></div>
+    <div class="grp"><b>Regard vertical</b><div class="seg" id="mInv">
+      <button type="button" data-k="normal">Normal</button><button type="button" data-k="inverse">Inversé</button>
+    </div></div>
+    <div class="act">
+      <button type="button" id="mResume" class="go">Reprendre la visite</button>
+      <a href="../index.html" id="mHome">Quitter — accueil du kit</a>
+    </div>
+  </div>
+</div>
+
+<div id="welcome">
+  <div class="box">
+    <h1>Le Chapelet du temps</h1>
+    <p class="lead">Quatre couloirs de salles, un par fil du document « Outil péda » — <span id="nFaits">91</span> faits :
+      <b>une salle par fait</b>, et le temps qui descend devant vous. Chaque couloir ne raconte qu’une piste ;
+      on ne passe jamais d’un couloir à l’autre <em>dans les salles</em>. Neuf carrefours dorés seulement les
+      réunissent — l’entrée, les sept moments communs du document, et aujourd’hui. À chaque carrefour,
+      une <em>stèle</em> par couloir montre ce que chaque piste avait à dire à ce moment — ou un
+      <em>rideau</em> si elle se taisait — puis vous choisissez le couloir de la suite.</p>
+    <div class="gram">
+      <span><i class="d" style="background:var(--occ)"></i>couloir du haut — influence occidentale / ONU</span>
+      <span><i class="d" style="background:var(--pal)"></i>couloir habitée — Palestine</span>
+      <span><i class="d" style="background:var(--isr)"></i>couloir bâtie — Yichouv / Israël</span>
+      <span><i class="d" style="background:var(--ter)"></i>couloir du sol — le territoire</span>
+      <span><i class="d" style="background:var(--gold)"></i>carrefours dorés — les 9 rencontres</span>
+    </div>
+    <div class="btns">
+      <button id="bWalk" class="go">Entrer au carrefour d’entrée (souris verrouillée)</button>
+      <button id="bStations" class="alt">Naviguer au clavier (postes)</button>
+      <a class="alt" href="perspective-I2-pdf.html">Préférer la tresse déroulée</a>
+    </div>
+    <p class="rm"><kbd>ZQSD</kbd>/<kbd>WASD</kbd> marcher · souris regarder · <kbd>E</kbd> ouvrir une affiche ·
+      <kbd>Échap</kbd> relâcher — ou <kbd>Tab</kbd> pour parcourir tous les faits sans souris.
+      Le clavier suffit à tout voir : chaque poste déplace la caméra et ouvre sa fiche
+      (mode « sans animation » du système : sauts instantanés, souris jamais verrouillée d’office).</p>
+  </div>
+</div>
+
+<div id="fallback">
+  <div class="box">
+    <h2>Le chapelet 3D ne s’ouvre pas ici</h2>
+    <p>Ce navigateur n’a pas pu initialiser WebGL (ou un fichier s’est mal chargé).
+      Le bâtiment n’est qu’une façon de voir — le contenu complet reste accessible.</p>
+    <p><a href="perspective-I2-pdf.html">→ Ouvrir la tresse de l’outil péda (I²)</a></p>
+  </div>
+</div>
+
+<script src="vendor/three.bundle.js"></script>
+<script src="perspective-I2-data.js"></script>
+<script src="perspective-K-data.js"></script>
+<script>
+/* Le Chapelet du temps — bâtiment « 4 couloirs de salles, 1 salle par fait, 9 carrefours dorés » (three.js vendorisé).
+   ZÉRO donnée nouvelle : le corpus vit dans perspective-I2-data.js ; les fenêtres des moments communs
+   viennent de perspective-K-data.js (window.__K_ALLIES — mêmes 7 moments que « Les Allées », même doctrine
+   éditoriale justifiée). La page ne possède que la géométrie et la caméra.
+   Doctrine : temps qui DESCEND (−z) ; une salle = un fait ; les couloirs sont SCELLÉS entre eux —
+   la seule traversée d’une piste à l’autre est le hall doré d’un carrefour. Couloir vide = conduit nu
+   avec rideau (silence du document, jamais un mur caché). Niches/stèles = faits de la fenêtre du moment.
+   Conventions harnais : API window.__chapelet (postes, inventaires, caméra, raycast, GEO). */
+"use strict";
+function fallbackOn(){ document.getElementById("fallback").style.display="flex"; document.getElementById("welcome").classList.add("gone"); }
+if (!window.THREE || typeof EV === "undefined" || typeof TRACKS === "undefined" || typeof window.__K_ALLIES === "undefined") { fallbackOn(); }
+else (function(){
+try {
+
+/* ---------- constantes du bâtiment (préambule : nécessaire à la simulation hors-ligne) ---------- */
+var GEO = { WALLH:3.1, EYE:1.62, PITCH:1.45, BODY:0.55, PART:0.3,
+  COLSP:8.0,          // pas entre colonnes de couloirs (le plan)
+  HALFW:3.1,          // demi-largeur hors-tout d'une salle
+  RD:5.6, NK:1.8,     // profondeur salle / profondeur boyau (murs inclus)
+  DOORW:1.15,         // demi-largeur d'ouverture de porte (les portes percent le mur au centre du couloir)
+  STUB:1.7,           // souchon d'entrée et de sortie d'un segment
+  HD:9.0,             // profondeur d'un carrefour (hall doré)
+  HALLX:15.6,         // demi-largeur du hall : bords extérieurs des couloirs + 0,5
+  STELEZ:3.1,         // distance du seuil d'entrée au front de stèle
+  STELEU:2.8,         // demi-largeur utile d'une stèle
+  CASEZ:6.3,          // distance du seuil à la vitrine centrale
+  PW:{ w2:.92, h2:.64, w1:.7, h1:.48 }, NICHEV:0.8 };
+var COLS = ["occ","pal","isr","ter"];                        // gauche → droite (ordre du plan, ordre du module)
+var BRINS = TRACK_KEYS;                                      // identité des faits = EV[i][1]
+function colIndex(k){ return COLS.indexOf(k); }
+function xcOf(ai){ return (ai-1.5)*GEO.COLSP; }             // −12 · −4 · +4 · +12
+var LANE = { pal:{t:"#7ed3ab"}, isr:{t:"#8ec6ee"}, occ:{t:"#e2a979"}, ter:{t:"#e8b45c"} };
+var GOLD = "#d2a63f";
+var WALLC = 0x2d2820, PARTC = 0x322c24, FLOORC = 0x1a1611, CEILC = 0x120e0a, BG = 0x0f0b07;
+var PW = GEO.PW;
+var _nf = (typeof document !== "undefined") ? document.getElementById("nFaits") : null;
+if (_nf) _nf.textContent = String(EV.length);   // le chiffre d'accueil suit le corpus (le sim node n'a pas de DOM)
+var CW = 0.95, CH = 2.3, YA = 1.7;
+
+/* ---------- helpers locaux (aucun nom partagé avec les modules de données) ---------- */
+function mClamp(v,a,b){ if (b<a){ var t=a; a=b; b=t; } return v<a?a:(v>b?b:v); }
+function mEsc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function yrOf(y){ return Math.floor(y); }
+function mthOf(y){ var m = Math.floor((y-Math.floor(y))*12); return m>=12?11:(m<0?0:m); }
+var MONTHS_L = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+function yrLbl(y){ return String(yrOf(y)) + " · " + MONTHS_L[mthOf(y)]; }
+function brOf(i){ return BRINS[EV[i][1]]; }
+function brName(k){ return TRACKS[k].short; }
+
+/* ---------- chronologie→géométrie : le chapelet — hubs dorés, segments, chaînes de salles ---------- */
+/*__LAYOUT_START__*/
+var WIN = window.__K_ALLIES.plazas.map(function(p, j){ return { j:j, y0:p.y0, y1:p.y1, label:p.label, ids:p.ids, just:p.just }; });
+function inWin(y){ for (var q=0;q<WIN.length;q++) if (y>=WIN[q].y0 && y<=WIN[q].y1) return true; return false; }
+var SEGW = [];                                               // 8 intervalles de temps entre les 9 carrefours
+(function(){
+  var minY = window.__K_ALLIES.minY, maxY = window.__K_ALLIES.maxY;
+  for (var j=0;j<=WIN.length;j++){
+    var ya = j===0 ? minY : WIN[j-1].y1;
+    var yb = j===WIN.length ? maxY : WIN[j].y0;
+    SEGW.push({ j:j, ya:ya, yb:yb });
+  }
+})();
+function segOfYL(y){                                         // fait hors fenêtre → son segment de date (bornes ouvertes)
+  if (inWin(y)) return -1;
+  for (var j=0;j<SEGW.length;j++){ var s = SEGW[j];
+    var lo = j===0 ? y>=s.ya : y>s.ya;
+    var hi = j===SEGW.length-1 ? y<=s.yb : y<s.yb;
+    if (lo && hi) return j; }
+  return -1;
+}
+var factsByBrin = {};
+BRINS.forEach(function(k){ factsByBrin[k] = []; });
+for (var ei=0; ei<EV.length; ei++) factsByBrin[brOf(ei)].push(ei);
+
+var HUBS = [], SEGS = [], rooms = [], posters = [], curtains = [], cases = [], rects = [], blockers = [];
+var NICHE_R = [];
+function layoutNicheRows(items, U, gid){                     // grille de stèle (loi mesurée K : vraies largeurs LV, ≤3 rangées)
+  var best = null;
+  var wMax = 0, hMax = 0;
+  items.forEach(function(t){
+    wMax = Math.max(wMax, (t.lv===2?PW.w2:PW.w1)); hMax = Math.max(hMax, (t.lv===2?PW.h2:PW.h1)); });
+  [1,2,3,4].forEach(function(cols){
+    if (cols*(wMax+0.10) - 0.10 + 0.16 > 2*U) return;
+    var nrows = Math.ceil(items.length/cols); if (nrows > 3) return;
+    var s = 1;
+    for (var attempt=0; attempt<14; attempt++){
+      var maxc = Math.min(cols, items.length - (nrows-1)*cols);
+      if (maxc*(wMax*s) + (maxc-1)*0.10 + 0.16 <= 2*U && hMax*s + 0.06 < 0.80) break;
+      s *= 0.9;
+    }
+    var cellW = 2*U/cols, pitch = nrows===1 ? 0.55 : Math.min(0.72, 1.62/(nrows-1));
+    if (!best || s > best.scale) best = { cols:cols, rows:nrows, scale:s, cellW:cellW, pitch:pitch };
+  });
+  if (!best){
+    var fbC = Math.max(1, Math.ceil(items.length/3));
+    var fbR = Math.ceil(items.length/fbC);
+    best = { cols:fbC, rows:fbR, scale:0.5, cellW:2*U/fbC, pitch: fbR===1 ? 0.55 : Math.min(0.6, 1.62/(fbR-1)) };
+  }
+  NICHE_R[gid] = { y0:1.05, pitch:best.pitch };
+  items.forEach(function(t, q){
+    var ri = Math.floor(q/best.cols), ci = q % best.cols;
+    t.scale = best.scale; t.row = ri+1; t.w = t.w0*best.scale; t.x = -U + best.cellW*(ci+0.5); });
+  return items;
+}
+function nicheRowY(gid, ri){ var g = NICHE_R[gid] || { y0:1.05, pitch:0.6 }; return g.y0 + g.pitch*ri; }
+
+(function buildChapelet(){
+  var z = 0;
+  HUBS.push({ h:0, kind:"entrée", win:null, z0:0, z1:z-GEO.HD, label:"Entrée" });
+  for (var j=0;j<SEGW.length;j++){
+    var zTop = HUBS[HUBS.length-1].z1;
+    var per = COLS.map(function(k, ai){
+      return factsByBrin[k].filter(function(i){ return segOfYL(EV[i][0])===j; })
+        .sort(function(a,b){ return EV[a][0]-EV[b][0] || a-b; });
+    });
+    var depth = 4.8;                                         // gageure : un segment jamais trop court pour un conduit
+    for (var ai=0; ai<COLS.length; ai++){
+      var n = per[ai].length;
+      var d = n ? (2*GEO.STUB + n*GEO.RD + (n-1)*GEO.NK) : (2*GEO.STUB + 2.6);
+      if (d > depth) depth = d;
+    }
+    var zBot = zTop - depth;
+    SEGS.push({ j:j, y0:SEGW[j].ya, y1:SEGW[j].yb, zTop:zTop, zBot:zBot, depth:depth });
+    var hj = HUBS.length;
+    HUBS.push({ h:hj, kind: j<WIN.length ? "moment" : "fin", win: j<WIN.length ? WIN[j] : null,
+                z0:zBot, z1:zBot-GEO.HD, label: j<WIN.length ? WIN[j].label : "Aujourd’hui" });
+    /* chaînes : une salle par fait, dans l'ordre du temps ; chaîne vide = conduit nu + rideau */
+    for (var ai2=0; ai2<COLS.length; ai2++){
+      var k = COLS[ai2], ids = per[ai2], x = xcOf(ai2);
+      if (!ids.length){
+        rects.push({ x0:x-1.0, x1:x+1.0, z0:zBot, z1:zTop, kind:"conduit", seg:j, ai:ai2 });
+        curtains.push({ kind:"curtain", mode:"conduit", i:null, brin:k, ai:ai2, seg:j,
+          x:x, z:(zTop+zBot)/2, y:CH/2+0.05, rotY:0, w:Math.min(CW, 1.9), lv:null });
+        continue;
+      }
+      var zt = zTop - GEO.STUB;
+      rects.push({ x0:x-1.0, x1:x+1.0, z0:zt, z1:zTop, kind:"stub", seg:j, ai:ai2 });
+      for (var q=0;q<ids.length;q++){
+        var i = ids[q], zb = zt - GEO.RD, lv = lvOf(i,k), w0 = lv===2 ? PW.w2 : PW.w1;
+        rooms.push({ i:i, brin:k, ai:ai2, seg:j, x:x, zt:zt, zb:zb });
+        rects.push({ x0:x-(GEO.HALFW-0.3), x1:x+(GEO.HALFW-0.3), z0:zb+0.15, z1:zt-0.15, kind:"room", seg:j, ai:ai2, i:i });
+        posters.push({ kind:"poster", mode:"room", i:i, brin:k, ai:ai2, seg:j, niche:false,
+          x:x, z:zb+0.17, y:YA, lv:lv, w:w0, h:(lv===2?PW.h2:PW.h1), rotY:0, scale:1 });
+        if (q < ids.length-1)
+          rects.push({ x0:x-1.0, x1:x+1.0, z0:zb-GEO.NK, z1:zb, kind:"neck", seg:j, ai:ai2 });
+        zt = zb - GEO.NK;
+      }
+      rects.push({ x0:x-1.0, x1:x+1.0, z0:zBot, z1:ids.length ? (zTop-GEO.STUB-ids.length*GEO.RD-(ids.length-1)*GEO.NK)+0.15 : zTop, kind:"stub", seg:j, ai:ai2 });
+    }
+  }
+  var ZMIN = HUBS[HUBS.length-1].z1;
+  /* halls dorés : rectangles de marche + bloquants (stèles, vitrine) */
+  HUBS.forEach(function(hu){
+    rects.push({ x0:-GEO.HALLX+0.3, x1:GEO.HALLX-0.3, z0:hu.z1+0.15, z1:hu.z0-0.15, kind:"hall", hub:hu.h });
+    if (hu.kind!=="moment") return;
+    var w = hu.win;
+    COLS.forEach(function(k, ai){
+      var ids = w.ids.filter(function(ii){ return brOf(ii)===k; });
+      if (!ids.length){
+        curtains.push({ kind:"curtain", mode:"stele", i:null, brin:k, ai:ai, hub:hu.h,
+          x:xcOf(ai), z:hu.z0-GEO.STELEZ+0.17, y:CH/2+0.05, rotY:0, w:Math.min(CW, 2*GEO.STELEU-0.2), lv:null });
+        return;
+      }
+      var items = ids.map(function(ii){ var lv = lvOf(ii,k);
+        return { i:ii, kind:"poster", lv:lv, w:0, w0: lv===2?PW.w2:PW.w1, brin:k, ai:ai, hub:hu.h }; });
+      layoutNicheRows(items, GEO.STELEU, hu.h*4+ai);
+      items.forEach(function(t){
+        posters.push({ kind:"poster", mode:"stele", i:t.i, brin:k, ai:ai, hub:hu.h, niche:true,
+          x:xcOf(ai)+t.x, z:hu.z0-GEO.STELEZ+0.17, y:nicheRowY(hu.h*4+ai, t.row-1),
+          lv:t.lv, w:t.w, h:(t.lv===2?PW.h2:PW.h1)*t.scale, rotY:0, scale:t.scale, row:t.row }); });
+    });
+    cases.push({ kind:"case", hub:hu.h, plaza:hu.h-1, x:0, z:hu.z0-GEO.CASEZ, i:w.ids[0] });
+    COLS.forEach(function(k, ai){
+      blockers.push({ x0:xcOf(ai)-GEO.STELEU-0.2, x1:xcOf(ai)+GEO.STELEU+0.2,
+        z0:hu.z0-GEO.STELEZ-0.45, z1:hu.z0-GEO.STELEZ+0.45, kind:"stele" });
+    });
+    blockers.push({ x0:-0.55, x1:0.55, z0:hu.z0-GEO.CASEZ-0.45, z1:hu.z0-GEO.CASEZ+0.45, kind:"case" });
+  });
+  window.__ZMIN = ZMIN;
+})();
+var ZMIN = window.__ZMIN;
+
+/* clés de poste stables (dérivées de la GÉOMÉTRIE) — avant le maillage, le harnais s'y adosse */
+posters.forEach(function(p){ p.key = p.niche ? ("sp"+p.i+"-"+p.hub) : ("rp"+p.i); });
+curtains.forEach(function(c){ c.key = c.mode==="stele" ? ("sc"+c.hub+"-"+c.ai) : ("rc"+c.seg+"-"+c.ai); });
+cases.forEach(function(v){ v.key = "cv"+v.hub; });
+
+/* ---------- stations : tous les postes dans l'ordre du temps (z décroissant) ---------- */
+var allStations = posters.concat(curtains, cases).sort(function(a,b){ return b.z-a.z; });
+allStations.forEach(function(s, si){ s.order = si; s.view = stationView(s); });
+function stationView(s){
+  /* LOI MESURÉE (yawTable, prouvée sur K) : vue monde = (−sin yaw, ·, −cos yaw) ; d.y = −sin(pitch)
+     (0 = −z : ici, face au couloir qui descend ; π = +z.) Les œuvres de L font face à +z → le visiteur
+     se tient à z plus grand et regarde yaw 0. */
+  if (s.kind==="case") { var d = 1.9;
+    return { x:s.x, z:s.z+d, yaw:0, pitch:Math.atan2(GEO.EYE-1.24, d) }; }
+  if (s.mode==="conduit")
+    return { x:s.x, z:s.z+1.6, yaw:0, pitch:Math.atan2(GEO.EYE-s.y, 1.6) };
+  return { x:s.x, z:s.z+1.7, yaw:0, pitch:Math.atan2(GEO.EYE-s.y, 1.7) };
+}
+/*__LAYOUT_END__*/
+
+/* ---------- scène ---------- */
+var renderer;
+try {
+  var probe = document.createElement("canvas");
+  var pctx = probe.getContext("webgl2") || probe.getContext("webgl");
+  if (!pctx) throw new Error("no-webgl");
+  pctx.getExtension;
+  renderer = new THREE.WebGLRenderer({ antialias:true });
+  if (!renderer.getContext()) throw new Error("no-context");
+} catch (e) {
+  try { if (renderer) renderer.dispose(); } catch (e2) {}
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias:false });
+    if (!renderer.getContext()) throw new Error("no-context-aa-off");
+  } catch (e3) { window.__L_FAIL = String(e3 && e3.stack || e3).slice(0, 400); fallbackOn(); return; }
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
+var MAX_ANISO = 1;
+try { MAX_ANISO = renderer.capabilities.getMaxAnisotropy(); } catch(e){}
+var PX_UNIT = (renderer.capabilities.maxTextureSize || 2048) >= 8192 ? 800 : 400;
+renderer.setSize(innerWidth, innerHeight);
+document.getElementById("stage").appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(BG);
+scene.fog = new THREE.Fog(BG, 12, 58);
+var cam = new THREE.PerspectiveCamera(68, innerWidth/innerHeight, .05, 90);
+cam.rotation.order = "YXZ";
+var yaw = 0, pitch = 0, pxCur = 0, pzCur = -2.4;              // arrivée : hall d'entrée, regard vers le temps qui descend
+
+scene.add(new THREE.HemisphereLight(0x5c4c38, 0x231b12, 1.5));
+var lamp = new THREE.PointLight(0xffcf94, 20, 12, 1.6);
+scene.add(lamp);
+
+function mat(c){ return new THREE.MeshLambertMaterial({ color:c }); }
+var mWall = mat(WALLC), mPart = mat(PARTC), mFloor = mat(FLOORC), mCeil = mat(CEILC);
+function box(w,h,d,x,y,z,m,rotY){ var o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), m); o.position.set(x,y,z); if (rotY) o.rotation.y = rotY; scene.add(o); return o; }
+
+/* sol, plafond, coque extérieure */
+var BLDG = -ZMIN + 1.0;
+box(2*GEO.HALLX+1.6, .1, BLDG+1.0, 0, -.05, -BLDG/2+0.5, mFloor);
+box(2*GEO.HALLX+1.6, .1, BLDG+1.0, 0, GEO.WALLH+.05, -BLDG/2+0.5, mCeil);
+box(2*GEO.PART, GEO.WALLH, BLDG, -(GEO.HALLX+0.5), GEO.WALLH/2, -BLDG/2+0.5, mWall);
+box(2*GEO.PART, GEO.WALLH, BLDG,  (GEO.HALLX+0.5), GEO.WALLH/2, -BLDG/2+0.5, mWall);
+box(2*GEO.HALLX+1.0, GEO.WALLH, 2*GEO.PART, 0, GEO.WALLH/2, 0.5, mWall);              // seuil d'entrée (derrière)
+box(2*GEO.HALLX+1.0, GEO.WALLH, 2*GEO.PART, 0, GEO.WALLH/2, ZMIN-0.5, mWall);         // paroi du « maintenant »
+
+/* parois d'un carrefour : mur plein à 4 portes (largeur 2×DOORW) + linteaux — pleines aux deux rives du temps */
+function hubWall(zc, solid){
+  if (solid){ box(2*GEO.HALLX, GEO.WALLH, GEO.PART, 0, GEO.WALLH/2, zc, mPart); return; }
+  var spans = [[-GEO.HALLX, xcOf(0)-GEO.DOORW]];
+  for (var g=0; g<COLS.length-1; g++) spans.push([xcOf(g)+GEO.DOORW, xcOf(g+1)-GEO.DOORW]);
+  spans.push([xcOf(COLS.length-1)+GEO.DOORW, GEO.HALLX]);
+  spans.forEach(function(sp){
+    var w = sp[1]-sp[0];
+    if (w > 0.02) box(w, GEO.WALLH, GEO.PART, (sp[0]+sp[1])/2, GEO.WALLH/2, zc, mPart);
+  });
+  COLS.forEach(function(k, ai){
+    box(2*GEO.DOORW, GEO.WALLH-2.2, GEO.PART, xcOf(ai), GEO.WALLH-(GEO.WALLH-2.2)/2, zc, mPart);  // linteau : porte = trou 2,20
+  });
+}
+HUBS.forEach(function(hu){ hubWall(hu.z0); hubWall(hu.z1); });
+
+/* salles : murs latéraux, parois de bout à porte centrale + linteau, boyaux */
+function roomWalls(rm){
+  var x = rm.x, hw = GEO.HALFW;
+  box(0.2, GEO.WALLH, rm.zt-rm.zb, x-hw+0.1, GEO.WALLH/2, (rm.zt+rm.zb)/2, mPart);
+  box(0.2, GEO.WALLH, rm.zt-rm.zb, x+hw-0.1, GEO.WALLH/2, (rm.zt+rm.zb)/2, mPart);
+  [rm.zt, rm.zb].forEach(function(zw){
+    [ [x+GEO.DOORW, x+hw-0.1], [x-hw+0.1, x-GEO.DOORW] ].forEach(function(sp){
+      var w = sp[1]-sp[0];
+      if (w > 0.02) box(w, GEO.WALLH, 0.2, (sp[0]+sp[1])/2, GEO.WALLH/2, zw, mPart);
+    });
+    box(2*GEO.DOORW, GEO.WALLH-2.2, 0.2, x, GEO.WALLH-(GEO.WALLH-2.2)/2, zw, mPart);
+  });
+}
+rooms.forEach(roomWalls);
+/* boyaux : murs courts entre deux salles (visuel — la marche est gardée par les rectangles) */
+SEGS.forEach(function(sg){
+  COLS.forEach(function(k, ai){
+    var x = xcOf(ai), qRooms = rooms.filter(function(r){ return r.seg===sg.j && r.ai===ai; })
+      .sort(function(a,b){ return b.zt-a.zt; });
+    for (var q=0;q<qRooms.length-1;q++)
+      [x-1.0, x+1.0].forEach(function(xw){
+        box(0.2, GEO.WALLH, qRooms[q].zb - qRooms[q+1].zt - 0.4, xw, GEO.WALLH/2, (qRooms[q].zb + qRooms[q+1].zt)/2, mPart);
+      });
+    if (!qRooms.length)                                            // conduit nu : parois + rideau au milieu
+      [x-1.2, x+1.2].forEach(function(xw){
+        box(0.2, GEO.WALLH, sg.zTop-sg.zBot, xw, GEO.WALLH/2, (sg.zTop+sg.zBot)/2, mPart);
+      });
+  });
+});
+
+/* rails de sol colorés (la grammaire : la couleur, c'est le couloir) + or des halls */
+function rail(w,d,x,z,col){ box(w,.02,d,x,.011,z,new THREE.MeshBasicMaterial({ color:col })); }
+var RAILC = { ter:0xa06417, pal:0x1f5741, isr:0x1d4768, occ:0x6b442a };
+SEGS.forEach(function(sg){
+  COLS.forEach(function(k, ai){
+    if (rooms.some(function(r){ return r.seg===sg.j && r.ai===ai; }))
+      rail(0.07, sg.depth-0.6, xcOf(ai)-GEO.HALFW+0.25, (sg.zTop+sg.zBot)/2, RAILC[k]);
+  });
+});
+HUBS.forEach(function(hu){
+  rail(2*GEO.HALLX-0.8, .07, 0, hu.z0-0.3, 0xd2a63f);
+  rail(2*GEO.HALLX-0.8, .07, 0, hu.z1+0.3, 0xd2a63f);
+});
+
+/* éclairage : une source par chaîne et par hall (jamais par salle — plafond de lights WebGL) */
+SEGS.forEach(function(sg){
+  COLS.forEach(function(k, ai){
+    var pl = new THREE.PointLight(0xf6d9a4, 8, Math.max(9, sg.depth*0.6), 1.5);
+    pl.position.set(xcOf(ai), GEO.WALLH-0.3, (sg.zTop+sg.zBot)/2); scene.add(pl);
+  });
+});
+HUBS.forEach(function(hu){
+  var pl = new THREE.PointLight(0xffd9a0, 18, 2*GEO.HALLX, 1.5);
+  pl.position.set(0, GEO.WALLH-0.3, (hu.z0+hu.z1)/2); scene.add(pl);
+});
+
+/* ---------- textes cuits ---------- */
+function tex(wpx,hpx,draw){
+  var c = document.createElement("canvas"); c.width=wpx; c.height=hpx;
+  draw(c.getContext("2d"), wpx, hpx);
+  var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = MAX_ANISO; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter;
+  return t;
+}
+function wrap2(ctx,text,maxW,maxL){
+  var words=String(text).split(/\s+/), lines=[], cur="";
+  for (var i=0;i<words.length;i++){ var tt = cur?cur+" "+words[i]:words[i];
+    if (ctx.measureText(tt).width>maxW && cur){ lines.push(cur); cur=words[i];
+      if (lines.length>=maxL){ lines[maxL-1]+="…"; return lines; } }
+    else cur=tt; }
+  if (cur) lines.push(cur); return lines;
+}
+function labelPlane(wpx,hpx,mw,texObj,x,y,z,rotY){
+  var m = new THREE.Mesh(new THREE.PlaneGeometry(mw, mw*hpx/wpx),
+        new THREE.MeshBasicMaterial({ map:texObj, side:THREE.FrontSide }));
+  m.position.set(x,y,z); m.rotation.y = rotY||0; scene.add(m); return m;
+}
+function posterTex(p){
+  var wpx = Math.round(p.w*PX_UNIT), hpx = Math.round(p.h*PX_UNIT), tint = LANE[p.brin].t;
+  return tex(wpx,hpx,function(x,w,h){
+    x.fillStyle="#221c14"; x.fillRect(0,0,w,h);
+    x.fillStyle=TRACKS[p.brin].c; x.fillRect(0,0,w,Math.max(6,h*.028));
+    x.fillStyle=tint; x.font="700 "+Math.round(h*.13)+"px system-ui";
+    x.fillText(yrLbl(EV[p.i][0]), w*.06, h*.22);
+    x.fillStyle="#ece6da"; x.font="600 "+Math.round(h*.115)+"px system-ui";
+    var lines = wrap2(x, titleOf(p.i,p.brin), w*.88, 4);
+    for (var q=0;q<lines.length;q++) x.fillText(lines[q], w*.06, h*.42+q*h*.15);
+  });
+}
+function curtainTexL(brin){
+  var tint = LANE[brin].t;
+  return tex(192,448,function(x,w,h){
+    x.fillStyle="#1c1712"; x.fillRect(0,0,w,h);
+    for (var f=0; f<6; f++){ var g=x.createLinearGradient(f*w/6,0,(f+1)*w/6,0);
+      g.addColorStop(0,"#0e1013"); g.addColorStop(.5,"#1f232a"); g.addColorStop(1,"#0e1013");
+      x.fillStyle=g; x.fillRect(f*w/6,0,w/6,h); }
+    x.fillStyle=TRACKS[brin].c; x.fillRect(0,h*.935,w,h*.03);
+    x.fillStyle=tint; x.font="700 26px system-ui"; x.textAlign="center";
+    x.fillText(brName(brin), w/2, h*.10);
+    x.fillStyle="rgba(236,230,218,.55)"; x.font="500 16px system-ui";
+    x.fillText("cette piste se tait", w/2, h*.16);
+    x.fillText("à ce moment", w/2, h*.215);
+  });
+}
+
+/* ---------- murs : affiches, rideaux, stèles, vitrines maillés ---------- */
+var hitables = [];
+posters.forEach(function(p){
+  var mesh = new THREE.Mesh(new THREE.PlaneGeometry(p.w, p.h),
+        new THREE.MeshBasicMaterial({ map:posterTex(p) }));
+  mesh.position.set(p.x, p.y, p.z); mesh.rotation.y = p.rotY;
+  scene.add(mesh);
+  var frame = new THREE.Mesh(new THREE.PlaneGeometry(p.w+.1, p.h+.1), mat(0x19140f));
+  frame.position.set(p.x, p.y, p.z); frame.rotation.y = p.rotY;
+  frame.translateZ(-.02);
+  scene.add(frame);
+  p.mesh = mesh; hitables.push(mesh);
+  mesh.userData = { kind:"poster", i:p.i, brin:p.brin, key:p.key };
+});
+var curtainMeshes = [];
+curtains.forEach(function(c){
+  var mesh = new THREE.Mesh(new THREE.PlaneGeometry(c.w, CH),
+        new THREE.MeshBasicMaterial({ map:curtainTexL(c.brin), side:THREE.DoubleSide }));
+  mesh.position.set(c.x, c.y, c.z); mesh.rotation.y = c.rotY;
+  scene.add(mesh);
+  c.mesh = mesh; hitables.push(mesh);
+  mesh.userData = { kind:"curtain", i:null, brin:c.brin, key:c.key };
+  curtainMeshes.push(mesh);
+});
+/* stèles : panneau front de carrefour (fond sombre + liseré doré + lampe) — la face d'un couloir au moment */
+var mStele = mat(0x14100b), mGold = new THREE.MeshBasicMaterial({ color:GOLD });
+var mGlass = new THREE.MeshBasicMaterial({ color:0xe0cda6, transparent:true, opacity:.1, side:THREE.DoubleSide, depthWrite:false });
+HUBS.forEach(function(hu){
+  if (hu.kind!=="moment") return;
+  COLS.forEach(function(k, ai){
+    var zs = hu.z0-GEO.STELEZ;
+    var np = posters.filter(function(q){ return q.mode==="stele" && q.hub===hu.h && q.ai===ai; });
+    var ct = curtains.filter(function(q){ return q.mode==="stele" && q.hub===hu.h && q.ai===ai; });
+    var y0, y1;
+    if (np.length){ var hs=np.map(function(q){return q.h;}); var ys=np.map(function(q){return q.y;});
+      y0=Math.min.apply(null, ys.map(function(y,q){return y-hs[q]/2;}))-0.10;
+      y1=Math.max.apply(null, ys.map(function(y,q){return y+hs[q]/2;}))+0.10; }
+    else { y0=0.14; y1=CH/2+0.05+CH/2+0.12; }
+    var back = new THREE.Mesh(new THREE.PlaneGeometry(2*GEO.STELEU+0.5, y1-y0), mStele);
+    back.position.set(xcOf(ai), (y0+y1)/2, zs); scene.add(back);
+    var edge = new THREE.Mesh(new THREE.BoxGeometry(2*GEO.STELEU+0.56, 0.03, 0.03), mGold);
+    edge.position.set(xcOf(ai), y1+0.05, zs+0.015); scene.add(edge);
+    var lp = new THREE.PointLight(0xffd9a0, np.length?5:3, 5.5, 1.6);
+    lp.position.set(xcOf(ai), y1+0.4, zs+0.9); scene.add(lp);
+    var cap = labelPlane(1200,90, 3.4, tex(1200,90,function(x,w,h){
+      x.fillStyle=LANE[k].t; x.font="700 40px system-ui"; x.textAlign="center";
+      x.fillText("COULOIR · " + TRACKS[k].name.toUpperCase(), w/2, h*.66);
+    }), xcOf(ai), y1+0.42, zs+0.02, 0);
+  });
+});
+/* vitrine centrale : le moment résumé des quatre couloirs */
+cases.forEach(function(v){
+  var w = WIN[v.plaza];
+  var g = new THREE.Group(); g.position.set(v.x, 0, v.z); scene.add(g);
+  var ped = new THREE.Mesh(new THREE.BoxGeometry(.66,.95,.5), mat(0x2a231a)); ped.position.y=.475; g.add(ped);
+  var railG = new THREE.Mesh(new THREE.BoxGeometry(.7,.028,.54), mGold); railG.position.y=1.5; g.add(railG);
+  var gl = new THREE.Mesh(new THREE.BoxGeometry(.6,.52,.44), mGlass); gl.position.y=1.24; gl.renderOrder=6; g.add(gl);
+  var tt = tex(512,400,function(x,ww,h){
+    x.fillStyle="#17130e"; x.fillRect(0,0,ww,h);
+    x.fillStyle="#d2a63f"; x.font="700 18px system-ui";
+    x.fillText("CARREFOUR — LES QUATRE COULOIRS À CE MOMENT", 16, 34);
+    var yy = 76;
+    COLS.forEach(function(k){
+      var ids = w.ids.filter(function(ii){ return brOf(ii)===k; });
+      x.fillStyle = ids.length ? LANE[k].t : "#787f89"; x.font="700 21px system-ui";
+      x.fillText(brName(k) + (ids.length ? "" : " · se tait"), 16, yy); yy += 27;
+      x.fillStyle="#ece6da"; x.font="600 19px system-ui";
+      ids.slice(0,2).forEach(function(ii){
+        var lines = wrap2(x, titleOf(ii,k), ww-40, 1);
+        x.fillText(lines[0], 26, yy); yy += 24;
+      });
+      if (ids.length > 2){ x.fillStyle="#9a8f7f"; x.fillText("et " + (ids.length-2) + " autre(s)…", 26, yy); yy += 24; }
+    });
+  });
+  var pl = new THREE.Mesh(new THREE.PlaneGeometry(.56,.44), new THREE.MeshBasicMaterial({ map:tt }));
+  pl.position.set(0, .62, .2515); g.add(pl);
+  v.mesh = gl; v.group = g; hitables.push(ped); hitables.push(gl);
+  ped.userData = { kind:"case", i:v.i, hub:v.hub, key:v.key }; gl.userData = ped.userData;
+});
+
+/* bandeaux : en-tête de chaîne (couloir + années du segment) + fronton des carrefours */
+SEGS.forEach(function(sg){
+  COLS.forEach(function(k, ai){
+    var qRooms = rooms.filter(function(r){ return r.seg===sg.j && r.ai===ai; });
+    if (!qRooms.length) return;
+    var zt0 = Math.max.apply(null, qRooms.map(function(r){ return r.zt; }));
+    var t = tex(1200,110,function(x,w,h){
+      x.fillStyle=LANE[k].t; x.font="700 54px system-ui";
+      x.fillText("COULOIR · " + TRACKS[k].name.toUpperCase() + " · " + yrOf(sg.y0)+"–"+yrOf(sg.y1), 12, h*.66);
+    });
+    labelPlane(1200,110, 5.6, t, xcOf(ai), 2.82, zt0+0.02, 0);
+  });
+});
+HUBS.forEach(function(hu){
+  var msg = hu.kind==="moment" ? ("CARREFOUR · " + hu.label + " · " + yrOf(hu.win.y0)+"–"+yrOf(hu.win.y1))
+    : hu.kind==="entrée" ? "ENTREZ — LE TEMPS DESCEND DEVANT VOUS · ON NE CHANGE DE COULOIR QU'AUX CARREFOURS DORÉS"
+    : "AUJOURD'HUI — " + yrOf(window.__K_ALLIES.maxY);
+  labelPlane(2400,150, Math.min(2*GEO.HALLX-2, 22), tex(2400,150,function(x,w,h){
+    x.fillStyle= hu.kind==="entrée" ? "#ece6da" : "#d2a63f";
+    x.font="700 " + (hu.kind==="entrée" ? 52 : 62) + "px system-ui"; x.textAlign="center";
+    x.fillText(msg, w/2, h*.66);
+  }), 0, 2.8, hu.z1+0.12, 0);
+});
+
+/* ---------- panneau : fait de couloir, stèle de carrefour, rideau, vitrine — regard croisé ---------- */
+var panelEl = document.getElementById("panel");
+function croise(i){
+  var y = EV[i][0], me = brOf(i), out = "";
+  COLS.forEach(function(k){
+    if (k===me) return;
+    var near = factsByBrin[k].filter(function(ii){ return Math.abs(EV[ii][0]-y) <= 2; });
+    if (near.length){
+      near.slice(0,3).forEach(function(ii){
+        out += '<p class="vx '+k+'"><b><span class="dot '+k+'"></span>'+mEsc(titleOf(ii,k))+'</b><span>'+mEsc(TRACKS[k].name)+' · '+yrLbl(EV[ii][0])+'</span></p>';
+      });
+    } else {
+      out += '<p class="vx '+k+' sil"><b>Aucun fait de cette piste dans un rayon de deux ans.</b><span>'+mEsc(TRACKS[k].name)+'</span></p>';
+    }
+  });
+  return out;
+}
+function hubVoilees(w){
+  var sil = COLS.filter(function(k){ return !w.ids.some(function(ii){ return brOf(ii)===k; }); });
+  return sil.length ? "Couloirs muets ici : " + sil.map(brName).join(", ") + "." : "Ici, les quatre couloirs parlent.";
+}
+function roomOf(i){ for (var q=0;q<rooms.length;q++) if (rooms[q].i===i) return rooms[q]; return null; }
+function openPanel(s){
+  var html = '<button class="x" aria-label="Fermer">×</button>';
+  if (s.kind==="curtain" && s.mode==="conduit"){
+    var sg = SEGS[s.seg];
+    html += '<p class="yr">Couloir nu · '+yrOf(sg.y0)+'–'+yrOf(sg.y1)+'</p>'+
+      '<h2>De «&nbsp;'+mEsc(brName(s.brin))+'&nbsp;», rien entre ces dates</h2>'+
+      '<p class="desc">Ce tronçon du couloir ne contient aucune salle : le document ne rapporte aucun fait de cette piste sur cette période. Le conduit reste ouvert — traverser le silence fait partie du récit.</p>';
+  } else if (s.kind==="curtain"){
+    html += '<p class="yr">Stèle voilée · '+HUBS[s.hub].label+'</p>'+
+      '<h2>Ici, «&nbsp;'+mEsc(brName(s.brin))+'&nbsp;» n’a rien à dire</h2>'+
+      '<p class="desc">Le carrefour réunit les récits au même moment — et cette piste n’y apporte aucun fait. Le voile ne dit pas «&nbsp;faux&nbsp;» : il dit «&nbsp;le document ne raconte pas ceci par cette piste&nbsp;». Question à travailler&nbsp;: qu’aurait signifié ce fait, raconté depuis là&nbsp;?</p>';
+  } else if (s.kind==="case"){
+    var w = WIN[s.plaza];
+    html += '<p class="yr">Carrefour · '+yrOf(w.y0)+'–'+yrOf(w.y1)+'</p><h2>'+mEsc(w.label)+'</h2>'+
+      '<p class="desc">'+mEsc(hubVoilees(w))+'</p>'+
+      '<div class="voix"><h3>Autour du fait</h3>'+croise(s.i)+'</div>'+
+      '<div class="voix"><h3>Pourquoi ce carrefour&nbsp;?</h3><p class="desc">'+mEsc(w.just)+'</p><p class="desc">Les carrefours sont un choix éditorial du kit, pas une donnée du document&nbsp;; chaque rattachement est justifié dans l’interface.</p></div>';
+  } else {
+    var i = s.i, ev = EV[i];
+    html += '<p class="yr">'+yrLbl(ev[0])+' · '+(s.niche ? "stèle du carrefour "+mEsc(HUBS[s.hub].label) : "salle du couloir "+mEsc(brName(s.brin)))+'</p>'+
+      '<h2>'+mEsc(titleOf(i,s.brin))+'</h2>'+
+      '<p class="desc">'+mEsc(ev[3])+'</p>'+
+      (divergent(i)?'<span class="divb">≠ lecture incertaine conservée du document</span>':'')+
+      '<div class="voix"><h3>Regard croisé — les autres couloirs vers '+yrOf(ev[0])+'</h3>'+croise(i)+'</div>';
+  }
+  html += '<div class="pied"><a href="index-comparatif.html">← Toutes les vues de la frise</a><br>'+
+    (s.kind==="case" ? "carrefour doré (choix éditorial justifié)"
+      : s.kind==="curtain" ? (s.mode==="conduit" ? "couloir nu — silence du document · segment "+(s.seg+1) : "stèle voilée — silence du document")
+      : (s.niche ? "stèle de carrefour" : "salle&nbsp;: couloir "+mEsc(TRACKS[s.brin].name)))+'</div>';
+  panelEl.innerHTML = html;
+  panelEl.classList.add("open");
+  panelEl.scrollTop = 0;
+  panelEl.querySelector(".x").addEventListener("click", closePanel);
+  panelEl.__key = s.key;
+  var bd = document.getElementById("badge");
+  bd.textContent = (s.kind==="curtain" ? (s.mode==="conduit" ? "Couloir nu · " : "Stèle voilée · ") : s.kind==="case" ? "Carrefour · " : "") +
+    (s.kind==="case" ? WIN[s.plaza].label : s.kind==="curtain" ? brName(s.brin)+" se tait" : yrLbl(EV[s.i][0])+" — "+titleOf(s.i,s.brin));
+  bd.classList.add("show");
+}
+function closePanel(){ panelEl.classList.remove("open"); panelEl.__key=null; document.getElementById("badge").classList.remove("show"); }
+
+/* ---------- stations DOM : Tab dans l'ordre du temps ---------- */
+var stWrap = document.getElementById("stations");
+allStations.forEach(function(s){
+  var b = document.createElement("button");
+  b.textContent = s.kind==="curtain"
+      ? (s.mode==="conduit" ? ("Couloir nu — « "+brName(s.brin)+" » se tait "+yrOf(SEGS[s.seg].y0)+"–"+yrOf(SEGS[s.seg].y1))
+                            : ("Stèle voilée — « "+brName(s.brin)+" » se tait au carrefour "+HUBS[s.hub].label))
+    : s.kind==="case" ? ("Carrefour "+WIN[s.plaza].label+" — les quatre couloirs à ce moment")
+    : (yrLbl(EV[s.i][0])+" — "+titleOf(s.i,s.brin)+" ("+(s.niche ? "stèle" : "salle")+" "+brName(s.brin)+")");
+  b.setAttribute("data-key", s.key);
+  b.addEventListener("focus", function(){ focusStation(s); });
+  stWrap.appendChild(b);
+});
+document.getElementById("skip").addEventListener("click", function(){ var b = stWrap.firstChild; if (b) b.focus(); });
+
+/* ---------- navigateur : les neuf carrefours ---------- */
+var navEl = document.getElementById("nav");
+function buildNav(){
+  HUBS.forEach(function(hu){
+    var b = document.createElement("button");
+    b.className = "place";
+    b.setAttribute("data-target","h"+hu.h);
+    b.innerHTML = "<b>"+(hu.kind==="moment" ? yrOf(hu.win.y0)+"–"+yrOf(hu.win.y1) : hu.kind==="entrée" ? "1880" : "2025")+"</b>"+mEsc(hu.label);
+    b.addEventListener("click", function(){ teleportHub(hu.h); });
+    navEl.appendChild(b);
+  });
+}
+function teleportHub(h){
+  var hu = HUBS[h]; if (!hu) return;
+  snapTo({ x:0, z:hu.z0-2.2, yaw:0, pitch:0 });
+  if (hu.kind==="moment") say("Carrefour "+hu.label+" · "+hu.win.ids.length+" fait(s) — "+hubVoilees(hu.win));
+  else if (hu.kind==="entrée") say("Entrée — le temps descend devant vous ; on ne change de couloir qu'aux carrefours dorés");
+  else say("Aujourd'hui — fin du chapelet");
+}
+buildNav();
+var sayT = 0;
+function say(msg){ var s = document.getElementById("say"); s.textContent = msg; s.classList.add("show");
+  clearTimeout(sayT); sayT = setTimeout(function(){ s.classList.remove("show"); }, 3200); }
+
+/* ---------- entrées profondes : ?ev=i (poste du fait) · ?hub=h (carrefour) ---------- */
+function stationForEvent(i){
+  for (var q=0;q<posters.length;q++) if (posters[q].i===i) return posters[q];
+  return null;
+}
+function deepLink(){
+  var pr = new URLSearchParams(location.search);
+  if (pr.has("hub")){ var hj = +pr.get("hub"); if (HUBS[hj]){ teleportHub(hj); return; } }
+  if (pr.has("ev")){ var i3 = +pr.get("ev"); if (EV[i3]){ var st = stationForEvent(i3); if (st){ focusStation(st, true); return; } } }
+  snapTo({ x:0, z:-2.4, yaw:0, pitch:0 }, true);
+}
+
+/* ---------- marche première personne (loi MESURÉE, prouvée sur K) ---------- */
+function inRect(x,z,r){ return x>=r.x0 && x<=r.x1 && z>=r.z0 && z<=r.z1; }
+function walkable(x,z){
+  if (z > 0.3 || z < ZMIN-0.3) return false;
+  for (var b=0;b<blockers.length;b++) if (inRect(x,z,blockers[b])) return false;
+  for (var r=0;r<rects.length;r++) if (inRect(x,z,rects[r])) return true;
+  return false;
+}
+function posAt(x,z){
+  for (var q=0;q<HUBS.length;q++) if (z<=HUBS[q].z0+0.2 && z>=HUBS[q].z1-0.2) return { kind:"hub", hub:q };
+  for (var j=0;j<SEGS.length;j++){ var sg = SEGS[j];
+    if (z<=sg.zTop+0.2 && z>=sg.zBot-0.2){
+      var best=0, bd=1e9;
+      for (var ai=0;ai<COLS.length;ai++){ var d=Math.abs(x-xcOf(ai)); if (d<bd){ bd=d; best=ai; } }
+      return { kind:"couloir", seg:j, ai:best }; } }
+  return { kind:"dehors" };
+}
+var glide = null;
+function reduced(){ return matchMedia("(prefers-reduced-motion: reduce)").matches; }
+function normYaw(y){ while (y>Math.PI) y-=2*Math.PI; while (y<-Math.PI) y+=2*Math.PI; return y; }
+function snapTo(v, instant){
+  if (instant===undefined) instant = reduced();
+  var ty = normYaw(v.yaw);
+  if (instant){ pxCur=v.x; pzCur=v.z; yaw=ty; pitch=v.pitch; glide=null; return; }
+  glide = { fx:pxCur, fz:pzCur, fy:yaw, fp:pitch, tx:v.x, tz:v.z, ty:ty, tp:v.pitch, t0:performance.now(), ms:380 };
+}
+function focusStation(s, instant){ snapTo(s.view, instant); openPanel(s); }
+var locked = false, keys = {};
+function panelOpen(){ return panelEl.classList.contains("open"); }
+var menuEl = document.getElementById("menu");
+function menuOpen(){ return menuEl.classList.contains("open"); }
+function openMenu(){ var wasLocked = locked;
+  if (locked) document.exitPointerLock();
+  menuEl.__resumeLock = wasLocked;
+  menuEl.classList.add("open"); paintMenu();
+  document.getElementById("mResume").focus();
+}
+function closeMenu(){ menuEl.classList.remove("open");
+  if (menuEl.__resumeLock) lockCanvas(); menuEl.__resumeLock = false; }
+function paintMenu(){
+  [["mSens",OPT.sens],["mSpd",OPT.spd],["mInv",OPT.inv]].forEach(function(g){
+    document.getElementById(g[0]).querySelectorAll("button").forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-k")===g[1] ? "true" : "false"); }); });
+}
+[["mSens","sens"],["mSpd","spd"],["mInv","inv"]].forEach(function(g){
+  document.getElementById(g[0]).addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    OPT[g[1]] = b.getAttribute("data-k"); saveOpts(); paintMenu(); });
+});
+document.getElementById("mResume").addEventListener("click", closeMenu);
+menuEl.addEventListener("click", function(e){ if (e.target===menuEl) closeMenu(); });
+document.addEventListener("keydown", function(e){
+  if (e.key==="Escape"){ if (locked) document.exitPointerLock();
+    if (panelOpen()){ closePanel(); return; }
+    if (menuOpen()){ closeMenu(); return; }
+    var w = document.getElementById("welcome");
+    if (!w.classList.contains("gone")){ w.classList.add("gone"); return; }
+    openMenu(); return; }
+  if (e.key==="?"||e.key==="h"||e.key==="H"){ document.getElementById("welcome").classList.remove("gone"); return; }
+  keys[e.key.toLowerCase()] = true;
+  if (locked && e.key.toLowerCase()==="e" && nearStation && !panelOpen()){ focusStation(nearStation); e.preventDefault(); }
+});
+document.addEventListener("keyup", function(e){ keys[e.key.toLowerCase()] = false; });
+document.addEventListener("mousemove", function(e){
+  if (!locked) return;
+  nudgeLook(e.movementX, e.movementY);
+});
+var OPTS_SENS = { douce:.0015, normale:.0023, rapide:.0034 };
+var OPTS_SPD  = { lente:1.8, normale:2.7, rapide:3.9 };
+var OPT = (function(){ var d = { sens:"normale", spd:"normale", inv:"normal" };
+  try { var s = JSON.parse(localStorage.getItem("chapelet-opts-v1") || "{}");
+    if (s && typeof s === "object"){
+      if (OPTS_SENS[s.sens]) d.sens = s.sens;
+      if (OPTS_SPD[s.spd]) d.spd = s.spd;
+      if (s.inv === "inverse") d.inv = "inverse";
+    } } catch(e){}
+  return d; })();
+function saveOpts(){ try { localStorage.setItem("chapelet-opts-v1", JSON.stringify(OPT)); } catch(e){} }
+function nudgeLook(dx,dy){
+  var s = OPTS_SENS[OPT.sens] || OPTS_SENS.normale;
+  yaw = normYaw(yaw - dx*s);
+  pitch = mClamp(pitch + (OPT.inv === "inverse" ? 1 : -1)*dy*s, -GEO.PITCH, GEO.PITCH);
+}
+function lockCanvas(){ try { var pr = renderer.domElement.requestPointerLock();
+  if (pr && pr.catch) pr.catch(function(){}); } catch(e){} }
+renderer.domElement.addEventListener("click", function(){ if (!locked && !menuOpen()) lockCanvas(); });
+document.addEventListener("pointerlockchange", function(){
+  locked = document.pointerLockElement === renderer.domElement;
+  document.body.classList.toggle("locked", locked);
+});
+var SPD = 2.7;
+function spdNow(){ return OPTS_SPD[OPT.spd] || SPD; }
+function step(dt){
+  if (locked && !panelOpen() && !glide){
+    var f = (keys["z"]||keys["w"]||keys["arrowup"]?1:0) - (keys["s"]||keys["arrowdown"]?1:0);
+    var r2 = (keys["q"]||keys["a"]?1:0) - (keys["d"]?1:0);
+    if (keys["arrowleft"]) yaw = normYaw(yaw + 1.7*dt);
+    if (keys["arrowright"]) yaw = normYaw(yaw - 1.7*dt);
+    if (f || r2){
+      var fx = -Math.sin(yaw), fz = -Math.cos(yaw);         // loi MESURÉE (yawTable) : avance = (−sin yaw, −cos yaw)
+      var lx = Math.cos(yaw), lz = -Math.sin(yaw);          // gauche = vue ∧ up
+      var vx = fx*f + lx*r2, vz = fz*f + lz*r2, n = Math.hypot(vx,vz)||1, d = spdNow()*dt/n;
+      var nx = pxCur + vx*d, nz = pzCur + vz*d;
+      if (walkable(nx, pzCur)) pxCur = nx;
+      if (walkable(pxCur, nz)) pzCur = nz;
+    }
+  }
+  if (glide){
+    var t = Math.min(1, (performance.now()-glide.t0)/glide.ms), e2 = t*t*(3-2*t);
+    pxCur = glide.fx + (glide.tx-glide.fx)*e2; pzCur = glide.fz + (glide.tz-glide.fz)*e2;
+    yaw = normYaw(glide.fy + (glide.ty-glide.fy)*e2); pitch = glide.fp + (glide.tp-glide.fp)*e2;
+    if (t>=1) glide = null;
+  }
+}
+
+/* ---------- affordance E ---------- */
+var nearStation = null;
+var affordEl = document.getElementById("afford");
+function refreshNear(){
+  var best = null, bd = 2.4;
+  for (var q=0;q<allStations.length;q++){ var s = allStations[q];
+    var d = Math.hypot(s.x-pxCur, s.z-pzCur);
+    if (d < bd){ bd = d; best = s; } }
+  nearStation = best;
+  if (best && !panelOpen() && !glide){
+    affordEl.innerHTML = "<kbd>E</kbd> " + mEsc(best.kind==="case" ? ("carrefour · "+WIN[best.plaza].label)
+      : best.kind==="curtain" ? (best.mode==="conduit" ? ("couloir nu · "+brName(best.brin)) : ("stèle voilée · "+brName(best.brin)))
+      : titleOf(best.i,best.brin));
+    affordEl.style.display = "block";
+  } else affordEl.style.display = "none";
+}
+
+/* ---------- boucle ---------- */
+var last = performance.now(), curPos = "";
+function frame(now){
+  requestAnimationFrame(frame);
+  var dt = Math.min(.05, (now-last)/1000); last = now;
+  step(dt);
+  cam.position.set(pxCur, GEO.EYE, pzCur);
+  cam.rotation.y = yaw; cam.rotation.x = -pitch;   // repère caméra (stationView) ; loi MESURÉE vue=(−sin yaw,·,−cos yaw)
+  lamp.position.set(pxCur, GEO.EYE+.2, pzCur);
+  renderer.render(scene, cam);
+  refreshNear();
+  var pp = posAt(pxCur, pzCur), pk = pp.kind+":"+(pp.hub!==undefined?pp.hub:pp.seg+":"+pp.ai);
+  if (pk !== curPos){ curPos = pk;
+    var tkey = pp.kind==="hub" ? ("h"+pp.hub) : null;
+    Array.prototype.forEach.call(navEl.children, function(b){
+      b.setAttribute("aria-current", tkey && b.getAttribute("data-target")===tkey ? "true" : "false"); });
+    if (initialized){
+      if (pp.kind==="hub"){ var hu = HUBS[pp.hub];
+        if (hu.kind==="moment") say("Carrefour "+hu.label+" · "+hu.win.ids.length+" fait(s) — "+hubVoilees(hu.win));
+        else if (hu.kind==="entrée") say("Entrée — le temps descend devant vous");
+        else say("Aujourd'hui — fin du chapelet"); }
+      else if (pp.kind==="couloir"){ var sg2 = SEGS[pp.seg];
+        say("Couloir "+brName(COLS[pp.ai])+" · "+yrOf(sg2.y0)+"–"+yrOf(sg2.y1)); }
+    } }
+}
+var initialized = false;
+addEventListener("resize", function(){ cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+/* ---------- accueil ---------- */
+var welEl = document.getElementById("welcome");
+document.getElementById("bWalk").addEventListener("click", function(){ welEl.classList.add("gone"); lockCanvas(); });
+document.getElementById("bStations").addEventListener("click", function(){ welEl.classList.add("gone"); var b = stWrap.firstChild; if (b) b.focus(); });
+welEl.addEventListener("click", function(e){ if (e.target===welEl) welEl.classList.add("gone"); });
+
+/* ---------- API de harnais : inventaires, géométrie dérivée, caméra, raycast ---------- */
+window.__chapelet = {
+  state: function(){ return { x:pxCur, z:pzCur, yaw:yaw, pitch:pitch, pos:posAt(pxCur,pzCur),
+      locked:!!document.pointerLockElement, gliding:!!glide, reduced:reduced(), panel:panelEl.__key||null,
+      aa:{ msaa:!!(renderer.getContext().getContextAttributes()||{}).antialias, aniso:MAX_ANISO, pxu:PX_UNIT, maxTex:renderer.capabilities.maxTextureSize },
+      menu:menuOpen(), opts:{ sens:OPT.sens, spd:OPT.spd, inv:OPT.inv } }; },
+  geo: GEO, ZMIN: ZMIN,
+  cols: function(){ return COLS.map(function(k, ai){ return { ai:ai, k:k, x:xcOf(ai) }; }); },
+  hubs: function(){ return HUBS.map(function(hu){ return { h:hu.h, kind:hu.kind, label:hu.label, z0:hu.z0, z1:hu.z1,
+      win: hu.win ? { y0:hu.win.y0, y1:hu.win.y1, ids:hu.win.ids.slice() } : null }; }); },
+  segs: function(){ return SEGS.map(function(s){ return { j:s.j, y0:s.y0, y1:s.y1, zTop:s.zTop, zBot:s.zBot, depth:s.depth }; }); },
+  rooms: function(){ return rooms.map(function(r){ return { i:r.i, brin:r.brin, ai:r.ai, seg:r.seg, x:r.x, zt:r.zt, zb:r.zb }; }); },
+  rects: function(){ return rects.slice(); }, blockers: function(){ return blockers.slice(); },
+  posters: function(){ return posters.map(function(p){ return { i:p.i, brin:p.brin, ai:p.ai, mode:p.mode, seg:p.seg===undefined?null:p.seg,
+      hub:p.hub===undefined?null:p.hub, x:p.x, z:p.z, y:p.y, w:p.w, h:p.h, lv:p.lv, key:p.key, year:EV[p.i][0], scale:p.scale }; }); },
+  curtains: function(){ return curtains.map(function(c){ return { brin:c.brin, ai:c.ai, mode:c.mode, seg:c.seg===undefined?null:c.seg,
+      hub:c.hub===undefined?null:c.hub, x:c.x, z:c.z, y:c.y, w:c.w, key:c.key }; }); },
+  cases: function(){ return cases.map(function(c){ return { hub:c.hub, i:c.i, x:c.x, z:c.z, key:c.key }; }); },
+  counts: function(){
+    var perBrin = {};
+    BRINS.forEach(function(k){
+      perBrin[k] = { n:factsByBrin[k].length,
+        roomPosters: posters.filter(function(p){ return p.brin===k && !p.niche; }).length,
+        stelePosters: posters.filter(function(p){ return p.brin===k && p.niche; }).length,
+        conduits: curtains.filter(function(c){ return c.brin===k && c.mode==="conduit"; }).length };
+    });
+    return { corpus:EV.length, perBrin:perBrin,
+      steleCurtains: curtains.filter(function(c){ return c.mode==="stele"; }).length,
+      conduits: curtains.filter(function(c){ return c.mode==="conduit"; }).length,
+      ndiv: EV.reduce(function(s,_,i){ return s+(divergent(i)?1:0); },0),
+      momentsIn: WIN.reduce(function(s,w){ return s+w.ids.length; },0),
+      steleCurtExpected: (function(){ var s=0; WIN.forEach(function(w){ COLS.forEach(function(k){
+        if (!w.ids.some(function(ii){ return brOf(ii)===k; })) s++; }); }); return s; })() };
+  },
+  xcOf: xcOf, segOfYL: segOfYL, inWin: inWin,
+  walkable: walkable,
+  stations: function(){ return allStations.map(function(s){ return { key:s.key, kind:s.kind, mode:s.mode||null,
+      i:s.i===undefined?null:s.i, brin:s.brin||null, hub:s.hub===undefined?null:s.hub, seg:s.seg===undefined?null:s.seg,
+      order:s.order, x:s.x, z:s.z, view:s.view }; }); },
+  focus: function(key, instant){ var s = null;
+    for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
+    if (s) focusStation(s, instant); return !!s; },
+  teleportHub: teleportHub, snapTo: snapTo, nudgeLook: nudgeLook,
+  forwardHit: function(){ cam.updateMatrixWorld(true); var rc0 = new THREE.Raycaster(); rc0.setFromCamera(new THREE.Vector2(0,0), cam); var d = rc0.ray.direction;
+    var rc = new THREE.Raycaster(cam.position.clone(), d, 0.05, 12);
+    var hit = rc.intersectObjects(hitables, false)[0];
+    return hit ? { kind:hit.object.userData.kind, key:hit.object.userData.key||null, dist:hit.distance }
+               : { miss:true, o:[+cam.position.x.toFixed(2),+cam.position.y.toFixed(2),+cam.position.z.toFixed(2)], d:[+d.x.toFixed(3),+d.y.toFixed(3),+d.z.toFixed(3)], n:hitables.length }; },
+  sceneRef: function(){ return scene; },
+  yawTable: function(){ var sx=cam.rotation.x, sy=cam.rotation.y, rows=[];
+    for (var k=0;k<8;k++){ var yaw2=k*Math.PI/4; var pp=0.0;
+      cam.rotation.y = yaw2; cam.rotation.x = -pp; cam.updateMatrixWorld(true);
+      var rc=new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(0,0), cam);
+      var d=rc.ray.direction; rows.push([+(yaw2/Math.PI).toFixed(2), +d.x.toFixed(2), +d.y.toFixed(2), +d.z.toFixed(2)]); }
+    cam.rotation.x=sx; cam.rotation.y=sy; cam.updateMatrixWorld(true); return rows; },
+  probeRay: function(ox,oy,oz,dx,dy,dz,max){ var rc = new THREE.Raycaster(new THREE.Vector3(ox,oy,oz), new THREE.Vector3(dx,dy,dz).normalize(), 0.02, max||12);
+    var hits = rc.intersectObjects(hitables, false);
+    return hits.slice(0,3).map(function(h){ return { key:h.object.userData.key||h.object.name||"?", dist:+h.distance.toFixed(2), at:[+h.point.x.toFixed(2),+h.point.y.toFixed(2),+h.point.z.toFixed(2)] }; }); },
+  rayHit: function(nx,ny){ cam.updateMatrixWorld(true); var rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(nx,ny), cam);
+    var hit = rc.intersectObjects(hitables, false)[0];
+    return hit ? { kind:hit.object.userData.kind, i:hit.object.userData.i===null?null:hit.object.userData.i,
+      brin:hit.object.userData.brin||null, key:hit.object.userData.key||null, dist:hit.distance } : null; },
+  panel: function(){ var a = panelEl.querySelector(".pied a");
+    return { open:panelEl.classList.contains("open"), key:panelEl.__key||null, backHref: a ? a.getAttribute("href") : null }; }
+};
+
+/* ---------- premier rendu, puis entrées profondes ---------- */
+deepLink();
+initialized = true;
+requestAnimationFrame(frame);
+
+} catch (err) {
+  console.error(err);
+  fallbackOn();
+}
+})();
+</script>
+<!-- BEGIN commun:frise-outils -->
+<nav class="frise-outils" aria-label="Navigation vers le kit">
+  <a href="../rapport/rapport_FR.html">← Kit pédagogique</a>
+  <a href="index-comparatif.html">Comparer les vues</a>
+</nav>
+<style>
+  .frise-outils{display:flex;flex-wrap:wrap;gap:4px 16px;background:var(--card,#fff);border-top:1px solid var(--border,#ccc);padding:9px 16px 0;font-size:12px}
+  .frise-outils a{color:var(--accent,#9a511c);text-decoration:none}
+  .frise-outils a:hover{text-decoration:underline}
+</style>
+<!-- END commun:frise-outils -->
+<!-- BEGIN commun:pied -->
+<footer class="pied-commun">
+  <p><b>Outil pédagogique Israël–Palestine</b> · réalisé par le GT (Groupe de travail) · Licence <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr">CC BY-NC-SA 4.0</a></p>
+  <p>Dernière mise à jour de cette page : <time datetime="2026-11-27">27 novembre 2026</time> · <a href="../rapport/NOUVEAUTES.html">Nouveautés du kit</a> · Dépôt : <a href="https://github.com/Coualafool/GT_conflits">github.com/Coualafool/GT_conflits</a></p>
+</footer>
+<style>
+  .pied-commun{max-width:var(--maxw,880px);margin:64px auto 0;padding:16px 22px 48px;border-top:1px solid var(--border);color:var(--faint);font-size:12.5px;line-height:1.7}
+  .pied-commun p{margin:3px 0}
+  .pied-commun a{color:var(--muted)}
+  .pied-commun a:hover{color:var(--ink)}
+</style>
+
+<style>
+  /* pied compact (pages-frise -- inject_common.py) */
+  .pied-commun{border-top:0;margin:0;padding:3px 16px 9px;font-size:12px;line-height:1.5;color:var(--muted,#555);background:var(--card,#fff)}
+  .pied-commun p{display:inline}
+  .pied-commun p+p::before{content:" · "}
+</style>
+<!-- END commun:pied -->
+</body>
+</html>
