@@ -294,7 +294,10 @@ await page.waitForTimeout(1500);
   await page.evaluate(() => {
     const C = window.__chapelet;
     const hu = C.hubs()[0], col = C.cols().find((c) => !C.segs()[0].alive[c.ai]);   // une colonne scellée dès l'entrée
-    C.snapTo({ x: col.x, z: hu.z1 + 1.6, yaw: 0, pitch: -0.03 }, true);              // face au mur scellé, portes voisines ouvertes
+    // cadrage RECULÉ (leçon vision QC 2026-11-27 : collé au mur = dégradé plat illisible) —
+    // l'angle entre colonne scellée et colonne ouverte voisine, pour voir fin ET chemins vivants.
+    const xvoisin = (col.x + C.cols()[col.ai === 0 ? 1 : col.ai - 1].x) / 2;
+    C.snapTo({ x: xvoisin, z: hu.z1 + 4.4, yaw: 0, pitch: -0.05 }, true);
   });
   await shot("L-sealed");
 }
