@@ -139,7 +139,8 @@ def esc(s: str) -> str:
     # 裸 = « nus », メ = « mé » initial). Le journal cite les sujets verbatim — on ne réécrit pas
     # l'histoire, mais on ne canonise pas non plus deux caractères CJK dans du texte français.
     # Ajouter une ligne ici à chaque nouvelle contamination avérée, jamais de filtrage générique.
-    for moj, fixe in (("les裸 nombres", "les nus nombres"), ("メtriques", "métriques")):
+    for moj, fixe in (("les裸 nombres", "les nus nombres"), ("メtriques", "métriques"),
+                      ("tuée dans l'uf", "tuée dans l'œuf"), ("se lit baigné dewarm", "se lit baigné de lumière")):
         s = s.replace(moj, fixe)
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
