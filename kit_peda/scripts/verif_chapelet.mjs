@@ -236,6 +236,35 @@ await page.waitForTimeout(1500);
     wmsg.startsWith("ok=true"), wmsg);
 }
 
+/* ---------- L9 : balayage fin de chaîne — aucune bande morte devant une porte ----------
+   Leçon 2026-11-27 : l'union de rectangles marchait AU-DESUS des portes mais le colliseur
+   laissait la trousse du mur (0,30 m) morte dans chaque ouverture — 208 bandes invisibles,
+   l'utilisateur butait devant chaque seuil. Les gates à tolérance (L2, ±0,3 m) enjambaient
+   exactement ces bandes : une continuité vérifiée au pas de 0,5 m ne prouve rien au pas de 5 cm. */
+{
+  const sweep = await page.evaluate(() => {
+    const C = window.__chapelet, hub = C.hubs(), bad = [];
+    C.cols().forEach((col) => {
+      let dead = null;
+      for (let z = -0.2; z >= C.ZMIN; z -= 0.05) {
+        const w = C.walkable(col.x, z);
+        if (!w && dead === null) dead = z;
+        if ((w || z <= C.ZMIN) && dead !== null) {
+          const a = dead, b = z; dead = null;
+          const width = a - b;
+          if (width > 0.4) return true;                       // obstacle visible (stèle) : on contourne
+          if (a > -0.3 || b < C.ZMIN + 0.5) return true;      // murs d'entrée et de bout du temps
+          bad.push(col.k + " " + a.toFixed(2) + "→" + b.toFixed(2) + " (" + width.toFixed(2) + " m)");
+        }
+      }
+      return true;
+    });
+    return bad;
+  });
+  log("(L9) chaîne marchable au pas de 5 cm : aucune bande morte devant une porte (couloir→salle→carrefour)",
+    sweep.length === 0, sweep.length ? sweep.slice(0, 6).join(" ; ") : "bandes=0 sur les 4 colonnes");
+}
+
 /* ---------- L6 : captures humaines — un hall avec ses stèles, une salle avec son affiche ---------- */
 {
   await page.goto(PAGE + "?nocache=" + Date.now(), { waitUntil: "load" });
