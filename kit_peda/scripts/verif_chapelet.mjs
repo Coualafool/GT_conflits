@@ -176,17 +176,33 @@ await page.waitForTimeout(1500);
   let wmsg = "verrou souris indisponible sur ce poste — direction du pas NON mesurée";
   if (lk) {
     wmsg = await page.evaluate(async () => {
-      const C = window.__chapelet, hu = C.hubs()[3];
+      const C = window.__chapelet;
+      C.closePanel()   // la batterie laisse des fiches ouvertes (deep links) : step() exige panneau fermé
+      await new Promise((r) => setTimeout(r, 150));
+      // LE SPOT ET LE YAW SONT CHERCHÉS, PAS SUPPOSÉS — walkable() est pur, on scanne avant de bouger
+      // la caméra (leçon TARS 2026-11-27 : le spot « évident » du carrefour plaçait le cap dans un mur).
+      const spots = C.hubs().map((hu) => ({ x: 0, z: (hu.z0 + hu.z1) / 2 }));
+      let YAW = null, SP = null;
+      const ouvert = (sp, y) => {
+        const F = [-Math.sin(y), -Math.cos(y)], R = [Math.cos(y), -Math.sin(y)];
+        return C.walkable(sp.x + R[0] * 0.5, sp.z + R[1] * 0.5) && C.walkable(sp.x - R[0] * 0.5, sp.z - R[1] * 0.5) &&
+               C.walkable(sp.x + F[0] * 0.5, sp.z + F[1] * 0.5);
+      };
+      scan: for (let pass = 0; pass < 2 && YAW === null; pass++)
+        for (const sp of spots) for (let i = pass === 0 ? 1 : 0; i < 16; i++) {
+          const y = i * Math.PI / 8;
+          if (ouvert(sp, y)) { YAW = y; SP = sp; break scan; }
+        }
+      if (YAW === null) { document.exitPointerLock(); return "ok=false AUCUN SPOT OUVERT (droite+gauche+avant) trouvé"; }
       // sonde de vie de la boucle rAF : un snapTo glissé doit se terminer de lui-même.
-      const YAW = 1.1;   // yaw oblique arbitraire : on teste la LOI, pas un axe
-      C.snapTo({ x: 0, z: (hu.z0 + hu.z1) / 2, yaw: YAW, pitch: 0 }, false);
+      C.snapTo({ x: SP.x, z: SP.z, yaw: YAW, pitch: 0 }, false);
       await new Promise((r) => setTimeout(r, 800));
       const rafAlive = !C.state().gliding;
       // PASSER LES TOUCHES piloté par les IMAGES : on maintient la touche jusqu'à ce que la position
       // ait bougé (le rendu SwiftShader tourne parfois à ~1 image/s — une fenêtre de temps fixe
       // ne prenait 0 image et mesurait 0,00 m, ce n'était PAS le bug de direction).
       const go = async (k) => {
-        C.snapTo({ x: 0, z: (hu.z0 + hu.z1) / 2, yaw: YAW, pitch: 0 }, true);
+        C.snapTo({ x: SP.x, z: SP.z, yaw: YAW, pitch: 0 }, true);
         await new Promise((r) => setTimeout(r, 120));
         const a = C.state();
         document.dispatchEvent(new KeyboardEvent("keydown", { key: k }));

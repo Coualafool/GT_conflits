@@ -998,7 +998,7 @@ window.__chapelet = {
   focus: function(key, instant){ var s = null;
     for (var q=0;q<allStations.length;q++) if (allStations[q].key===key) s = allStations[q];
     if (s) focusStation(s, instant); return !!s; },
-  teleportHub: teleportHub, snapTo: snapTo, nudgeLook: nudgeLook,
+  teleportHub: teleportHub, snapTo: snapTo, nudgeLook: nudgeLook, closePanel: closePanel,
   forwardHit: function(){ cam.updateMatrixWorld(true); var rc0 = new THREE.Raycaster(); rc0.setFromCamera(new THREE.Vector2(0,0), cam); var d = rc0.ray.direction;
     var rc = new THREE.Raycaster(cam.position.clone(), d, 0.05, 12);
     var hit = rc.intersectObjects(hitables, false)[0];
